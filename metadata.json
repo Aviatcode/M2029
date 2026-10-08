@@ -1,0 +1,6 @@
+{
+  "name": "SyllabusOS - AI Autonomous Curriculum & WebAPK",
+  "description": "Autonomous curriculum operating system that parses your syllabus, delivers 7 AM pre-lecture ELI9 primers, visual mindmaps, university 10-marker answers, PYQs, and shared token-saving classroom cache with installable WebAPK PWA support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
