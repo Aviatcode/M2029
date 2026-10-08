@@ -13,114 +13,88 @@
 > **Official Class Curriculum & Knowledge Base** for **Database Management Systems & Relational Architectures** (BCA-302), offered by the **Department of Computer Science & Applications**, **University School of Information Technology & Engineering** for academic year **2026-2027**.
 > Access dynamic AI mindmaps, primers, PYQs, and interactive lecture materials directly at [**https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app**](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app).
 
----
+# 🎓 Database Management Systems & Relational Architectures (BCA-302)
 
-## 📋 Table of Contents
-1. [👨‍🏫 Instructor & Faculty Details](#-instructor--faculty-details)
-2. [📅 Class Schedule & Timetable](#-class-schedule--timetable)
-3. [📚 Curriculum & Syllabus Units](#-curriculum--syllabus-units)
-4. [📖 Prescribed Textbooks & References](#-prescribed-textbooks--references)
-5. [🎯 Examination & Evaluation Scheme](#-examination--evaluation-scheme)
-6. [📂 Repository Directory Structure](#-repository-directory-structure)
-7. [🚀 How to Clone & Use This Repository](#-how-to-clone--use-this-repository)
-8. [🤝 How to Contribute](#-how-to-contribute)
-9. [⚖️ Academic Integrity & License](#-academic-integrity--license)
+> A concise course repository containing the syllabus, notes, study resources, PYQs, assignments, and interactive AI-powered learning tools.
+
+## 🌐 Links
+
+* 🚀 [Live SyllabusOS App](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
+* 🛠️ [Dev Workspace](https://ais-dev-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
+* 📦 [Download Repository ZIP](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/syllabus-repo.zip)
 
 ---
 
-## 👨‍🏫 Instructor & Faculty Details
+## 📚 Syllabus
 
-| Detail | Information |
-| :--- | :--- |
-| **Instructor / Professor** | **Dr. Rajesh Sharma** |
-| **Designation** | Associate Professor & Head of Database Systems Lab |
-| **Official Email** | [`rajesh.sharma@cs.university.edu`](mailto:rajesh.sharma@cs.university.edu) |
-| **Faculty Office** | Room 402, Block B, Technology Wing |
-| **Academic Term** | Semester III (2026-2027) |
-| **Course Credits** | 4.0 Credits (3L + 1T) |
+### Unit 1 — Data Modeling
 
----
+* Database Systems
+* Schema & Instance
+* Three-Schema Architecture
+* ER & EER Modeling
+* Generalization & Specialization
+* Weak Entities
 
-## 📅 Class Schedule & Timetable
+### Unit 2 — Relational Model
 
-| Day | Timings | Room / Venue | Session Type |
-| :--- | :--- | :--- | :--- |
-| **Monday** | 10:00 AM - 11:30 AM | `Lecture Hall 204` | Lecture |
-| **Wednesday** | 11:30 AM - 01:00 PM | `Lecture Hall 204` | Lecture |
-| **Friday** | 02:00 PM - 04:00 PM | `Database Systems Lab 3` | Practical Lab |
+* Relational Model
+* Integrity Constraints
+* Relational Algebra
+* Joins & Set Operations
+* Tuple Relational Calculus
+* Domain Relational Calculus
 
----
+### Unit 3 — SQL
 
-## 📚 Curriculum & Syllabus Units
+* DDL, DML, DCL & TCL
+* Subqueries & Correlated Queries
+* Aggregate Functions
+* GROUP BY & HAVING
+* Window Functions
+* Views & Indexes
+* Triggers
+* Stored Procedures & Functions
+* PL/SQL
 
-### 📌 Unit 1: Data Modeling and Conceptual Database Architecture
-* **Estimated Teaching Hours:** 10 Hours
-* **University Exam Weightage:** `15 Marks`
+### Unit 4 — Normalization
 
-**Key Concepts & Topics Covered:**
-- [ ] Introduction to Database Systems, Schema vs Instance, Three-Schema Architecture
-- [ ] Entity-Relationship (ER) Modeling: Entities, Relationships, Multiplicity Constraints, Weak Entities
-- [ ] Enhanced ER (EER) modeling, Generalization, Specialization, Categorization
+* Functional Dependencies
+* Attribute Closure
+* 1NF, 2NF & 3NF
+* BCNF
+* Lossless Decomposition
+* Dependency Preservation
 
-### 📌 Unit 2: The Relational Model and Relational Languages
-* **Estimated Teaching Hours:** 12 Hours
-* **University Exam Weightage:** `20 Marks`
+### Unit 5 — Transactions & Recovery
 
-**Key Concepts & Topics Covered:**
-- [ ] Relational Model Concepts, Integrity Constraints (Domain, Key, Referential Integrity)
-- [ ] Relational Algebra: Selection, Projection, Set Operations, Joins, Division
-- [ ] Tuple and Domain Relational Calculus
+* Transactions & ACID Properties
+* Serializability
+* Concurrency Control
+* Two-Phase Locking
+* Timestamp Ordering
+* Write-Ahead Logging
+* Checkpoints
+* ARIES
 
-### 📌 Unit 3: SQL Mastery & Procedural Extensions
-* **Estimated Teaching Hours:** 12 Hours
-* **University Exam Weightage:** `25 Marks`
+## 🤖 SyllabusOS
 
-**Key Concepts & Topics Covered:**
-- [ ] DDL, DML, DCL, TCL Statements, Complex Nested Subqueries, Correlated Queries
-- [ ] SQL Window Functions, Group By, Having, Aggregate Computations
-- [ ] Views, Indexes, Triggers, and Stored Procedures / Functions in PL/SQL
+Use the live application for:
 
-### 📌 Unit 4: Normalization and Relational Design Theory
-* **Estimated Teaching Hours:** 10 Hours
-* **University Exam Weightage:** `20 Marks`
+* AI-powered topic explanations
+* Interactive mindmaps
+* Topic primers
+* PYQs
+* Lecture resources
+* Course navigation
 
-**Key Concepts & Topics Covered:**
-- [ ] Pitfalls in Relational Database Design, Functional Dependencies, Attribute Closure
-- [ ] Normal Forms: 1NF, 2NF, 3NF, Boyce-Codd Normal Form (BCNF)
-- [ ] Decomposition Properties: Lossless-Join Decomposition, Dependency Preservation
-
-### 📌 Unit 5: Transaction Management, Concurrency Control & Recovery
-* **Estimated Teaching Hours:** 10 Hours
-* **University Exam Weightage:** `20 Marks`
-
-**Key Concepts & Topics Covered:**
-- [ ] Transaction Concept, ACID Properties, Serializability (Conflict & View)
-- [ ] Concurrency Control: Two-Phase Locking (2PL), Strict 2PL, Timestamp Ordering
-- [ ] Crash Recovery: Write-Ahead Logging (WAL), Checkpoints, ARIES Protocol
+**[🚀 Open SyllabusOS](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)**
 
 ---
 
-## 📖 Prescribed Textbooks & References
+## 📄 License
 
-1. **Database System Concepts (7th Edition)**  
-   *Authors:* Abraham Silberschatz, Henry F. Korth, S. Sudarshan (McGraw-Hill Education)
-2. **Fundamentals of Database Systems (7th Edition)**  
-   *Authors:* Ramez Elmasri, Shamkant B. Navathe (Pearson)
-3. **Database Management Systems (3rd Edition)**  
-   *Authors:* Raghu Ramakrishnan, Johannes Gehrke (McGraw-Hill)
-
----
-
-## 🎯 Examination & Evaluation Scheme
-
-| Assessment Component | Weightage | Description |
-| :--- | :--- | :--- |
-| **Mid-Term Exam** | `20%` | Theory & problem solving covering Units 1 & 2 |
-| **Lab Assignments & Practical Viva** | `20%` | Hands-on SQL lab sheets, schema design & viva voce |
-| **Class Participation & Quizzes** | `10%` | Regular attendance, surprise quizzes, and homework |
-| **End-Term University Examination** | `50%` | Comprehensive 3-hour university theory exam |
-
----
+MIT License.
 
 ## 📂 Repository Directory Structure
 
