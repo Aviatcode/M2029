@@ -36,46 +36,6 @@
 * Generalization & Specialization
 * Weak Entities
 
-### Unit 2 — Relational Model
-
-* Relational Model
-* Integrity Constraints
-* Relational Algebra
-* Joins & Set Operations
-* Tuple Relational Calculus
-* Domain Relational Calculus
-
-### Unit 3 — SQL
-
-* DDL, DML, DCL & TCL
-* Subqueries & Correlated Queries
-* Aggregate Functions
-* GROUP BY & HAVING
-* Window Functions
-* Views & Indexes
-* Triggers
-* Stored Procedures & Functions
-* PL/SQL
-
-### Unit 4 — Normalization
-
-* Functional Dependencies
-* Attribute Closure
-* 1NF, 2NF & 3NF
-* BCNF
-* Lossless Decomposition
-* Dependency Preservation
-
-### Unit 5 — Transactions & Recovery
-
-* Transactions & ACID Properties
-* Serializability
-* Concurrency Control
-* Two-Phase Locking
-* Timestamp Ordering
-* Write-Ahead Logging
-* Checkpoints
-* ARIES
 
 ## 🤖 SyllabusOS
 
