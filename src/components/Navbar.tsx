@@ -1,11 +1,8 @@
 import React from 'react';
-import { UserRole } from '../types';
 import { PWAInstallButton } from './PWAInstallButton';
 import { Search, Bell, Menu, Sparkles } from 'lucide-react';
 
 interface NavbarProps {
-  currentRole: UserRole;
-  onRoleChange: (role: UserRole) => void;
   classCode: string;
   onOpenSearch: () => void;
   onOpenNotifications: () => void;
@@ -17,8 +14,6 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  currentRole,
-  onRoleChange,
   classCode,
   onOpenSearch,
   onOpenNotifications,
@@ -95,29 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         )}
 
-        {/* Role Persona Selector */}
-        <div className="flex items-center rounded-lg bg-slate-900 border border-slate-800 p-0.5 text-xs">
-          <button
-            onClick={() => onRoleChange('student')}
-            className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
-              currentRole === 'student'
-                ? 'bg-slate-800 text-white font-medium shadow-xs'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Student
-          </button>
-          <button
-            onClick={() => onRoleChange('teacher')}
-            className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
-              currentRole === 'teacher'
-                ? 'bg-slate-800 text-white font-medium shadow-xs'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Teacher
-          </button>
-        </div>
+
 
         {/* Notifications */}
         <button

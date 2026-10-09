@@ -11,7 +11,6 @@ export async function generateZipBuffer(
   zip.file('SYLLABUS.md', files.syllabusMarkdown);
   zip.file('TIMETABLE.md', files.timetableMarkdown);
   zip.file('CONTRIBUTING.md', files.contributingMarkdown);
-  zip.file('.gitignore', files.gitignoreContent);
   zip.file('LICENSE', files.licenseContent);
 
   zip
@@ -62,15 +61,23 @@ export function generateGitHubFiles(info: ExtractedCourseInfo): GitHubPublishFil
   const teacherBadge = encodeURIComponent(info.teacherName || 'Faculty');
   const creditsBadge = encodeURIComponent(info.credits || '4 Credits');
 
-  const readmeMarkdown = `# 🎓 ${info.courseName} (${info.courseCode})
+  const appDevUrl = "https://ais-dev-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app";
+  const appLiveUrl = "https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app";
 
-[![University](https://img.shields.io/badge/University-${uniBadge}-0284c7.svg)](https://github.com)
-[![Semester](https://img.shields.io/badge/Semester-${semBadge}-0d9488.svg)](https://github.com)
-[![Instructor](https://img.shields.io/badge/Faculty-${teacherBadge}-7c3aed.svg)](https://github.com)
-[![Credits](https://img.shields.io/badge/Credits-${creditsBadge}-16a34a.svg)](https://github.com)
+  const readmeMarkdown = `> 🌐 **Live Web Application & Autonomous AI Portal:**
+> **[🚀 Open SyllabusOS Live App](${appLiveUrl})** | **[🛠️ Interactive Dev Workspace](${appDevUrl})**
+
+# 🎓 ${info.courseName} (${info.courseCode})
+
+[![Live Web Application](https://img.shields.io/badge/Live_App-SyllabusOS-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](${appLiveUrl})
+[![University](https://img.shields.io/badge/University-${uniBadge}-0284c7.svg)](${appLiveUrl})
+[![Semester](https://img.shields.io/badge/Semester-${semBadge}-0d9488.svg)](${appLiveUrl})
+[![Instructor](https://img.shields.io/badge/Faculty-${teacherBadge}-7c3aed.svg)](${appLiveUrl})
+[![Credits](https://img.shields.io/badge/Credits-${creditsBadge}-16a34a.svg)](${appLiveUrl})
 [![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b.svg)](LICENSE)
 
 > **Official Class Curriculum & Knowledge Base** for **${info.courseName}** (${info.courseCode}), offered by the **${info.department}**, **${info.university}** for academic year **${info.academicYear}**.
+> Access dynamic AI mindmaps, primers, PYQs, and interactive lecture material directly at [**${appLiveUrl}**](${appLiveUrl}).
 
 ---
 

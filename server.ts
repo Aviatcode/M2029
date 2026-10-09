@@ -578,7 +578,9 @@ Evaluate the answer. Return STRICT JSON only:
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
-        hmr: false,
+        hmr: {
+          server: httpServer,
+        },
         watch: process.env.DISABLE_HMR === 'true' ? null : {},
       },
       appType: 'spa',

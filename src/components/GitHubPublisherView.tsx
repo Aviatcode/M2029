@@ -176,7 +176,6 @@ export const GitHubPublisherView: React.FC<GitHubPublisherViewProps> = ({
     zip.file('SYLLABUS.md', generatedFiles.syllabusMarkdown);
     zip.file('TIMETABLE.md', generatedFiles.timetableMarkdown);
     zip.file('CONTRIBUTING.md', generatedFiles.contributingMarkdown);
-    zip.file('.gitignore', generatedFiles.gitignoreContent);
     zip.file('LICENSE', generatedFiles.licenseContent);
 
     // Create standard directory scaffolding
@@ -493,8 +492,17 @@ export const GitHubPublisherView: React.FC<GitHubPublisherViewProps> = ({
                 className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition cursor-pointer"
               >
                 <Download className="w-4 h-4" />
-                <span>Download .ZIP File</span>
+                <span>Download Repo .ZIP</span>
               </button>
+
+              <a
+                href="/backend-source.zip"
+                download="backend-source.zip"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download Backend Files (.ZIP)</span>
+              </a>
 
               <a
                 href="/syllabus-repo.zip"
@@ -502,22 +510,26 @@ export const GitHubPublisherView: React.FC<GitHubPublisherViewProps> = ({
                 className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer"
               >
                 <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Direct Link (.zip)</span>
+                <span>Curriculum ZIP</span>
               </a>
             </div>
           </div>
 
           {/* Included files preview pills */}
           <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
-            <span className="text-slate-400 font-medium">Included in archive:</span>
+            <span className="text-slate-400 font-medium">Curriculum Repo:</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">README.md</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">SYLLABUS.md</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">TIMETABLE.md</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">CONTRIBUTING.md</span>
-            <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">.gitignore</span>
-            <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">LICENSE</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">/notes/</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">/slides/</span>
+            <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">/assignments/</span>
+            <span className="text-slate-500 font-medium ml-2">| Backend Files:</span>
+            <span className="px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 font-mono">server.ts</span>
+            <span className="px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 font-mono">src/server/routes.ts</span>
+            <span className="px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 font-mono">src/server/ai/provider.ts</span>
+            <span className="px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/50 font-mono">package.json</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">/pyqs/</span>
             <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-200 font-mono">/assignments/</span>
           </div>

@@ -216,8 +216,6 @@ export default function App() {
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500/25 selection:text-cyan-100">
       {/* 1. TOP NAVBAR */}
       <Navbar
-        currentRole={currentRole}
-        onRoleChange={setCurrentRole}
         classCode={classCode}
         onOpenSearch={() => setIsSearchModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsOpen(true)}

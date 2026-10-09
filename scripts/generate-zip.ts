@@ -115,7 +115,6 @@ async function main() {
   fs.writeFileSync(path.join(repoDir, 'SYLLABUS.md'), files.syllabusMarkdown);
   fs.writeFileSync(path.join(repoDir, 'TIMETABLE.md'), files.timetableMarkdown);
   fs.writeFileSync(path.join(repoDir, 'CONTRIBUTING.md'), files.contributingMarkdown);
-  fs.writeFileSync(path.join(repoDir, '.gitignore'), files.gitignoreContent);
   fs.writeFileSync(path.join(repoDir, 'LICENSE'), files.licenseContent);
 
   ['notes', 'slides', 'pyqs', 'assignments'].forEach((sub) => {
