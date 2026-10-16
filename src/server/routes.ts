@@ -33,6 +33,12 @@ import {
   serverSupabase,
   isServerSupabaseConfigured,
 } from './db/supabaseClient.js';
+import {
+  isNeonConfigured,
+  testNeonConnection,
+  getNeonSql,
+  initializeNeonSchema,
+} from './db/neonClient.js';
 
 export const apiRouter = Router();
 
@@ -84,6 +90,32 @@ apiRouter.get('/supabase/status', async (_req: Request, res: Response) => {
     configured: isServerSupabaseConfigured(),
     ...result,
   });
+});
+
+// 0.2 Neon PostgreSQL Connection & Health Status
+apiRouter.get('/neon/status', async (_req: Request, res: Response) => {
+  const result = await testNeonConnection();
+  res.json({
+    configured: isNeonConfigured(),
+    ...result,
+  });
+});
+
+// 0.3 Neon PostgreSQL Schema Initialization & Seed Trigger
+apiRouter.post('/neon/init', async (req: Request, res: Response) => {
+  try {
+    const seed = req.body.seed !== false;
+    const result = await initializeNeonSchema(seed);
+    res.json({
+      status: 'success',
+      ...result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message || 'Failed to initialize Neon schema',
+    });
+  }
 });
 
 // 1. Get Class Workspace & Overview

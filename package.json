@@ -10,10 +10,13 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "db:push": "tsx scripts/push-to-supabase.ts"
+    "db:push": "tsx scripts/push-to-supabase.ts",
+    "db:neon:init": "tsx scripts/push-to-neon.ts",
+    "db:neon:push": "tsx scripts/push-to-neon.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
+    "@neondatabase/serverless": "^1.2.0",
     "@supabase/supabase-js": "^2.118.0",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.1",

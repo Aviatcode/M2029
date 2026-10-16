@@ -27,6 +27,11 @@ const classroomsStore: Record<string, Classroom> = {
 
 import { apiRouter } from './src/server/routes.js';
 import { initDailyAutoSyncScheduler } from './src/server/autoSyncService.js';
+import {
+  isNeonConfigured,
+  testNeonConnection,
+  getNeonSql,
+} from './src/server/db/neonClient.js';
 
 async function startServer() {
   const app = express();
@@ -219,6 +224,23 @@ STRICT JSON OUTPUT FORMAT (Return JSON only, no markdown ticks, no preamble):
           ...classroom.cachedLessons[topicId],
           source: 'cache',
         });
+      }
+
+      // Check Neon Cloud Database Cache
+      if (isNeonConfigured()) {
+        try {
+          const sql = getNeonSql();
+          if (sql) {
+            const rows = await sql`SELECT lesson_json FROM cached_lessons WHERE topic_id = ${topicId} LIMIT 1`;
+            if (rows && rows.length > 0 && rows[0].lesson_json) {
+              const cached = rows[0].lesson_json;
+              classroom.cachedLessons[topicId] = cached;
+              return res.json({ ...cached, source: 'neon_cloud_cache' });
+            }
+          }
+        } catch (e) {
+          // Gracefully continue to local defaults or AI generation
+        }
       }
 
       // Check default lessons
@@ -441,6 +463,22 @@ RETURN STRICTLY VALID JSON ONLY (No markdown formatting, no backticks, no commen
       // Store in classroom cache! Zero future tokens for all classmates!
       classroom.cachedLessons[topicId] = completeLesson;
 
+      // Persist to Neon PostgreSQL
+      if (isNeonConfigured()) {
+        try {
+          const sql = getNeonSql();
+          if (sql) {
+            sql`
+              INSERT INTO cached_lessons (topic_id, class_code, lesson_json)
+              VALUES (${topicId}, ${code}, ${JSON.stringify(completeLesson)}::jsonb)
+              ON CONFLICT (topic_id) DO UPDATE SET lesson_json = ${JSON.stringify(completeLesson)}::jsonb
+            `.catch((e: any) => console.error('[Neon lesson cache error]:', e));
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+
       return res.json(completeLesson);
     } catch (err: any) {
       console.error('Error generating lesson:', err);
@@ -488,6 +526,23 @@ Provide a crisp, intuitive, and accurate answer (under 120 words).
       };
 
       classroom.doubts.unshift(newDoubt);
+
+      // Persist to Neon PostgreSQL
+      if (isNeonConfigured()) {
+        try {
+          const sql = getNeonSql();
+          if (sql) {
+            sql`
+              INSERT INTO classroom_doubts (id, class_code, topic_id, student_name, question, answer, upvotes)
+              VALUES (${newDoubt.id}, ${code}, ${newDoubt.topicId}, ${newDoubt.studentName}, ${newDoubt.question}, ${newDoubt.answer}, ${newDoubt.upvotes})
+              ON CONFLICT (id) DO NOTHING
+            `.catch((e: any) => console.error('[Neon doubt sync error]:', e));
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+
       res.json(newDoubt);
     } catch (err: any) {
       console.error('Error answering doubt:', err);
@@ -597,6 +652,24 @@ Evaluate the answer. Return STRICT JSON only:
 
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 SyllabusOS server running on http://0.0.0.0:${PORT}`);
+    if (isNeonConfigured()) {
+      console.log('⚡ Neon PostgreSQL is configured. Verifying cloud connection...');
+      testNeonConnection()
+        .then((res) => {
+          if (res.ok) {
+            console.log(
+              `✅ Connected to Neon PostgreSQL database: ${res.database} (${res.tableCount} tables, ${res.latencyMs}ms latency)`
+            );
+          } else {
+            console.warn(`⚠️ Neon connection warning: ${res.message}`);
+          }
+        })
+        .catch(() => {});
+    } else {
+      console.log(
+        'ℹ️ Running with fast in-memory store. (Configure DATABASE_URL in .env to persist to Neon PostgreSQL)'
+      );
+    }
     initDailyAutoSyncScheduler();
   });
 }
