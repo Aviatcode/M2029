@@ -119,8 +119,49 @@ export default function App() {
   const [pyqs, setPyqs] = useState<HistoricalPYQ[]>(SEED_PYQS);
   const [exams, setExams] = useState<ExamDateSheetItem[]>(SEED_EXAMS);
   const [announcements, setAnnouncements] = useState<ClassAnnouncement[]>(SEED_ANNOUNCEMENTS);
-  const [notifications, setNotifications] = useState<AppNotification[]>(SEED_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<AppNotification[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_notifications');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return SEED_NOTIFICATIONS;
+  });
   const [assignments, setAssignments] = useState<AcademicAssignment[]>(SEED_ASSIGNMENTS);
+
+  const handleMarkAllRead = () => {
+    setNotifications((prev) => {
+      const updated = prev.map((n) => ({ ...n, read: true }));
+      try {
+        localStorage.setItem('syllabus_notifications', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
+  const handleClearAllNotifications = () => {
+    setNotifications([]);
+    try {
+      localStorage.setItem('syllabus_notifications', JSON.stringify([]));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleClearSingleNotification = (id: string) => {
+    setNotifications((prev) => {
+      const updated = prev.filter((n) => n.id !== id);
+      try {
+        localStorage.setItem('syllabus_notifications', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
 
   // Modals & Drawers
   const [isTomorrowModalOpen, setIsTomorrowModalOpen] = useState(false);
@@ -374,7 +415,10 @@ export default function App() {
         currentUser={currentUser}
         onNavigateHome={() => setActiveTab('dashboard')}
         onOpenSearch={() => setIsSearchModalOpen(true)}
-        onOpenNotifications={() => setIsNotificationsOpen(true)}
+        onOpenNotifications={() => {
+          setIsNotificationsOpen(true);
+          handleMarkAllRead();
+        }}
         onOpenClassSetup={() => setIsSetupModalOpen(true)}
         onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
         onOpenLogin={() => setIsLoginModalOpen(true)}
@@ -620,9 +664,9 @@ export default function App() {
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
         notifications={notifications}
-        onMarkAllRead={() =>
-          setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-        }
+        onMarkAllRead={handleMarkAllRead}
+        onClearAll={handleClearAllNotifications}
+        onClearNotification={handleClearSingleNotification}
         onActionClick={(url) => {
           setIsNotificationsOpen(false);
           if (url.includes('tomorrow')) setActiveTab('tomorrow');
