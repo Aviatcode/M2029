@@ -73,9 +73,11 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
       <div className="p-4 border-b border-slate-800/80 bg-slate-900/60">
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 font-bold text-sm">
-              🎓
-            </div>
+            <img
+              src="./am-logo.png"
+              alt="AM Logo"
+              className="w-8 h-8 rounded-lg shrink-0 object-contain shadow-xs border border-neutral-800/80"
+            />
             <div>
               <h1 className="font-bold text-sm text-white tracking-tight">M2029</h1>
               <p className="text-[10px] text-cyan-400 font-mono">Autonomous Curriculum</p>

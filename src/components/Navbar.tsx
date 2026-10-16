@@ -124,9 +124,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           aria-label="Return to Workspace"
         >
           <img
-            src="/am-logo.png"
+            src="./am-logo.png"
             alt="AM Logo"
-            className="w-8 h-8 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition"
+            className="w-8 h-8 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition border border-neutral-800/80"
           />
         </button>
       </div>

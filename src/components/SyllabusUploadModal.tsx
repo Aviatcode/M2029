@@ -90,7 +90,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
             <div>
               <h2 className="font-bold text-lg text-white">Upload Syllabus & Auto-Create Folders</h2>
               <p className="text-xs text-slate-400">
-                SyllabusOS parses chapters, builds 7 AM primers, mindmaps, and 10-markers for class {classCode}
+                M2029 parses chapters, builds 7 AM primers, mindmaps, and 10-markers for class {classCode}
               </p>
             </div>
           </div>

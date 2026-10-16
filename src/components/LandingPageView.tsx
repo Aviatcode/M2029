@@ -142,9 +142,9 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <header className="relative z-20 border-b border-neutral-850/60 bg-neutral-950/70 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <img
-            src="/am-logo.png"
+            src="./am-logo.png"
             alt="AM Logo"
-            className="w-7 h-7 rounded-lg shrink-0 object-contain shadow-xs"
+            className="w-7 h-7 rounded-lg shrink-0 object-contain shadow-xs border border-neutral-800"
           />
           <span className="font-semibold text-sm tracking-tight text-white">M2029</span>
         </div>
@@ -172,10 +172,15 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       {/* 3. Hero & Minimal Form Section */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 max-w-xl mx-auto w-full">
         {/* Short, Punchy Title */}
-        <div className="text-center space-y-2 mb-7">
+        <div className="text-center space-y-2 mb-7 flex flex-col items-center">
+          <img
+            src="./am-logo.png"
+            alt="AM Logo"
+            className="w-14 h-14 rounded-2xl object-contain shadow-lg mb-1 border border-neutral-800"
+          />
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 text-[11px] font-mono">
             <Sparkles className="w-3 h-3 text-neutral-400" />
-            <span>Classroom Desk</span>
+            <span>M2029 Classroom Desk</span>
           </div>
 
           <h1 className="font-editorial text-3xl sm:text-4xl font-normal tracking-tight text-white">
@@ -368,7 +373,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       {/* 4. Minimal Footer */}
       <footer className="relative z-10 border-t border-neutral-850/60 bg-neutral-950/70 py-3.5 px-4 sm:px-8 text-center text-[11px] text-neutral-500 font-mono flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src="/am-logo.png" alt="AM" className="w-3.5 h-3.5 rounded object-contain" />
+          <img src="./am-logo.png" alt="AM" className="w-3.5 h-3.5 rounded object-contain border border-neutral-800" />
           <span>M2029</span>
         </div>
         <div>

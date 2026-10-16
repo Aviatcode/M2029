@@ -87,9 +87,11 @@ export const PWAInstallPopup: React.FC = () => {
           </button>
 
           <div className="flex items-start gap-3 pr-5">
-            <div className="w-7 h-7 rounded bg-slate-950 border border-slate-800 text-neutral-300 flex items-center justify-center shrink-0 mt-0.5">
-              <Smartphone className="w-3.5 h-3.5" />
-            </div>
+            <img
+              src="./am-logo.png"
+              alt="AM Logo"
+              className="w-7 h-7 rounded-lg object-contain border border-slate-800 shrink-0 mt-0.5"
+            />
 
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5">

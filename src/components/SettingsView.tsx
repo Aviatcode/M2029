@@ -694,11 +694,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {/* SECTION 3: APP VERSION & PWA DEPLOYMENT */}
       <div className="rounded-xl bg-slate-900/40 border border-slate-800 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2.5">
-          <Smartphone className="w-4 h-4 text-cyan-400 shrink-0" />
+          <img src="./am-logo.png" alt="AM Logo" className="w-5 h-5 rounded object-contain border border-neutral-800 shrink-0" />
           <div>
             <span className="font-semibold text-slate-200">Mobile WebAPK & Offline PWA Ready</span>
             <p className="text-[11px] text-slate-400">
-              Install SyllabusOS onto your phone home screen for offline syllabus access.
+              Install M2029 onto your phone home screen for offline syllabus access.
             </p>
           </div>
         </div>
