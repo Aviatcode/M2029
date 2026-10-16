@@ -42,6 +42,7 @@ interface DashboardViewProps {
   onNavigateTab: (tab: ActiveNavTab) => void;
   onTriggerQuickAIAction: (actionType: string) => void;
   calmMode?: boolean;
+  onOpenAIKeyConfig?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -59,6 +60,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateTab,
   onTriggerQuickAIAction,
   calmMode = false,
+  onOpenAIKeyConfig,
 }) => {
   const [activeTab, setActiveTab] = useState<'schedule' | 'exams' | 'notes'>('schedule');
   const [searchPrompt, setSearchPrompt] = useState('');
@@ -120,6 +122,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <ShieldCheck className="w-3 h-3 text-emerald-400" />
                 <span className="hidden sm:inline">CR Verified</span>
               </span>
+              {onOpenAIKeyConfig && (
+                <button
+                  type="button"
+                  onClick={onOpenAIKeyConfig}
+                  className="academic-tag text-[10px] text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 hover:border-cyan-500/70 hover:bg-cyan-900/60 px-2 py-0.5 rounded inline-flex items-center gap-1 transition cursor-pointer"
+                  title="Configure Gemini AI Key & Database"
+                >
+                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  <span>Configure API Key</span>
+                </button>
+              )}
             </div>
 
             <h1 className="font-editorial text-3xl sm:text-4xl text-slate-100 font-normal italic tracking-tight">

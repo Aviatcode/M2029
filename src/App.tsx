@@ -43,6 +43,7 @@ import { NotificationDrawer } from './components/NotificationDrawer';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { PWAInstallPopup } from './components/PWAInstallPopup';
 import { ThemeSelectorModal } from './components/ThemeSelectorModal';
+import { AIKeyConfigModal } from './components/AIKeyConfigModal';
 import { initTheme } from './utils/themeService';
 
 export default function App() {
@@ -113,6 +114,7 @@ export default function App() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
+  const [isAIKeyModalOpen, setIsAIKeyModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [initialTutorPrompt, setInitialTutorPrompt] = useState('');
 
@@ -318,6 +320,7 @@ export default function App() {
         onOpenSearch={() => setIsSearchModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenClassSetup={() => setIsSetupModalOpen(true)}
+        onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
         unreadNotificationsCount={unreadNotificationsCount}
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
         calmMode={calmMode}
@@ -337,6 +340,7 @@ export default function App() {
             isCollapsed={isSidebarCollapsed}
             onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
             onOpenClassSetup={() => setIsSetupModalOpen(true)}
+            onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
           />
         </div>
 
@@ -354,6 +358,10 @@ export default function App() {
                 semesterNumber={workspace.semester}
                 onOpenClassSetup={() => {
                   setIsSetupModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                onOpenAIKeyConfig={() => {
+                  setIsAIKeyModalOpen(true);
                   setMobileMenuOpen(false);
                 }}
               />
@@ -379,6 +387,7 @@ export default function App() {
               onOpenTomorrowPrep={() => setIsTomorrowModalOpen(true)}
               onNavigateTab={handleSelectTab}
               onTriggerQuickAIAction={handleQuickAIAction}
+              onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
               calmMode={calmMode}
             />
           )}
@@ -518,6 +527,11 @@ export default function App() {
       <ThemeSelectorModal
         isOpen={isThemeModalOpen}
         onClose={() => setIsThemeModalOpen(false)}
+      />
+
+      <AIKeyConfigModal
+        isOpen={isAIKeyModalOpen}
+        onClose={() => setIsAIKeyModalOpen(false)}
       />
 
       <GlobalSearchModal

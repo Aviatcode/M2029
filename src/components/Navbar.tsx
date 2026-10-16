@@ -19,6 +19,7 @@ interface NavbarProps {
   calmMode?: boolean;
   onToggleCalmMode?: () => void;
   onOpenThemeSelector?: () => void;
+  onOpenAIKeyConfig?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -32,6 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   calmMode = false,
   onToggleCalmMode,
   onOpenThemeSelector,
+  onOpenAIKeyConfig,
 }) => {
   return (
     <header className="h-14 border-b border-slate-800/80 bg-slate-950 px-3 md:px-5 flex items-center justify-between gap-3 shrink-0 z-30">
@@ -99,6 +101,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <Search className="w-4 h-4" />
         </button>
+
+        {/* Dedicated AI Key & Model Config Button */}
+        {onOpenAIKeyConfig && (
+          <button
+            onClick={onOpenAIKeyConfig}
+            className="flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-md text-xs font-medium text-cyan-200 hover:text-white bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/30 hover:border-cyan-500/60 transition cursor-pointer shadow-2xs group"
+            title="Add / Configure Google Gemini API Key & Supabase"
+            aria-label="API Key Settings"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform shrink-0" />
+            <span className="hidden sm:inline font-sans-ui font-semibold">API Key</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+          </button>
+        )}
 
         {/* Dedicated Semester Setup Wizard Button */}
         <button
