@@ -61,7 +61,7 @@ const DEFAULT_USER: UserProfile = {
   role: 'cr',
   avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
   classCode: 'BCA-2028',
-  isLoggedIn: true,
+  isLoggedIn: false,
 };
 
 export default function App() {
@@ -88,7 +88,21 @@ export default function App() {
     } catch {
       // fallback
     }
-    return 'dashboard';
+
+    // Check if user has an existing active session in localStorage
+    try {
+      const saved = localStorage.getItem('syllabus_user_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.isLoggedIn) {
+          return 'dashboard';
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    return 'landing';
   };
 
   const [activeTab, setActiveTab] = useState<ActiveNavTab>(getInitialTab);
@@ -458,7 +472,7 @@ export default function App() {
       />
 
       {/* 1. TOP NAVBAR / WORKSPACE vs LANDING PAGE */}
-      {activeTab === 'landing' ? (
+      {activeTab === 'landing' || !currentUser.isLoggedIn ? (
         <div className="relative z-10 w-full h-full overflow-y-auto">
           <LandingPageView
             currentUser={currentUser}

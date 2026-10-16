@@ -12,9 +12,10 @@ import {
   Layers,
   Smartphone,
   CheckCircle2,
-  Cpu,
   Clock,
   Compass,
+  LogIn,
+  UserPlus,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
 import { UserRole } from '../types';
@@ -69,6 +70,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
   onEnterWorkspace,
   onGoToDashboard,
 }) => {
+  const [authMode, setAuthMode] = useState<'signup' | 'signin'>('signup');
   const [name, setName] = useState(currentUser.isLoggedIn ? currentUser.name : '');
   const [email, setEmail] = useState(currentUser.isLoggedIn ? currentUser.email : '');
   const [selectedClassId, setSelectedClassId] = useState(classCode || 'BCA-2028');
@@ -81,11 +83,11 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
     e.preventDefault();
     setFormError('');
 
-    const cleanName = name.trim();
     const cleanEmail = email.trim();
     const cleanClassId = selectedClassId.trim().toUpperCase();
+    const cleanName = authMode === 'signup' ? name.trim() : (name.trim() || cleanEmail.split('@')[0]);
 
-    if (!cleanName) {
+    if (authMode === 'signup' && !cleanName) {
       setFormError('Please enter your full student or faculty name.');
       return;
     }
@@ -177,7 +179,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               href="#onboard-card"
               className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-neutral-100 hover:bg-white text-neutral-950 font-medium text-xs transition cursor-pointer shadow-sm"
             >
-              <span>Get Started</span>
+              <span>{authMode === 'signup' ? 'Sign Up' : 'Sign In'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </a>
           )}
@@ -198,8 +200,8 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           </h1>
 
           <p className="text-xs sm:text-sm text-neutral-400 font-sans leading-relaxed max-w-xl mx-auto">
-            Synchronize with your common class cohort, access 7 AM pre-lecture primers, visual mindmaps, 
-            and 10-marker university PYQ answers.
+            Sign in with your student mail, name, and common class ID to sync with your cohort and unlock 
+            autonomous syllabus tracking, 7 AM primers, and 10-marker university PYQs.
           </p>
         </div>
 
@@ -211,27 +213,61 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           {/* Subtle Accent Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-neutral-400 to-transparent opacity-50" />
 
-          {/* Card Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-neutral-800/80 mb-5">
-            <div className="flex items-center gap-3">
-              <img
-                src="/am-logo.png"
-                alt="AM App Logo"
-                className="w-9 h-9 rounded-lg shrink-0 object-contain shadow-sm border border-neutral-800"
-              />
-              <div>
-                <h2 className="text-sm sm:text-base font-semibold text-white">Enter Classroom Desk</h2>
-                <p className="text-[11px] text-neutral-400">
-                  Enter student mail, name, and common class ID to join.
-                </p>
+          {/* Card Header with Mode Switcher */}
+          <div className="pb-4 border-b border-neutral-800/80 mb-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/am-logo.png"
+                  alt="AM App Logo"
+                  className="w-9 h-9 rounded-lg shrink-0 object-contain shadow-sm border border-neutral-800"
+                />
+                <div>
+                  <h2 className="text-sm sm:text-base font-semibold text-white">
+                    {authMode === 'signup' ? 'Student Sign Up & Join' : 'Classroom Sign In'}
+                  </h2>
+                  <p className="text-[11px] text-neutral-400">
+                    {authMode === 'signup'
+                      ? 'Register with student mail, name & class ID to enter the desk'
+                      : 'Sign in to access your class syllabus and academic workspace'}
+                  </p>
+                </div>
               </div>
+
+              {currentUser.isLoggedIn && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 border border-neutral-700">
+                  Session Active
+                </span>
+              )}
             </div>
 
-            {currentUser.isLoggedIn && (
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-800 text-neutral-300 border border-neutral-700">
-                Session Active
-              </span>
-            )}
+            {/* Mode Switch Tabs: Sign Up vs Sign In */}
+            <div className="flex p-1 rounded-xl bg-neutral-950 border border-neutral-850 text-xs">
+              <button
+                type="button"
+                onClick={() => setAuthMode('signup')}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg font-medium transition cursor-pointer ${
+                  authMode === 'signup'
+                    ? 'bg-neutral-850 text-white shadow-xs'
+                    : 'text-neutral-400 hover:text-neutral-200'
+                }`}
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>New Student (Sign Up)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAuthMode('signin')}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg font-medium transition cursor-pointer ${
+                  authMode === 'signin'
+                    ? 'bg-neutral-850 text-white shadow-xs'
+                    : 'text-neutral-400 hover:text-neutral-200'
+                }`}
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Existing Student (Sign In)</span>
+              </button>
+            </div>
           </div>
 
           {/* Form */}
@@ -242,21 +278,23 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               </div>
             )}
 
-            {/* 1. Student Name */}
-            <div className="space-y-1.5">
-              <label className="font-medium text-neutral-300 flex items-center gap-1.5">
-                <UserIcon className="w-3.5 h-3.5 text-neutral-400" />
-                <span>Full Name</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Aman Kumar"
-                required
-                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-sans"
-              />
-            </div>
+            {/* 1. Student Name (Required in signup mode) */}
+            {authMode === 'signup' && (
+              <div className="space-y-1.5">
+                <label className="font-medium text-neutral-300 flex items-center gap-1.5">
+                  <UserIcon className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>Student / Full Name</span>
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Aman Kumar"
+                  required={authMode === 'signup'}
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-sans"
+                />
+              </div>
+            )}
 
             {/* 2. Student Mail / University Email */}
             <div className="space-y-1.5">
@@ -312,30 +350,32 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               </div>
             </div>
 
-            {/* 4. Role Toggle */}
-            <div className="space-y-1.5 pt-1">
-              <label className="font-medium text-neutral-300 block">Classroom Role</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'student', label: 'Student' },
-                  { id: 'cr', label: 'Class Rep (CR)' },
-                  { id: 'teacher', label: 'Faculty' },
-                ].map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => setSelectedRole(r.id as UserRole)}
-                    className={`py-1.5 px-2 rounded-lg text-xs font-medium border text-center transition cursor-pointer ${
-                      selectedRole === r.id
-                        ? 'bg-neutral-100 text-neutral-950 border-neutral-100 shadow-xs'
-                        : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:border-neutral-700'
-                    }`}
-                  >
-                    {r.label}
-                  </button>
-                ))}
+            {/* 4. Role Toggle (Only in sign up mode) */}
+            {authMode === 'signup' && (
+              <div className="space-y-1.5 pt-1">
+                <label className="font-medium text-neutral-300 block">Classroom Role</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'student', label: 'Student' },
+                    { id: 'cr', label: 'Class Rep (CR)' },
+                    { id: 'teacher', label: 'Faculty' },
+                  ].map((r) => (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => setSelectedRole(r.id as UserRole)}
+                      className={`py-1.5 px-2 rounded-lg text-xs font-medium border text-center transition cursor-pointer ${
+                        selectedRole === r.id
+                          ? 'bg-neutral-100 text-neutral-950 border-neutral-100 shadow-xs'
+                          : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:border-neutral-700'
+                      }`}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Submit Action */}
             <div className="pt-2">
@@ -343,7 +383,9 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 type="submit"
                 className="w-full py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
               >
-                <span>Enter Classroom Desk</span>
+                <span>
+                  {authMode === 'signup' ? 'Complete Sign Up & Enter Desk' : 'Sign In & Enter Desk'}
+                </span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -352,7 +394,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           {/* One-Click Demo Profiles */}
           <div className="mt-5 pt-4 border-t border-neutral-800/80">
             <span className="text-[11px] text-neutral-400 block mb-2 font-mono">
-              Or test with one-click classroom profiles:
+              Or instant 1-click sign in:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {PRESET_PROFILES.map((preset) => (
