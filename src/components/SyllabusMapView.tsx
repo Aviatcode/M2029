@@ -49,24 +49,17 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
-      {/* 1. Editorial Header */}
-      <div className="space-y-4 border-b border-slate-800/60 pb-5">
+      {/* 1. Header */}
+      <div className="space-y-3 border-b border-slate-800/60 pb-4">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-neutral-400" />
-              <span className="academic-tag text-[10px] text-neutral-400">
-                Curriculum Table of Contents
-              </span>
-            </div>
+          <div className="space-y-0.5">
             <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-              Syllabus & Concept Map
+              Syllabus Directory
             </h1>
+            <p className="text-xs text-slate-400 font-sans-ui">
+              {currentSubject?.name || 'Course Curriculum'}
+            </p>
           </div>
-
-          <p className="text-xs text-slate-400 font-sans-ui">
-            Course curriculum for <strong className="text-slate-200">{currentSubject?.name || 'Class Workspace'}</strong>
-          </p>
         </div>
 
         {/* Quiet Subject Tabs */}

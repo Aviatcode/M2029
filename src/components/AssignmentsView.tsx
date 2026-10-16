@@ -396,23 +396,14 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in text-slate-100 pb-12">
-      {/* 1. Academic Header with Stats & Action Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-slate-800/60">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <Presentation className="w-4 h-4 text-neutral-400" />
-            <span className="academic-tag text-[10px] text-neutral-400">
-              Deliverables & Presentation Dossier
-            </span>
-            <span className="academic-tag text-[10px] text-slate-400">
-              {assignments.length} Total Deliverables
-            </span>
-          </div>
+      {/* 1. Header with Stats & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 border-b border-slate-800/60">
+        <div className="space-y-1">
           <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-            Assignments, PPT Rosters & Coursework
+            Assignments & Presentations
           </h1>
           <p className="text-xs text-slate-400 font-sans-ui">
-            Subject-wise coursework dossier, university submission milestones, and class presentation rosters.
+            Classwork deadlines and seminar presentation roster.
           </p>
         </div>
 
@@ -420,11 +411,11 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsCRPortalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
             title="Class Representative 1-Click Sync"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
-            <span>CR Portal Sync</span>
+            <span>CR Sync</span>
           </button>
 
           <button
@@ -432,7 +423,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               if (selectedFolder !== 'all') setNewSubject(selectedFolder);
               setIsAddModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
           >
             <Plus className="w-4 h-4" />
             <span>Add Work</span>

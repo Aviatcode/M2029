@@ -34,19 +34,13 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
-      {/* 1. Academic Header */}
-      <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-neutral-400" />
-          <span className="academic-tag text-[10px] text-neutral-400">
-            University Datesheet & Recall Plan
-          </span>
-        </div>
+      {/* 1. Header */}
+      <div className="space-y-1 border-b border-slate-800/60 pb-4">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-          Examination Schedule & Active Recall Roadmap
+          Exam Datesheet & Revision
         </h1>
         <p className="text-xs text-slate-400 font-sans-ui">
-          Structured 5-day distributed revision timetable and syllabus milestone checklist.
+          Upcoming examinations and active recall revision roadmap.
         </p>
       </div>
 

@@ -42,9 +42,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
     {
       id: 'msg-welcome',
       sender: 'ai',
-      text: `Hello! I am your academic tutor for ${selectedSubject}.
-I have access to your class syllabus, teacher notes, and past university question papers.
-Ask me any question or paste a topic you are finding difficult to understand.`,
+      text: `Hello! Ask any question or paste a topic from ${selectedSubject} to study.`,
       timestamp: 'Just now',
       sourcesUsed: [
         { title: 'Class Syllabus & Shared Notes', type: 'Knowledge Base' },
@@ -116,11 +114,8 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
           </div>
           <div>
             <h1 className="font-sans-ui font-semibold text-xs sm:text-sm text-slate-100 leading-tight">
-              AI Study Hall
+              AI Tutor
             </h1>
-            <p className="academic-tag text-[9px] text-slate-400">
-              Autonomous Curriculum Companion
-            </p>
           </div>
         </div>
 

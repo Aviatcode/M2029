@@ -51,18 +51,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const primaryItems = [
     { id: 'dashboard' as const, label: 'Today', icon: LayoutDashboard },
-    { id: 'ai-tutor' as const, label: 'AI Study Hall', icon: Bot },
-    { id: 'syllabus' as const, label: 'Syllabus Map', icon: Map },
-    { id: 'materials' as const, label: 'Class Notes', icon: FolderOpen },
-    { id: 'exams' as const, label: 'Exams & Revision', icon: Flame },
-    { id: 'pyqs' as const, label: 'PYQ Archive', icon: Award },
+    { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot },
+    { id: 'syllabus' as const, label: 'Syllabus', icon: Map },
+    { id: 'materials' as const, label: 'Notes', icon: FolderOpen },
+    { id: 'exams' as const, label: 'Exams', icon: Flame },
+    { id: 'pyqs' as const, label: 'PYQs', icon: Award },
   ];
 
   const secondaryItems = [
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
-    { id: 'settings' as const, label: 'Settings & API Key', icon: SlidersHorizontal },
-    { id: 'landing' as const, label: 'Landing Page', icon: Compass },
+    { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
+    { id: 'landing' as const, label: 'Sign In / Out', icon: Compass },
   ];
 
   return (

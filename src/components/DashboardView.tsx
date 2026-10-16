@@ -107,20 +107,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-9 animate-fade-in">
-      {/* 1. Editorial Academic Masthead */}
-      <div className="space-y-4 border-b border-slate-800/60 pb-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-          <div className="space-y-1.5">
+      {/* 1. Academic Masthead */}
+      <div className="space-y-3 border-b border-slate-800/60 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+          <div className="space-y-1">
             <div className="flex items-center gap-2 text-slate-400">
               <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
-                Semester {semesterNumber} · {classCode}
-              </span>
-              <span className="academic-tag text-[10px] text-slate-500">
-                Academic Dossier
-              </span>
-              <span className="text-[10px] text-neutral-400 font-sans inline-flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-neutral-400" />
-                <span className="hidden sm:inline">CR Verified</span>
+                Sem {semesterNumber} · {classCode}
               </span>
               {onOpenAIKeyConfig && (
                 <button
@@ -130,77 +123,64 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   title="Configure AI Model Engine & Keys"
                 >
                   <Sparkles className="w-3 h-3 text-neutral-400" />
-                  <span>Configure API Key</span>
+                  <span>API Key</span>
                 </button>
               )}
             </div>
 
-            <h1 className="font-editorial text-3xl sm:text-4xl text-slate-100 font-normal italic tracking-tight">
+            <h1 className="font-editorial text-2xl sm:text-3xl text-slate-100 font-normal italic tracking-tight">
               {getGreeting()}, {studentName}
             </h1>
           </div>
 
           <div className="text-left sm:text-right text-xs text-slate-400 font-sans">
-            <div>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
-            <div className="font-mono text-slate-400 text-[11px] mt-0.5">
-              {todayClasses.length} {todayClasses.length === 1 ? 'lecture' : 'lectures'} scheduled today
+            <div>{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+            <div className="font-mono text-slate-400 text-[11px]">
+              {todayClasses.length} {todayClasses.length === 1 ? 'lecture' : 'lectures'} today
             </div>
           </div>
         </div>
 
-        {/* Quiet Editorial Syllabus Query Bar */}
+        {/* Search Bar */}
         <form onSubmit={handleQuickSearch} className="relative pt-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-4" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
           <input
             type="text"
             value={searchPrompt}
             onChange={(e) => setSearchPrompt(e.target.value)}
-            placeholder="Inquire any syllabus topic (e.g., Normalization, Page Replacement, Fourier Series)..."
-            className="w-full bg-slate-900/50 border border-slate-800/90 rounded-md pl-10 pr-24 sm:pr-28 py-2.5 text-xs sm:text-sm text-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-slate-600 focus:bg-slate-900 transition font-sans-ui shadow-2xs"
+            placeholder="Search syllabus topics (e.g., Normalization, Page Replacement)..."
+            className="w-full bg-slate-900/50 border border-slate-800/90 rounded-md pl-10 pr-20 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-slate-600 transition font-sans-ui"
           />
           <button
             type="submit"
-            className="absolute right-1.5 top-2.5 px-2.5 sm:px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui border border-slate-700/60"
+            className="absolute right-1 top-2 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-medium transition cursor-pointer font-sans-ui border border-slate-700/60"
           >
-            <span className="hidden sm:inline">Study Topic</span>
-            <span className="sm:hidden">Study →</span>
+            Study →
           </button>
         </form>
 
-        {/* Calm Mode Focus Indicator */}
+        {/* Calm Mode Indicator */}
         {calmMode && (
-          <div className="flex items-center justify-between px-3.5 py-2 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-300">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
-              <span className="font-sans-ui">
-                <strong className="font-semibold text-neutral-200">Calm Mode Active:</strong> Extraneous notifications and secondary modules are silenced for deep study.
-              </span>
-            </div>
-            <span className="academic-tag text-[10px] text-neutral-400 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800 hidden sm:inline">
-              Zen Focus
-            </span>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400">
+            <Sparkles className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <span>Calm Mode active: Notifications silenced.</span>
           </div>
         )}
       </div>
 
-      {/* 2. Syllabus Horizon & Academic Progress Visualization */}
+      {/* 2. Syllabus Horizon */}
       {subjects.length > 0 && (
         <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 sm:p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/50 pb-3">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-neutral-400" />
-                <span className="academic-tag text-[10px] text-slate-400">
-                  Curriculum Horizon
-                </span>
-              </div>
-              <h2 className="text-sm font-semibold text-slate-200 font-sans-ui">
-                Syllabus Mastery & Course Completion
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-neutral-400" />
+              <h2 className="text-xs font-semibold text-slate-200 font-sans-ui">
+                Syllabus Progress
               </h2>
             </div>
 
             <div className="flex items-center gap-3 text-xs">
-              <span className="text-slate-400 font-sans-ui">Semester Progress:</span>
+              <span className="text-slate-400 font-sans-ui">Completed:</span>
               <span className="font-mono text-slate-100 font-semibold text-sm">
                 {overallProgressPercent}%
               </span>
@@ -208,7 +188,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 onClick={() => onNavigateTab('syllabus')}
                 className="text-xs text-slate-400 hover:text-slate-200 transition font-sans-ui underline underline-offset-4 cursor-pointer"
               >
-                View Syllabus Map →
+                View Map →
               </button>
             </div>
           </div>
@@ -259,12 +239,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* 3. Today's Immediate Academic Focus (Marginalia Composition) */}
+      {/* 3. Next Lecture */}
       {nextClass && (
-        <div className="rounded-md bg-slate-900/40 border border-slate-800/80 p-5 space-y-3.5 marginalia">
+        <div className="rounded-md bg-slate-900/40 border border-slate-800/80 p-4 sm:p-5 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
             <span className="academic-tag text-[10px] text-neutral-400">
-              Immediate Agenda · Next Lecture
+              Next Lecture
             </span>
             <span className="font-mono text-slate-400 text-xs">
               {nextClass.time} · {nextClass.room}
@@ -276,46 +256,46 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {nextClass.subjectName}
             </h2>
             <p className="text-xs text-slate-400 mt-1 font-sans-ui">
-              Professor: <span className="text-slate-300 font-medium">{nextClass.teacherName}</span>
+              Prof. {nextClass.teacherName}
               {nextClass.likelyTopic && (
-                <> · Topic: <span className="text-slate-200 italic font-editorial">{nextClass.likelyTopic.title}</span></>
+                <> · <span className="text-slate-300 italic font-editorial">{nextClass.likelyTopic.title}</span></>
               )}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 pt-1">
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <button
               onClick={onOpenTomorrowPrep}
-              className="px-3.5 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shadow-2xs font-sans-ui"
+              className="px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shadow-2xs font-sans-ui"
             >
-              <span>7-Min Pre-Class Primer</span>
+              <span>7-Min Primer</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => onNavigateTab('ai-tutor')}
-              className="px-3.5 py-1.5 rounded bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
+              className="px-3 py-1.5 rounded bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
             >
-              Consult AI Study Hall
+              AI Tutor
             </button>
           </div>
         </div>
       )}
 
-      {/* 4. Classroom Deliverables & Deadlines Docket */}
+      {/* 4. Upcoming Deadlines */}
       {pendingAssignments.length > 0 && (
         <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 sm:p-5 space-y-3">
-          <div className="flex items-center justify-between text-xs border-b border-slate-800/50 pb-2.5">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between text-xs border-b border-slate-800/50 pb-2">
+            <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span className="academic-tag text-[10px] text-amber-400">
-                Academic Docket · {pendingAssignments.length} Submissions Due This Week
+              <span className="text-xs font-medium text-slate-200">
+                Deadlines ({pendingAssignments.length})
               </span>
             </div>
             <button
               onClick={() => onNavigateTab('assignments')}
               className="text-xs text-slate-400 hover:text-slate-200 transition font-sans-ui cursor-pointer"
             >
-              View Full Docket →
+              View All →
             </button>
           </div>
 
@@ -334,15 +314,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </div>
                     <div className="text-[11px] text-slate-400 font-sans-ui flex items-center gap-2">
                       <span>{item.subjectName}</span>
-                      <span>·</span>
-                      <span className="text-slate-400">
-                        {item.type === 'ppt_presentation' ? 'Classroom Presentation' : 'Assignment'}
-                      </span>
                     </div>
                   </div>
 
                   <span className="academic-tag text-[10px] text-amber-400/90 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded shrink-0">
-                    {days === 0 ? 'Due Today' : days === 1 ? 'Due Tomorrow' : `In ${days} Days`}
+                    {days === 0 ? 'Today' : days === 1 ? 'Tomorrow' : `${days}d left`}
                   </span>
                 </div>
               );
@@ -351,41 +327,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* Push Notification Banner */}
+      {/* Notification Prompt */}
       {notifPermission === 'default' && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-md bg-slate-900/40 border border-slate-800 text-xs">
-          <div className="flex items-center gap-2.5 text-slate-300">
-            <Bell className="w-4 h-4 text-neutral-400 shrink-0" />
-            <div className="font-sans-ui">
-              <span className="font-semibold text-slate-200">Classroom Deadlines & Timetable Alerts: </span>
-              <span className="text-slate-400">
-                Enable desktop and mobile alerts for tomorrow's syllabus readings, PPTs, and lectures.
-              </span>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-md bg-slate-900/40 border border-slate-800 text-xs">
+          <div className="flex items-center gap-2 text-slate-300">
+            <Bell className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <span className="text-slate-300">
+              Enable notifications for upcoming lectures and deadlines.
+            </span>
           </div>
           <button
             onClick={handleAllowNotifications}
-            className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white font-medium transition cursor-pointer shrink-0 font-sans-ui flex items-center justify-center gap-1.5"
+            className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 text-xs font-medium transition cursor-pointer shrink-0"
           >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Enable Alerts</span>
+            Enable
           </button>
         </div>
       )}
 
-      {/* 5. Academic Workspace Tabs (Agenda, Datesheet, Notes) */}
-      <div className="space-y-4 pt-2">
-        <div className="flex items-center gap-6 border-b border-slate-800/80 text-xs">
+      {/* 5. Lectures, Exams, Notes */}
+      <div className="space-y-3 pt-2">
+        <div className="flex items-center gap-5 border-b border-slate-800/80 text-xs">
           <button
             onClick={() => setActiveTab('schedule')}
-            className={`pb-2.5 font-sans-ui transition cursor-pointer relative flex items-center gap-1.5 ${
+            className={`pb-2 font-sans-ui transition cursor-pointer relative flex items-center gap-1.5 ${
               activeTab === 'schedule'
                 ? 'text-slate-100 font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>Today's Lectures</span>
-            <span className="font-editorial italic text-slate-400">({todayClasses.length})</span>
+            <span>Lectures</span>
+            <span className="text-slate-500">({todayClasses.length})</span>
             {activeTab === 'schedule' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-200 rounded-full" />
             )}
@@ -393,14 +365,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => setActiveTab('exams')}
-            className={`pb-2.5 font-sans-ui transition cursor-pointer relative flex items-center gap-1.5 ${
+            className={`pb-2 font-sans-ui transition cursor-pointer relative flex items-center gap-1.5 ${
               activeTab === 'exams'
                 ? 'text-slate-100 font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>Upcoming Exams</span>
-            <span className="font-editorial italic text-slate-400">({upcomingExams.length})</span>
+            <span>Exams</span>
+            <span className="text-slate-500">({upcomingExams.length})</span>
             {activeTab === 'exams' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-200 rounded-full" />
             )}
@@ -408,14 +380,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => setActiveTab('notes')}
-            className={`pb-2.5 font-sans-ui transition cursor-pointer relative flex items-center gap-1.5 ${
+            className={`pb-2 font-sans-ui transition cursor-pointer relative flex items-center gap-1.5 ${
               activeTab === 'notes'
                 ? 'text-slate-100 font-semibold'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <span>Shared Notes & PPTs</span>
-            <span className="font-editorial italic text-slate-400">({recentMaterials.length})</span>
+            <span>Notes</span>
+            <span className="text-slate-500">({recentMaterials.length})</span>
             {activeTab === 'notes' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-200 rounded-full" />
             )}

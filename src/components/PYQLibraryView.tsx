@@ -31,31 +31,22 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
-      {/* 1. Academic Header */}
-      <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-neutral-400" />
-          <span className="academic-tag text-[10px] text-neutral-400">
-            University Exam Archive
-          </span>
-        </div>
+      {/* 1. Header */}
+      <div className="space-y-1 border-b border-slate-800/60 pb-4">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-          Previous Year Questions & Model Rubrics
+          Previous Year Questions
         </h1>
         <p className="text-xs text-slate-400 font-sans-ui">
-          Verified university question papers, recurrence patterns, and 10-marker model scoring rubrics.
+          University past questions and 10-marker model rubrics.
         </p>
       </div>
 
-      {/* 2. High-Yield Recurrent Concepts Matrix */}
-      <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 sm:p-5 space-y-3.5">
-        <div className="flex items-center justify-between border-b border-slate-800/50 pb-2.5">
-          <h2 className="academic-tag text-[10px] text-slate-400">
-            High-Yield Recurrence Patterns (2020–2025)
+      {/* 2. High-Yield Topics */}
+      <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-800/50 pb-2">
+          <h2 className="text-xs font-semibold text-slate-200 font-sans-ui">
+            High-Frequency Questions (2020–2025)
           </h2>
-          <span className="text-[11px] text-slate-400 font-sans-ui">
-            Automated PYQ Frequency Analyzer
-          </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

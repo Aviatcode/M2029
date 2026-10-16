@@ -92,19 +92,14 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
       {/* 1. Academic Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-5">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-neutral-400" />
-            <span className="academic-tag text-[10px] text-neutral-400">
-              Classroom Digital Archive
-            </span>
-          </div>
+      {/* 1. Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-4">
+        <div className="space-y-1">
           <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-            Course Notes & Professor Presentations
+            Notes & Slides
           </h1>
           <p className="text-xs text-slate-400 font-sans-ui">
-            Shared repository of teacher slides, lecture notes, and synthesized concepts.
+            Lecture notes, professor slides, and study resources.
           </p>
         </div>
 

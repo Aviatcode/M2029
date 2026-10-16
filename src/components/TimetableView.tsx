@@ -19,19 +19,13 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
-      {/* 1. Academic Header */}
-      <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-neutral-400" />
-          <span className="academic-tag text-[10px] text-neutral-400">
-            Classroom Schedule & Timetable
-          </span>
-        </div>
+      {/* 1. Header */}
+      <div className="space-y-1 border-b border-slate-800/60 pb-4">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-          Weekly Lecture Schedule & Room Allocations
+          Timetable
         </h1>
         <p className="text-xs text-slate-400 font-sans-ui">
-          University timetable, designated lecture halls, and faculty instructors for each weekday.
+          Weekly lecture schedule and room allocations.
         </p>
       </div>
 
