@@ -62,6 +62,16 @@ class MemoryStore {
 export const db = new MemoryStore();
 registerDbProvider(() => db);
 
+// 0. Health & Service Status Endpoint
+apiRouter.get('/health', (_req: Request, res: Response) => {
+  res.json({
+    status: 'ok',
+    service: 'SyllabusOS Curriculum & Classroom API',
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // 1. Get Class Workspace & Overview
 apiRouter.get('/class/:code', (req: Request, res: Response) => {
   const code = (req.params.code || 'BCA-2028').toUpperCase().trim();

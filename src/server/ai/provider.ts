@@ -13,7 +13,7 @@ export class GeminiAIProvider implements AIProvider {
 
   constructor(apiKey?: string) {
     const key = apiKey || process.env.GEMINI_API_KEY;
-    if (key && key.trim().length > 0) {
+    if (key && key.trim().length > 0 && !key.includes('MY_GEMINI_API_KEY') && !key.startsWith('your_')) {
       this.ai = new GoogleGenAI({ apiKey: key.trim() });
     }
   }

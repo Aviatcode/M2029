@@ -16,7 +16,8 @@ const isProd = process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT) || 3000;
 
 // Initialize Google GenAI client (Server-Side only)
-const apiKey = process.env.GEMINI_API_KEY || '';
+const rawKey = process.env.GEMINI_API_KEY || '';
+const apiKey = (rawKey && !rawKey.includes('MY_GEMINI_API_KEY') && !rawKey.startsWith('your_')) ? rawKey.trim() : '';
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 // In-memory persistent store of classrooms
