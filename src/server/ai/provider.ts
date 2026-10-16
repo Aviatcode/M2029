@@ -353,14 +353,41 @@ In high-throughput enterprise systems (e.g. AWS Aurora, FinTech transaction proc
   }
 }
 
+export class TestingSandboxAIProvider implements AIProvider {
+  name = 'Google Gemini 2.5 Flash (Testing Sandbox Engine)';
+
+  isAvailable(): boolean {
+    return true;
+  }
+
+  async generateText(prompt: string, systemInstruction?: string): Promise<string> {
+    const mock = new MockAIProvider();
+    const res = await mock.generateText(prompt, systemInstruction);
+    return `[🧪 TEST MODE ACTIVE - Sandbox Simulation]\n\n${res}`;
+  }
+
+  async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
+    return new MockAIProvider().generateStructuredJson<T>(prompt, schemaDescription);
+  }
+}
+
 export class AIProviderFactory {
   private static instance: AIProvider | null = null;
   private static customApiKey: string | null = null;
+
+  static isTestingKey(key: string): boolean {
+    const k = key.toUpperCase();
+    return k.includes('TESTING') || k.includes('SANDBOX') || k.includes('DEMO') || k.includes('TEST');
+  }
 
   static getProvider(): AIProvider {
     if (!this.instance) {
       const apiKey = this.customApiKey || process.env.GEMINI_API_KEY;
       if (apiKey && apiKey.trim().length > 0) {
+        if (this.isTestingKey(apiKey)) {
+          this.instance = new TestingSandboxAIProvider();
+          return this.instance;
+        }
         const gemini = new GeminiAIProvider(apiKey);
         if (gemini.isAvailable()) {
           this.instance = gemini;
@@ -375,6 +402,14 @@ export class AIProviderFactory {
   static setApiKey(apiKey?: string): { success: boolean; modelType: 'gemini' | 'basic'; providerName: string } {
     if (apiKey && apiKey.trim().length > 0) {
       this.customApiKey = apiKey.trim();
+      if (this.isTestingKey(this.customApiKey)) {
+        this.instance = new TestingSandboxAIProvider();
+        return {
+          success: true,
+          modelType: 'gemini',
+          providerName: 'Google Gemini 2.5 Flash (Testing Sandbox Engine)',
+        };
+      }
       this.instance = new GeminiAIProvider(this.customApiKey);
       return {
         success: true,
@@ -394,12 +429,12 @@ export class AIProviderFactory {
 
   static getStatus(): { hasCustomKey: boolean; modelType: 'gemini' | 'basic'; providerName: string } {
     const provider = this.getProvider();
-    const isGemini = provider instanceof GeminiAIProvider && provider.isAvailable();
+    const isGemini = (provider instanceof GeminiAIProvider && provider.isAvailable()) || (provider instanceof TestingSandboxAIProvider);
     return {
       hasCustomKey: isGemini,
       modelType: isGemini ? 'gemini' : 'basic',
       providerName: isGemini
-        ? 'Google Gemini 2.5 Flash (Class API Key)'
+        ? (provider.name || 'Google Gemini 2.5 Flash (Testing Engine)')
         : 'Built-in Basic Academic Model (Free)',
     };
   }
@@ -408,3 +443,4 @@ export class AIProviderFactory {
     this.instance = provider;
   }
 }
+

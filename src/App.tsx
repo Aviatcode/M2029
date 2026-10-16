@@ -44,6 +44,7 @@ import { OfflineIndicator } from './components/OfflineIndicator';
 import { PWAInstallPopup } from './components/PWAInstallPopup';
 import { ThemeSelectorModal } from './components/ThemeSelectorModal';
 import { AIKeyConfigModal } from './components/AIKeyConfigModal';
+import { SettingsView } from './components/SettingsView';
 import { initTheme } from './utils/themeService';
 
 export default function App() {
@@ -61,6 +62,7 @@ export default function App() {
         'exams',
         'assignments',
         'setup',
+        'settings',
       ];
       if (validTabs.includes(hash)) {
         return hash;
@@ -507,6 +509,15 @@ export default function App() {
                 Open Semester Setup Wizard ⚙️
               </button>
             </div>
+          )}
+
+          {activeTab === 'settings' && (
+            <SettingsView
+              classCode={classCode}
+              semesterNumber={workspace.semester}
+              subjects={subjects}
+              onOpenClassSetup={() => setIsSetupModalOpen(true)}
+            />
           )}
         </main>
       </div>

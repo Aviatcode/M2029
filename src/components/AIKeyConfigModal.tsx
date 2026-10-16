@@ -359,15 +359,29 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={handleSaveGeminiKey}
-                disabled={isLoading || !apiKey.trim()}
-                className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-40 text-white font-semibold text-xs transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{isLoading ? 'Activating Key...' : 'Activate Gemini Key in App'}</span>
-              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveGeminiKey}
+                  disabled={isLoading || !apiKey.trim()}
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-40 text-white font-semibold text-xs transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{isLoading ? 'Activating Key...' : 'Activate Key in App'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const testKey = 'AIzaSy-TESTING-DEMO-KEY';
+                    setApiKey(testKey);
+                  }}
+                  className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-cyan-300 border border-slate-700 text-xs font-medium transition cursor-pointer flex items-center gap-1 shrink-0"
+                  title="Insert testing key"
+                >
+                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Load Test Key</span>
+                </button>
+              </div>
             </div>
 
             {/* Option 2: Fallback to Basic Free Model */}

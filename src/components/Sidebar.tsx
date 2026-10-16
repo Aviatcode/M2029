@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ShieldCheck,
   KeyRound,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 export type ActiveNavTab =
@@ -25,7 +26,8 @@ export type ActiveNavTab =
   | 'pyqs'
   | 'exams'
   | 'assignments'
-  | 'setup';
+  | 'setup'
+  | 'settings';
 
 interface SidebarProps {
   activeTab: ActiveNavTab;
@@ -60,6 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const secondaryItems = [
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
+    { id: 'settings' as const, label: 'Settings & API Key', icon: SlidersHorizontal },
   ];
 
   return (
