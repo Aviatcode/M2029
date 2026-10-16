@@ -62,7 +62,7 @@ export const PWAInstallPopup: React.FC = () => {
     } else {
       // Fallback for standard browsers
       alert(
-        'To install SyllabusOS on your phone or computer, tap the "Install" or "Add to Home Screen" option in your browser menu/address bar.'
+        'To install M2029 on your phone or computer, tap the "Install" or "Add to Home Screen" option in your browser menu/address bar.'
       );
       handleDismiss();
     }
@@ -93,7 +93,7 @@ export const PWAInstallPopup: React.FC = () => {
 
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5">
-                <span className="font-sans-ui font-semibold text-xs text-slate-100">Install SyllabusOS</span>
+                <span className="font-sans-ui font-semibold text-xs text-slate-100">Install M2029</span>
                 <span className="academic-tag text-[9px] px-1 py-0.2 rounded bg-neutral-900 text-neutral-300 border border-neutral-700">
                   WebAPK
                 </span>

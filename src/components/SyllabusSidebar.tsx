@@ -77,7 +77,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
               🎓
             </div>
             <div>
-              <h1 className="font-bold text-sm text-white tracking-tight">SyllabusOS</h1>
+              <h1 className="font-bold text-sm text-white tracking-tight">M2029</h1>
               <p className="text-[10px] text-cyan-400 font-mono">Autonomous Curriculum</p>
             </div>
           </div>

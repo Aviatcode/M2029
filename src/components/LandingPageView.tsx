@@ -146,7 +146,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             alt="AM Logo"
             className="w-7 h-7 rounded-lg shrink-0 object-contain shadow-xs"
           />
-          <span className="font-semibold text-sm tracking-tight text-white">SyllabusOS</span>
+          <span className="font-semibold text-sm tracking-tight text-white">M2029</span>
         </div>
 
         <div>
@@ -369,7 +369,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <footer className="relative z-10 border-t border-neutral-850/60 bg-neutral-950/70 py-3.5 px-4 sm:px-8 text-center text-[11px] text-neutral-500 font-mono flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/am-logo.png" alt="AM" className="w-3.5 h-3.5 rounded object-contain" />
-          <span>SyllabusOS</span>
+          <span>M2029</span>
         </div>
         <div>
           <span>BCA 2028 Cohort</span>
