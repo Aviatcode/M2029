@@ -79,17 +79,18 @@ export class MockAIProvider implements AIProvider {
     return true;
   }
 
-  async generateText(prompt: string, systemInstruction?: string): Promise<string> {
+  async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
+    const p = (prompt || '').toLowerCase();
     // Intelligent heuristic pedagogical fallback
-    if (prompt.toLowerCase().includes('hinglish')) {
+    if (p.includes('hinglish')) {
       return `Dekho bhai, seedhi baat hai! Yeh concept exam ke liye bohot zaroori hai. Simple shabdon mein samjho: jab system mein data ya resources organize karne hote hain, toh hum structured rules follow karte hain taaki koi deadlock ya confusion na ho. Professor ke lecture mein bas inke steps aur boundary conditions dhyan se note karna. 10-marker answer mein definition + flowchart + code zaroor likhna!`;
     }
 
-    if (prompt.toLowerCase().includes('eli9') || prompt.toLowerCase().includes('explain like i\'m 9')) {
+    if (p.includes('eli9') || p.includes('explain like i\'m 9')) {
       return `Imagine a busy school cafeteria where everyone wants ice cream, but there is only one spoon! If nobody shares, nobody gets dessert. This concept is just the friendly teacher who sets fair turn-by-turn rules so every kid gets their ice cream without fighting or waiting forever!`;
     }
 
-    if (prompt.toLowerCase().includes('assignment') || prompt.toLowerCase().includes('solve assignment')) {
+    if (p.includes('assignment') || p.includes('solve assignment')) {
       return `## 🎓 UNIVERSITY ASSIGNMENT SUBMISSION & MODEL SOLUTION
 
 ### 1. Executive Summary & Problem Scope

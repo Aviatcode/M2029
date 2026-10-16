@@ -359,7 +359,8 @@ apiRouter.post('/ai/config', (req: Request, res: Response) => {
 
 // 6. AI Tutor with 8 Pedagogical Modes (Queries Class Knowledge Base First)
 apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
-  const { question, mode, subjectName, topicName } = req.body;
+  const question = req.body.question || req.body.query || '';
+  const { mode, subjectName, topicName } = req.body;
   const tutorMode: TutorResponseMode = mode || 'simple';
 
   const ai = AIProviderFactory.getProvider();
@@ -390,6 +391,7 @@ Ground your response in authoritative university curricula and standard textbook
     const responseText = await ai.generateText(question, systemInstruction);
     res.json({
       answer: responseText,
+      text: responseText,
       modeUsed: tutorMode,
       sourcesUsed: [
         { title: `${subjectName || 'Class'} Syllabus & Verified PPTs`, type: 'Class Knowledge Base' },
