@@ -71,56 +71,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
         isCollapsed ? 'w-16' : 'w-56'
       }`}
     >
-      {/* Top Header: Class Info & Collapse Toggle */}
-      <div
-        className={`border-b border-slate-800/60 flex items-center justify-between ${
-          isCollapsed ? 'p-3 flex-col gap-2' : 'px-3.5 py-3'
-        }`}
-      >
-        {!isCollapsed ? (
-          <>
-            <div className="truncate pr-1">
-              <div className="text-[10px] text-slate-400 font-sans flex items-center gap-1.5 truncate">
-                <span className="font-mono text-neutral-300 font-medium">Sem {semesterNumber}</span>
-                <span>·</span>
-                <span className="font-mono text-slate-300 font-semibold">{classCode}</span>
-              </div>
-              <div className="font-sans-ui font-semibold text-xs text-slate-100 mt-0.5 truncate tracking-tight">
-                Academic Desk
-              </div>
-            </div>
-            {onToggleCollapse && (
-              <button
-                onClick={onToggleCollapse}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer shrink-0"
-                title="Collapse sidebar (Arrow)"
-                aria-label="Collapse sidebar"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-            )}
-          </>
-        ) : (
-          <>
-            <div
-              className="w-8 h-8 rounded-md bg-slate-900 border border-slate-800 flex items-center justify-center font-mono text-xs font-semibold text-neutral-200 shadow-2xs"
-              title={`Semester ${semesterNumber} · ${classCode}`}
-            >
-              S{semesterNumber}
-            </div>
-            {onToggleCollapse && (
-              <button
-                onClick={onToggleCollapse}
-                className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-100 hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer"
-                title="Expand sidebar (Arrow)"
-                aria-label="Expand sidebar"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            )}
-          </>
-        )}
-      </div>
+      {/* Top Header: Collapse Toggle */}
+      {onToggleCollapse && (
+        <div
+          className={`border-b border-slate-800/60 flex items-center ${
+            isCollapsed ? 'justify-center p-2.5' : 'justify-end px-3.5 py-2.5'
+          }`}
+        >
+          <button
+            onClick={onToggleCollapse}
+            className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer shrink-0"
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+        </div>
+      )}
 
       {/* Navigation Links */}
       <nav className={`flex-1 overflow-y-auto space-y-4 ${isCollapsed ? 'p-2' : 'p-3'}`}>
