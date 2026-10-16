@@ -33,18 +33,24 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-6 space-y-6 animate-fade-in">
-      {/* Calm Header */}
-      <div>
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-100">
-          Exam Schedule & Revision Plan
+    <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
+      {/* 1. Academic Header */}
+      <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-emerald-400" />
+          <span className="academic-tag text-[10px] text-emerald-400">
+            University Datesheet & Recall Plan
+          </span>
+        </div>
+        <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+          Examination Schedule & Active Recall Roadmap
         </h1>
-        <p className="text-sm text-slate-400 mt-0.5">
-          Step-by-step active recall timetable for upcoming semester examinations.
+        <p className="text-xs text-slate-400 font-sans-ui">
+          Structured 5-day distributed revision timetable and syllabus milestone checklist.
         </p>
       </div>
 
-      {/* Clean Exam Selection Cards */}
+      {/* 2. Exam Selection Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {exams.map((ex) => {
           const isSelected = ex.id === activeExam?.id;
@@ -54,25 +60,32 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
             <div
               key={ex.id}
               onClick={() => setSelectedExamId(ex.id)}
-              className={`p-4 rounded-xl border cursor-pointer transition space-y-1 ${
+              className={`p-4 rounded-md border cursor-pointer transition space-y-2 select-none ${
                 isSelected
-                  ? 'bg-slate-900 border-slate-700 shadow-sm'
-                  : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-750'
+                  ? 'bg-slate-900 border-slate-700 shadow-2xs'
+                  : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-700'
               }`}
             >
-              <div className="text-xs text-slate-400 font-mono">
-                {daysLeft} days remaining
+              <div className="flex items-center justify-between">
+                <span className="academic-tag text-[9px] text-slate-400">
+                  {ex.examType}
+                </span>
+                <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                  {daysLeft} Days Left
+                </span>
               </div>
 
-              <h2 className="font-medium text-sm text-slate-200 truncate">
+              <h2 className="font-sans-ui font-semibold text-sm text-slate-100 truncate">
                 {ex.subjectName}
               </h2>
 
-              <p className="text-xs text-slate-400">
-                {new Date(ex.date).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                })}{' '}
+              <p className="text-xs text-slate-400 font-sans-ui">
+                <span className="font-mono text-slate-300">
+                  {new Date(ex.date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>{' '}
                 · {ex.time}
               </p>
             </div>
@@ -80,32 +93,35 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
         })}
       </div>
 
-      {/* Active Exam Plan Details */}
+      {/* 3. Active Exam Roadmap Details */}
       {activeExam && (
-        <div className="rounded-xl bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
+        <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/60">
-            <div>
-              <h2 className="text-base font-medium text-slate-100">
-                {activeExam.subjectName} Revision Roadmap
+            <div className="space-y-0.5">
+              <span className="academic-tag text-[10px] text-emerald-400">
+                Milestone Roadmap
+              </span>
+              <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-100">
+                {activeExam.subjectName}
               </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Exam date: {activeExam.date} ({activeExam.time}) · {activeExam.examType}
+              <p className="text-xs text-slate-400 font-sans-ui">
+                Exam Session: <span className="text-slate-300 font-mono">{activeExam.date} ({activeExam.time})</span> · {activeExam.examType}
               </p>
             </div>
 
             <button
               onClick={() => onOpenStudySession(activeExam.subjectName)}
-              className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
             >
-              <span>Review Topics with AI</span>
+              <span>Review Topics in AI Study Hall</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {/* Revision Days Checklist */}
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Daily Milestones
+            <h3 className="academic-tag text-[10px] text-slate-400">
+              Daily Syllabus Targets & Active Recall Milestones
             </h3>
 
             <div className="space-y-2">
@@ -113,34 +129,34 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                 <div
                   key={step.dayNumber}
                   onClick={() => onToggleRevisionDay(activeExam.id, step.dayNumber)}
-                  className={`p-3.5 rounded-xl border transition flex items-start justify-between gap-3 cursor-pointer ${
+                  className={`p-3.5 rounded-md border transition flex items-start justify-between gap-3 cursor-pointer select-none ${
                     step.completed
                       ? 'bg-slate-950/40 border-slate-850 opacity-70'
-                      : 'bg-slate-900/50 border-slate-800 hover:border-slate-750'
+                      : 'bg-slate-900/50 border-slate-800/90 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
-                      className={`w-5 h-5 rounded-md flex items-center justify-center text-xs mt-0.5 border ${
+                      className={`w-4 h-4 rounded flex items-center justify-center text-xs mt-0.5 border ${
                         step.completed
                           ? 'bg-emerald-950 text-emerald-400 border-emerald-500/40'
                           : 'border-slate-700 bg-slate-900 text-transparent'
                       }`}
                     >
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-3 h-3" />
                     </div>
 
-                    <div>
-                      <div className="text-xs font-medium text-slate-300">
-                        Day {step.dayNumber}: {step.title}
+                    <div className="space-y-0.5">
+                      <div className="text-xs font-semibold text-slate-200 font-sans-ui">
+                        Day 0{step.dayNumber}: {step.title}
                       </div>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="text-xs text-slate-400 font-sans-ui">
                         {step.topics.join(' · ')}
                       </p>
                     </div>
                   </div>
 
-                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
+                  <span className="academic-tag text-[9px] text-slate-400 shrink-0">
                     Day {step.dayNumber}
                   </span>
                 </div>

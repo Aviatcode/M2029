@@ -25,6 +25,7 @@ const classroomsStore: Record<string, Classroom> = {
 };
 
 import { apiRouter } from './src/server/routes.js';
+import { initDailyAutoSyncScheduler } from './src/server/autoSyncService.js';
 
 async function startServer() {
   const app = express();
@@ -595,6 +596,7 @@ Evaluate the answer. Return STRICT JSON only:
 
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 SyllabusOS server running on http://0.0.0.0:${PORT}`);
+    initDailyAutoSyncScheduler();
   });
 }
 

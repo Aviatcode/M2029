@@ -18,6 +18,10 @@ export interface ClassWorkspace {
   academicYear: string; // e.g. "2026-2027"
   memberCount: number;
   adminId: string;
+  verifiedByCR?: boolean;
+  crName?: string;
+  crRollNo?: string;
+  crVerifiedAt?: string;
 }
 
 export interface Subject {
@@ -171,18 +175,26 @@ export interface ExamDateSheetItem {
   }[];
 }
 
+export type ClassworkType = 'assignment' | 'ppt_presentation' | 'lab_record';
+
 export interface AcademicAssignment {
   id: string;
   classId: string;
   subjectId: string;
   subjectName: string;
   title: string;
+  type?: ClassworkType;
   dueDate: string;
   instructions: string;
   integrityMode: 'teach_me' | 'create_draft' | 'improve_answer';
   outlineSteps: string[];
   keyReferences: string[];
   sampleDraftGuidance?: string;
+  assignedBy?: string;
+  rollNumber?: string;
+  presenterName?: string;
+  completed?: boolean;
+  aiSolvedAnswer?: string;
 }
 
 export interface ClassAnnouncement {

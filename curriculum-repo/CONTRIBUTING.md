@@ -1,25 +1,8 @@
-# Contributing to Database Management Systems & Relational Architectures Repository
+# Contributing to BCA-2028 Academic Repository
 
-Thank you for helping keep our class knowledge base up to date!
+Welcome cohort students and contributors!
 
-## How You Can Help
-1. **Lecture Notes:** Submit markdown summaries of classes you attended in the `/notes` directory.
-2. **PYQ Solutions:** Add step-by-step verified answers to past examination questions in `/pyqs`.
-3. **Lab Code:** Share clean, commented code examples in `/assignments`.
-
-## Submission Rules
-- Keep markdown clean and readable.
-- Cite any external sources or textbooks.
-- Respect academic integrity: Do not upload direct exam leaks.
-
-## Git Workflow
-```bash
-# 1. Create a branch
-git checkout -b note-unit3-update
-
-# 2. Commit your changes
-git commit -m "docs: add notes for Unit 3 Normalization"
-
-# 3. Push and create PR
-git push origin note-unit3-update
-```
+## How to Contribute
+- **Classwork Submissions:** Submit assignments or notes into `notes/` or `assignments/`.
+- **Formatting:** Use standard Markdown formatting. Include equations in LaTeX ($...$) and code in language fences.
+- **Academic Integrity:** Ensure student answers provide educational step-by-step guidance rather than direct plagiarism.

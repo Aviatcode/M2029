@@ -1,16 +1,245 @@
 @import "tailwindcss";
 
+/* ======================================================== */
+/* 1. BLACK UI THEMES (Dark Mode Variations)                */
+/* ======================================================== */
+:root,
+html[data-mode="black"][data-theme="midnight"],
+html:not([data-mode]) {
+  --color-slate-950: #090d16;
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-slate-750: #253349;
+  --color-slate-700: #334155;
+  --color-slate-600: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-300: #cbd5e1;
+  --color-slate-200: #e2e8f0;
+  --color-slate-100: #f8fafc;
+  --theme-bg-app: #090d16;
+  --theme-accent: #06b6d4;
+  --theme-border: #1e293b;
+  --theme-scrollbar-track: rgba(15, 23, 42, 0.6);
+  --theme-scrollbar-thumb: rgba(51, 65, 85, 0.8);
+  color-scheme: dark;
+}
+
+html[data-mode="black"][data-theme="oled"] {
+  --color-slate-950: #000000;
+  --color-slate-900: #0a0a0a;
+  --color-slate-800: #18181b;
+  --color-slate-750: #27272a;
+  --color-slate-700: #3f3f46;
+  --color-slate-600: #52525b;
+  --color-slate-500: #71717a;
+  --color-slate-400: #a1a1aa;
+  --color-slate-300: #d4d4d8;
+  --color-slate-200: #e4e4e7;
+  --color-slate-100: #ffffff;
+  --theme-bg-app: #000000;
+  --theme-accent: #38bdf8;
+  --theme-border: #18181b;
+  --theme-scrollbar-track: #050505;
+  --theme-scrollbar-thumb: #27272a;
+  color-scheme: dark;
+}
+
+html[data-mode="black"][data-theme="cyberpunk"] {
+  --color-slate-950: #070312;
+  --color-slate-900: #120a26;
+  --color-slate-800: #211342;
+  --color-slate-750: #2f1b5e;
+  --color-slate-700: #432882;
+  --color-slate-600: #5e3da8;
+  --color-slate-500: #8258d4;
+  --color-slate-400: #b598f2;
+  --color-slate-300: #d8c9fb;
+  --color-slate-200: #efe9fe;
+  --color-slate-100: #faf7ff;
+  --theme-bg-app: #070312;
+  --theme-accent: #a855f7;
+  --theme-border: #211342;
+  --theme-scrollbar-track: #0f0724;
+  --theme-scrollbar-thumb: #432882;
+  color-scheme: dark;
+}
+
+html[data-mode="black"][data-theme="emerald"] {
+  --color-slate-950: #020c08;
+  --color-slate-900: #051a11;
+  --color-slate-800: #0c2e1f;
+  --color-slate-750: #123e2b;
+  --color-slate-700: #185239;
+  --color-slate-600: #247553;
+  --color-slate-500: #34a376;
+  --color-slate-400: #6ee7b7;
+  --color-slate-300: #a7f3d0;
+  --color-slate-200: #d1fae5;
+  --color-slate-100: #ecfdf5;
+  --theme-bg-app: #020c08;
+  --theme-accent: #10b981;
+  --theme-border: #0c2e1f;
+  --theme-scrollbar-track: #051a11;
+  --theme-scrollbar-thumb: #185239;
+  color-scheme: dark;
+}
+
+html[data-mode="black"][data-theme="sunset"] {
+  --color-slate-950: #0d0408;
+  --color-slate-900: #1a0811;
+  --color-slate-800: #2e1020;
+  --color-slate-750: #3f172d;
+  --color-slate-700: #561f3d;
+  --color-slate-600: #782d56;
+  --color-slate-500: #a8427a;
+  --color-slate-400: #f472b6;
+  --color-slate-300: #fbcfe8;
+  --color-slate-200: #fce7f3;
+  --color-slate-100: #fff1f8;
+  --theme-bg-app: #0d0408;
+  --theme-accent: #f43f5e;
+  --theme-border: #2e1020;
+  --theme-scrollbar-track: #1a0811;
+  --theme-scrollbar-thumb: #561f3d;
+  color-scheme: dark;
+}
+
+/* ======================================================== */
+/* 2. WHITE UI THEMES (Light Mode Variations)               */
+/* ======================================================== */
+html[data-mode="white"][data-theme="paper"],
+html[data-mode="white"]:not([data-theme]) {
+  --color-slate-950: #ffffff;
+  --color-slate-900: #f8fafc;
+  --color-slate-800: #e2e8f0;
+  --color-slate-750: #cbd5e1;
+  --color-slate-700: #94a3b8;
+  --color-slate-600: #64748b;
+  --color-slate-500: #475569;
+  --color-slate-400: #334155;
+  --color-slate-300: #1e293b;
+  --color-slate-200: #0f172a;
+  --color-slate-100: #020617;
+  --theme-bg-app: #f1f5f9;
+  --theme-accent: #0284c7;
+  --theme-border: #e2e8f0;
+  --theme-scrollbar-track: #f1f5f9;
+  --theme-scrollbar-thumb: #cbd5e1;
+  color-scheme: light;
+}
+
+html[data-mode="white"][data-theme="sepia"] {
+  --color-slate-950: #faf7f2;
+  --color-slate-900: #f4eee5;
+  --color-slate-800: #e7ded0;
+  --color-slate-750: #d8cbb8;
+  --color-slate-700: #b5a48f;
+  --color-slate-600: #8c7b66;
+  --color-slate-500: #6b5c48;
+  --color-slate-400: #4a3e2e;
+  --color-slate-300: #362c1f;
+  --color-slate-200: #241d13;
+  --color-slate-100: #151009;
+  --theme-bg-app: #f4eee5;
+  --theme-accent: #d97706;
+  --theme-border: #e7ded0;
+  --theme-scrollbar-track: #f4eee5;
+  --theme-scrollbar-thumb: #d8cbb8;
+  color-scheme: light;
+}
+
+html[data-mode="white"][data-theme="nord"] {
+  --color-slate-950: #f8fafc;
+  --color-slate-900: #edf2f7;
+  --color-slate-800: #e2e8f0;
+  --color-slate-750: #cbd5e1;
+  --color-slate-700: #94a3b8;
+  --color-slate-600: #64748b;
+  --color-slate-500: #475569;
+  --color-slate-400: #334155;
+  --color-slate-300: #1e293b;
+  --color-slate-200: #0f172a;
+  --color-slate-100: #0b1329;
+  --theme-bg-app: #edf2f7;
+  --theme-accent: #2563eb;
+  --theme-border: #e2e8f0;
+  --theme-scrollbar-track: #edf2f7;
+  --theme-scrollbar-thumb: #cbd5e1;
+  color-scheme: light;
+}
+
+html[data-mode="white"][data-theme="mint"] {
+  --color-slate-950: #f6fbf8;
+  --color-slate-900: #eaf5ee;
+  --color-slate-800: #d6eadc;
+  --color-slate-750: #bfe0ca;
+  --color-slate-700: #8bc29d;
+  --color-slate-600: #599b70;
+  --color-slate-500: #3c7750;
+  --color-slate-400: #255535;
+  --color-slate-300: #183e24;
+  --color-slate-200: #0e2715;
+  --color-slate-100: #05150a;
+  --theme-bg-app: #eaf5ee;
+  --theme-accent: #059669;
+  --theme-border: #d6eadc;
+  --theme-scrollbar-track: #eaf5ee;
+  --theme-scrollbar-thumb: #bfe0ca;
+  color-scheme: light;
+}
+
+html[data-mode="white"][data-theme="rose"] {
+  --color-slate-950: #fdf8f9;
+  --color-slate-900: #faedf1;
+  --color-slate-800: #f5dae4;
+  --color-slate-750: #ecc2d3;
+  --color-slate-700: #d896b2;
+  --color-slate-600: #ba668a;
+  --color-slate-500: #984368;
+  --color-slate-400: #742749;
+  --color-slate-300: #531631;
+  --color-slate-200: #360b1e;
+  --color-slate-100: #1c030d;
+  --theme-bg-app: #faedf1;
+  --theme-accent: #e11d48;
+  --theme-border: #f5dae4;
+  --theme-scrollbar-track: #faedf1;
+  --theme-scrollbar-thumb: #ecc2d3;
+  color-scheme: light;
+}
+
+/* ======================================================== */
+/* 3. Base Styles & Global Transitions                      */
+/* ======================================================== */
 @layer base {
   html, body, #root {
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
-    background-color: #090d16;
-    color: #f1f5f9;
+    background-color: var(--theme-bg-app, #090d16);
+    color: var(--color-slate-100, #f1f5f9);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
   }
+}
+
+/* White mode text contrast fixes for raw text-white in headers */
+html[data-mode="white"] h1.text-white,
+html[data-mode="white"] h2.text-white,
+html[data-mode="white"] h3.text-white,
+html[data-mode="white"] h4.text-white,
+html[data-mode="white"] p.text-white,
+html[data-mode="white"] div.text-white:not([class*="bg-cyan-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-gradient-"]),
+html[data-mode="white"] span.text-white:not([class*="bg-cyan-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-gradient-"]):not([class*="rounded-full"]) {
+  color: var(--color-slate-100) !important;
+}
+
+/* Ensure hover:text-white doesn't wash out on light backgrounds */
+html[data-mode="white"] .hover\:text-white:hover {
+  color: var(--color-slate-100) !important;
 }
 
 /* Custom scrollbars */
@@ -20,16 +249,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--theme-scrollbar-track, rgba(15, 23, 42, 0.6));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
+  background: var(--theme-scrollbar-thumb, rgba(51, 65, 85, 0.8));
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 1);
+  filter: brightness(1.2);
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -52,3 +281,43 @@
 .animate-spin-slow {
   animation: spinSlow 20s linear infinite;
 }
+
+/* ======================================================== */
+/* 4. Modern Classic Academic Design System Utilities       */
+/* ======================================================== */
+.font-editorial {
+  font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+  letter-spacing: -0.015em;
+  font-feature-settings: "kern", "liga", "clig", "calt";
+}
+
+.font-sans-ui {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Academic marginalia and editorial dividers */
+.marginalia {
+  border-left: 2px solid var(--theme-accent, #06b6d4);
+  padding-left: 0.875rem;
+}
+
+.academic-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.subtle-academic-border {
+  border-color: rgba(148, 163, 184, 0.15);
+}
+
+html[data-mode="white"] .subtle-academic-border {
+  border-color: rgba(148, 163, 184, 0.28);
+}
+

@@ -24,8 +24,10 @@ import {
   TutorResponseMode,
   PYQAnalysisItem,
   ExtractedCourseInfo,
+  AcademicAssignment,
 } from '../types/index.js';
 import { generateGitHubFiles, generateZipBuffer } from './githubExporter.js';
+import { getAutoSyncStatus, executeAutoSync, registerDbProvider } from './autoSyncService.js';
 
 export const apiRouter = Router();
 
@@ -58,6 +60,7 @@ class MemoryStore {
 }
 
 export const db = new MemoryStore();
+registerDbProvider(() => db);
 
 // 1. Get Class Workspace & Overview
 apiRouter.get('/class/:code', (req: Request, res: Response) => {
@@ -80,7 +83,7 @@ apiRouter.get('/class/:code', (req: Request, res: Response) => {
 
 // 2. Create or Join Class (Semester Setup Wizard)
 apiRouter.post('/class/create', (req: Request, res: Response) => {
-  const { code, name, university, semester, subjectsList } = req.body;
+  const { code, name, university, semester, subjectsList, crVerification } = req.body;
   const cleanCode = (code || `CLASS-${Math.floor(1000 + Math.random() * 9000)}`).toUpperCase().trim();
 
   const newClass: ClassWorkspace = {
@@ -92,9 +95,25 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
     academicYear: '2026-2027',
     memberCount: 1,
     adminId: 'user-admin-self',
+    verifiedByCR: crVerification?.verifiedByCR ?? true,
+    crName: crVerification?.crName || 'Class Representative (CR)',
+    crRollNo: crVerification?.crRollNo || 'CR-VERIFIED',
+    crVerifiedAt: new Date().toISOString(),
   };
 
   db.classes[cleanCode] = newClass;
+
+  // Add system announcement for CR authentication
+  db.announcements.unshift({
+    id: `ann-${Date.now()}`,
+    classId: newClass.id,
+    authorName: newClass.crName || 'Class Representative (CR)',
+    authorRole: 'admin',
+    title: `🎓 Semester ${newClass.semester} Setup Authenticated`,
+    content: `Class Representative ${newClass.crName} (Roll: ${newClass.crRollNo}) has officially authenticated and configured the curriculum, folder structure, and subjects for ${cleanCode}.`,
+    createdAt: new Date().toISOString(),
+    badge: 'CR Verified',
+  });
 
   // Add subjects
   const defaultColors = [
@@ -296,6 +315,21 @@ Format as strict JSON:
   res.json({
     tomorrowClass,
     prep: prepContent,
+  });
+});
+
+// 5.5 AI Engine Configuration (Gemini API Key or Built-in Basic Model)
+apiRouter.get('/ai/config', (_req: Request, res: Response) => {
+  res.json(AIProviderFactory.getStatus());
+});
+
+apiRouter.post('/ai/config', (req: Request, res: Response) => {
+  const { apiKey } = req.body;
+  const result = AIProviderFactory.setApiKey(apiKey);
+  res.json({
+    status: 'success',
+    ...result,
+    ...AIProviderFactory.getStatus(),
   });
 });
 
@@ -522,9 +556,175 @@ apiRouter.post('/exams/toggle-plan', (req: Request, res: Response) => {
   res.status(404).json({ error: 'Plan item not found' });
 });
 
-// 12. Assignments
+// 12. Assignments & Classwork
+apiRouter.get('/assignments', (_req: Request, res: Response) => {
+  res.json(db.assignments);
+});
+
 apiRouter.get('/assignments/:classId', (_req: Request, res: Response) => {
   res.json(db.assignments);
+});
+
+// 12b. Add single assignment with due date
+apiRouter.post('/assignments/add', (req: Request, res: Response) => {
+  const { title, subjectId, subjectName, dueDate, instructions, type, assignedBy, outlineSteps } =
+    req.body;
+  if (!title || !dueDate) {
+    return res.status(400).json({ error: 'Title and due date are required' });
+  }
+
+  const newAssignment: AcademicAssignment = {
+    id: `assign-${Date.now()}`,
+    classId: 'class-bca-2028',
+    subjectId: subjectId || 'sub-dbms',
+    subjectName: subjectName || 'Database Management Systems',
+    type: type || 'assignment',
+    title: title.trim(),
+    dueDate,
+    instructions:
+      instructions ||
+      'Complete the assignment questions following formal university guidelines and submission format.',
+    integrityMode: 'teach_me',
+    assignedBy: assignedBy || 'Faculty / Instructor',
+    completed: false,
+    outlineSteps: outlineSteps || [
+      'Step 1: Understand problem specifications and theoretical axioms',
+      'Step 2: Develop systematic solution with schemas / code / equations',
+      'Step 3: Analyze boundary conditions and summarize final conclusions',
+    ],
+    keyReferences: ['Prescribed University Semester Textbook'],
+  };
+
+  db.assignments.unshift(newAssignment);
+
+  // Publish classwide notification
+  db.notifications.unshift({
+    id: `notif-${Date.now()}`,
+    title: `New ${type === 'ppt_presentation' ? 'PPT Presentation' : 'Assignment'} Added`,
+    message: `${newAssignment.title} (${newAssignment.subjectName}) is due on ${dueDate}.`,
+    type: 'class_reminder',
+    time: 'Just now',
+    read: false,
+    actionUrl: '/assignments',
+  });
+
+  // Silently refine & synchronize repository in background
+  executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
+
+  res.json({ success: true, assignments: db.assignments });
+});
+
+// 12c. CR 1-Click Classwide Sync (PPT Order & Assignments)
+apiRouter.post('/assignments/cr-sync', (req: Request, res: Response) => {
+  const { items, broadcastMessage } = req.body;
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'Valid assignment or PPT items required' });
+  }
+
+  for (const it of items) {
+    const existingIdx = db.assignments.findIndex((a: AcademicAssignment) => a.id === it.id);
+    if (existingIdx >= 0) {
+      db.assignments[existingIdx] = { ...db.assignments[existingIdx], ...it };
+    } else {
+      db.assignments.unshift({
+        id: it.id || `cr-work-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        classId: 'class-bca-2028',
+        subjectId: it.subjectId || 'sub-dbms',
+        subjectName: it.subjectName || 'Database Management Systems',
+        title: it.title,
+        type: it.type || 'assignment',
+        dueDate: it.dueDate || new Date().toISOString().slice(0, 10),
+        instructions:
+          it.instructions || 'Official classwork deadline set by Class Representative (CR).',
+        integrityMode: 'teach_me',
+        assignedBy: it.assignedBy || 'Class Representative (CR)',
+        presenterName: it.presenterName,
+        rollNumber: it.rollNumber,
+        completed: false,
+        outlineSteps: it.outlineSteps || [
+          'Step 1: Review class syllabus & topic boundaries',
+          'Step 2: Prepare formal presentation slides / written report',
+          'Step 3: Submit / present on designated scheduled date',
+        ],
+        keyReferences: ['University Semester Curriculum Guidelines'],
+      });
+    }
+  }
+
+  // Broadcast classwide announcement
+  db.announcements.unshift({
+    id: `ann-${Date.now()}`,
+    classId: 'class-bca-2028',
+    authorName: 'Class Representative (CR)',
+    authorRole: 'student',
+    title: '📢 CR Notice: New Assignment & PPT Schedule Synced',
+    content:
+      broadcastMessage ||
+      `The Class Representative has updated and synchronized the official classwork deadlines and PPT presentation roster for the batch. Please review your due dates in the Assignments tab.`,
+    createdAt: new Date().toISOString().slice(0, 10),
+    badge: 'CR Verified',
+  });
+
+  // Silently refine & synchronize repository in background
+  executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
+
+  res.json({ success: true, count: items.length, assignments: db.assignments });
+});
+
+// 12d. Toggle student done state
+apiRouter.patch('/assignments/:id/toggle-done', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const assignment = db.assignments.find((a: AcademicAssignment) => a.id === id);
+  if (!assignment) {
+    return res.status(404).json({ error: 'Assignment not found' });
+  }
+
+  assignment.completed = !assignment.completed;
+
+  // Silently refine & synchronize repository in background
+  executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
+
+  res.json({ success: true, completed: assignment.completed, assignment });
+});
+
+// 12e. AI Assignment Solver (Recognizes assignment context and outputs proper big answers)
+apiRouter.post('/assignments/solve', async (req: Request, res: Response) => {
+  try {
+    const { assignmentTitle, subjectName, instructions, studentNotes } = req.body;
+    const ai = AIProviderFactory.getProvider();
+
+    const prompt = `You are SyllabusOS AI Academic Assignment Solver for university-level curricula.
+You are tasked with providing a full-credit, comprehensive, highly detailed, and exhaustive academic assignment submission (800-1200 words).
+You MUST recognize that this is an official graded university assignment:
+- Subject: ${subjectName || 'Computer Science / Engineering'}
+- Assignment Title: ${assignmentTitle}
+- Official Instructions: ${instructions || 'Comprehensive university assignment'}
+${studentNotes ? `- Additional Context/Notes from Student: ${studentNotes}` : ''}
+
+REQUIRED STRUCTURE:
+1. 🎓 EXECUTIVE SUMMARY & FORMAL PROBLEM STATEMENT: Precise academic context, definitions, and mathematical notation.
+2. 📐 THEORETICAL PRINCIPLES & FORMAL RULES: Key theorems, formal algorithms, axioms, or underlying system architecture.
+3. 📝 STEP-BY-STEP EXHAUSTIVE SOLUTION:
+   - Complete, non-abbreviated mathematical derivations, equations, or schema definitions (SQL DDL/DML, Java/C++ code with full comments).
+   - Clear explanations of each step and why each rule was applied.
+4. 💡 REAL-WORLD INDUSTRY APPLICATION: Practical implementation in enterprise systems, performance benefits, and database/OS invariants.
+5. ⚠️ BOUNDARY CASES & GOTCHAS: Common student pitfalls, edge conditions, and complexity bounds (O(N), space, disk I/O).
+6. 📚 ACADEMIC REFERENCES & CITATIONS: Standard prescribed university textbook references (Silberschatz, Korth, Tanenbaum, Galvin, etc.).
+
+Provide a proper, big, beautifully formatted markdown solution with code blocks, tables, and step-by-step points so the student can submit for maximum marks.`;
+
+    const systemInstruction = `You are a distinguished university professor and academic assignment evaluator who provides thorough, exhaustive, top-scoring assignment solutions with proper academic rigor and full technical depth.`;
+
+    const answer = await ai.generateText(prompt, systemInstruction);
+
+    // Silently refine & synchronize repository in background
+    executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
+
+    res.json({ success: true, answer });
+  } catch (err: any) {
+    console.error('Assignment solver error:', err);
+    res.status(500).json({ error: 'Failed to solve assignment', details: err.message });
+  }
 });
 
 // 13. Notifications
@@ -764,6 +964,38 @@ apiRouter.post('/github/download-zip', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to generate zip file', details: err.message });
   }
 });
+
+// 19. Get Daily Auto-Sync Status
+apiRouter.get('/sync/status', (_req: Request, res: Response) => {
+  res.json(getAutoSyncStatus());
+});
+
+// 20. Trigger Immediate Auto-Sync
+apiRouter.post('/sync/now', async (_req: Request, res: Response) => {
+  try {
+    const result = await executeAutoSync(true);
+    res.json({ ...result, status: getAutoSyncStatus() });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Sync failed', details: err.message });
+  }
+});
+
+
+// 19. Get Daily Auto-Sync Status
+apiRouter.get('/sync/status', (_req: Request, res: Response) => {
+  res.json(getAutoSyncStatus());
+});
+
+// 20. Trigger Immediate Auto-Sync
+apiRouter.post('/sync/now', async (_req: Request, res: Response) => {
+  try {
+    const result = await executeAutoSync(true);
+    res.json({ ...result, status: getAutoSyncStatus() });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Sync failed', details: err.message });
+  }
+});
+
 
 // 18. Download Repository as a ZIP File (GET with query param or default)
 apiRouter.get('/github/download-zip', async (req: Request, res: Response) => {

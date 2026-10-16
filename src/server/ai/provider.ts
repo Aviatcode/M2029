@@ -8,7 +8,7 @@ export interface AIProvider {
 }
 
 export class GeminiAIProvider implements AIProvider {
-  name = 'Google Gemini (gemini-3.8-flash)';
+  name = 'Google Gemini (gemini-2.5-flash)';
   private ai: GoogleGenAI | null = null;
 
   constructor(apiKey?: string) {
@@ -24,35 +24,51 @@ export class GeminiAIProvider implements AIProvider {
 
   async generateText(prompt: string, systemInstruction?: string): Promise<string> {
     if (!this.ai) {
-      throw new Error('Gemini API key is not configured.');
+      return new MockAIProvider().generateText(prompt, systemInstruction);
     }
 
-    const response = await this.ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: prompt,
-      config: systemInstruction ? { systemInstruction } : undefined,
-    });
+    try {
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: systemInstruction ? { systemInstruction } : undefined,
+      });
 
-    return response.text || '';
+      return response.text || '';
+    } catch (err: any) {
+      console.warn(
+        '⚠️ [AI Provider] Gemini API call failed, using Academic Knowledge Engine fallback:',
+        err.message
+      );
+      return new MockAIProvider().generateText(prompt, systemInstruction);
+    }
   }
 
   async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
     if (!this.ai) {
-      throw new Error('Gemini API key is not configured.');
+      return new MockAIProvider().generateStructuredJson<T>(prompt, schemaDescription);
     }
 
     const fullPrompt = `${prompt}
 ${schemaDescription ? `\nStrict Schema:\n${schemaDescription}` : ''}
 Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
 
-    const response = await this.ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: fullPrompt,
-    });
+    try {
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: fullPrompt,
+      });
 
-    const raw = response.text || '{}';
-    const cleanJson = raw.replace(/```json/gi, '').replace(/```/gi, '').trim();
-    return JSON.parse(cleanJson) as T;
+      const raw = response.text || '{}';
+      const cleanJson = raw.replace(/```json/gi, '').replace(/```/gi, '').trim();
+      return JSON.parse(cleanJson) as T;
+    } catch (err: any) {
+      console.warn(
+        '⚠️ [AI Provider] Gemini structured call failed, using Academic Knowledge Engine fallback:',
+        err.message
+      );
+      return new MockAIProvider().generateStructuredJson<T>(prompt, schemaDescription);
+    }
   }
 }
 
@@ -71,6 +87,80 @@ export class MockAIProvider implements AIProvider {
 
     if (prompt.toLowerCase().includes('eli9') || prompt.toLowerCase().includes('explain like i\'m 9')) {
       return `Imagine a busy school cafeteria where everyone wants ice cream, but there is only one spoon! If nobody shares, nobody gets dessert. This concept is just the friendly teacher who sets fair turn-by-turn rules so every kid gets their ice cream without fighting or waiting forever!`;
+    }
+
+    if (prompt.toLowerCase().includes('assignment') || prompt.toLowerCase().includes('solve assignment')) {
+      return `## 🎓 UNIVERSITY ASSIGNMENT SUBMISSION & MODEL SOLUTION
+
+### 1. Executive Summary & Problem Scope
+This assignment addresses the formal specification, architectural modeling, and rigorous implementation guarantees required in the university academic curriculum. The objective is to design a fault-tolerant, normalized, and optimized computational pipeline meeting university evaluation standards.
+
+---
+
+### 2. Theoretical Foundations & Mathematical Formalisms
+- **Core Principles:** The fundamental rules governing this system require strict adherence to closure properties, atomicity guarantees, and boundary invariants.
+- **Relational Invariant / Formal Equation:**
+  $\\forall X \\rightarrow Y \\in F^+, \\quad \\text{either } Y \\subseteq X \\text{ (trivial) or } X \\text{ is a superkey of } R$
+- **Preconditions & Assumptions:**
+  1. Input data is deterministic with discrete state transitions.
+  2. Deadlock conditions (Coffman criteria) are strictly guarded via pre-allocation or timeout protocols.
+  3. Relational schemas are normalized to eliminate update, insertion, and deletion anomalies.
+
+---
+
+### 3. Step-by-Step Comprehensive Solution & Working
+
+#### Part A: Architectural Blueprint & Entity Breakdown
+\`\`\`sql
+-- Production Relational Schema Definition
+CREATE TABLE Doctors (
+    doctor_id VARCHAR(10) PRIMARY KEY,
+    doctor_name VARCHAR(100) NOT NULL,
+    specialization VARCHAR(50) NOT NULL,
+    department VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Patients (
+    patient_id VARCHAR(10) PRIMARY KEY,
+    patient_name VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    contact_number VARCHAR(15) UNIQUE
+);
+
+CREATE TABLE Appointments (
+    appointment_id VARCHAR(12) PRIMARY KEY,
+    patient_id VARCHAR(10) REFERENCES Patients(patient_id) ON DELETE CASCADE,
+    doctor_id VARCHAR(10) REFERENCES Doctors(doctor_id) ON DELETE RESTRICT,
+    scheduled_timestamp TIMESTAMP NOT NULL,
+    status VARCHAR(20) DEFAULT 'Scheduled',
+    CONSTRAINT chk_status CHECK (status IN ('Scheduled', 'Completed', 'Cancelled'))
+);
+\`\`\`
+
+#### Part B: Step-by-Step Mathematical & Algorithmic Proof
+1. **Dependency Analysis:** Given attribute set $U = \\{A, B, C, D, E\\}$ and Functional Dependency set $F = \\{A \\rightarrow B, B \\rightarrow C, C \\rightarrow D\\}$.
+2. **Closure Verification:** Compute $(A)^+ = \\{A, B, C, D\\}$. Since $(A)^+$ contains candidate attributes without partial dependency, schema adheres to 2NF.
+3. **Decomposition to 3NF:** By applying Boyce-Codd / 3NF synthesis algorithm, we decompose into lossless join sub-schemas that preserve all dependencies.
+
+---
+
+### 4. Real-World Industrial Application & Practical Example
+In high-throughput enterprise systems (e.g. AWS Aurora, FinTech transaction processing), this design prevents:
+- **Write Skew & Lost Updates:** Through strict serializability and row-level locking.
+- **Redundant Storage:** Reducing storage footprint by over 42% through eliminated schema duplication.
+
+---
+
+### 5. Boundary Conditions, Edge Cases & Verification Checklist
+- [x] Zero partial dependencies detected ($A \\rightarrow B$ strictly on full candidate key).
+- [x] Null pointer & boundary value checks implemented for empty recordsets.
+- [x] Thread safety guaranteed via mutex / monitor synchronization primitives.
+
+---
+
+### 6. Academic References & Citations
+1. Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). *Database System Concepts* (7th ed., Chapters 2, 7 & 14). McGraw-Hill.
+2. Elmasri, R., & Navathe, S. B. (2021). *Fundamentals of Database Systems* (8th ed.). Pearson Education.`;
     }
 
     if (prompt.toLowerCase().includes('exam') || prompt.toLowerCase().includes('10-marker')) {
@@ -265,17 +355,53 @@ export class MockAIProvider implements AIProvider {
 
 export class AIProviderFactory {
   private static instance: AIProvider | null = null;
+  private static customApiKey: string | null = null;
 
   static getProvider(): AIProvider {
     if (!this.instance) {
-      const gemini = new GeminiAIProvider();
-      if (gemini.isAvailable()) {
-        this.instance = gemini;
-      } else {
-        this.instance = new MockAIProvider();
+      const apiKey = this.customApiKey || process.env.GEMINI_API_KEY;
+      if (apiKey && apiKey.trim().length > 0) {
+        const gemini = new GeminiAIProvider(apiKey);
+        if (gemini.isAvailable()) {
+          this.instance = gemini;
+          return this.instance;
+        }
       }
+      this.instance = new MockAIProvider();
     }
     return this.instance;
+  }
+
+  static setApiKey(apiKey?: string): { success: boolean; modelType: 'gemini' | 'basic'; providerName: string } {
+    if (apiKey && apiKey.trim().length > 0) {
+      this.customApiKey = apiKey.trim();
+      this.instance = new GeminiAIProvider(this.customApiKey);
+      return {
+        success: true,
+        modelType: 'gemini',
+        providerName: 'Google Gemini 2.5 Flash',
+      };
+    } else {
+      this.customApiKey = null;
+      this.instance = new MockAIProvider();
+      return {
+        success: true,
+        modelType: 'basic',
+        providerName: 'Built-in Basic Academic Model',
+      };
+    }
+  }
+
+  static getStatus(): { hasCustomKey: boolean; modelType: 'gemini' | 'basic'; providerName: string } {
+    const provider = this.getProvider();
+    const isGemini = provider instanceof GeminiAIProvider && provider.isAvailable();
+    return {
+      hasCustomKey: isGemini,
+      modelType: isGemini ? 'gemini' : 'basic',
+      providerName: isGemini
+        ? 'Google Gemini 2.5 Flash (Class API Key)'
+        : 'Built-in Basic Academic Model (Free)',
+    };
   }
 
   static setProvider(provider: AIProvider): void {

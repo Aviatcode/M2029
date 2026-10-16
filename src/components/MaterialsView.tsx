@@ -90,35 +90,41 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-6 space-y-6 animate-fade-in">
-      {/* Calm Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-slate-100">
-            Class Notes & PPTs
+    <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
+      {/* 1. Academic Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-5">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-emerald-400" />
+            <span className="academic-tag text-[10px] text-emerald-400">
+              Classroom Digital Archive
+            </span>
+          </div>
+          <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+            Course Notes & Professor Presentations
           </h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-400 font-sans-ui">
             Shared repository of teacher slides, lecture notes, and synthesized concepts.
           </p>
         </div>
 
         <button
           onClick={() => setIsUploading(true)}
-          className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5"
+          className="px-3.5 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
         >
           <UploadCloud className="w-3.5 h-3.5" />
           <span>Upload Material</span>
         </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-1 border-b border-slate-800/80 overflow-x-auto no-scrollbar pb-1 text-xs">
+      {/* 2. Filter Tabs */}
+      <div className="flex items-center gap-1.5 border-b border-slate-800/80 overflow-x-auto no-scrollbar pb-1 text-xs">
         <button
           onClick={() => setSelectedSubjectFilter('all')}
-          className={`px-3 py-1.5 rounded-lg transition shrink-0 cursor-pointer ${
+          className={`px-3 py-1.5 rounded transition shrink-0 cursor-pointer font-sans-ui text-xs ${
             selectedSubjectFilter === 'all'
-              ? 'bg-slate-800 text-white font-medium'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-slate-900 text-white font-medium border border-slate-800 shadow-2xs'
+              : 'text-slate-400 hover:text-slate-200 border border-transparent'
           }`}
         >
           All Subjects ({materials.length})
@@ -127,10 +133,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           <button
             key={sub.id}
             onClick={() => setSelectedSubjectFilter(sub.id)}
-            className={`px-3 py-1.5 rounded-lg transition shrink-0 cursor-pointer ${
+            className={`px-3 py-1.5 rounded transition shrink-0 cursor-pointer font-sans-ui text-xs ${
               selectedSubjectFilter === sub.id
-                ? 'bg-slate-800 text-white font-medium'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-slate-900 text-white font-medium border border-slate-800 shadow-2xs'
+                : 'text-slate-400 hover:text-slate-200 border border-transparent'
             }`}
           >
             {sub.name}
@@ -138,12 +144,12 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
         ))}
       </div>
 
-      {/* Main Grid: Files List & Details */}
+      {/* 3. Main Reading Pane: File Index & Scholar Notes */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Files Column */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Files ({filteredMaterials.length})
+        <div className="space-y-2.5">
+          <h2 className="academic-tag text-[10px] text-slate-400">
+            Document Archive ({filteredMaterials.length})
           </h2>
 
           <div className="space-y-1.5">
@@ -154,15 +160,18 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 <div
                   key={mat.id}
                   onClick={() => setSelectedMaterial(mat)}
-                  className={`p-3 rounded-lg border cursor-pointer transition text-xs space-y-1 ${
+                  className={`p-3 rounded-md border cursor-pointer transition text-xs space-y-1 select-none ${
                     isSelected
-                      ? 'bg-slate-900 border-slate-700 text-slate-100 shadow-sm'
-                      : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-750 text-slate-300'
+                      ? 'bg-slate-900 border-slate-700 text-slate-100 shadow-2xs'
+                      : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-700 text-slate-300'
                   }`}
                 >
-                  <h3 className="font-medium truncate">{mat.title}</h3>
-                  <div className="text-[11px] text-slate-400">
-                    {mat.subjectName} · {mat.uploaderName}
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <h3 className="font-sans-ui font-medium truncate">{mat.title}</h3>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono">
+                    {mat.subjectName} · Shared by {mat.uploaderName}
                   </div>
                 </div>
               );
@@ -173,33 +182,33 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
         {/* Selected File Details */}
         <div className="md:col-span-2">
           {selectedMaterial ? (
-            <div className="rounded-xl bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
+            <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
               <div className="pb-3 border-b border-slate-800/60">
-                <div className="text-xs text-slate-400">
-                  {selectedMaterial.subjectName} · Shared by {selectedMaterial.uploaderName}
+                <div className="text-[11px] text-slate-400 font-sans-ui">
+                  {selectedMaterial.subjectName} · Deposited by {selectedMaterial.uploaderName}
                 </div>
-                <h2 className="text-base font-medium text-slate-100 mt-0.5">
+                <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-100 mt-0.5">
                   {selectedMaterial.title}
                 </h2>
               </div>
 
               {/* Summary */}
-              <div className="space-y-1.5">
-                <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  Summary
+              <div className="space-y-2">
+                <h3 className="academic-tag text-[10px] text-slate-400">
+                  Synthesized Curriculum Summary
                 </h3>
-                <p className="text-xs md:text-sm text-slate-300 leading-relaxed bg-slate-900/40 p-3.5 rounded-lg border border-slate-800/60">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900/40 p-3.5 rounded border border-slate-800/60 font-sans-ui">
                   {selectedMaterial.resources.summary}
                 </p>
               </div>
 
               {/* Hinglish Explanation */}
               {selectedMaterial.resources.hinglishSummary && (
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Intuitive Understanding (Hinglish)
+                <div className="space-y-2 marginalia">
+                  <h3 className="academic-tag text-[10px] text-emerald-400">
+                    Conceptual Takeaway (Hinglish Primer)
                   </h3>
-                  <p className="text-xs md:text-sm text-slate-300 leading-relaxed bg-slate-900/40 p-3.5 rounded-lg border border-slate-800/60">
+                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans-ui">
                     {selectedMaterial.resources.hinglishSummary}
                   </p>
                 </div>
@@ -207,15 +216,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
               {/* Definitions */}
               {selectedMaterial.resources.importantDefinitions.length > 0 && (
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Key Definitions
+                <div className="space-y-2">
+                  <h3 className="academic-tag text-[10px] text-slate-400">
+                    Core Architectural Terms & Definitions
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedMaterial.resources.importantDefinitions.map((d, i) => (
-                      <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800/60">
-                        <strong className="text-slate-200 block mb-0.5">{d.term}</strong>
-                        <span className="text-slate-400">{d.definition}</span>
+                      <div key={i} className="p-3 rounded bg-slate-900/40 border border-slate-800/60 font-sans-ui">
+                        <strong className="text-slate-100 block mb-0.5 font-medium">{d.term}</strong>
+                        <span className="text-slate-400 text-[11px]">{d.definition}</span>
                       </div>
                     ))}
                   </div>
@@ -224,15 +233,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
               {/* Flashcards */}
               {selectedMaterial.resources.flashcards.length > 0 && (
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    Flashcards
+                <div className="space-y-2">
+                  <h3 className="academic-tag text-[10px] text-slate-400">
+                    Active Recall Flashcards
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedMaterial.resources.flashcards.map((fc) => (
-                      <div key={fc.id} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800/60 space-y-1">
-                        <span className="text-slate-200 font-medium block">Q: {fc.question}</span>
-                        <span className="text-slate-400 block">A: {fc.answer}</span>
+                      <div key={fc.id} className="p-3 rounded bg-slate-900/40 border border-slate-800/60 space-y-1.5 font-sans-ui">
+                        <span className="text-slate-100 font-medium block">Q: {fc.question}</span>
+                        <span className="text-slate-400 text-[11px] block">A: {fc.answer}</span>
                       </div>
                     ))}
                   </div>

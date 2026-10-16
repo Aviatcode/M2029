@@ -41,12 +41,59 @@ import { SemesterSetupModal } from './components/SemesterSetupModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { NotificationDrawer } from './components/NotificationDrawer';
 import { OfflineIndicator } from './components/OfflineIndicator';
-import { GitHubPublisherView } from './components/GitHubPublisherView';
+import { PWAInstallPopup } from './components/PWAInstallPopup';
+import { ThemeSelectorModal } from './components/ThemeSelectorModal';
+import { initTheme } from './utils/themeService';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<ActiveNavTab>('dashboard');
+  const getInitialTab = (): ActiveNavTab => {
+    try {
+      const hash = window.location.hash.replace('#', '') as ActiveNavTab;
+      const validTabs: ActiveNavTab[] = [
+        'dashboard',
+        'tomorrow',
+        'syllabus',
+        'timetable',
+        'ai-tutor',
+        'materials',
+        'pyqs',
+        'exams',
+        'assignments',
+        'setup',
+      ];
+      if (validTabs.includes(hash)) {
+        return hash;
+      }
+    } catch {
+      // fallback
+    }
+    return 'dashboard';
+  };
+
+  const [activeTab, setActiveTab] = useState<ActiveNavTab>(getInitialTab);
   const [currentRole, setCurrentRole] = useState<UserRole>('student');
   const [classCode, setClassCode] = useState<string>('BCA-2028');
+
+  // Sync tab with URL hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '') as ActiveNavTab;
+      if (hash && hash !== activeTab) {
+        setActiveTab(hash);
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [activeTab]);
+
+  const handleSelectTab = (tab: ActiveNavTab) => {
+    setActiveTab(tab);
+    try {
+      window.location.hash = tab;
+    } catch {
+      // ignore
+    }
+  };
 
   // Core Academic State
   const [workspace, setWorkspace] = useState<ClassWorkspace>(SEED_CLASS);
@@ -65,9 +112,46 @@ export default function App() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [initialTutorPrompt, setInitialTutorPrompt] = useState('');
-  const [calmMode, setCalmMode] = useState(true);
+
+  // Initialize selected UI Mode and Theme
+  useEffect(() => {
+    initTheme();
+  }, []);
+  const [calmMode, setCalmMode] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_calm_mode');
+      return saved !== null ? saved === 'true' : false;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_calm_mode', String(calmMode));
+    } catch {
+      // ignore
+    }
+  }, [calmMode]);
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('syllabus_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_sidebar_collapsed', String(isSidebarCollapsed));
+    } catch {
+      // ignore local storage restrictions if any
+    }
+  }, [isSidebarCollapsed]);
 
   // 7-Minute Prep state
   const [tomorrowPrepData, setTomorrowPrepData] = useState<SevenMinutePrep>({
@@ -195,6 +279,19 @@ export default function App() {
     if (classData.subjects) {
       setSubjects(classData.subjects);
     }
+    if (classData.workspace?.verifiedByCR) {
+      setNotifications((prev) => [
+        {
+          id: `notif-cr-auth-${Date.now()}`,
+          title: `CR Verified: ${classData.workspace.code}`,
+          message: `Semester ${classData.workspace.semester} subjects and folders authenticated by CR ${classData.workspace.crName || 'Representative'}.`,
+          type: 'class_reminder',
+          time: 'Just now',
+          read: false,
+        },
+        ...prev,
+      ]);
+    }
     setActiveTab('dashboard');
   };
 
@@ -217,6 +314,7 @@ export default function App() {
       {/* 1. TOP NAVBAR */}
       <Navbar
         classCode={classCode}
+        onNavigateHome={() => setActiveTab('dashboard')}
         onOpenSearch={() => setIsSearchModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenClassSetup={() => setIsSetupModalOpen(true)}
@@ -224,17 +322,21 @@ export default function App() {
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
         calmMode={calmMode}
         onToggleCalmMode={() => setCalmMode((prev) => !prev)}
+        onOpenThemeSelector={() => setIsThemeModalOpen(true)}
       />
 
       {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT WORKSPACE */}
       <div className="flex flex-1 h-[calc(100vh-3.5rem)] overflow-hidden">
-        {/* Desktop Sidebar */}
+        {/* Desktop Sidebar (Collapsible) */}
         <div className="hidden lg:flex h-full shrink-0">
           <Sidebar
             activeTab={activeTab}
-            onSelectTab={setActiveTab}
+            onSelectTab={handleSelectTab}
             classCode={classCode}
             semesterNumber={workspace.semester}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+            onOpenClassSetup={() => setIsSetupModalOpen(true)}
           />
         </div>
 
@@ -245,11 +347,15 @@ export default function App() {
               <Sidebar
                 activeTab={activeTab}
                 onSelectTab={(tab) => {
-                  setActiveTab(tab);
+                  handleSelectTab(tab);
                   setMobileMenuOpen(false);
                 }}
                 classCode={classCode}
                 semesterNumber={workspace.semester}
+                onOpenClassSetup={() => {
+                  setIsSetupModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
               />
             </div>
             <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
@@ -269,8 +375,9 @@ export default function App() {
               recentMaterials={materials.slice(0, 4)}
               announcements={announcements}
               subjects={subjects}
+              assignments={assignments}
               onOpenTomorrowPrep={() => setIsTomorrowModalOpen(true)}
-              onNavigateTab={setActiveTab}
+              onNavigateTab={handleSelectTab}
               onTriggerQuickAIAction={handleQuickAIAction}
               calmMode={calmMode}
             />
@@ -309,7 +416,6 @@ export default function App() {
               unitsBySubject={unitsBySubject}
               onUpdateTopicStatus={handleUpdateTopicStatus}
               onStudyTopic={handleStudyTopic}
-              onExportToGitHub={() => setActiveTab('github-publish')}
             />
           )}
 
@@ -372,7 +478,11 @@ export default function App() {
           )}
 
           {activeTab === 'assignments' && (
-            <AssignmentsView assignments={assignments} />
+            <AssignmentsView
+              assignments={assignments}
+              subjects={subjects}
+              onUpdateAssignments={(updated) => setAssignments(updated)}
+            />
           )}
 
           {activeTab === 'setup' && (
@@ -389,10 +499,6 @@ export default function App() {
               </button>
             </div>
           )}
-
-          {activeTab === 'github-publish' && (
-            <GitHubPublisherView subjects={subjects} classCode={classCode} />
-          )}
         </main>
       </div>
 
@@ -407,6 +513,11 @@ export default function App() {
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
         onSetupComplete={handleSetupComplete}
+      />
+
+      <ThemeSelectorModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
       />
 
       <GlobalSearchModal
@@ -430,8 +541,9 @@ export default function App() {
         }}
       />
 
-      {/* 4. OFFLINE PWA RESILIENCE INDICATOR */}
+      {/* 4. OFFLINE PWA RESILIENCE INDICATOR & FIRST-TIME INSTALL POPUP */}
       <OfflineIndicator />
+      <PWAInstallPopup />
     </div>
   );
 }

@@ -30,54 +30,65 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
   });
 
   return (
-    <div className="max-w-3xl mx-auto py-6 space-y-6 animate-fade-in">
-      {/* Calm Header */}
-      <div>
-        <h1 className="text-xl md:text-2xl font-semibold text-slate-100">
-          Previous Year Questions
+    <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
+      {/* 1. Academic Header */}
+      <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
+        <div className="flex items-center gap-2">
+          <HelpCircle className="w-4 h-4 text-emerald-400" />
+          <span className="academic-tag text-[10px] text-emerald-400">
+            University Exam Archive
+          </span>
+        </div>
+        <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+          Previous Year Questions & Model Rubrics
         </h1>
-        <p className="text-sm text-slate-400 mt-0.5">
-          Verified university question papers and model scoring answers.
+        <p className="text-xs text-slate-400 font-sans-ui">
+          Verified university question papers, recurrence patterns, and 10-marker model scoring rubrics.
         </p>
       </div>
 
-      {/* Frequently Repeated Concepts */}
-      <div className="rounded-xl bg-slate-900/30 border border-slate-800/80 p-4 space-y-3">
-        <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-          Repeated Exam Topics
-        </h2>
+      {/* 2. High-Yield Recurrent Concepts Matrix */}
+      <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 sm:p-5 space-y-3.5">
+        <div className="flex items-center justify-between border-b border-slate-800/50 pb-2.5">
+          <h2 className="academic-tag text-[10px] text-slate-400">
+            High-Yield Recurrence Patterns (2020–2025)
+          </h2>
+          <span className="text-[11px] text-slate-400 font-sans-ui">
+            Automated PYQ Frequency Analyzer
+          </span>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {analysisItems.map((item, idx) => (
             <div
               key={idx}
-              className="p-3 rounded-lg bg-slate-900/50 border border-slate-800 text-xs space-y-1"
+              className="p-3.5 rounded bg-slate-900/50 border border-slate-800/80 text-xs space-y-1.5 hover:border-slate-700 transition"
             >
               <div className="flex items-center justify-between text-slate-400">
-                <span className="font-mono text-cyan-300">
-                  Asked {item.frequency} times
+                <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                  Asked {item.frequency}×
                 </span>
-                <span>{item.highestMarks} marks</span>
+                <span className="font-mono text-[10px] text-slate-400">Max {item.highestMarks}M</span>
               </div>
-              <h3 className="font-medium text-slate-200 line-clamp-1">
+              <h3 className="font-sans-ui font-semibold text-slate-100 line-clamp-1">
                 {item.topicTitle}
               </h3>
-              <p className="text-[11px] text-slate-400">
-                {item.yearsAsked.join(', ')}
+              <p className="text-[10px] text-slate-400 font-mono">
+                Papers: {item.yearsAsked.join(', ')}
               </p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* 3. Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-slate-400">Filter:</span>
+          <span className="text-slate-400 font-sans-ui">Archive Filter:</span>
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-200 focus:outline-none"
+            className="bg-slate-900 border border-slate-800/90 rounded px-2.5 py-1 text-slate-200 focus:outline-none cursor-pointer font-sans-ui text-xs"
           >
             <option value="all">All Subjects</option>
             {subjects.map((s) => (
@@ -90,9 +101,9 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1 text-slate-200 focus:outline-none"
+            className="bg-slate-900 border border-slate-800/90 rounded px-2.5 py-1 text-slate-200 focus:outline-none cursor-pointer font-sans-ui text-xs"
           >
-            <option value="all">All Years</option>
+            <option value="all">All Examination Sessions</option>
             <option value="2025">2025 End-Term</option>
             <option value="2024">2024 End-Term</option>
             <option value="2023">2023 End-Term</option>
@@ -100,40 +111,42 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
           </select>
         </div>
 
-        <span className="text-slate-400">
-          {filteredPYQs.length} questions
+        <span className="academic-tag text-[10px] text-slate-400">
+          {filteredPYQs.length} Questions Indexed
         </span>
       </div>
 
-      {/* Question List */}
-      <div className="space-y-2.5">
+      {/* 4. Question Archive List */}
+      <div className="space-y-3">
         {filteredPYQs.map((pyq) => {
           const isExpanded = expandedId === pyq.id;
 
           return (
             <div
               key={pyq.id}
-              className="rounded-xl bg-slate-900/30 border border-slate-800/80 overflow-hidden"
+              className="rounded-md bg-slate-900/30 border border-slate-800/80 overflow-hidden"
             >
               <div
                 onClick={() => setExpandedId(isExpanded ? null : pyq.id)}
-                className="p-4 flex items-start justify-between gap-3 cursor-pointer hover:bg-slate-900/50 transition"
+                className="p-4 sm:p-5 flex items-start justify-between gap-4 cursor-pointer hover:bg-slate-900/50 transition select-none"
               >
-                <div className="space-y-1">
-                  <div className="text-[11px] text-slate-400 flex items-center gap-2">
-                    <span className="font-mono">{pyq.marks} Marks</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{pyq.year} Exam</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{pyq.source}</span>
+                <div className="space-y-1.5">
+                  <div className="text-[11px] text-slate-400 flex items-center gap-2 font-sans-ui">
+                    <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                      {pyq.marks} Marks
+                    </span>
+                    <span>·</span>
+                    <span className="font-mono text-[11px] text-slate-300">{pyq.year} University Paper</span>
+                    <span>·</span>
+                    <span className="text-slate-400">{pyq.source}</span>
                   </div>
 
-                  <h3 className="text-xs md:text-sm font-medium text-slate-200 leading-snug">
+                  <h3 className="font-editorial text-base sm:text-lg font-medium text-slate-100 leading-snug">
                     {pyq.question}
                   </h3>
                 </div>
 
-                <div className="text-slate-400 pt-0.5">
+                <div className="text-slate-400 pt-1 shrink-0">
                   {isExpanded ? (
                     <ChevronUp className="w-4 h-4" />
                   ) : (
@@ -143,11 +156,16 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
               </div>
 
               {isExpanded && (
-                <div className="border-t border-slate-800/60 p-4 bg-slate-950/40 space-y-2 text-xs">
-                  <div className="font-medium text-slate-300">
-                    Model Answer & Scoring Points:
+                <div className="border-t border-slate-800/60 p-4 sm:p-5 bg-slate-950/60 space-y-3 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="academic-tag text-[10px] text-slate-300">
+                      Standard Scoring Scheme & Model Answer:
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      Faculty Evaluator Standard
+                    </span>
                   </div>
-                  <div className="p-3.5 rounded-lg bg-slate-900/60 border border-slate-800/70 text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
+                  <div className="p-4 rounded bg-slate-900/60 border border-slate-800/80 text-slate-200 leading-relaxed whitespace-pre-wrap font-sans-ui text-xs sm:text-sm marginalia">
                     {pyq.modelAnswer}
                   </div>
                 </div>

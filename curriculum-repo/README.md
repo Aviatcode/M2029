@@ -1,163 +1,111 @@
-> 🌐 **Live Web Application & Autonomous AI Portal:**
-> **[🚀 Open SyllabusOS Live App](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)** | **[🛠️ Interactive Dev Workspace](https://ais-dev-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)**
+# 🎓 BCA Batch of 2028 (BCA-2028) — Academic Curriculum & Knowledge Hub
 
-# 🎓 Database Management Systems & Relational Architectures (BCA-302)
+[![Cohort](https://img.shields.io/badge/Cohort-BCA-2028-0284c7.svg?style=flat-square)](#)
+[![University](https://img.shields.io/badge/University-University%20School%20of%20Information%20Technology-0d9488.svg?style=flat-square)](#)
+[![Semester](https://img.shields.io/badge/Semester-Semester_3-7c3aed.svg?style=flat-square)](#)
+[![Active Subjects](https://img.shields.io/badge/Subjects-5_Active-16a34a.svg?style=flat-square)](#)
+[![Assignments](https://img.shields.io/badge/Pending_Classwork-4_Items-f59e0b.svg?style=flat-square)](#)
+[![Automated Sync](https://img.shields.io/badge/Sync-Automated_Daily-6366f1.svg?style=flat-square)](#)
 
-[![Live Web Application](https://img.shields.io/badge/Live_App-SyllabusOS-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![University](https://img.shields.io/badge/University-University%20School%20of%20Information%20Technology%20%26%20Engineering-0284c7.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![Semester](https://img.shields.io/badge/Semester-Semester%20III-0d9488.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![Instructor](https://img.shields.io/badge/Faculty-Dr.%20Rajesh%20Sharma-7c3aed.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![Credits](https://img.shields.io/badge/Credits-4.0%20Credits%20(3L%20%2B%201T)-16a34a.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b.svg)](LICENSE)
-
-> **Official Class Curriculum & Knowledge Base** for **Database Management Systems & Relational Architectures** (BCA-302), offered by the **Department of Computer Science & Applications**, **University School of Information Technology & Engineering** for academic year **2026-2027**.
-> Access dynamic AI mindmaps, primers, PYQs, and interactive lecture material directly at [**https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app**](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app).
+> **Official Class Curriculum & Knowledge Base** for **BCA Batch of 2028 (BCA-2028)**, University School of Information Technology (Academic Term: 2026–2028).  
+> Automatically synchronizes and refines all classwork deadlines, teacher PPT presentation schedules, comprehensive unit syllabi, and 10-marker exam question analyses.
 
 ---
 
 ## 📋 Table of Contents
-1. [👨‍🏫 Instructor & Faculty Details](#-instructor--faculty-details)
-2. [📅 Class Schedule & Timetable](#-class-schedule--timetable)
-3. [📚 Curriculum & Syllabus Units](#-curriculum--syllabus-units)
-4. [📖 Prescribed Textbooks & References](#-prescribed-textbooks--references)
-5. [🎯 Examination & Evaluation Scheme](#-examination--evaluation-scheme)
-6. [📂 Repository Directory Structure](#-repository-directory-structure)
-7. [🚀 How to Clone & Use This Repository](#-how-to-clone--use-this-repository)
-8. [🤝 How to Contribute](#-how-to-contribute)
-9. [⚖️ Academic Integrity & License](#-academic-integrity--license)
+1. [⚡ Active Classwork & Deadlines Matrix](#-active-classwork--deadlines-matrix)
+2. [🎤 Class Representative (CR) PPT Presentation Schedule](#-class-representative-cr-ppt-presentation-schedule)
+3. [📅 Weekly Lecture & Lab Schedule](#-weekly-lecture--lab-schedule)
+4. [📚 Core Subjects & Faculty Overview](#-core-subjects--faculty-overview)
+5. [📂 Repository Directory Structure](#-repository-directory-structure)
+6. [🤝 How to Contribute](#-how-to-contribute)
+7. [⚖️ Academic Integrity & License](#-academic-integrity--license)
 
 ---
 
-## 👨‍🏫 Instructor & Faculty Details
+## ⚡ Active Classwork & Deadlines Matrix
 
-| Detail | Information |
-| :--- | :--- |
-| **Instructor / Professor** | **Dr. Rajesh Sharma** |
-| **Designation** | Associate Professor & Head of Database Systems Lab |
-| **Official Email** | [`rajesh.sharma@cs.university.edu`](mailto:rajesh.sharma@cs.university.edu) |
-| **Faculty Office** | Room 402, Block B, Technology Wing |
-| **Academic Term** | Semester III (2026-2027) |
-| **Course Credits** | 4.0 Credits (3L + 1T) |
+All upcoming homework sets, laboratory exercises, and research assignments currently tracked for the cohort:
 
----
+| # | Subject | Title | Due Date | Time Left | Assigned By | Status |
+| :-: | :--- | :--- | :---: | :---: | :--- | :---: |
+| 1 | **Database Management Systems** | Hospital Management System: ER Diagram & Normalization to 3NF | `2026-10-17` | **`Today`** ⚠️ | Dr. Rajesh Sharma | ⏳ **Pending** |
+| 2 | **Java Programming** | Producer-Consumer Problem using synchronized and wait/notify | `2026-10-20` | 3 days left | Prof. Ananya Sen | ⏳ **Pending** |
+| 3 | **Operating Systems** | Class Presentation: Deadlock Avoidance using Banker's Algorithm & Safety State Matrix | `2026-10-22` | 5 days left | Class Representative (CR) / Faculty Schedule | ⏳ **Pending** |
+| 4 | **Database Management Systems** | Class Presentation: B-Tree vs B+ Tree Indexing in High-Throughput Databases | `2026-10-24` | 7 days left | Class Representative (CR) / Faculty Schedule | ⏳ **Pending** |
 
-## 📅 Class Schedule & Timetable
-
-| Day | Timings | Room / Venue | Session Type |
-| :--- | :--- | :--- | :--- |
-| **Monday** | 10:00 AM - 11:30 AM | `Lecture Hall 204` | Lecture |
-| **Wednesday** | 11:30 AM - 01:00 PM | `Lecture Hall 204` | Lecture |
-| **Friday** | 02:00 PM - 04:00 PM | `Database Systems Lab 3` | Practical Lab |
+*Detailed instructions, step-by-step rubrics, and model university answers are available in [assignments/ACTIVE_DEADLINES.md](assignments/ACTIVE_DEADLINES.md) and [assignments/SOLUTIONS.md](assignments/SOLUTIONS.md).*
 
 ---
 
-## 📚 Curriculum & Syllabus Units
+## 🎤 Class Representative (CR) PPT Presentation Schedule
 
-### 📌 Unit 1: Data Modeling and Conceptual Database Architecture
-* **Estimated Teaching Hours:** 10 Hours
-* **University Exam Weightage:** `15 Marks`
+Official presentation roster synchronized by the Class Representative for technical seminars and lab evaluations:
 
-**Key Concepts & Topics Covered:**
-- [ ] Introduction to Database Systems, Schema vs Instance, Three-Schema Architecture
-- [ ] Entity-Relationship (ER) Modeling: Entities, Relationships, Multiplicity Constraints, Weak Entities
-- [ ] Enhanced ER (EER) modeling, Generalization, Specialization, Categorization
+| Roll Numbers | Presenter / Team | Subject | Seminar / Presentation Topic | Scheduled Date | Status |
+| :--- | :--- | :--- | :--- | :---: | :---: |
+| `BCA-01 to BCA-05` | **Roll 101 - Aman Kumar & Team** | Operating Systems | Deadlock Avoidance using Banker's Algorithm & Safety State Matrix | `2026-10-22` | ⏳ Scheduled |
+| `BCA-06 to BCA-10` | **Roll 106 - Priya Singh & Team** | Database Management Systems | B-Tree vs B+ Tree Indexing in High-Throughput Databases | `2026-10-24` | ⏳ Scheduled |
 
-### 📌 Unit 2: The Relational Model and Relational Languages
-* **Estimated Teaching Hours:** 11 Hours
-* **University Exam Weightage:** `20 Marks`
-
-**Key Concepts & Topics Covered:**
-- [ ] Relational data structure, integrity constraints: domain, key, entity, and referential integrity
-- [ ] Relational Algebra: Selection, Projection, Set operations, Cartesian product, Joins, Division
-- [ ] Relational Calculus: Tuple Relational Calculus (TRC) and Domain Relational Calculus (DRC)
-- [ ] SQL DDL, DML, DCL, Views, Complex Nested Subqueries, Aggregate Operators
-
-### 📌 Unit 3: Relational Database Design and Normalization
-* **Estimated Teaching Hours:** 12 Hours
-* **University Exam Weightage:** `25 Marks`
-
-**Key Concepts & Topics Covered:**
-- [ ] Informal design guidelines for relation schemas, Anomalies in schema design
-- [ ] Functional Dependencies (FDs), Closure of attribute sets, Canonical cover, Armstrong Axioms
-- [ ] Normal Forms based on primary keys: 1NF, 2NF, 3NF, Boyce-Codd Normal Form (BCNF)
-- [ ] Multi-valued dependencies and 4NF, Join dependencies and 5NF, Lossless join and Dependency preservation
-
-### 📌 Unit 4: Transaction Processing, Concurrency, and Recovery
-* **Estimated Teaching Hours:** 10 Hours
-* **University Exam Weightage:** `20 Marks`
-
-**Key Concepts & Topics Covered:**
-- [ ] Transaction concept, ACID properties, Transaction states, Concurrent executions
-- [ ] Serializability: Conflict and View serializability, Precedence Graph
-- [ ] Concurrency Control: Two-Phase Locking (2PL), Strict 2PL, Timestamp ordering, Deadlocks
-- [ ] Crash Recovery: Log-based recovery, Immediate vs Deferred update, Checkpoints, ARIES algorithm
-
+*Review presentation guidelines, slide structure rules, and viva evaluation rubrics in [assignments/PPT_SCHEDULE.md](assignments/PPT_SCHEDULE.md).*
 
 ---
 
-## 📖 Prescribed Textbooks & References
+## 📅 Weekly Lecture & Lab Schedule
 
-| # | Book Title | Authors | Publisher & Edition |
-| :-: | :--- | :--- | :--- |
-| 1 | **Database System Concepts** | Abraham Silberschatz, Henry F. Korth, S. Sudarshan | McGraw-Hill Education, 7th Edition |
-| 2 | **Fundamentals of Database Systems** | Ramez Elmasri, Shamkant B. Navathe | Pearson Education, 8th Edition |
+| Day | Timings | Subject & Course Code | Room / Lab | Faculty In-Charge |
+| :--- | :--- | :--- | :---: | :--- |
+| **Wednesday** | 09:30 AM - 10:30 AM | Database Management Systems (BCA-302) | `Lab 3 (Ground Floor)` | Dr. Neha Verma |
+| **Wednesday** | 11:00 AM - 12:00 PM | Operating Systems (BCA-304) | `Room 304` | Dr. K.R. Rao |
+| **Wednesday** | 01:30 PM - 02:30 PM | Web Development (BCA-303) | `Software Lab 1` | Prof. Ankit Mehra |
+| **Thursday** | 10:00 AM - 11:00 AM | Java Programming (BCA-301) | `Room 204` | Prof. Sharma |
+| **Thursday** | 11:30 AM - 12:30 PM | Computer Networks (BCA-305) | `Room 208` | Prof. Sunita Rao |
+
+*Complete weekly timetable and faculty consultation hours are documented in [TIMETABLE.md](TIMETABLE.md).*
 
 ---
 
-## 🎯 Examination & Evaluation Scheme
+## 📚 Core Subjects & Faculty Overview
 
-| Evaluation Component | Weightage | Description |
-| :--- | :-: | :--- |
-| **Internal Sessional Exams (2 Mid-Terms)** | `25%` | Evaluated based on syllabus performance |
-| **Laboratory Practical Work & Mini-Project** | `25%` | Evaluated based on syllabus performance |
-| **University End-Semester Examination** | `50%` | Evaluated based on syllabus performance |
+| Code | Subject Name | Credits | Faculty Lead | Room | Key Focus Area |
+| :--- | :--- | :---: | :--- | :---: | :--- |
+| **BCA-301** | [Java Programming](SYLLABUS.md#bca-301) | 4.0 | Prof. Sharma | `4 Units` | 8/16 Topics Revised |
+| **BCA-302** | [Database Management Systems](SYLLABUS.md#bca-302) | 4.0 | Dr. Neha Verma | `4 Units` | 10/18 Topics Revised |
+| **BCA-303** | [Web Development](SYLLABUS.md#bca-303) | 3.0 | Prof. Ankit Mehra | `4 Units` | 6/14 Topics Revised |
+| **BCA-304** | [Operating Systems](SYLLABUS.md#bca-304) | 4.0 | Dr. K.R. Rao | `4 Units` | 7/16 Topics Revised |
+| **BCA-305** | [Computer Networks](SYLLABUS.md#bca-305) | 3.0 | Prof. Sunita Rao | `4 Units` | 4/15 Topics Revised |
 
 ---
 
 ## 📂 Repository Directory Structure
 
-This repository is organized to maintain all class materials, homeworks, and lecture notes in one collaborative place:
-
 ```
-├── README.md               # Main course overview, teacher info & syllabus
-├── SYLLABUS.md             # Detailed unit-by-unit syllabus breakdown
-├── TIMETABLE.md            # Weekly class schedule and office hours
-├── CONTRIBUTING.md         # Guide for class students submitting notes & fixes
-├── LICENSE                 # Open-source MIT License
-├── notes/                  # Markdown summaries & handwritten notes
-│   ├── unit-01/
-│   ├── unit-02/
-│   └── revision-sheets/
-├── slides/                 # Lecture slide decks and handouts
-├── pyqs/                   # University past year question papers & solutions
-└── assignments/            # Problem sets, lab assignments & codes
+├── README.md                    # Cohort dashboard, active deadlines & timetable summary
+├── SYLLABUS.md                  # Comprehensive unit-by-unit syllabus with 10-marker weightages
+├── TIMETABLE.md                 # Daily lecture schedule, faculty office hours & exam datesheet
+├── CONTRIBUTING.md              # Class contribution & peer notes submission guide
+├── LICENSE                      # MIT Open Academic License
+├── assignments/                 # Official classwork, PPT rosters & full-mark solutions
+│   ├── README.md                # Classwork portal overview & metrics
+│   ├── ACTIVE_DEADLINES.md      # Detailed problem statements & checklists
+│   ├── PPT_SCHEDULE.md          # CR presentation order, team rosters & guidelines
+│   └── SOLUTIONS.md             # AI-generated 800+ word university model solutions
+├── notes/                       # High-yield revision primers & study summaries
+│   └── README.md                # 7-minute pre-class primers & cheatsheets
+└── pyqs/                        # University Past Year Questions (2021-2025)
+    └── README.md                # 10-marker high-frequency questions & answer guides
 ```
-
----
-
-## 🚀 How to Clone & Use This Repository
-
-### 1. Clone to your local machine
-```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/bca-302-curriculum.git
-cd bca-302-curriculum
-```
-
-### 2. View offline in VS Code or Obsidian
-You can open this folder directly in **VS Code**, **Obsidian**, or any Markdown reader for rapid search and offline revision.
 
 ---
 
 ## 🤝 How to Contribute
 
-We welcome contributions from all cohort students!
-- Found a typo in the lecture notes? Open a Pull Request!
-- Have solved past year questions (PYQs)? Drop them into `/pyqs`.
-- Check [CONTRIBUTING.md](CONTRIBUTING.md) for style guidelines.
+1. **Submit Peer Lecture Notes:** Place markdown or PDF notes into `notes/`.
+2. **Add Verified Past Year Questions:** Contribute university exam questions to `pyqs/`.
+3. **Report Syllabus Discrepancies:** Submit a pull request or contact the Class Representative.
 
 ---
 
 ## ⚖️ Academic Integrity & License
 
-This curriculum repository is maintained for educational and study purposes. All textbook copyrights belong to their respective publishers.
-Code and student notes are distributed under the [MIT License](LICENSE).
+This curriculum repository is maintained for educational cohort reference. All lecture materials, syllabus structures, and solution outlines are distributed under the [MIT License](LICENSE).
