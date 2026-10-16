@@ -14,9 +14,11 @@ import {
   ShieldCheck,
   KeyRound,
   SlidersHorizontal,
+  Compass,
 } from 'lucide-react';
 
 export type ActiveNavTab =
+  | 'landing'
   | 'dashboard'
   | 'tomorrow'
   | 'syllabus'
@@ -63,6 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
     { id: 'settings' as const, label: 'Settings & API Key', icon: SlidersHorizontal },
+    { id: 'landing' as const, label: 'Landing Page', icon: Compass },
   ];
 
   return (

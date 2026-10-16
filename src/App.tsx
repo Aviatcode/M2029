@@ -46,6 +46,7 @@ import { ThemeSelectorModal } from './components/ThemeSelectorModal';
 import { AIKeyConfigModal } from './components/AIKeyConfigModal';
 import { SettingsView } from './components/SettingsView';
 import { LoginModal, UserProfile } from './components/LoginModal';
+import { LandingPageView } from './components/LandingPageView';
 import { initTheme } from './utils/themeService';
 import {
   BackgroundConfig,
@@ -68,6 +69,7 @@ export default function App() {
     try {
       const hash = window.location.hash.replace('#', '') as ActiveNavTab;
       const validTabs: ActiveNavTab[] = [
+        'landing',
         'dashboard',
         'tomorrow',
         'syllabus',
@@ -214,6 +216,12 @@ export default function App() {
     setCurrentRole('student');
     try {
       localStorage.setItem('syllabus_user_profile', JSON.stringify(guestProfile));
+    } catch {
+      // ignore
+    }
+    setActiveTab('landing');
+    try {
+      window.location.hash = 'landing';
     } catch {
       // ignore
     }
@@ -449,32 +457,66 @@ export default function App() {
         aria-hidden="true"
       />
 
-      {/* 1. TOP NAVBAR */}
-      <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
-      <Navbar
-        classCode={classCode}
-        currentUser={currentUser}
-        onNavigateHome={() => setActiveTab('dashboard')}
-        onOpenSearch={() => setIsSearchModalOpen(true)}
-        onOpenNotifications={() => {
-          setIsNotificationsOpen(true);
-          handleMarkAllRead();
-        }}
-        onOpenClassSetup={() => setIsSetupModalOpen(true)}
-        onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
-        onOpenLogin={() => setIsLoginModalOpen(true)}
-        onLogout={handleLogout}
-        onNavigateSettings={() => handleSelectTab('settings')}
-        unreadNotificationsCount={unreadNotificationsCount}
-        totalNotificationsCount={notifications.length}
-        onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
-        calmMode={calmMode}
-        onToggleCalmMode={() => setCalmMode((prev) => !prev)}
-        onOpenThemeSelector={() => setIsThemeModalOpen(true)}
-      />
+      {/* 1. TOP NAVBAR / WORKSPACE vs LANDING PAGE */}
+      {activeTab === 'landing' ? (
+        <div className="relative z-10 w-full h-full overflow-y-auto">
+          <LandingPageView
+            currentUser={currentUser}
+            classCode={classCode}
+            onEnterWorkspace={(profile) => {
+              handleLogin(profile);
+              setClassCode(profile.classCode);
+              setActiveTab('dashboard');
+              try {
+                window.location.hash = 'dashboard';
+              } catch {
+                // ignore
+              }
+            }}
+            onGoToDashboard={() => {
+              setActiveTab('dashboard');
+              try {
+                window.location.hash = 'dashboard';
+              } catch {
+                // ignore
+              }
+            }}
+          />
+        </div>
+      ) : (
+        <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
+          <Navbar
+            classCode={classCode}
+            currentUser={currentUser}
+            onNavigateHome={() => setActiveTab('dashboard')}
+            onNavigateLanding={() => {
+              setActiveTab('landing');
+              try {
+                window.location.hash = 'landing';
+              } catch {
+                // ignore
+              }
+            }}
+            onOpenSearch={() => setIsSearchModalOpen(true)}
+            onOpenNotifications={() => {
+              setIsNotificationsOpen(true);
+              handleMarkAllRead();
+            }}
+            onOpenClassSetup={() => setIsSetupModalOpen(true)}
+            onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+            onOpenLogin={() => setIsLoginModalOpen(true)}
+            onLogout={handleLogout}
+            onNavigateSettings={() => handleSelectTab('settings')}
+            unreadNotificationsCount={unreadNotificationsCount}
+            totalNotificationsCount={notifications.length}
+            onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
+            calmMode={calmMode}
+            onToggleCalmMode={() => setCalmMode((prev) => !prev)}
+            onOpenThemeSelector={() => setIsThemeModalOpen(true)}
+          />
 
-      {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT WORKSPACE */}
-      <div className="flex flex-1 h-[calc(100vh-3.5rem)] overflow-hidden">
+          {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT WORKSPACE */}
+          <div className="flex flex-1 h-[calc(100vh-3.5rem)] overflow-hidden">
         {/* Desktop Sidebar (Collapsible) */}
         <div className="hidden lg:flex h-full shrink-0">
           <Sidebar
@@ -665,6 +707,7 @@ export default function App() {
         </main>
       </div>
       </div>
+      )}
 
       {/* 3. MODALS & DRAWERS */}
       <TomorrowPrepModal

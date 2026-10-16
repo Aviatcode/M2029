@@ -10,6 +10,7 @@ import {
   User,
   LogOut,
   Sliders,
+  Compass,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
 
@@ -17,6 +18,7 @@ interface NavbarProps {
   classCode: string;
   currentUser?: UserProfile;
   onNavigateHome: () => void;
+  onNavigateLanding?: () => void;
   onOpenSearch: () => void;
   onOpenNotifications: () => void;
   onOpenClassSetup: () => void;
@@ -45,6 +47,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     isLoggedIn: true,
   },
   onNavigateHome,
+  onNavigateLanding,
   onOpenSearch,
   onOpenNotifications,
   onOpenClassSetup,
@@ -243,6 +246,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <Palette className="w-3.5 h-3.5 text-neutral-400" />
                   <span>Appearance</span>
                 </button>
+
+                {/* Landing Page */}
+                {onNavigateLanding && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      onNavigateLanding();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
+                  >
+                    <Compass className="w-3.5 h-3.5 text-neutral-400" />
+                    <span>Landing Page</span>
+                  </button>
+                )}
 
                 {/* AI Models & Keys */}
                 <button
