@@ -11,9 +11,6 @@ import {
   LogOut,
   ChevronDown,
   Sliders,
-  ShieldCheck,
-  CheckCircle2,
-  GraduationCap,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
 
@@ -43,7 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     email: 'aman.cr@cs.university.edu',
     rollNumber: 'BCA-2028-042',
     role: 'cr',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '',
     classCode: 'BCA-2028',
     isLoggedIn: true,
   },
@@ -97,72 +94,68 @@ export const Navbar: React.FC<NavbarProps> = ({
     return name.slice(0, 2).toUpperCase();
   };
 
-  const roleBadgeStyle = {
-    cr: 'bg-emerald-950/80 text-emerald-300 border-emerald-500/30',
-    teacher: 'bg-indigo-950/80 text-indigo-300 border-indigo-500/30',
-    student: 'bg-cyan-950/80 text-cyan-300 border-cyan-500/30',
-  }[currentUser.role || 'student'];
-
   return (
-    <header className="h-14 border-b border-slate-800/80 bg-slate-950 px-3 md:px-5 flex items-center justify-between gap-3 shrink-0 z-30 relative select-none">
-      {/* 1. Left: Brand Logo & Class Name */}
-      <div className="flex items-center gap-2.5 sm:gap-3.5">
+    <header className="h-13 border-b border-neutral-850 bg-neutral-950 px-3 md:px-5 flex items-center justify-between gap-3 shrink-0 z-30 select-none">
+      {/* 1. Left: AM Brand Logo & Class Name */}
+      <div className="flex items-center gap-2.5">
         {/* Mobile menu trigger */}
         <button
           onClick={onToggleMobileMenu}
-          className="lg:hidden p-1.5 rounded-md text-slate-400 hover:text-white transition cursor-pointer"
+          className="lg:hidden p-1.5 rounded-md text-neutral-400 hover:text-white transition cursor-pointer"
           aria-label="Open navigation"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-4 h-4" />
         </button>
 
-        {/* SyllabusOS Academic Stamp -> Redirects to Home */}
+        {/* Minimal AM Brand Identity */}
         <button
           onClick={onNavigateHome}
-          className="flex items-center gap-2.5 group cursor-pointer transition text-left focus:outline-none"
-          title="Return to Academic Workspace"
+          className="flex items-center gap-2.5 group cursor-pointer text-left focus:outline-none"
+          title="Return to Workspace"
         >
-          <div className="w-8 h-8 rounded-md bg-slate-900 border border-slate-750 flex items-center justify-center shadow-xs group-hover:border-slate-600 transition relative overflow-hidden">
-            <span className="font-editorial text-sm font-semibold tracking-tight text-slate-200 group-hover:text-white transition select-none">
-              §
-            </span>
-            <span className="absolute bottom-0 right-0 w-1.5 h-1.5 bg-emerald-500 rounded-tl-sm opacity-80" />
+          <div className="w-7 h-7 rounded-lg overflow-hidden border border-neutral-800 bg-black flex items-center justify-center shrink-0 group-hover:border-neutral-700 transition">
+            <img
+              src="/am-logo.svg"
+              alt="AM Logo"
+              className="w-full h-full object-cover"
+            />
           </div>
 
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="font-sans font-semibold text-xs tracking-tight text-slate-200 group-hover:text-white transition">
-                SyllabusOS
-              </span>
-              <span className={`academic-tag text-[9px] px-1 py-0.2 rounded border ${roleBadgeStyle}`}>
-                {currentUser.role ? currentUser.role.toUpperCase() : 'BCA'}
-              </span>
-            </div>
-            <span className="academic-tag text-[10px] text-slate-400 group-hover:text-slate-300 transition leading-tight">
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-xs tracking-tight text-neutral-200 group-hover:text-white transition">
+              SyllabusOS
+            </span>
+            <span className="text-[10px] font-mono text-neutral-500">
+              /
+            </span>
+            <span className="text-[11px] font-mono text-neutral-400 group-hover:text-neutral-300 transition">
               {classCode}
+            </span>
+            <span className="text-[9px] font-mono font-medium px-1.5 py-0.2 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
+              {currentUser.role ? currentUser.role.toUpperCase() : 'CR'}
             </span>
           </div>
         </button>
       </div>
 
-      {/* 2. Center: Global Search Bar */}
+      {/* 2. Center: Minimal Search Input */}
       <button
         onClick={onOpenSearch}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-900/80 border border-slate-800 text-xs text-slate-400 hover:text-slate-200 hover:border-slate-700 transition cursor-pointer w-60 lg:w-72 justify-between shadow-2xs"
+        className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400 hover:text-neutral-200 hover:border-neutral-700 transition cursor-pointer w-56 lg:w-64 justify-between"
       >
         <span className="flex items-center gap-2">
-          <Search className="w-3.5 h-3.5 text-slate-500" />
-          <span className="font-sans-ui truncate">Search syllabus, PPTs, PYQs...</span>
+          <Search className="w-3.5 h-3.5 text-neutral-500" />
+          <span className="truncate text-[11px]">Search syllabus, PYQs...</span>
         </span>
-        <kbd className="academic-tag text-[10px] text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">⌘K</kbd>
+        <kbd className="text-[10px] font-mono text-neutral-500 bg-neutral-950 px-1 py-0.5 rounded border border-neutral-850">⌘K</kbd>
       </button>
 
-      {/* 3. Right: Quick Actions & USER DISPLAY PICTURE (DP) WITH DROPDOWN */}
-      <div className="flex items-center gap-1.5 sm:gap-2">
+      {/* 3. Right: Alerts & Minimal User DP */}
+      <div className="flex items-center gap-2">
         {/* Mobile search icon */}
         <button
           onClick={onOpenSearch}
-          className="md:hidden p-2 text-slate-400 hover:text-white rounded-md transition cursor-pointer"
+          className="md:hidden p-1.5 text-neutral-400 hover:text-white rounded-md transition cursor-pointer"
           title="Search"
           aria-label="Search"
         >
@@ -172,178 +165,119 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Notifications Icon */}
         <button
           onClick={onOpenNotifications}
-          className="relative p-2 text-slate-400 hover:text-white rounded-md transition cursor-pointer"
-          title="Class alerts"
-          aria-label="Class alerts"
+          className="relative p-1.5 text-neutral-400 hover:text-white rounded-md transition cursor-pointer"
+          title="Alerts"
+          aria-label="Alerts"
         >
           <Bell className="w-4 h-4" />
           {unreadNotificationsCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-neutral-200" />
           )}
         </button>
 
-        {/* ============================================================== */}
-        {/* USER DISPLAY PICTURE (DP) & DROPDOWN IN THE RIGHT CORNER */}
-        {/* Below it: Theme, API Key, All Settings, Semester Setup, Login */}
-        {/* ============================================================== */}
-        <div className="relative ml-1" ref={dropdownRef}>
+        {/* Minimal User DP Trigger */}
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen((prev) => !prev)}
-            className="flex items-center gap-1.5 p-1 rounded-full hover:ring-2 hover:ring-cyan-500/50 transition cursor-pointer focus:outline-none group"
-            title={`${currentUser.name} (${currentUser.role.toUpperCase()}) - Click for Settings, Theme & API Keys`}
-            aria-label="User Profile & Settings Menu"
+            className="flex items-center gap-1.5 p-0.5 rounded-full hover:opacity-90 transition cursor-pointer focus:outline-none"
+            title={`${currentUser.name} (${currentUser.role.toUpperCase()})`}
+            aria-label="User Menu"
             aria-expanded={isDropdownOpen}
           >
-            {/* Display Picture (DP) with active status dot */}
             <div className="relative">
               {currentUser.avatarUrl ? (
                 <img
                   src={currentUser.avatarUrl}
                   alt={currentUser.name}
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-700 group-hover:ring-cyan-400 transition"
+                  className="w-7 h-7 rounded-full object-cover border border-neutral-800"
                   onError={(e) => {
-                    // Fallback to initials if image fails
                     (e.target as HTMLElement).style.display = 'none';
                   }}
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-600 via-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-slate-700 group-hover:ring-cyan-400 transition">
+                <div className="w-7 h-7 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 font-medium text-[11px] flex items-center justify-center">
                   {getInitials(currentUser.name)}
                 </div>
               )}
-              {/* Online indicator badge */}
-              <span
-                className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-slate-950 ${
-                  currentUser.isLoggedIn ? 'bg-emerald-400' : 'bg-slate-500'
-                }`}
-                title={currentUser.isLoggedIn ? 'Active User' : 'Guest'}
-              />
+              {currentUser.isLoggedIn && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-neutral-950" />
+              )}
             </div>
 
-            {/* Subtle chevron */}
             <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform duration-200 hidden sm:block ${
+              className={`w-3 h-3 text-neutral-500 transition-transform duration-150 ${
                 isDropdownOpen ? 'rotate-180' : ''
               }`}
             />
           </button>
 
-          {/* ========================================================== */}
-          {/* FLOATING DROPDOWN MENU DIRECTLY BELOW THE USER DP */}
-          {/* ========================================================== */}
+          {/* Minimal Floating Menu Below DP */}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl bg-slate-900/98 backdrop-blur-xl border border-slate-750 shadow-2xl py-2 z-50 text-slate-100 animate-in fade-in slide-in-from-top-2 duration-150">
-              {/* 1. Header: User Info Card */}
-              <div className="px-4 py-3 border-b border-slate-800/90 flex items-center gap-3">
-                <div className="relative shrink-0">
+            <div className="absolute right-0 top-full mt-2 w-64 rounded-xl bg-neutral-950/98 backdrop-blur-md border border-neutral-800 shadow-xl py-1.5 z-50 text-neutral-200 animate-in fade-in duration-100">
+              {/* Profile Header */}
+              <div className="px-3.5 py-2.5 border-b border-neutral-850 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-xs font-medium text-neutral-200 shrink-0 overflow-hidden">
                   {currentUser.avatarUrl ? (
-                    <img
-                      src={currentUser.avatarUrl}
-                      alt={currentUser.name}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-cyan-500/50"
-                    />
+                    <img src={currentUser.avatarUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-600 to-indigo-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-slate-700">
-                      {getInitials(currentUser.name)}
-                    </div>
+                    getInitials(currentUser.name)
                   )}
-                  <span
-                    className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full ring-2 ring-slate-900 ${
-                      currentUser.isLoggedIn ? 'bg-emerald-400' : 'bg-slate-500'
-                    }`}
-                  />
                 </div>
-
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-sm text-white truncate">
-                      {currentUser.name}
-                    </span>
-                    <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded border ${roleBadgeStyle}`}>
+                  <div className="text-xs font-medium text-neutral-200 truncate flex items-center gap-1.5">
+                    <span>{currentUser.name}</span>
+                    <span className="text-[9px] uppercase font-mono px-1 py-0.2 rounded border border-neutral-800 bg-neutral-900 text-neutral-400">
                       {currentUser.role}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 truncate font-mono mt-0.5">
+                  <div className="text-[11px] text-neutral-500 truncate font-mono mt-0.5">
                     {currentUser.rollNumber}
-                  </p>
-                  <p className="text-[11px] text-slate-500 truncate">
-                    {currentUser.email}
-                  </p>
+                  </div>
                 </div>
               </div>
 
-              {/* 2. Menu Buttons Below the DP (Theme, API, All Settings, etc.) */}
-              <div className="p-1.5 space-y-0.5">
-                {/* A. THEME BUTTON */}
+              {/* Menu Items (Minimal, Clean Rows) */}
+              <div className="p-1 text-xs">
+                {/* Appearance / Theme */}
                 <button
                   type="button"
                   onClick={() => {
                     setIsDropdownOpen(false);
                     onOpenThemeSelector?.();
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800/80 transition cursor-pointer text-left group"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                 >
-                  <div className="p-2 rounded-lg bg-purple-950/70 text-purple-400 border border-purple-500/30 group-hover:scale-105 transition-transform shrink-0">
-                    <Palette className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-slate-200 group-hover:text-white">
-                      Theme & Appearance
-                    </div>
-                    <div className="text-[10px] text-slate-400 truncate">
-                      Dark, AMOLED, Clean Light & Cyberpunk themes
-                    </div>
-                  </div>
+                  <Palette className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>Appearance</span>
                 </button>
 
-                {/* B. API KEY & UNIVERSAL AI MODELS BUTTON */}
+                {/* AI Models & Keys */}
                 <button
                   type="button"
                   onClick={() => {
                     setIsDropdownOpen(false);
                     onOpenAIKeyConfig?.();
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800/80 transition cursor-pointer text-left group"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                 >
-                  <div className="p-2 rounded-lg bg-cyan-950/70 text-cyan-400 border border-cyan-500/30 group-hover:scale-105 transition-transform shrink-0">
-                    <KeyRound className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-slate-200 group-hover:text-white flex items-center gap-1.5">
-                      <span>API Keys & Universal AI</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                    </div>
-                    <div className="text-[10px] text-slate-400 truncate">
-                      Any model: OpenAI, Claude, DeepSeek, Gemini, etc.
-                    </div>
-                  </div>
+                  <KeyRound className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>AI Models & API Keys</span>
                 </button>
 
-                {/* C. ALL SETTINGS BUTTON */}
+                {/* Settings */}
                 <button
                   type="button"
                   onClick={() => {
                     setIsDropdownOpen(false);
-                    if (onNavigateSettings) {
-                      onNavigateSettings();
-                    }
+                    onNavigateSettings?.();
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800/80 transition cursor-pointer text-left group"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                 >
-                  <div className="p-2 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 group-hover:scale-105 transition-transform shrink-0">
-                    <Settings className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-slate-200 group-hover:text-white">
-                      All Settings
-                    </div>
-                    <div className="text-[10px] text-slate-400 truncate">
-                      Full workspace settings & live query tester
-                    </div>
-                  </div>
+                  <Settings className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>Settings</span>
                 </button>
 
-                {/* D. SEMESTER SETUP WIZARD BUTTON */}
+                {/* Semester Setup */}
                 {onOpenClassSetup && (
                   <button
                     type="button"
@@ -351,71 +285,53 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setIsDropdownOpen(false);
                       onOpenClassSetup();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800/80 transition cursor-pointer text-left group"
+                    className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                   >
-                    <div className="p-2 rounded-lg bg-amber-950/70 text-amber-400 border border-amber-500/30 group-hover:scale-105 transition-transform shrink-0">
-                      <Sliders className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-slate-200 group-hover:text-white">
-                        Semester Setup Wizard
-                      </div>
-                      <div className="text-[10px] text-slate-400 truncate">
-                        CR curriculum & subject configuration
-                      </div>
-                    </div>
+                    <Sliders className="w-3.5 h-3.5 text-neutral-400" />
+                    <span>Semester Setup</span>
                   </button>
                 )}
 
-                {/* E. CALM MODE TOGGLE */}
+                {/* Calm Mode */}
                 {onToggleCalmMode && (
                   <button
                     type="button"
                     onClick={() => {
                       onToggleCalmMode();
                     }}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-200 hover:text-white hover:bg-slate-800/80 transition cursor-pointer text-left"
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-emerald-950/70 text-emerald-400 border border-emerald-500/30 shrink-0">
-                        <Sparkles className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-slate-200">Calm Study Mode</div>
-                        <div className="text-[10px] text-slate-400">Distraction-free clean view</div>
-                      </div>
+                    <div className="flex items-center gap-2.5">
+                      <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
+                      <span>Calm Mode</span>
                     </div>
                     <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                      className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
                         calmMode
-                          ? 'bg-emerald-950 border-emerald-500/40 text-emerald-300'
-                          : 'bg-slate-850 border-slate-700 text-slate-400'
+                          ? 'bg-neutral-800 border-neutral-700 text-neutral-200'
+                          : 'text-neutral-500 border-transparent'
                       }`}
                     >
-                      {calmMode ? 'ON' : 'OFF'}
+                      {calmMode ? 'On' : 'Off'}
                     </span>
                   </button>
                 )}
               </div>
 
-              {/* 3. Footer: Switch Profile / Login / Sign Out */}
-              <div className="pt-2 mt-1 border-t border-slate-800/90 px-2 space-y-1">
-                {/* Open Login Page Modal */}
+              {/* Account Actions */}
+              <div className="pt-1 mt-1 border-t border-neutral-850 px-1 text-xs">
                 <button
                   type="button"
                   onClick={() => {
                     setIsDropdownOpen(false);
                     onOpenLogin();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-cyan-300 hover:text-cyan-200 hover:bg-cyan-950/50 transition cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                 >
-                  <User className="w-4 h-4 shrink-0" />
-                  <span>
-                    {currentUser.isLoggedIn ? 'Switch Account / Login Page' : 'Sign In / Open Login Page'}
-                  </span>
+                  <User className="w-3.5 h-3.5 text-neutral-400" />
+                  <span>{currentUser.isLoggedIn ? 'Switch Account' : 'Sign In'}</span>
                 </button>
 
-                {/* Sign Out Option */}
                 {currentUser.isLoggedIn && onLogout && (
                   <button
                     type="button"
@@ -423,9 +339,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setIsDropdownOpen(false);
                       onLogout();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 transition cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-rose-400 hover:bg-neutral-900 transition text-left cursor-pointer"
                   >
-                    <LogOut className="w-4 h-4 shrink-0" />
+                    <LogOut className="w-3.5 h-3.5 text-neutral-500" />
                     <span>Sign Out</span>
                   </button>
                 )}
