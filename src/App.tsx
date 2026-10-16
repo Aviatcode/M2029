@@ -45,7 +45,19 @@ import { PWAInstallPopup } from './components/PWAInstallPopup';
 import { ThemeSelectorModal } from './components/ThemeSelectorModal';
 import { AIKeyConfigModal } from './components/AIKeyConfigModal';
 import { SettingsView } from './components/SettingsView';
+import { LoginModal, UserProfile } from './components/LoginModal';
 import { initTheme } from './utils/themeService';
+
+const DEFAULT_USER: UserProfile = {
+  id: 'user-cr-1',
+  name: 'Aman Kumar',
+  email: 'aman.cr@cs.university.edu',
+  rollNumber: 'BCA-2028-042',
+  role: 'cr',
+  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  classCode: 'BCA-2028',
+  isLoggedIn: true,
+};
 
 export default function App() {
   const getInitialTab = (): ActiveNavTab => {
@@ -117,8 +129,49 @@ export default function App() {
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [isAIKeyModalOpen, setIsAIKeyModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [initialTutorPrompt, setInitialTutorPrompt] = useState('');
+
+  // User Profile State (persisted)
+  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_user_profile');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return DEFAULT_USER;
+  });
+
+  const handleLogin = (profile: UserProfile) => {
+    setCurrentUser(profile);
+    setCurrentRole(profile.role);
+    try {
+      localStorage.setItem('syllabus_user_profile', JSON.stringify(profile));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleLogout = () => {
+    const guestProfile: UserProfile = {
+      id: 'user-guest',
+      name: 'Guest Student',
+      email: 'guest@university.edu',
+      rollNumber: 'GUEST-001',
+      role: 'student',
+      classCode: classCode || 'BCA-2028',
+      isLoggedIn: false,
+    };
+    setCurrentUser(guestProfile);
+    setCurrentRole('student');
+    try {
+      localStorage.setItem('syllabus_user_profile', JSON.stringify(guestProfile));
+    } catch {
+      // ignore
+    }
+  };
 
   // Initialize selected UI Mode and Theme
   useEffect(() => {
@@ -318,11 +371,15 @@ export default function App() {
       {/* 1. TOP NAVBAR */}
       <Navbar
         classCode={classCode}
+        currentUser={currentUser}
         onNavigateHome={() => setActiveTab('dashboard')}
         onOpenSearch={() => setIsSearchModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenClassSetup={() => setIsSetupModalOpen(true)}
         onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
+        onLogout={handleLogout}
+        onNavigateSettings={() => handleSelectTab('settings')}
         unreadNotificationsCount={unreadNotificationsCount}
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
         calmMode={calmMode}
@@ -376,7 +433,7 @@ export default function App() {
         <main className="flex-1 h-full overflow-y-auto px-4 md:px-8 py-6 max-w-4xl mx-auto w-full">
           {activeTab === 'dashboard' && (
             <DashboardView
-              studentName="Aman Kumar"
+              studentName={currentUser.name}
               classCode={classCode}
               semesterNumber={workspace.semester}
               todayClasses={timetable.filter((t) => t.day === 'Wednesday')}
@@ -543,6 +600,14 @@ export default function App() {
       <AIKeyConfigModal
         isOpen={isAIKeyModalOpen}
         onClose={() => setIsAIKeyModalOpen(false)}
+      />
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        currentUser={currentUser}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
       />
 
       <GlobalSearchModal

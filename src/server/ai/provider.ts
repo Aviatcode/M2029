@@ -1,5 +1,16 @@
 import { GoogleGenAI } from '@google/genai';
 
+export type ModelProviderType =
+  | 'auto'
+  | 'openai'
+  | 'claude'
+  | 'gemini'
+  | 'deepseek'
+  | 'groq'
+  | 'custom'
+  | 'sandbox'
+  | 'basic';
+
 export interface AIProvider {
   name: string;
   isAvailable(): boolean;
@@ -7,45 +18,204 @@ export interface AIProvider {
   generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T>;
 }
 
-export class GeminiAIProvider implements AIProvider {
-  name = 'Google Gemini (gemini-2.5-flash)';
-  private ai: GoogleGenAI | null = null;
+export interface UniversalKeyConfig {
+  apiKey?: string;
+  provider?: ModelProviderType;
+  modelName?: string;
+  baseUrl?: string;
+}
 
-  constructor(apiKey?: string) {
-    const key = apiKey || process.env.GEMINI_API_KEY;
-    if (key && key.trim().length > 0 && !key.includes('MY_GEMINI_API_KEY') && !key.startsWith('your_')) {
-      this.ai = new GoogleGenAI({ apiKey: key.trim() });
+export class UniversalAIProvider implements AIProvider {
+  name: string;
+  private apiKey: string;
+  private provider: ModelProviderType;
+  private modelName: string;
+  private baseUrl: string;
+  private geminiClient: GoogleGenAI | null = null;
+
+  constructor(config: UniversalKeyConfig) {
+    this.apiKey = (config.apiKey || process.env.AI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
+    this.baseUrl = (config.baseUrl || '').trim();
+    this.provider = config.provider || 'auto';
+
+    // Auto-detect provider if auto
+    if (this.provider === 'auto') {
+      if (this.apiKey.startsWith('sk-ant-')) {
+        this.provider = 'claude';
+      } else if (this.apiKey.startsWith('AIzaSy')) {
+        this.provider = 'gemini';
+      } else if (this.apiKey.startsWith('gsk_')) {
+        this.provider = 'groq';
+      } else if (this.apiKey.startsWith('sk-') && (this.baseUrl.includes('deepseek') || this.apiKey.length === 35)) {
+        this.provider = 'deepseek';
+      } else if (this.apiKey.startsWith('sk-')) {
+        this.provider = 'openai';
+      } else if (this.baseUrl.length > 0) {
+        this.provider = 'custom';
+      } else if (this.apiKey.includes('TEST') || this.apiKey.includes('DEMO') || this.apiKey.includes('SANDBOX')) {
+        this.provider = 'sandbox';
+      } else {
+        this.provider = 'basic';
+      }
+    }
+
+    // Default models based on provider
+    if (config.modelName && config.modelName.trim().length > 0) {
+      this.modelName = config.modelName.trim();
+    } else {
+      switch (this.provider) {
+        case 'openai':
+          this.modelName = 'gpt-4o-mini';
+          break;
+        case 'claude':
+          this.modelName = 'claude-3-5-haiku-20241022';
+          break;
+        case 'deepseek':
+          this.modelName = 'deepseek-chat';
+          break;
+        case 'groq':
+          this.modelName = 'llama-3.3-70b-versatile';
+          break;
+        case 'gemini':
+          this.modelName = 'gemini-2.5-flash';
+          break;
+        case 'custom':
+          this.modelName = 'default-model';
+          break;
+        default:
+          this.modelName = 'built-in-academic';
+      }
+    }
+
+    const providerDisplayNames: Record<string, string> = {
+      openai: `OpenAI (${this.modelName})`,
+      claude: `Anthropic Claude (${this.modelName})`,
+      deepseek: `DeepSeek AI (${this.modelName})`,
+      groq: `Groq Llama (${this.modelName})`,
+      gemini: `Google Gemini (${this.modelName})`,
+      custom: `Custom / Ollama Endpoint (${this.baseUrl || 'Local'})`,
+      sandbox: `Universal AI Testing Sandbox Engine`,
+      basic: `Built-in Basic Academic Model (Free)`,
+    };
+
+    this.name = providerDisplayNames[this.provider] || `AI Engine (${this.modelName})`;
+
+    // Initialize Gemini SDK if Gemini is chosen and key is not placeholder
+    if (this.provider === 'gemini' && this.apiKey && !this.apiKey.includes('MY_GEMINI_API_KEY')) {
+      try {
+        this.geminiClient = new GoogleGenAI({ apiKey: this.apiKey });
+      } catch {
+        this.geminiClient = null;
+      }
     }
   }
 
   isAvailable(): boolean {
-    return this.ai !== null;
+    if (this.provider === 'basic') return false;
+    if (this.provider === 'sandbox') return true;
+    return this.apiKey.length > 5 || this.baseUrl.length > 5;
   }
 
-  async generateText(prompt: string, systemInstruction?: string): Promise<string> {
-    if (!this.ai) {
+  async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
+    if (!this.isAvailable()) {
       return new MockAIProvider().generateText(prompt, systemInstruction);
+    }
+
+    if (this.provider === 'sandbox') {
+      const mockRes = await new MockAIProvider().generateText(prompt, systemInstruction);
+      return `[🧪 TEST MODE ACTIVE - Universal AI Sandbox]\n\n${mockRes}`;
     }
 
     try {
-      const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: systemInstruction ? { systemInstruction } : undefined,
-      });
+      // 1. Google Gemini via SDK
+      if (this.provider === 'gemini' && this.geminiClient) {
+        const resp = await this.geminiClient.models.generateContent({
+          model: this.modelName || 'gemini-2.5-flash',
+          contents: prompt,
+          config: systemInstruction ? { systemInstruction } : undefined,
+        });
+        return resp.text || '';
+      }
 
-      return response.text || '';
+      // 2. OpenAI / DeepSeek / Groq / Custom via OpenAI-compatible Chat API
+      if (
+        this.provider === 'openai' ||
+        this.provider === 'deepseek' ||
+        this.provider === 'groq' ||
+        this.provider === 'custom'
+      ) {
+        let endpoint = 'https://api.openai.com/v1/chat/completions';
+        if (this.provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
+        if (this.provider === 'groq') endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        if (this.provider === 'custom' && this.baseUrl) {
+          endpoint = this.baseUrl.endsWith('/chat/completions')
+            ? this.baseUrl
+            : `${this.baseUrl.replace(/\/$/, '')}/chat/completions`;
+        }
+
+        const messages = [];
+        if (systemInstruction) {
+          messages.push({ role: 'system', content: systemInstruction });
+        }
+        messages.push({ role: 'user', content: prompt });
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.apiKey}`,
+          },
+          body: JSON.stringify({
+            model: this.modelName,
+            messages,
+            temperature: 0.7,
+          }),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`API returned ${res.status}: ${errText.slice(0, 100)}`);
+        }
+
+        const data: any = await res.json();
+        return data.choices?.[0]?.message?.content || '';
+      }
+
+      // 3. Anthropic Claude via Messages API
+      if (this.provider === 'claude') {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': this.apiKey,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: this.modelName,
+            max_tokens: 2048,
+            system: systemInstruction || undefined,
+            messages: [{ role: 'user', content: prompt }],
+          }),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`Claude API returned ${res.status}: ${errText.slice(0, 100)}`);
+        }
+
+        const data: any = await res.json();
+        return data.content?.[0]?.text || '';
+      }
     } catch (err: any) {
-      console.warn(
-        '⚠️ [AI Provider] Gemini API call failed, using Academic Knowledge Engine fallback:',
-        err.message
-      );
+      console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, err.message);
       return new MockAIProvider().generateText(prompt, systemInstruction);
     }
+
+    return new MockAIProvider().generateText(prompt, systemInstruction);
   }
 
   async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
-    if (!this.ai) {
+    if (!this.isAvailable()) {
       return new MockAIProvider().generateStructuredJson<T>(prompt, schemaDescription);
     }
 
@@ -54,26 +224,17 @@ ${schemaDescription ? `\nStrict Schema:\n${schemaDescription}` : ''}
 Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
 
     try {
-      const response = await this.ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: fullPrompt,
-      });
-
-      const raw = response.text || '{}';
-      const cleanJson = raw.replace(/```json/gi, '').replace(/```/gi, '').trim();
+      const rawText = await this.generateText(fullPrompt);
+      const cleanJson = rawText.replace(/```json/gi, '').replace(/```/gi, '').trim();
       return JSON.parse(cleanJson) as T;
-    } catch (err: any) {
-      console.warn(
-        '⚠️ [AI Provider] Gemini structured call failed, using Academic Knowledge Engine fallback:',
-        err.message
-      );
+    } catch {
       return new MockAIProvider().generateStructuredJson<T>(prompt, schemaDescription);
     }
   }
 }
 
 export class MockAIProvider implements AIProvider {
-  name = 'Offline Academic Knowledge Engine (Zero Token Fallback)';
+  name = 'Built-in Basic Academic Model (Free)';
 
   isAvailable(): boolean {
     return true;
@@ -109,236 +270,226 @@ This assignment addresses the formal specification, architectural modeling, and 
 
 ---
 
-### 3. Step-by-Step Comprehensive Solution & Working
-
-#### Part A: Architectural Blueprint & Entity Breakdown
-\`\`\`sql
--- Production Relational Schema Definition
-CREATE TABLE Doctors (
-    doctor_id VARCHAR(10) PRIMARY KEY,
-    doctor_name VARCHAR(100) NOT NULL,
-    specialization VARCHAR(50) NOT NULL,
-    department VARCHAR(50) NOT NULL
-);
-
-CREATE TABLE Patients (
-    patient_id VARCHAR(10) PRIMARY KEY,
-    patient_name VARCHAR(100) NOT NULL,
-    date_of_birth DATE NOT NULL,
-    contact_number VARCHAR(15) UNIQUE
-);
-
-CREATE TABLE Appointments (
-    appointment_id VARCHAR(12) PRIMARY KEY,
-    patient_id VARCHAR(10) REFERENCES Patients(patient_id) ON DELETE CASCADE,
-    doctor_id VARCHAR(10) REFERENCES Doctors(doctor_id) ON DELETE RESTRICT,
-    scheduled_timestamp TIMESTAMP NOT NULL,
-    status VARCHAR(20) DEFAULT 'Scheduled',
-    CONSTRAINT chk_status CHECK (status IN ('Scheduled', 'Completed', 'Cancelled'))
-);
+### 3. Structural Architecture & Algorithmic Blueprint
+\`\`\`
+[Input Tuple / Transaction]
+        │
+        ▼
+ ┌──────────────┐      Violation
+ │ Integrity    ├─────────────────────► [Abort / Rollback Protocol]
+ │ Verification │
+ └──────┬───────┘
+        │ Validated
+        ▼
+ ┌──────────────┐
+ │ Concurrency  │ (2-Phase Locking / Multiversion Timestamping)
+ │ Scheduler    │
+ └──────┬───────┘
+        │ Serialized
+        ▼
+ [Committed Database State (ACID Guaranteed)]
 \`\`\`
 
-#### Part B: Step-by-Step Mathematical & Algorithmic Proof
-1. **Dependency Analysis:** Given attribute set $U = \\{A, B, C, D, E\\}$ and Functional Dependency set $F = \\{A \\rightarrow B, B \\rightarrow C, C \\rightarrow D\\}$.
-2. **Closure Verification:** Compute $(A)^+ = \\{A, B, C, D\\}$. Since $(A)^+$ contains candidate attributes without partial dependency, schema adheres to 2NF.
-3. **Decomposition to 3NF:** By applying Boyce-Codd / 3NF synthesis algorithm, we decompose into lossless join sub-schemas that preserve all dependencies.
+---
+
+### 4. Implementation Artifact / Code Execution
+\`\`\`java
+public class AcademicSolutionEngine {
+    private final String courseCode = "BCA-302";
+    private boolean isConsistent = true;
+
+    public void verifyInvariants() {
+        if (!isConsistent) {
+            throw new IllegalStateException("Integrity constraint violated: rolling back state.");
+        }
+        System.out.println("All schema invariants satisfied according to university syllabus.");
+    }
+}
+\`\`\`
 
 ---
 
-### 4. Real-World Industrial Application & Practical Example
-In high-throughput enterprise systems (e.g. AWS Aurora, FinTech transaction processing), this design prevents:
-- **Write Skew & Lost Updates:** Through strict serializability and row-level locking.
-- **Redundant Storage:** Reducing storage footprint by over 42% through eliminated schema duplication.
-
----
-
-### 5. Boundary Conditions, Edge Cases & Verification Checklist
-- [x] Zero partial dependencies detected ($A \\rightarrow B$ strictly on full candidate key).
-- [x] Null pointer & boundary value checks implemented for empty recordsets.
-- [x] Thread safety guaranteed via mutex / monitor synchronization primitives.
-
----
-
-### 6. Academic References & Citations
-1. Silberschatz, A., Korth, H. F., & Sudarshan, S. (2020). *Database System Concepts* (7th ed., Chapters 2, 7 & 14). McGraw-Hill.
-2. Elmasri, R., & Navathe, S. B. (2021). *Fundamentals of Database Systems* (8th ed.). Pearson Education.`;
+### 5. University Evaluation & Scoring Checklist
+- [x] Defined all formal terminology with boundary conditions.
+- [x] Illustrated architectural block diagrams with state transitions.
+- [x] Outlined code snippets with time complexity bounds.
+- [x] Cross-referenced past 5 years university PYQ variations.`;
     }
 
-    if (prompt.toLowerCase().includes('exam') || prompt.toLowerCase().includes('10-marker')) {
-      return `### Formal Definition (2 Marks)\nA standardized computational mechanism ensuring atomicity, consistency, and structural integrity.\n\n### Architectural Mechanism (3 Marks)\n- State initialization\n- Boundary check execution\n- Resource allocation and cleanup\n\n### Working Algorithm & Syntax (3 Marks)\nO(1) runtime bounds with strict parameter verification.\n\n### Examiner Gotchas (2 Marks)\nAlways handle empty boundaries and index overflow!`;
+    if (p.includes('10-marker') || p.includes('exam')) {
+      return `## 📝 UNIVERSITY 10-MARKER MODEL ANSWER SCHEME
+
+### Section 1: Standard Definition (2 Marks)
+A formal computational or structural paradigm designed to guarantee consistency, fault-isolation, and predictable resource allocation across interconnected software nodes.
+
+### Section 2: Architectural Schematic Diagram (2 Marks)
+\`\`\`
+  ┌────────────────────────────────────────────────────────┐
+  │                 Application / User Tier                 │
+  └───────────────────────────┬────────────────────────────┘
+                              │ Standard Queries (SQL / RPC)
+                              ▼
+  ┌────────────────────────────────────────────────────────┐
+  │           Conceptual Schema / Normal Form Invariant     │
+  └───────────────────────────┬────────────────────────────┘
+                              │ Physical Storage Mapping
+                              ▼
+  ┌────────────────────────────────────────────────────────┐
+  │           Disk Storage & Write-Ahead Logging (WAL)     │
+  └────────────────────────────────────────────────────────┘
+\`\`\`
+
+### Section 3: Step-by-Step Working Mechanism (3 Marks)
+1. **Initiation & Validation:** Input parameters are checked against candidate key constraints.
+2. **State Transition:** Operations are recorded in write-ahead logs prior to cache buffer flushes.
+3. **Commit Guarantee:** Once committed, changes are non-volatile and withstand unexpected failures.
+
+### Section 4: Key Gotchas & Scoring Takeaways (3 Marks)
+- **Common Student Trap:** Forgetting to mention the closure test or dependency preservation check.
+- **Examiner's Favorite:** State explicitly whether the solution guarantees serializability under concurrent schedules.`;
     }
 
     return `This is a foundational concept frequently tested in university examinations. It solves critical bottlenecks by introducing formal boundary conditions and predictable resource management. Key exam focus areas include architectural diagrams, time complexity bounds, and real-world failure handling.`;
   }
 
-  async generateStructuredJson<T>(prompt: string, _schemaDescription?: string): Promise<T> {
-    if (prompt.toLowerCase().includes('prep') || prompt.toLowerCase().includes('tomorrow')) {
+  async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
+    const p = prompt.toLowerCase();
+
+    // 1. Syllabus Parsing Heuristic
+    if (p.includes('units') || p.includes('syllabus')) {
+      return [
+        {
+          id: 'unit-gen-1',
+          number: 1,
+          title: 'Unit 1: Foundations & Relational Architecture',
+          topics: [
+            {
+              id: 'top-1-1',
+              title: 'Three Schema Architecture & Data Independence',
+              difficulty: 'Easy',
+              examWeightage: 'High',
+              estimatedMinutes: 5,
+              status: 'strong',
+            },
+            {
+              id: 'top-1-2',
+              title: 'Entity Relationship (ER) & Extended ER Modeling',
+              difficulty: 'Medium',
+              examWeightage: 'Must Read (10 Marks)',
+              estimatedMinutes: 7,
+              status: 'learning',
+            },
+            {
+              id: 'top-1-3',
+              title: 'Integrity Constraints: Domain, Entity & Referential',
+              difficulty: 'Medium',
+              examWeightage: 'High',
+              estimatedMinutes: 6,
+              status: 'not_started',
+            },
+          ],
+        },
+        {
+          id: 'unit-gen-2',
+          number: 2,
+          title: 'Unit 2: Relational Calculus & Schema Refinement',
+          topics: [
+            {
+              id: 'top-2-1',
+              title: 'Relational Algebra: Select, Project, Join & Division',
+              difficulty: 'Hard',
+              examWeightage: 'Must Read (10 Marks)',
+              estimatedMinutes: 8,
+              status: 'learning',
+            },
+            {
+              id: 'top-2-2',
+              title: 'Functional Dependencies & Attribute Closure Algorithm',
+              difficulty: 'Medium',
+              examWeightage: 'Must Read (10 Marks)',
+              estimatedMinutes: 7,
+              status: 'not_started',
+            },
+            {
+              id: 'top-2-3',
+              title: 'Normalization: 1NF, 2NF, 3NF & BCNF Decomposition',
+              difficulty: 'Hard',
+              examWeightage: 'Must Read (10 Marks)',
+              estimatedMinutes: 10,
+              status: 'not_started',
+            },
+          ],
+        },
+      ] as unknown as T;
+    }
+
+    // 2. Pre-Lecture 7-Min Primer Heuristic
+    if (p.includes('step1whatisit') || p.includes('prep') || p.includes('primer')) {
       return {
-        step1WhatIsIt: 'A foundational object-oriented and structural paradigm.',
-        step2WhyUsed: 'To reuse reliable logic without rewriting code and preventing bugs.',
-        step3AnalogyAndExample: 'Like inheriting your family recipe: you keep what works and add your own twist!',
+        step1WhatIsIt:
+          'A fundamental architectural mechanism that prevents state inconsistencies and resource collisions.',
+        step2WhyUsed:
+          'Without this protocol, concurrent or nested operations lead to dirty reads, update loss, or system deadlocks.',
+        step3AnalogyAndExample:
+          'Think of an ATM transaction: either cash is dispensed AND your account balance is deducted, or nothing happens at all.',
         step4MiniQuiz: [
           {
-            question: 'What is the primary benefit of this concept?',
-            options: ['Code reusability', 'Slower runtime', 'Increased memory leak', 'None'],
+            question: 'What is the primary guarantee provided by this mechanism?',
+            options: ['Consistency & Atomicity', 'Faster Clock Speed', 'Lower Screen Brightness', 'None'],
             correctIndex: 0,
-            explanation: 'It allows modular extension while preserving baseline functionality.',
+            explanation: 'It guarantees that intermediate failure leaves the system in a known valid state.',
+          },
+          {
+            question: 'What happens if a constraint is violated during execution?',
+            options: ['Abort and Rollback', 'Continue blindly', 'Delete the server', 'Ignore error'],
+            correctIndex: 0,
+            explanation: 'Transactions strictly rollback upon detecting constraint violations.',
           },
         ],
       } as unknown as T;
     }
 
-    if (
-      prompt.toLowerCase().includes('course') ||
-      prompt.toLowerCase().includes('syllabus') ||
-      prompt.toLowerCase().includes('teacher') ||
-      prompt.toLowerCase().includes('faculty') ||
-      prompt.toLowerCase().includes('instructor')
-    ) {
-      const lower = prompt.toLowerCase();
-      let courseName = 'Database Management Systems';
-      let courseCode = 'BCA-302';
-      let teacherName = 'Dr. Rajesh Sharma';
-      let teacherDesignation = 'Associate Professor & Course Lead';
-      let teacherEmail = 'r.sharma@cs.university.edu';
-      let teacherOffice = 'Room 402, Block B, Tech Campus';
-
-      if (lower.includes('java')) {
-        courseName = 'Java Programming & OOP Paradigm';
-        courseCode = 'BCA-301';
-        teacherName = 'Prof. Sunita Rao';
-        teacherDesignation = 'Professor, Department of Computer Applications';
-        teacherEmail = 'sunita.rao@cs.university.edu';
-        teacherOffice = 'Room 205, Main Academic Wing';
-      } else if (lower.includes('network') || lower.includes('cn')) {
-        courseName = 'Computer Networks & Protocols';
-        courseCode = 'BCA-305';
-        teacherName = 'Dr. Neha Verma';
-        teacherDesignation = 'Associate Professor, Networking Systems';
-        teacherEmail = 'n.verma@cs.university.edu';
-        teacherOffice = 'Room 312, Telecomm Block';
-      } else if (lower.includes('os') || lower.includes('operating')) {
-        courseName = 'Operating Systems Architecture';
-        courseCode = 'BCA-304';
-        teacherName = 'Prof. Vikram Malhotra';
-        teacherDesignation = 'Senior Lecturer & Lab In-charge';
-        teacherEmail = 'v.malhotra@cs.university.edu';
-        teacherOffice = 'Room 110, Systems Lab';
-      } else if (lower.includes('web')) {
-        courseName = 'Full-Stack Web Development';
-        courseCode = 'BCA-303';
-        teacherName = 'Dr. Amit Trivedi';
-        teacherDesignation = 'Assistant Professor, Web Technologies';
-        teacherEmail = 'a.trivedi@cs.university.edu';
-        teacherOffice = 'Room 418, Tech Innovation Hub';
-      }
-
-      // Check if teacher name or email was passed in prompt
-      const teacherMatch = prompt.match(/(?:Prof\.|Dr\.|Teacher|Instructor|Faculty)[:\s]+([A-Z][a-zA-Z\s.]+)/i);
-      if (teacherMatch && teacherMatch[1]) {
-        teacherName = teacherMatch[1].trim();
-      }
-
+    // 3. GitHub Exporter Course Info Heuristic
+    if (p.includes('teachername') || p.includes('courseinfo')) {
       return {
-        teacherName,
-        teacherDesignation,
-        teacherEmail,
-        teacherOffice,
-        courseName,
-        courseCode,
+        teacherName: 'Dr. Rajesh Sharma',
+        teacherDesignation: 'Associate Professor & Lab Director',
+        teacherEmail: 'rajesh.sharma@cs.university.edu',
+        teacherOffice: 'Room 402, Block B, Academic Wing',
+        courseName: 'Database Management Systems & Relational Architectures',
+        courseCode: 'BCA-302',
         university: 'University School of Information Technology',
-        department: 'Department of Computer Science & Applications',
+        department: 'Department of Computer Applications',
         semester: 'Semester III',
         academicYear: '2026-2027',
-        credits: '4.0 Credits (3L + 1T)',
+        credits: '4.0 Credits',
         weeklySchedule: [
-          { day: 'Monday', time: '10:00 AM - 11:30 AM', room: 'Lecture Hall 204', type: 'Lecture' },
-          { day: 'Wednesday', time: '11:30 AM - 01:00 PM', room: 'Lecture Hall 204', type: 'Lecture' },
-          { day: 'Friday', time: '02:00 PM - 04:00 PM', room: 'CS Lab 3', type: 'Practical Lab' },
+          { day: 'Monday', time: '10:00 AM - 11:30 AM', room: 'LH-204', type: 'Lecture' },
+          { day: 'Wednesday', time: '11:30 AM - 01:00 PM', room: 'LH-204', type: 'Lecture' },
+          { day: 'Friday', time: '02:00 PM - 04:00 PM', room: 'Lab 3', type: 'Lab' },
         ],
         units: [
           {
             unitNumber: 1,
             title: 'Foundations & Data Modeling',
-            topics: [
-              'Database System Architecture',
-              'Three-Schema Architecture',
-              'Data Independence',
-              'Entity-Relationship (ER) Modeling',
-              'Enhanced ER Modeling and Specialization',
-            ],
-            hours: 9,
+            topics: ['Three Schema Architecture', 'ER Diagrams', 'Relational Constraints'],
+            hours: 10,
             examWeightage: '15 Marks',
           },
           {
             unitNumber: 2,
-            title: 'Relational Model & Formal Query Languages',
-            topics: [
-              'Relational Model Concepts & Constraints',
-              'Relational Algebra Operations (Select, Project, Join, Division)',
-              'Tuple Relational Calculus & Domain Calculus',
-              'SQL-99 Schema Definition & Constraints',
-            ],
-            hours: 10,
-            examWeightage: '20 Marks',
-          },
-          {
-            unitNumber: 3,
-            title: 'Relational Database Design & Normalization',
-            topics: [
-              'Informal Design Guidelines for Relation Schemas',
-              'Functional Dependencies (FDs) & Armstrong Axioms',
-              'Normal Forms: 1NF, 2NF, 3NF, BCNF',
-              'Multi-Valued Dependencies & 4NF, 5NF',
-              'Lossless Decomposition & Dependency Preservation',
-            ],
+            title: 'Relational Algebra & Normalization',
+            topics: ['Relational Operators', 'Functional Dependencies', '1NF, 2NF, 3NF, BCNF'],
             hours: 12,
             examWeightage: '25 Marks',
-          },
-          {
-            unitNumber: 4,
-            title: 'Transaction Management & Concurrency Control',
-            topics: [
-              'ACID Properties of Transactions',
-              'Transaction States & Serializability Schedules',
-              'Two-Phase Locking (2PL) Protocol',
-              'Deadlock Handling, Prevention, and Detection',
-              'Log-Based Crash Recovery & Checkpointing',
-            ],
-            hours: 11,
-            examWeightage: '20 Marks',
-          },
-          {
-            unitNumber: 5,
-            title: 'Storage, Indexing & Emerging Paradigms',
-            topics: [
-              'File Organization & Record Buffering',
-              'B-Tree and B+ Tree Indexing Structures',
-              'Hashing Techniques',
-              'NoSQL Datastores & Distributed Architectures',
-            ],
-            hours: 8,
-            examWeightage: '20 Marks',
           },
         ],
         textbooks: [
           {
             title: 'Database System Concepts',
-            authors: 'Abraham Silberschatz, Henry F. Korth, S. Sudarshan',
-            publisher: 'McGraw-Hill Education',
-            edition: '7th International Edition',
-          },
-          {
-            title: 'Fundamentals of Database Systems',
-            authors: 'Ramez Elmasri, Shamkant B. Navathe',
-            publisher: 'Pearson Education',
-            edition: '8th Edition',
-          },
-          {
-            title: 'Database Management Systems',
-            authors: 'Raghu Ramakrishnan, Johannes Gehrke',
+            authors: 'Silberschatz, Korth, Sudarshan',
             publisher: 'McGraw-Hill Higher Education',
-            edition: '3rd Edition',
+            edition: '7th Edition',
           },
         ],
         evaluationScheme: [
@@ -354,71 +505,48 @@ In high-throughput enterprise systems (e.g. AWS Aurora, FinTech transaction proc
   }
 }
 
-export class TestingSandboxAIProvider implements AIProvider {
-  name = 'Google Gemini 2.5 Flash (Testing Sandbox Engine)';
-
-  isAvailable(): boolean {
-    return true;
-  }
-
-  async generateText(prompt: string, systemInstruction?: string): Promise<string> {
-    const mock = new MockAIProvider();
-    const res = await mock.generateText(prompt, systemInstruction);
-    return `[🧪 TEST MODE ACTIVE - Sandbox Simulation]\n\n${res}`;
-  }
-
-  async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
-    return new MockAIProvider().generateStructuredJson<T>(prompt, schemaDescription);
-  }
-}
-
 export class AIProviderFactory {
   private static instance: AIProvider | null = null;
-  private static customApiKey: string | null = null;
-
-  static isTestingKey(key: string): boolean {
-    const k = key.toUpperCase();
-    return k.includes('TESTING') || k.includes('SANDBOX') || k.includes('DEMO') || k.includes('TEST');
-  }
+  private static currentConfig: UniversalKeyConfig = {};
 
   static getProvider(): AIProvider {
     if (!this.instance) {
-      const apiKey = this.customApiKey || process.env.GEMINI_API_KEY;
-      if (apiKey && apiKey.trim().length > 0) {
-        if (this.isTestingKey(apiKey)) {
-          this.instance = new TestingSandboxAIProvider();
-          return this.instance;
-        }
-        const gemini = new GeminiAIProvider(apiKey);
-        if (gemini.isAvailable()) {
-          this.instance = gemini;
-          return this.instance;
-        }
+      const envKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || '';
+      if (this.currentConfig.apiKey || envKey) {
+        this.instance = new UniversalAIProvider({
+          apiKey: this.currentConfig.apiKey || envKey,
+          provider: this.currentConfig.provider || 'auto',
+          modelName: this.currentConfig.modelName,
+          baseUrl: this.currentConfig.baseUrl,
+        });
+      } else {
+        this.instance = new MockAIProvider();
       }
-      this.instance = new MockAIProvider();
     }
     return this.instance;
   }
 
-  static setApiKey(apiKey?: string): { success: boolean; modelType: 'gemini' | 'basic'; providerName: string } {
-    if (apiKey && apiKey.trim().length > 0) {
-      this.customApiKey = apiKey.trim();
-      if (this.isTestingKey(this.customApiKey)) {
-        this.instance = new TestingSandboxAIProvider();
-        return {
-          success: true,
-          modelType: 'gemini',
-          providerName: 'Google Gemini 2.5 Flash (Testing Sandbox Engine)',
-        };
-      }
-      this.instance = new GeminiAIProvider(this.customApiKey);
+  static setConfig(config: UniversalKeyConfig): {
+    success: boolean;
+    modelType: 'custom_ai' | 'basic';
+    providerName: string;
+  } {
+    const key = (config.apiKey || '').trim();
+    if (key.length > 0 || (config.baseUrl && config.baseUrl.trim().length > 0)) {
+      this.currentConfig = {
+        apiKey: key,
+        provider: config.provider || 'auto',
+        modelName: config.modelName,
+        baseUrl: config.baseUrl,
+      };
+      this.instance = new UniversalAIProvider(this.currentConfig);
       return {
         success: true,
-        modelType: 'gemini',
-        providerName: 'Google Gemini 2.5 Flash',
+        modelType: 'custom_ai',
+        providerName: this.instance.name,
       };
     } else {
-      this.customApiKey = null;
+      this.currentConfig = {};
       this.instance = new MockAIProvider();
       return {
         success: true,
@@ -428,15 +556,26 @@ export class AIProviderFactory {
     }
   }
 
-  static getStatus(): { hasCustomKey: boolean; modelType: 'gemini' | 'basic'; providerName: string } {
+  // Backward compatibility alias for single apiKey argument
+  static setApiKey(apiKey?: string): { success: boolean; modelType: 'custom_ai' | 'basic'; providerName: string } {
+    return this.setConfig({ apiKey });
+  }
+
+  static getStatus(): {
+    hasCustomKey: boolean;
+    modelType: 'custom_ai' | 'basic';
+    providerName: string;
+    provider: ModelProviderType;
+    modelName: string;
+  } {
     const provider = this.getProvider();
-    const isGemini = (provider instanceof GeminiAIProvider && provider.isAvailable()) || (provider instanceof TestingSandboxAIProvider);
+    const hasKey = provider instanceof UniversalAIProvider && provider.isAvailable();
     return {
-      hasCustomKey: isGemini,
-      modelType: isGemini ? 'gemini' : 'basic',
-      providerName: isGemini
-        ? (provider.name || 'Google Gemini 2.5 Flash (Testing Engine)')
-        : 'Built-in Basic Academic Model (Free)',
+      hasCustomKey: hasKey,
+      modelType: hasKey ? 'custom_ai' : 'basic',
+      providerName: hasKey ? provider.name : 'Built-in Basic Academic Model (Free)',
+      provider: this.currentConfig.provider || 'auto',
+      modelName: this.currentConfig.modelName || 'default',
     };
   }
 
@@ -444,4 +583,3 @@ export class AIProviderFactory {
     this.instance = provider;
   }
 }
-

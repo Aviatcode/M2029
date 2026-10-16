@@ -19,7 +19,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
 
   const [aiStatus, setAiStatus] = useState<{
     hasCustomKey: boolean;
-    modelType: 'gemini' | 'basic';
+    modelType: string;
     providerName: string;
   }>({
     hasCustomKey: false,

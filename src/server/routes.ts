@@ -342,14 +342,14 @@ Format as strict JSON:
   });
 });
 
-// 5.5 AI Engine Configuration (Gemini API Key or Built-in Basic Model)
+// 5.5 AI Engine Configuration (Universal Model API Key or Built-in Basic Model)
 apiRouter.get('/ai/config', (_req: Request, res: Response) => {
   res.json(AIProviderFactory.getStatus());
 });
 
 apiRouter.post('/ai/config', (req: Request, res: Response) => {
-  const { apiKey } = req.body;
-  const result = AIProviderFactory.setApiKey(apiKey);
+  const { apiKey, provider, modelName, baseUrl } = req.body;
+  const result = AIProviderFactory.setConfig({ apiKey, provider, modelName, baseUrl });
   res.json({
     status: 'success',
     ...result,
