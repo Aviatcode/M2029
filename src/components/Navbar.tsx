@@ -113,13 +113,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-2.5 group cursor-pointer text-left focus:outline-none"
           title="Return to Workspace"
         >
-          <div className="w-7 h-7 rounded-lg overflow-hidden border border-neutral-800 bg-black flex items-center justify-center shrink-0 group-hover:border-neutral-700 transition">
-            <img
-              src="/am-logo.svg"
-              alt="AM Logo"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <img
+            src="/am-logo.png"
+            alt="AM Logo"
+            className="w-7 h-7 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition"
+          />
 
           <div className="flex items-center gap-2">
             <span className="font-medium text-xs tracking-tight text-neutral-200 group-hover:text-white transition">
