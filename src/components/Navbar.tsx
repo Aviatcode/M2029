@@ -169,33 +169,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Search className="w-4 h-4" />
         </button>
 
-        {/* Quick API Key Button */}
-        {onOpenAIKeyConfig && (
-          <button
-            onClick={onOpenAIKeyConfig}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-cyan-200 hover:text-white bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/30 hover:border-cyan-500/60 transition cursor-pointer shadow-2xs group"
-            title="Configure Universal AI Models & API Key"
-            aria-label="Universal API Key"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform shrink-0" />
-            <span className="font-sans-ui font-semibold">API Key</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          </button>
-        )}
-
-        {/* Quick Theme Picker */}
-        {onOpenThemeSelector && (
-          <button
-            onClick={onOpenThemeSelector}
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-300 hover:text-white bg-slate-900/50 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition cursor-pointer shadow-2xs"
-            title="Appearance & Themes"
-            aria-label="Appearance Themes"
-          >
-            <Palette className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="font-sans-ui">Theme</span>
-          </button>
-        )}
-
         {/* Notifications Icon */}
         <button
           onClick={onOpenNotifications}
