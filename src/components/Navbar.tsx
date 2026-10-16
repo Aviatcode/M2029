@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <img
             src="/am-logo.png"
             alt="AM Logo"
-            className="w-7 h-7 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition"
+            className="w-8 h-8 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition"
           />
         </button>
       </div>
