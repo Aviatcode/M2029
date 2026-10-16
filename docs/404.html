@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>SyllabusOS - AI Autonomous Curriculum & WebAPK</title>
+    <meta name="description" content="Autonomous curriculum operating system that parses your syllabus, delivers 7 AM pre-lecture ELI9 primers, visual mindmaps, university 10-marker answers, PYQs, and shared token-saving classroom cache with installable WebAPK PWA support." />
+    
+    <!-- OpenGraph & Twitter -->
+    <meta property="og:title" content="SyllabusOS - AI Autonomous Curriculum & WebAPK" />
+    <meta property="og:description" content="Autonomous curriculum operating system that parses your syllabus, delivers 7 AM pre-lecture ELI9 primers, visual mindmaps, university 10-marker answers, PYQs, and shared token-saving classroom cache with installable WebAPK PWA support." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- WebAPK / PWA Meta Tags -->
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SyllabusOS" />
+    
+    <link rel="icon" type="image/png" href="./am-logo.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.json" />
+
+    <!-- Google Fonts: Newsreader (Editorial Serif), Plus Jakarta Sans (Modern Sans), & JetBrains Mono (Academic Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+      // Suppress benign Vite dev server WebSocket disconnect errors in cloud proxy / iframe environments
+      window.addEventListener('unhandledrejection', function(event) {
+        var reason = event && event.reason;
+        var msg = (reason && (reason.message || reason.stack || String(reason))) || '';
+        if (msg.indexOf('WebSocket') !== -1) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      });
+      window.addEventListener('error', function(event) {
+        var msg = (event && (event.message || '')) || '';
+        if (msg.indexOf('WebSocket') !== -1) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+        }
+      });
+    </script>
+    <script type="module" crossorigin src="./assets/index-C28obot7.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DmjJ7Oa7.css">
+  <link rel="manifest" href="./manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="./registerSW.js"></script></head>
+  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/20 selection:text-cyan-200">
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <!-- Subtle glow ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#glow)" stroke-width="3" opacity="0.25"/>
+
+  <!-- Folder base structure -->
+  <g filter="url(#shadow)">
+    <!-- Folder tab -->
+    <path d="M 120 180 L 210 180 L 240 210 L 392 210 A 16 16 0 0 1 408 226 L 408 340 A 24 24 0 0 1 384 364 L 128 364 A 24 24 0 0 1 104 340 L 104 196 A 16 16 0 0 1 120 180 Z" fill="#1e293b" opacity="0.9" stroke="url(#glow)" stroke-width="4"/>
+    
+    <!-- Syllabus Sheet / Document protruding out -->
+    <path d="M 160 140 L 352 140 A 16 16 0 0 1 368 156 L 368 280 L 144 280 L 144 156 A 16 16 0 0 1 160 140 Z" fill="#f8fafc" opacity="0.95"/>
+    <!-- Document lines -->
+    <rect x="180" y="168" width="100" height="8" rx="4" fill="#0284c7"/>
+    <rect x="180" y="190" width="150" height="6" rx="3" fill="#94a3b8"/>
+    <rect x="180" y="206" width="130" height="6" rx="3" fill="#cbd5e1"/>
+    <rect x="180" y="222" width="110" height="6" rx="3" fill="#cbd5e1"/>
+
+    <!-- Front Folder flap with graduation cap crest -->
+    <path d="M 104 230 L 408 230 L 388 364 A 24 24 0 0 1 364 380 L 148 380 A 24 24 0 0 1 124 364 Z" fill="url(#glow)" opacity="0.95"/>
+
+    <!-- Mortarboard Cap / Autonomous Brain Crest -->
+    <!-- Cap top rhombus -->
+    <polygon points="256,260 336,290 256,320 176,290" fill="#ffffff" filter="url(#shadow)"/>
+    <!-- Cap skull cap -->
+    <path d="M 216 305 Q 256 345 296 305 L 296 325 Q 256 365 216 325 Z" fill="#0f172a"/>
+    <!-- Tassel -->
+    <line x1="256" y1="290" x2="330" y2="305" stroke="url(#accent)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="330" cy="318" r="6" fill="url(#accent)"/>
+  </g>
+
+  <!-- Golden 7:00 AM Dawn spark / AI star -->
+  <g transform="translate(370, 110)">
+    <circle cx="0" cy="0" r="28" fill="url(#accent)" filter="url(#shadow)"/>
+    <!-- 4 point star -->
+    <path d="M 0 -20 Q 0 0 20 0 Q 0 0 0 20 Q 0 0 -20 0 Q 0 0 0 -20 Z" fill="#ffffff"/>
+  </g>
+</svg>
