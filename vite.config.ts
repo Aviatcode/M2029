@@ -10,6 +10,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig(() => {
   return {
+    base: process.env.BASE_PATH || './',
     plugins: [
       react(),
       tailwindcss(),

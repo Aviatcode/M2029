@@ -28,6 +28,11 @@ import {
 } from '../types/index.js';
 import { generateGitHubFiles, generateZipBuffer } from './githubExporter.js';
 import { getAutoSyncStatus, executeAutoSync, registerDbProvider } from './autoSyncService.js';
+import {
+  testSupabaseConnection,
+  serverSupabase,
+  isServerSupabaseConfigured,
+} from './db/supabaseClient.js';
 
 export const apiRouter = Router();
 
@@ -69,6 +74,15 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     service: 'SyllabusOS Curriculum & Classroom API',
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
+  });
+});
+
+// 0.1 Supabase Database Connection & Migration Status
+apiRouter.get('/supabase/status', async (_req: Request, res: Response) => {
+  const result = await testSupabaseConnection();
+  res.json({
+    configured: isServerSupabaseConfigured(),
+    ...result,
   });
 });
 
