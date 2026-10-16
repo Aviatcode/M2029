@@ -7,12 +7,9 @@ import {
   Calendar,
   Flame,
   FileCheck2,
-  Settings,
   Award,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
-  KeyRound,
   SlidersHorizontal,
   Compass,
 } from 'lucide-react';
@@ -181,53 +178,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
         </div>
       </nav>
-
-      {/* Footer: Setup Wizard & Sidebar Collapse Action */}
-      <div
-        className={`p-2.5 border-t border-slate-800/60 text-xs text-slate-400 flex flex-col gap-1.5`}
-      >
-        {onOpenAIKeyConfig && (
-          <button
-            onClick={onOpenAIKeyConfig}
-            className={`flex items-center rounded-md text-neutral-300 hover:text-white hover:bg-neutral-900 border border-neutral-800 transition cursor-pointer ${
-              isCollapsed ? 'p-2 justify-center' : 'gap-2 px-2.5 py-1.5'
-            }`}
-            title="Configure AI Model Engine & API Keys"
-          >
-            <KeyRound className="w-4 h-4 text-neutral-400 shrink-0" />
-            {!isCollapsed && <span className="font-sans-ui text-xs font-medium">AI Keys & Models</span>}
-          </button>
-        )}
-
-        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-          <button
-            onClick={() => {
-              if (onOpenClassSetup) {
-                onOpenClassSetup();
-              } else {
-                onSelectTab('setup');
-              }
-            }}
-            className={`flex items-center rounded-md text-slate-400 hover:text-white hover:bg-slate-900/60 transition cursor-pointer ${
-              isCollapsed ? 'p-2 justify-center' : 'gap-2 px-2.5 py-1.5'
-            }`}
-            title="Open Semester Setup Wizard (CR Authenticated)"
-          >
-            <Settings className="w-4 h-4 text-slate-400 shrink-0" />
-            {!isCollapsed && <span className="font-sans-ui text-xs">Semester Setup</span>}
-          </button>
-
-          {!isCollapsed && onToggleCollapse && (
-            <button
-              onClick={onToggleCollapse}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition cursor-pointer"
-              title="Collapse sidebar"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </div>
     </aside>
   );
 };
