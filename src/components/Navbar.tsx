@@ -117,29 +117,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Minimal AM Brand Identity */}
         <button
           onClick={onNavigateHome}
-          className="flex items-center gap-2.5 group cursor-pointer text-left focus:outline-none"
+          className="flex items-center group cursor-pointer focus:outline-none"
           title="Return to Workspace"
+          aria-label="Return to Workspace"
         >
           <img
             src="/am-logo.png"
             alt="AM Logo"
             className="w-7 h-7 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition"
           />
-
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-xs tracking-tight text-neutral-200 group-hover:text-white transition">
-              SyllabusOS
-            </span>
-            <span className="text-[10px] font-mono text-neutral-500">
-              /
-            </span>
-            <span className="text-[11px] font-mono text-neutral-400 group-hover:text-neutral-300 transition">
-              {classCode}
-            </span>
-            <span className="text-[9px] font-mono font-medium px-1.5 py-0.2 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
-              {currentUser.role ? currentUser.role.toUpperCase() : 'CR'}
-            </span>
-          </div>
         </button>
       </div>
 
