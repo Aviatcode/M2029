@@ -9,7 +9,6 @@ import {
   KeyRound,
   User,
   LogOut,
-  ChevronDown,
   Sliders,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
@@ -178,11 +177,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
         </button>
 
-        {/* Minimal User DP Trigger (Clean avatar without status dot) */}
+        {/* Minimal User DP Trigger (Clean avatar without status dot or extra icons) */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen((prev) => !prev)}
-            className="flex items-center gap-1.5 p-0.5 rounded-full hover:opacity-90 transition cursor-pointer focus:outline-none"
+            className="flex items-center p-0.5 rounded-full hover:opacity-90 transition cursor-pointer focus:outline-none"
             title={`${currentUser.name} (${currentUser.role.toUpperCase()})`}
             aria-label="User Menu"
             aria-expanded={isDropdownOpen}
@@ -203,12 +202,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               )}
             </div>
-
-            <ChevronDown
-              className={`w-3 h-3 text-neutral-500 transition-transform duration-150 ${
-                isDropdownOpen ? 'rotate-180' : ''
-              }`}
-            />
           </button>
 
           {/* Minimal Floating Menu Below DP */}
