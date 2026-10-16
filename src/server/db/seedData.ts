@@ -799,7 +799,7 @@ export const SEED_NOTIFICATIONS: AppNotification[] = [
     message: 'Normalization and ACID properties have been flagged as High Priority topics for your revision plan.',
     type: 'exam_alert',
     time: '1 day ago',
-    read: true,
+    read: false,
     actionUrl: '/exams',
   },
 ];

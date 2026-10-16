@@ -466,6 +466,7 @@ export default function App() {
         onLogout={handleLogout}
         onNavigateSettings={() => handleSelectTab('settings')}
         unreadNotificationsCount={unreadNotificationsCount}
+        totalNotificationsCount={notifications.length}
         onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
         calmMode={calmMode}
         onToggleCalmMode={() => setCalmMode((prev) => !prev)}

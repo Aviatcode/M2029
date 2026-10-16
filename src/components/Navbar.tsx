@@ -25,6 +25,7 @@ interface NavbarProps {
   onLogout?: () => void;
   onNavigateSettings?: () => void;
   unreadNotificationsCount: number;
+  totalNotificationsCount?: number;
   onToggleMobileMenu: () => void;
   calmMode?: boolean;
   onToggleCalmMode?: () => void;
@@ -52,6 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLogout,
   onNavigateSettings,
   unreadNotificationsCount,
+  totalNotificationsCount,
   onToggleMobileMenu,
   calmMode = false,
   onToggleCalmMode,
@@ -60,6 +62,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const notificationCount =
+    totalNotificationsCount !== undefined && totalNotificationsCount > 0
+      ? totalNotificationsCount
+      : unreadNotificationsCount;
 
   // Close dropdown on outside click or Escape key
   useEffect(() => {
@@ -160,20 +167,32 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Search className="w-4 h-4" />
         </button>
 
-        {/* Notifications Icon */}
+        {/* Notifications Icon with count number badge */}
         <button
           onClick={onOpenNotifications}
           className="relative p-1.5 text-neutral-400 hover:text-white rounded-md transition cursor-pointer"
-          title="Alerts"
-          aria-label="Alerts"
+          title={
+            notificationCount > 0
+              ? `${notificationCount} notification${notificationCount === 1 ? '' : 's'}`
+              : 'Notifications'
+          }
+          aria-label="Notifications"
         >
           <Bell className="w-4 h-4" />
-          {unreadNotificationsCount > 0 && (
-            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-neutral-200" />
+          {notificationCount > 0 && (
+            <span
+              className={`absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full text-[10px] font-bold font-mono flex items-center justify-center leading-none shadow-sm transition-all ${
+                unreadNotificationsCount > 0
+                  ? 'bg-neutral-100 text-neutral-950 border border-neutral-950'
+                  : 'bg-neutral-800 text-neutral-300 border border-neutral-700'
+              }`}
+            >
+              {notificationCount > 99 ? '99+' : notificationCount}
+            </span>
           )}
         </button>
 
-        {/* Minimal User DP Trigger */}
+        {/* Minimal User DP Trigger (Clean avatar without status dot) */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen((prev) => !prev)}
@@ -196,9 +215,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="w-7 h-7 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-300 font-medium text-[11px] flex items-center justify-center">
                   {getInitials(currentUser.name)}
                 </div>
-              )}
-              {currentUser.isLoggedIn && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-neutral-300 ring-2 ring-neutral-950" />
               )}
             </div>
 
