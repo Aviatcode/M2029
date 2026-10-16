@@ -77,7 +77,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'llama-3.3-70b-versatile';
           break;
         case 'gemini':
-          this.modelName = 'gemini-2.5-flash';
+          this.modelName = 'gemini-3.8-flash';
           break;
         case 'custom':
           this.modelName = 'default-model';
@@ -130,7 +130,7 @@ export class UniversalAIProvider implements AIProvider {
       // 1. Google Gemini via SDK
       if (this.provider === 'gemini' && this.geminiClient) {
         const resp = await this.geminiClient.models.generateContent({
-          model: this.modelName || 'gemini-2.5-flash',
+          model: this.modelName || 'gemini-3.8-flash',
           contents: prompt,
           config: systemInstruction ? { systemInstruction } : undefined,
         });
