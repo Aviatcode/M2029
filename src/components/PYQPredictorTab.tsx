@@ -15,10 +15,10 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-teal-950/40 border border-emerald-500/30 p-5 md:p-6 shadow-xl flex items-center justify-between">
+      <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-5 md:p-6 shadow-xl flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-semibold">
+            <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700 text-xs font-semibold">
               🎯 Previous Year Question (PYQ) Bank
             </span>
             <span className="text-xs text-slate-400">Repeated University Papers</span>
@@ -53,7 +53,7 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
                         ? 'bg-purple-500/20 text-purple-300 border border-purple-400/30'
                         : pyq.marks >= 5
                         ? 'bg-blue-500/20 text-blue-300 border border-blue-400/30'
-                        : 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'
+                        : 'bg-neutral-800 text-neutral-300 border border-neutral-700'
                     }`}
                   >
                     [{pyq.marks} Marks]

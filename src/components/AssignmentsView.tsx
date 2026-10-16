@@ -302,7 +302,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       'database management systems': 'text-cyan-400 bg-cyan-950/40 border-cyan-500/30',
       'java programming': 'text-amber-400 bg-amber-950/40 border-amber-500/30',
       'operating systems': 'text-purple-400 bg-purple-950/40 border-purple-500/30',
-      'web development': 'text-emerald-400 bg-emerald-950/40 border-emerald-500/30',
+      'web development': 'text-neutral-300 bg-neutral-900 border-neutral-700',
       'computer networks': 'text-rose-400 bg-rose-950/40 border-rose-500/30',
     };
 
@@ -400,8 +400,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-slate-800/60">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <Presentation className="w-4 h-4 text-emerald-400" />
-            <span className="academic-tag text-[10px] text-emerald-400">
+            <Presentation className="w-4 h-4 text-neutral-400" />
+            <span className="academic-tag text-[10px] text-neutral-400">
               Deliverables & Presentation Dossier
             </span>
             <span className="academic-tag text-[10px] text-slate-400">
@@ -423,7 +423,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui shadow-2xs"
             title="Class Representative 1-Click Sync"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
             <span>CR Portal Sync</span>
           </button>
 
@@ -514,7 +514,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       {/* Folder Graphic */}
-                      <div className="w-8 h-8 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition">
+                      <div className="w-8 h-8 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition">
                         <Folder className="w-4 h-4" />
                       </div>
 
@@ -532,7 +532,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                     </div>
 
                     <div>
-                      <h3 className="font-editorial text-base font-medium text-slate-100 group-hover:text-emerald-400 transition">
+                      <h3 className="font-editorial text-base font-medium text-slate-100 group-hover:text-white transition">
                         {folder.name}
                       </h3>
                       <span className="academic-tag text-[9px] text-slate-400">
@@ -545,11 +545,11 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   <div className="space-y-1.5 pt-2 border-t border-slate-800/60 font-sans-ui text-xs">
                     <div className="flex items-center justify-between text-[11px] text-slate-400">
                       <span>{folder.completedCount} of {folder.totalCount} Completed</span>
-                      <span className="font-mono text-emerald-400 font-medium">{percentDone}%</span>
+                      <span className="font-mono text-neutral-200 font-medium">{percentDone}%</span>
                     </div>
                     <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-emerald-500/80 group-hover:bg-emerald-400 transition-all duration-300 rounded-full"
+                        className="h-full bg-neutral-300 group-hover:bg-white transition-all duration-300 rounded-full"
                         style={{ width: `${percentDone}%` }}
                       />
                     </div>
@@ -644,7 +644,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         <span
                           className={`font-mono font-medium ${
                             item.completed
-                              ? 'text-emerald-400'
+                              ? 'text-neutral-300'
                               : isUrgent
                               ? 'text-amber-400 font-semibold'
                               : 'text-slate-400'
@@ -683,13 +683,13 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         onClick={(e) => handleToggleDone(item.id, e)}
                         className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition cursor-pointer border ${
                           item.completed
-                            ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/60'
+                            ? 'bg-neutral-800 text-neutral-200 border-neutral-700 hover:bg-neutral-750'
                             : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
                         }`}
                       >
                         {item.completed ? (
                           <>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-neutral-300" />
                             <span>Done ✓</span>
                           </>
                         ) : (
@@ -760,13 +760,13 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   onClick={() => handleToggleDone(activeModalItem.id)}
                   className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer shadow-sm ${
                     activeModalItem.completed
-                      ? 'bg-emerald-950 text-emerald-300 border-emerald-500/50 hover:bg-emerald-900/70'
-                      : 'bg-emerald-600 hover:bg-emerald-500 text-white border-transparent'
+                      ? 'bg-neutral-800 text-neutral-200 border-neutral-700 hover:bg-neutral-750'
+                      : 'bg-neutral-100 hover:bg-white text-neutral-900 border-transparent'
                   }`}
                 >
                   {activeModalItem.completed ? (
                     <>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <CheckCircle2 className="w-4 h-4 text-neutral-300" />
                       <span>Completed ✓ (Click to Undo)</span>
                     </>
                   ) : (
@@ -857,7 +857,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                           onClick={handleCopySolution}
                           className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
                         >
-                          {copiedSolution ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          {copiedSolution ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
                           <span>{copiedSolution ? 'Copied' : 'Copy Solution'}</span>
                         </button>
                       </div>
@@ -1091,10 +1091,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             </div>
 
             {crSyncSuccess ? (
-              <div className="p-6 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-center space-y-2 animate-fade-in">
-                <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
+              <div className="p-6 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-center space-y-2 animate-fade-in">
+                <CheckCircle2 className="w-10 h-10 text-neutral-300 mx-auto" />
                 <h4 className="font-semibold text-base">{crSyncSuccess}</h4>
-                <p className="text-xs text-emerald-400/80">
+                <p className="text-xs text-neutral-400">
                   Notification and class announcement broadcasted to every student in cohort.
                 </p>
               </div>

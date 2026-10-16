@@ -54,8 +54,8 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-emerald-400" />
-              <span className="academic-tag text-[10px] text-emerald-400">
+              <BookOpen className="w-4 h-4 text-neutral-400" />
+              <span className="academic-tag text-[10px] text-neutral-400">
                 Curriculum Table of Contents
               </span>
             </div>
@@ -99,7 +99,7 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
           <div className="p-4 rounded-md bg-slate-900/40 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs marginalia">
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <span className="academic-tag text-[10px] text-emerald-400">
+                <span className="academic-tag text-[10px] text-neutral-300">
                   Recommended Next Reading
                 </span>
                 <span className="academic-tag text-[10px] text-slate-400">
@@ -149,7 +149,7 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
                   className="p-3.5 sm:p-4 bg-slate-900/60 hover:bg-slate-900/80 flex items-center justify-between gap-3 cursor-pointer transition select-none"
                 >
                   <div className="flex items-center gap-3">
-                    <FolderOpen className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <FolderOpen className="w-4 h-4 text-neutral-400 shrink-0" />
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="academic-tag text-[10px] text-slate-400">

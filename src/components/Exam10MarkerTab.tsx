@@ -65,7 +65,7 @@ ${exam.examinerTraps.join('\n')}
             <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs font-mono font-semibold">
               📝 Section C / Long Answer
             </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-semibold">
+            <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700 text-xs font-semibold">
               Target: 10 / 10 Marks
             </span>
           </div>
@@ -81,7 +81,7 @@ ${exam.examinerTraps.join('\n')}
           onClick={handleCopyFullSheet}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/25 transition cursor-pointer self-start md:self-auto"
         >
-          {copiedFullSheet ? <Check className="w-4 h-4 text-emerald-200" /> : <Copy className="w-4 h-4" />}
+          {copiedFullSheet ? <Check className="w-4 h-4 text-white" /> : <Copy className="w-4 h-4" />}
           <span>{copiedFullSheet ? 'Copied Full Model Answer!' : 'Copy Entire 10-Marker'}</span>
         </button>
       </div>
@@ -108,7 +108,7 @@ ${exam.examinerTraps.join('\n')}
             onClick={handleCopyDiagram}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs border border-slate-700 transition"
           >
-            {copiedDiagram ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedDiagram ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copiedDiagram ? 'Copied' : 'Copy Diagram'}</span>
           </button>
         </div>
@@ -151,12 +151,12 @@ ${exam.examinerTraps.join('\n')}
             onClick={handleCopyCode}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs border border-slate-700 transition"
           >
-            {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedCode ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copiedCode ? 'Copied' : 'Copy Code'}</span>
           </button>
         </div>
         <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 overflow-x-auto">
-          <pre className="font-mono text-xs md:text-sm text-emerald-300/90 leading-relaxed whitespace-pre">
+          <pre className="font-mono text-xs md:text-sm text-neutral-200 leading-relaxed whitespace-pre">
             {exam.codeOrAlgorithm}
           </pre>
         </div>
@@ -164,14 +164,14 @@ ${exam.examinerTraps.join('\n')}
 
       {/* 5. Advantages & Disadvantages */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-2xl bg-emerald-950/20 border border-emerald-500/30 p-5 shadow-lg">
-          <h4 className="text-emerald-300 font-semibold text-sm flex items-center gap-2 mb-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Advantages (1 Mark)
+        <div className="rounded-2xl bg-neutral-900/60 border border-neutral-800 p-5 shadow-lg">
+          <h4 className="text-neutral-200 font-semibold text-sm flex items-center gap-2 mb-3">
+            <CheckCircle2 className="w-4 h-4 text-neutral-300" /> Advantages (1 Mark)
           </h4>
           <ul className="space-y-2 text-xs md:text-sm text-slate-200">
             {exam.advantagesDisadvantages.advantages.map((adv, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="text-emerald-400 font-bold">•</span>
+                <span className="text-neutral-400 font-bold">•</span>
                 <span>{adv}</span>
               </li>
             ))}

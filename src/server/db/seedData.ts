@@ -56,7 +56,7 @@ export const SEED_SUBJECTS: Subject[] = [
     code: 'BCA-303',
     teacherName: 'Prof. Ankit Mehra',
     credits: 3,
-    color: 'from-emerald-500 to-teal-600',
+    color: 'from-slate-700 to-zinc-700',
     iconName: 'Globe',
     totalUnits: 4,
     completedTopicsCount: 6,

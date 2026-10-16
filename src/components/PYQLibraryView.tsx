@@ -34,8 +34,8 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
       {/* 1. Academic Header */}
       <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
         <div className="flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-emerald-400" />
-          <span className="academic-tag text-[10px] text-emerald-400">
+          <HelpCircle className="w-4 h-4 text-neutral-400" />
+          <span className="academic-tag text-[10px] text-neutral-400">
             University Exam Archive
           </span>
         </div>
@@ -65,7 +65,7 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
               className="p-3.5 rounded bg-slate-900/50 border border-slate-800/80 text-xs space-y-1.5 hover:border-slate-700 transition"
             >
               <div className="flex items-center justify-between text-slate-400">
-                <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
                   Asked {item.frequency}×
                 </span>
                 <span className="font-mono text-[10px] text-slate-400">Max {item.highestMarks}M</span>
@@ -132,7 +132,7 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
               >
                 <div className="space-y-1.5">
                   <div className="text-[11px] text-slate-400 flex items-center gap-2 font-sans-ui">
-                    <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                    <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-1.5 py-0.2 rounded">
                       {pyq.marks} Marks
                     </span>
                     <span>·</span>

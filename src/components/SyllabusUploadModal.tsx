@@ -142,7 +142,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
                   `Unit 1: Relational Model & ER Design\n- Entity Relationship Diagrams, Weak Entities\n- Relational Algebra Operations\n\nUnit 2: Normalization\n- Functional Dependencies\n- 1NF, 2NF, 3NF and Boyce-Codd Normal Form (BCNF)\n\nUnit 3: Transactions & Concurrency\n- ACID Properties\n- Serializability & Two-Phase Locking (2PL) Protocol`
                 )
               }
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-emerald-300 transition cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-neutral-200 transition cursor-pointer"
             >
               🗄️ BCA Sem 3 (DBMS)
             </button>

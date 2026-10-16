@@ -142,7 +142,7 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
   // Add subjects
   const defaultColors = [
     'from-blue-500 to-indigo-600',
-    'from-emerald-500 to-teal-600',
+    'from-slate-700 to-zinc-700',
     'from-amber-500 to-orange-600',
     'from-purple-500 to-pink-600',
     'from-rose-500 to-red-600',

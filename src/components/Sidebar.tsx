@@ -81,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <>
             <div className="truncate pr-1">
               <div className="text-[10px] text-slate-400 font-sans flex items-center gap-1.5 truncate">
-                <span className="font-mono text-emerald-400 font-medium">Sem {semesterNumber}</span>
+                <span className="font-mono text-neutral-300 font-medium">Sem {semesterNumber}</span>
                 <span>·</span>
                 <span className="font-mono text-slate-300 font-semibold">{classCode}</span>
               </div>
@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ) : (
           <>
             <div
-              className="w-8 h-8 rounded-md bg-slate-900 border border-slate-800 flex items-center justify-center font-mono text-xs font-semibold text-emerald-400 shadow-2xs"
+              className="w-8 h-8 rounded-md bg-slate-900 border border-slate-800 flex items-center justify-center font-mono text-xs font-semibold text-neutral-200 shadow-2xs"
               title={`Semester ${semesterNumber} · ${classCode}`}
             >
               S{semesterNumber}
@@ -152,13 +152,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 {/* Active Indicator bar when collapsed */}
                 {isActive && isCollapsed && (
-                  <span className="absolute left-0 w-0.5 h-4 bg-emerald-400 rounded-r" />
+                  <span className="absolute left-0 w-0.5 h-4 bg-neutral-200 rounded-r" />
                 )}
 
                 <Icon
                   className={`shrink-0 ${
                     isCollapsed ? 'w-4 h-4' : 'w-4 h-4'
-                  } ${isActive ? 'text-emerald-400' : 'text-slate-400'}`}
+                  } ${isActive ? 'text-white' : 'text-slate-400'}`}
                 />
                 {!isCollapsed && <span className="truncate font-sans-ui">{item.label}</span>}
               </button>
@@ -197,13 +197,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }`}
               >
                 {isActive && isCollapsed && (
-                  <span className="absolute left-0 w-0.5 h-4 bg-emerald-400 rounded-r" />
+                  <span className="absolute left-0 w-0.5 h-4 bg-neutral-200 rounded-r" />
                 )}
 
                 <Icon
                   className={`shrink-0 ${
                     isCollapsed ? 'w-4 h-4' : 'w-4 h-4'
-                  } ${isActive ? 'text-emerald-400' : 'text-slate-400'}`}
+                  } ${isActive ? 'text-white' : 'text-slate-400'}`}
                 />
                 {!isCollapsed && <span className="truncate font-sans-ui">{item.label}</span>}
               </button>
@@ -219,13 +219,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {onOpenAIKeyConfig && (
           <button
             onClick={onOpenAIKeyConfig}
-            className={`flex items-center rounded-md text-cyan-300 hover:text-white hover:bg-cyan-950/40 border border-cyan-500/25 hover:border-cyan-500/50 transition cursor-pointer ${
+            className={`flex items-center rounded-md text-neutral-300 hover:text-white hover:bg-neutral-900 border border-neutral-800 transition cursor-pointer ${
               isCollapsed ? 'p-2 justify-center' : 'gap-2 px-2.5 py-1.5'
             }`}
-            title="Configure Gemini AI Key & Database"
+            title="Configure AI Model Engine & API Keys"
           >
-            <KeyRound className="w-4 h-4 text-cyan-400 shrink-0" />
-            {!isCollapsed && <span className="font-sans-ui text-xs font-medium">Add API Key</span>}
+            <KeyRound className="w-4 h-4 text-neutral-400 shrink-0" />
+            {!isCollapsed && <span className="font-sans-ui text-xs font-medium">AI Keys & Models</span>}
           </button>
         )}
 

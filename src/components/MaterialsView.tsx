@@ -95,8 +95,8 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-5">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-emerald-400" />
-            <span className="academic-tag text-[10px] text-emerald-400">
+            <BookOpen className="w-4 h-4 text-neutral-400" />
+            <span className="academic-tag text-[10px] text-neutral-400">
               Classroom Digital Archive
             </span>
           </div>
@@ -205,7 +205,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               {/* Hinglish Explanation */}
               {selectedMaterial.resources.hinglishSummary && (
                 <div className="space-y-2 marginalia">
-                  <h3 className="academic-tag text-[10px] text-emerald-400">
+                  <h3 className="academic-tag text-[10px] text-neutral-300">
                     Conceptual Takeaway (Hinglish Primer)
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans-ui">

@@ -22,8 +22,8 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
       {/* 1. Academic Header */}
       <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-emerald-400" />
-          <span className="academic-tag text-[10px] text-emerald-400">
+          <Clock className="w-4 h-4 text-neutral-400" />
+          <span className="academic-tag text-[10px] text-neutral-400">
             Classroom Schedule & Timetable
           </span>
         </div>
@@ -70,7 +70,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                  <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
                     {cls.subjectCode}
                   </span>
                   <h3 className="font-editorial text-base sm:text-lg font-medium text-slate-100">

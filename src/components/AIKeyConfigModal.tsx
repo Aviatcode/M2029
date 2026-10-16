@@ -452,11 +452,11 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
             }}
             className={`flex-1 py-1.5 px-3 rounded-md font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'supabase'
-                ? 'bg-emerald-950/70 text-emerald-200 border border-emerald-500/40 shadow-xs'
+                ? 'bg-neutral-800 text-white border border-neutral-700 shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Database className="w-3.5 h-3.5 text-emerald-400" />
+            <Database className="w-3.5 h-3.5 text-neutral-400" />
             <span>Supabase Cloud DB</span>
           </button>
         </div>
@@ -470,8 +470,8 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                 <div className="font-semibold text-slate-100 flex items-center gap-1.5">
                   {currentStatus.hasCustomKey ? (
                     <>
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                      <span className="text-emerald-300">{currentStatus.providerName}</span>
+                      <Sparkles className="w-4 h-4 text-neutral-300" />
+                      <span className="text-neutral-200">{currentStatus.providerName}</span>
                     </>
                   ) : (
                     <>
@@ -484,11 +484,11 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
               <span
                 className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                   currentStatus.hasCustomKey
-                    ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-300'
+                    ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                     : 'bg-cyan-950/80 border-cyan-500/30 text-cyan-300'
                 }`}
               >
-                {currentStatus.hasCustomKey ? '🟢 Active & Ready' : '⚪ Free Basic Model'}
+                {currentStatus.hasCustomKey ? 'Active & Ready' : 'Basic Model'}
               </span>
             </div>
 
@@ -597,13 +597,13 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                 <div
                   className={`p-3 rounded-xl text-xs flex items-center gap-2 border animate-fade-in ${
                     statusMessage.type === 'success'
-                      ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
+                      ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                       : statusMessage.type === 'error'
                       ? 'bg-rose-950/60 border-rose-500/40 text-rose-200'
-                      : 'bg-cyan-950/60 border-cyan-500/40 text-cyan-200'
+                      : 'bg-neutral-900 border-neutral-750 text-neutral-300'
                   }`}
                 >
-                  {statusMessage.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+                  {statusMessage.type === 'success' && <CheckCircle2 className="w-4 h-4 text-neutral-300 shrink-0" />}
                   {statusMessage.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />}
                   <span>{statusMessage.text}</span>
                 </div>
@@ -662,8 +662,8 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
               <div className="space-y-0.5">
                 <span className="text-[11px] text-slate-400">Database Connection:</span>
                 <div className="font-semibold text-slate-100 flex items-center gap-1.5">
-                  <Database className="w-4 h-4 text-emerald-400" />
-                  <span className={supabaseStatus.ok ? 'text-emerald-300' : 'text-slate-300'}>
+                  <Database className="w-4 h-4 text-neutral-400" />
+                  <span className={supabaseStatus.ok ? 'text-neutral-200' : 'text-slate-300'}>
                     {supabaseStatus.ok ? 'Supabase Connected' : 'Local / Offline DB'}
                   </span>
                 </div>
@@ -671,25 +671,25 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
               <span
                 className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                   supabaseStatus.ok
-                    ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-300'
+                    ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                     : 'bg-slate-850 border-slate-700 text-slate-400'
                 }`}
               >
-                {supabaseStatus.ok ? '🟢 Cloud Sync' : '⚪ Memory DB'}
+                {supabaseStatus.ok ? 'Cloud Sync' : 'Memory DB'}
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/25 text-xs space-y-1.5">
+            <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800 text-xs space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-emerald-300 flex items-center gap-1.5">
-                  <Database className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="font-semibold text-neutral-200 flex items-center gap-1.5">
+                  <Database className="w-3.5 h-3.5 text-neutral-400" />
                   <span>Cloud PostgreSQL Setup</span>
                 </span>
                 <a
                   href="https://supabase.com/dashboard"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-[11px] text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 hover:underline"
+                  className="text-[11px] text-neutral-300 hover:text-white inline-flex items-center gap-1 hover:underline"
                 >
                   <span>Supabase Dashboard</span>
                   <ExternalLink className="w-3 h-3" />
@@ -713,7 +713,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                   value={supabaseUrl}
                   onChange={(e) => setSupabaseUrl(e.target.value)}
                   placeholder="https://xyzcompany.supabase.co"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono outline-none transition"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-neutral-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono outline-none transition"
                 />
               </div>
 
@@ -736,7 +736,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                     value={supabaseKey}
                     onChange={(e) => setSupabaseKey(e.target.value)}
                     placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono outline-none transition pr-10"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-neutral-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono outline-none transition pr-10"
                   />
                   <button
                     type="button"
@@ -752,12 +752,12 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                 <div
                   className={`p-3 rounded-xl text-xs flex items-center gap-2 border animate-fade-in ${
                     statusMessage.type === 'success'
-                      ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-200'
+                      ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                       : 'bg-rose-950/60 border-rose-500/40 text-rose-200'
                   }`}
                 >
                   {statusMessage.type === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-neutral-300 shrink-0" />
                   ) : (
                     <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
                   )}
@@ -768,7 +768,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
               <button
                 type="button"
                 onClick={handleSaveSupabase}
-                className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 px-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white font-semibold text-xs transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
               >
                 <Database className="w-3.5 h-3.5" />
                 <span>Save Supabase Credentials</span>

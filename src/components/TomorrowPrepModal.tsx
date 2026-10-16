@@ -87,7 +87,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                 currentStep === s.num
                   ? 'border-amber-400 bg-amber-500/15 text-amber-300 shadow-md'
                   : currentStep > s.num
-                  ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-300'
+                  ? 'border-neutral-700 bg-neutral-800 text-neutral-200'
                   : 'border-slate-800 bg-slate-950/40 text-slate-500'
               }`}
             >
@@ -152,7 +152,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                   <span>4. 3-Question Pre-Class Verification Quiz</span>
                 </div>
                 {quizSubmitted && (
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                  <span className="text-xs font-bold text-neutral-200 flex items-center gap-1">
                     <Trophy className="w-3.5 h-3.5" />
                     Score: {calculateScore()} / {prep.step4MiniQuiz.length}
                   </span>
@@ -182,7 +182,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                                 ? 'border-amber-400 bg-amber-500/20 text-amber-200'
                                 : 'border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700 cursor-pointer';
                           } else if (optIdx === q.correctIndex) {
-                            btnStyle += 'border-emerald-500 bg-emerald-950/40 text-emerald-200 font-semibold';
+                            btnStyle += 'border-neutral-500 bg-neutral-800 text-neutral-100 font-semibold';
                           } else if (isOptionChosen && !isCorrect) {
                             btnStyle += 'border-rose-500 bg-rose-950/40 text-rose-200';
                           } else {
@@ -220,7 +220,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                   Verify My 7-Minute Answers
                 </button>
               ) : (
-                <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs text-center font-semibold">
+                <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs text-center font-medium">
                   🎉 Pre-lecture prep complete! You are ready to ace tomorrow's lecture in Room {prep.room}.
                 </div>
               )}

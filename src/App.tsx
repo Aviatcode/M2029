@@ -47,6 +47,10 @@ import { AIKeyConfigModal } from './components/AIKeyConfigModal';
 import { SettingsView } from './components/SettingsView';
 import { LoginModal, UserProfile } from './components/LoginModal';
 import { initTheme } from './utils/themeService';
+import {
+  BackgroundConfig,
+  getStoredBackgroundConfig,
+} from './utils/backgroundService';
 
 const DEFAULT_USER: UserProfile = {
   id: 'user-cr-1',
@@ -88,6 +92,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveNavTab>(getInitialTab);
   const [currentRole, setCurrentRole] = useState<UserRole>('student');
   const [classCode, setClassCode] = useState<string>('BCA-2028');
+  const [bgConfig, setBgConfig] = useState<BackgroundConfig>(getStoredBackgroundConfig);
 
   // Sync tab with URL hash
   useEffect(() => {
@@ -408,8 +413,44 @@ export default function App() {
   const unreadNotificationsCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500/25 selection:text-cyan-100">
+    <div className="relative flex flex-col h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 font-sans selection:bg-neutral-800 selection:text-white">
+      {/* College Doodles / Custom Wallpaper Backdrop Layer */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300"
+        style={{
+          opacity: bgConfig.opacity,
+          filter: bgConfig.blur > 0 ? `blur(${bgConfig.blur}px)` : undefined,
+          backgroundImage:
+            bgConfig.type === 'college-doodles'
+              ? "url('/college-doodles-bg.jpg')"
+              : bgConfig.type === 'college-vector'
+              ? "url('/college-doodles.svg')"
+              : bgConfig.type === 'grid'
+              ? 'linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px)'
+              : bgConfig.type === 'dots'
+              ? 'radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)'
+              : bgConfig.type === 'custom' && bgConfig.customUrl
+              ? `url('${bgConfig.customUrl}')`
+              : 'none',
+          backgroundSize:
+            bgConfig.type === 'college-vector'
+              ? '480px 480px'
+              : bgConfig.type === 'grid'
+              ? '32px 32px'
+              : bgConfig.type === 'dots'
+              ? '20px 20px'
+              : 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat:
+            bgConfig.type === 'college-vector' || bgConfig.type === 'grid' || bgConfig.type === 'dots'
+              ? 'repeat'
+              : 'no-repeat',
+        }}
+        aria-hidden="true"
+      />
+
       {/* 1. TOP NAVBAR */}
+      <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
       <Navbar
         classCode={classCode}
         currentUser={currentUser}
@@ -622,6 +663,7 @@ export default function App() {
           )}
         </main>
       </div>
+      </div>
 
       {/* 3. MODALS & DRAWERS */}
       <TomorrowPrepModal
@@ -639,6 +681,8 @@ export default function App() {
       <ThemeSelectorModal
         isOpen={isThemeModalOpen}
         onClose={() => setIsThemeModalOpen(false)}
+        currentBgConfig={bgConfig}
+        onBgConfigChanged={(newCfg) => setBgConfig(newCfg)}
       />
 
       <AIKeyConfigModal

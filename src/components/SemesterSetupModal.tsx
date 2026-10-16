@@ -212,7 +212,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   step === s
                     ? 'bg-cyan-500 text-slate-950 ring-4 ring-cyan-500/20'
                     : step > s
-                    ? 'bg-emerald-500 text-slate-950'
+                    ? 'bg-neutral-200 text-slate-950'
                     : 'bg-slate-800 text-slate-400'
                 }`}
               >
@@ -526,13 +526,13 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   <span>Verify & Authenticate as CR</span>
                 </button>
               ) : (
-                <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-xs space-y-1 animate-fade-in">
+                <div className="p-3.5 rounded-xl bg-neutral-900 border border-neutral-700 text-xs space-y-1 animate-fade-in">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 font-bold text-emerald-300">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <div className="flex items-center gap-1.5 font-bold text-neutral-200">
+                      <CheckCircle2 className="w-4 h-4 text-neutral-300" />
                       <span>Authenticated by Class Representative</span>
                     </div>
-                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-500/30">
+                    <span className="text-[10px] font-mono text-neutral-300 bg-neutral-800 px-2 py-0.5 rounded border border-neutral-700">
                       CR Verified ✓
                     </span>
                   </div>
@@ -548,7 +548,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
           {step === 5 && (
             <div className="space-y-4 py-2 animate-fade-in">
               <div className="text-center space-y-2">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 flex items-center justify-center mx-auto shadow-md">
+                <div className="w-12 h-12 rounded-2xl bg-neutral-800 text-neutral-200 border border-neutral-700 flex items-center justify-center mx-auto shadow-md">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <h4 className="font-bold text-base text-white">
@@ -571,7 +571,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400">CR Verification:</span>
-                  <span className="text-emerald-400 font-medium flex items-center gap-1">
+                  <span className="text-neutral-300 font-medium flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>{crName} ({crRollNo})</span>
                   </span>
@@ -626,7 +626,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               type="button"
               onClick={handleFinishSetup}
               disabled={isSubmitting}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 hover:opacity-95 text-white text-xs font-bold shadow-lg transition cursor-pointer flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-xl bg-neutral-100 hover:bg-white text-neutral-900 text-xs font-bold shadow-lg transition cursor-pointer flex items-center gap-1.5"
             >
               {isSubmitting ? (
                 <span>Initializing Workspace...</span>

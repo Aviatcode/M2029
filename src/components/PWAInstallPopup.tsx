@@ -87,14 +87,14 @@ export const PWAInstallPopup: React.FC = () => {
           </button>
 
           <div className="flex items-start gap-3 pr-5">
-            <div className="w-7 h-7 rounded bg-slate-950 border border-slate-800 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-7 h-7 rounded bg-slate-950 border border-slate-800 text-neutral-300 flex items-center justify-center shrink-0 mt-0.5">
               <Smartphone className="w-3.5 h-3.5" />
             </div>
 
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5">
                 <span className="font-sans-ui font-semibold text-xs text-slate-100">Install SyllabusOS</span>
-                <span className="academic-tag text-[9px] px-1 py-0.2 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/25">
+                <span className="academic-tag text-[9px] px-1 py-0.2 rounded bg-neutral-900 text-neutral-300 border border-neutral-700">
                   WebAPK
                 </span>
               </div>
@@ -116,7 +116,7 @@ export const PWAInstallPopup: React.FC = () => {
               disabled={installing}
               className="flex items-center gap-1.5 px-3 py-1 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-100 text-[11px] font-medium transition cursor-pointer"
             >
-              <Download className="w-3 h-3 text-emerald-400" />
+              <Download className="w-3 h-3 text-neutral-300" />
               <span>{installing ? 'Installing...' : 'Install'}</span>
             </button>
           </div>
@@ -129,7 +129,7 @@ export const PWAInstallPopup: React.FC = () => {
           <div className="w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-700 p-6 shadow-2xl text-slate-100">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-cyan-500/20 text-cyan-400">
+                <div className="p-2 rounded-lg bg-neutral-800 text-neutral-200 border border-neutral-700">
                   <Smartphone className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-base">Install on iPhone / iPad</h3>
@@ -147,18 +147,18 @@ export const PWAInstallPopup: React.FC = () => {
 
             <div className="space-y-3 text-xs text-slate-300 leading-relaxed mb-5">
               <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/60 border border-slate-750">
-                <Share className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
+                <Share className="w-4 h-4 text-neutral-300 mt-0.5 shrink-0" />
                 <div>
                   <span className="font-semibold text-white">Step 1:</span> Tap the{' '}
-                  <strong className="text-cyan-300">Share</strong> button at the bottom of Safari.
+                  <strong className="text-neutral-200">Share</strong> button at the bottom of Safari.
                 </div>
               </div>
 
               <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/60 border border-slate-750">
-                <PlusSquare className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                <PlusSquare className="w-4 h-4 text-neutral-300 mt-0.5 shrink-0" />
                 <div>
                   <span className="font-semibold text-white">Step 2:</span> Scroll down and tap{' '}
-                  <strong className="text-emerald-300">"Add to Home Screen"</strong>.
+                  <strong className="text-neutral-200">"Add to Home Screen"</strong>.
                 </div>
               </div>
             </div>

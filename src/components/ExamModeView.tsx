@@ -37,8 +37,8 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
       {/* 1. Academic Header */}
       <div className="space-y-1.5 border-b border-slate-800/60 pb-5">
         <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-emerald-400" />
-          <span className="academic-tag text-[10px] text-emerald-400">
+          <Calendar className="w-4 h-4 text-neutral-400" />
+          <span className="academic-tag text-[10px] text-neutral-400">
             University Datesheet & Recall Plan
           </span>
         </div>
@@ -70,7 +70,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                 <span className="academic-tag text-[9px] text-slate-400">
                   {ex.examType}
                 </span>
-                <span className="academic-tag text-[9px] text-emerald-400/90 bg-emerald-950/40 border border-emerald-500/20 px-1.5 py-0.2 rounded">
+                <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
                   {daysLeft} Days Left
                 </span>
               </div>
@@ -98,7 +98,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
         <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/60">
             <div className="space-y-0.5">
-              <span className="academic-tag text-[10px] text-emerald-400">
+              <span className="academic-tag text-[10px] text-neutral-400">
                 Milestone Roadmap
               </span>
               <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-100">
@@ -139,7 +139,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                     <div
                       className={`w-4 h-4 rounded flex items-center justify-center text-xs mt-0.5 border ${
                         step.completed
-                          ? 'bg-emerald-950 text-emerald-400 border-emerald-500/40'
+                          ? 'bg-neutral-800 text-neutral-200 border-neutral-600'
                           : 'border-slate-700 bg-slate-900 text-transparent'
                       }`}
                     >

@@ -138,7 +138,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
                 'border-slate-800 bg-slate-950/70 hover:border-cyan-500 hover:bg-slate-900 text-slate-200 cursor-pointer';
             } else if (isCorrect) {
               buttonClass +=
-                'border-emerald-500/80 bg-emerald-950/40 text-emerald-200 font-semibold shadow-md shadow-emerald-500/10';
+                'border-neutral-500 bg-neutral-800 text-neutral-100 font-semibold shadow-md';
             } else if (isChosen && !isCorrect) {
               buttonClass += 'border-rose-500/80 bg-rose-950/40 text-rose-200';
             } else {
@@ -154,7 +154,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
               >
                 <span>{opt}</span>
                 {hasSubmittedOption && isCorrect && (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
+                  <CheckCircle2 className="w-4 h-4 text-neutral-300 shrink-0 ml-2" />
                 )}
                 {hasSubmittedOption && isChosen && !isCorrect && (
                   <XCircle className="w-4 h-4 text-rose-400 shrink-0 ml-2" />
@@ -169,7 +169,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
           <div
             className={`p-4 rounded-xl border text-xs md:text-sm leading-relaxed transition ${
               selectedOption === quiz.correctIndex
-                ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+                ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                 : 'bg-amber-950/30 border-amber-500/30 text-amber-200'
             }`}
           >
@@ -215,7 +215,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
             <div
               className={`p-4 rounded-xl border text-xs md:text-sm space-y-2 ${
                 openResult.passed
-                  ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+                  ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                   : 'bg-amber-950/30 border-amber-500/30 text-amber-200'
               }`}
             >

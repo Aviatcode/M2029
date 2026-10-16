@@ -394,14 +394,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div
           className={`p-3.5 rounded-xl text-xs flex items-center gap-2.5 border transition ${
             statusMessage.type === 'success'
-              ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+              ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
               : statusMessage.type === 'error'
               ? 'bg-rose-950/40 border-rose-500/40 text-rose-300'
-              : 'bg-cyan-950/40 border-cyan-500/40 text-cyan-300'
+              : 'bg-neutral-900 border-neutral-750 text-neutral-300'
           }`}
         >
           {statusMessage.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-neutral-300" />
           ) : (
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
           )}
@@ -428,11 +428,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <span
               className={`text-xs px-2.5 py-1 rounded-md border font-mono font-medium flex items-center gap-1.5 ${
                 aiStatus.hasCustomKey
-                  ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
+                  ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                   : 'bg-slate-950 border-slate-800 text-slate-400'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${aiStatus.hasCustomKey ? 'bg-emerald-400' : 'bg-slate-500'}`} />
+              <span className={`w-2 h-2 rounded-full ${aiStatus.hasCustomKey ? 'bg-neutral-300' : 'bg-slate-500'}`} />
               <span>{aiStatus.hasCustomKey ? 'Active' : 'Basic Model'}</span>
             </span>
           </div>
@@ -585,7 +585,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="p-4 rounded-lg bg-slate-950/90 border border-slate-800/80 space-y-3">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold text-slate-200 flex items-center gap-1.5">
-              <Play className="w-3.5 h-3.5 text-emerald-400" />
+              <Play className="w-3.5 h-3.5 text-neutral-300" />
               <span>Live AI Query Tester (Verify API Key Response)</span>
             </span>
             <span className="text-[11px] text-slate-400">Target: {subjects[0]?.name || 'DBMS'}</span>
@@ -602,7 +602,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <button
               onClick={handleRunLiveTest}
               disabled={isTestingQuery || !testPrompt.trim()}
-              className="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-medium text-xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
+              className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 disabled:opacity-40 text-white font-medium text-xs transition cursor-pointer flex items-center gap-1.5 shrink-0"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{isTestingQuery ? 'Querying...' : 'Test Response'}</span>
@@ -621,7 +621,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-4">
         <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-emerald-950 border border-emerald-500/30 text-emerald-400">
+            <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300">
               <Database className="w-5 h-5" />
             </div>
             <div>
@@ -635,11 +635,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <span
             className={`text-xs px-2.5 py-1 rounded-md border font-mono font-medium ${
               supabaseStatus.ok
-                ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
+                ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                 : 'bg-slate-950 border-slate-800 text-slate-400'
             }`}
           >
-            {supabaseStatus.ok ? '🟢 Connected' : '⚪ Standby'}
+            {supabaseStatus.ok ? 'Connected' : 'Standby'}
           </span>
         </div>
 
@@ -651,7 +651,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               value={supabaseUrl}
               onChange={(e) => setSupabaseUrl(e.target.value)}
               placeholder="https://your-project-id.supabase.co"
-              className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs font-mono text-slate-100 outline-none focus:border-emerald-500"
+              className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs font-mono text-slate-100 outline-none focus:border-neutral-600"
             />
           </div>
 
@@ -663,7 +663,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 value={supabaseKey}
                 onChange={(e) => setSupabaseKey(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs font-mono text-slate-100 pr-9 outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-xs font-mono text-slate-100 pr-9 outline-none focus:border-neutral-600"
               />
               <button
                 type="button"
@@ -679,14 +679,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
           <button
             onClick={handleSaveSupabase}
-            className="px-3.5 py-2 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white font-medium text-xs transition cursor-pointer flex items-center gap-1.5"
           >
             <Database className="w-3.5 h-3.5" />
             <span>Save Supabase Config</span>
           </button>
 
           <span className="text-[11px] text-slate-400">
-            Push database seeds via terminal: <code className="text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded">npm run db:push</code>
+            Push database seeds via terminal: <code className="text-neutral-300 bg-slate-950 px-1.5 py-0.5 rounded border border-neutral-800">npm run db:push</code>
           </span>
         </div>
       </div>
@@ -706,7 +706,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
           <span>v2.0.0</span>
           <span>·</span>
-          <span className="text-emerald-400">PWA Active</span>
+          <span className="text-neutral-300">PWA Active</span>
         </div>
       </div>
     </div>

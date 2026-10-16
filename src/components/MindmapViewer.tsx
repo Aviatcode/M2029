@@ -133,7 +133,7 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-xs text-slate-200 hover:bg-slate-750 transition"
               title="Copy Mermaid.js diagram"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
               <span>{copied ? 'Copied!' : 'Copy Code'}</span>
             </button>
           )}

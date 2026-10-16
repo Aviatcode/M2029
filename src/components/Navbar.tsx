@@ -198,7 +198,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               )}
               {currentUser.isLoggedIn && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-neutral-950" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-neutral-300 ring-2 ring-neutral-950" />
               )}
             </div>
 

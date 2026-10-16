@@ -136,12 +136,12 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
           </div>
 
           {/* Token Saving Indicator */}
-          <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-emerald-400">
+          <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-neutral-300">
             <span className="flex items-center gap-1">
-              <Zap className="w-3 h-3 text-emerald-400" />
+              <Zap className="w-3 h-3 text-neutral-400" />
               <span>Shared Class Cache:</span>
             </span>
-            <span className="font-mono font-bold bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
+            <span className="font-mono font-bold bg-neutral-900 px-1.5 py-0.5 rounded border border-neutral-700">
               {cachedCount} Saved (0 Tokens)
             </span>
           </div>
@@ -158,7 +158,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
           <span
             className={`font-mono font-bold ${
               readinessPercent >= 70
-                ? 'text-emerald-400'
+                ? 'text-neutral-200'
                 : readinessPercent >= 40
                 ? 'text-amber-400'
                 : 'text-rose-400'
@@ -169,7 +169,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
         </div>
         <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500 transition-all duration-500"
+            className="h-full rounded-full bg-neutral-300 transition-all duration-500"
             style={{ width: `${Math.max(readinessPercent, 5)}%` }}
           />
         </div>
@@ -285,7 +285,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
                               <span
                                 className={`w-2 h-2 rounded-full shrink-0 ${
                                   score >= 70
-                                    ? 'bg-emerald-400 shadow-sm shadow-emerald-400/50'
+                                    ? 'bg-neutral-200 shadow-sm'
                                     : score >= 40
                                     ? 'bg-amber-400'
                                     : 'bg-rose-400'

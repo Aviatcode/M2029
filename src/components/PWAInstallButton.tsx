@@ -10,8 +10,8 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
   // If already running inside installed standalone WebAPK, display an active badge
   if (isInstalled) {
     return (
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-medium">
-        <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs font-medium">
+        <CheckCircle className="w-3.5 h-3.5 text-neutral-300" />
         <span>WebAPK Installed</span>
       </div>
     );
@@ -33,11 +33,11 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
         onClick={handleInstallClick}
         disabled={installing}
         title="Install as Android WebAPK or Desktop Application"
-        className={`flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 text-white font-medium shadow-md shadow-blue-500/20 hover:shadow-blue-500/35 hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer ${
+        className={`flex items-center gap-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white font-medium shadow-sm hover:scale-[1.01] active:scale-[0.98] transition cursor-pointer ${
           compact ? 'px-2.5 py-1.5 text-xs' : 'px-3.5 py-2 text-xs md:text-sm'
         }`}
       >
-        <Smartphone className="w-4 h-4 text-cyan-200 animate-pulse" />
+        <Smartphone className="w-4 h-4 text-neutral-300" />
         <span>{installing ? 'Installing...' : '📲 Install WebAPK'}</span>
       </button>
     );
@@ -53,7 +53,7 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
             compact ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-1.5 text-xs'
           }`}
         >
-          <Download className="w-3.5 h-3.5 text-cyan-400" />
+          <Download className="w-3.5 h-3.5 text-neutral-300" />
           <span>Install WebAPK on iOS</span>
         </button>
 
@@ -62,7 +62,7 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
             <div className="w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-700 p-6 shadow-2xl text-slate-100">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400">
+                  <div className="p-2 rounded-lg bg-neutral-800 text-neutral-200 border border-neutral-700">
                     <Smartphone className="w-5 h-5" />
                   </div>
                   <h3 className="font-semibold text-base">Install on iPhone / iPad</h3>
@@ -77,16 +77,16 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
 
               <div className="space-y-3 text-xs text-slate-300 leading-relaxed mb-5">
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/60 border border-slate-750">
-                  <Share className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
+                  <Share className="w-4 h-4 text-neutral-300 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-semibold text-white">Step 1:</span> Tap the <strong className="text-cyan-300">Share</strong> button at the bottom of Safari.
+                    <span className="font-semibold text-white">Step 1:</span> Tap the <strong className="text-neutral-200">Share</strong> button at the bottom of Safari.
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3 p-3 rounded-lg bg-slate-800/60 border border-slate-750">
-                  <PlusSquare className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                  <PlusSquare className="w-4 h-4 text-neutral-300 mt-0.5 shrink-0" />
                   <div>
-                    <span className="font-semibold text-white">Step 2:</span> Scroll down and tap <strong className="text-emerald-300">"Add to Home Screen"</strong>.
+                    <span className="font-semibold text-white">Step 2:</span> Scroll down and tap <strong className="text-neutral-200">"Add to Home Screen"</strong>.
                   </div>
                 </div>
               </div>

@@ -112,7 +112,7 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
       <div className="px-4 py-3 border-b border-slate-800/80 bg-slate-950 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded bg-slate-900 border border-slate-800 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-emerald-400" />
+            <Bot className="w-4 h-4 text-neutral-400" />
           </div>
           <div>
             <h1 className="font-sans-ui font-semibold text-xs sm:text-sm text-slate-100 leading-tight">
@@ -161,9 +161,9 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
       <div className="px-4 py-2 border-b border-slate-800/60 bg-slate-900/30 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2 shrink-0">
         <div className="flex items-center gap-2 text-slate-300">
           {aiStatus.hasCustomKey ? (
-            <span className="academic-tag text-[10px] text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-emerald-400" />
-              <span>Gemini 2.5 Active</span>
+            <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-neutral-400" />
+              <span>{aiStatus.providerName || 'AI Model'} Active</span>
             </span>
           ) : (
             <span className="academic-tag text-[10px] text-slate-300 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
@@ -174,18 +174,18 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
           <span className="text-slate-600 hidden sm:inline">·</span>
           <span className="text-[11px] text-slate-400 font-sans-ui hidden sm:inline">
             {aiStatus.hasCustomKey
-              ? 'Shared class Gemini key unlocked for syllabus reasoning'
-              : 'CR or any classmate can add a free Gemini API key'}
+              ? 'Shared class AI key unlocked for syllabus reasoning'
+              : 'CR or any classmate can add an API key for higher intelligence'}
           </span>
         </div>
 
         <button
           onClick={() => setIsKeyModalOpen(true)}
           className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer shrink-0 self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
-          title="Configure Class Gemini API Key or switch to basic model"
+          title="Configure AI API Keys or switch to basic model"
         >
           <KeyRound className="w-3 h-3 text-slate-400" />
-          <span>{aiStatus.hasCustomKey ? 'Manage Gemini Key' : 'Configure Gemini Key (CR/Student)'}</span>
+          <span>{aiStatus.hasCustomKey ? 'Manage AI Keys' : 'Configure AI Key (CR/Student)'}</span>
         </button>
       </div>
 
@@ -196,7 +196,7 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
             return (
               <div key={msg.id} className="border-b border-slate-800/60 pb-3 pt-1">
                 <div className="flex items-center gap-2 text-slate-400 text-xs mb-1">
-                  <span className="academic-tag text-[9px] text-emerald-400">Student Inquiry</span>
+                  <span className="academic-tag text-[9px] text-neutral-400">Student Inquiry</span>
                   <span>·</span>
                   <span className="font-mono text-[10px] text-slate-500">{msg.timestamp}</span>
                 </div>
@@ -215,7 +215,7 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
             >
               <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="academic-tag text-[10px] text-emerald-400 bg-emerald-950/60 border border-emerald-500/25 px-2 py-0.5 rounded">
+                  <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
                     {msg.modeUsed ? msg.modeUsed.toUpperCase().replace('_', ' ') : 'ACADEMIC LESSON'}
                   </span>
                   <span className="text-slate-400 text-[11px] font-sans-ui hidden sm:inline">
@@ -273,7 +273,7 @@ Ask me any question or paste a topic you are finding difficult to understand.`,
 
         {isLoading && (
           <div className="flex items-center gap-2.5 text-xs text-slate-400 p-3 rounded-md bg-slate-900/40 border border-slate-800/60 font-sans-ui">
-            <Sparkles className="w-4 h-4 text-emerald-400 animate-spin" />
+            <Sparkles className="w-4 h-4 text-neutral-300 animate-spin" />
             <span>Consulting syllabus knowledge base & formulating academic explanation...</span>
           </div>
         )}

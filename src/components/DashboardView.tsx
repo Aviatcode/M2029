@@ -112,24 +112,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-slate-400">
-              <span className="academic-tag text-[10px] text-emerald-400/90 bg-emerald-950/60 border border-emerald-500/25 px-2 py-0.5 rounded">
+              <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
                 Semester {semesterNumber} · {classCode}
               </span>
               <span className="academic-tag text-[10px] text-slate-500">
                 Academic Dossier
               </span>
-              <span className="text-[10px] text-emerald-400 font-sans inline-flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-emerald-400" />
+              <span className="text-[10px] text-neutral-400 font-sans inline-flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-neutral-400" />
                 <span className="hidden sm:inline">CR Verified</span>
               </span>
               {onOpenAIKeyConfig && (
                 <button
                   type="button"
                   onClick={onOpenAIKeyConfig}
-                  className="academic-tag text-[10px] text-cyan-300 bg-cyan-950/60 border border-cyan-500/30 hover:border-cyan-500/70 hover:bg-cyan-900/60 px-2 py-0.5 rounded inline-flex items-center gap-1 transition cursor-pointer"
-                  title="Configure Gemini AI Key & Database"
+                  className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-850 px-2 py-0.5 rounded inline-flex items-center gap-1 transition cursor-pointer"
+                  title="Configure AI Model Engine & Keys"
                 >
-                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  <Sparkles className="w-3 h-3 text-neutral-400" />
                   <span>Configure API Key</span>
                 </button>
               )}
@@ -169,14 +169,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Calm Mode Focus Indicator */}
         {calmMode && (
-          <div className="flex items-center justify-between px-3.5 py-2 rounded-md bg-emerald-950/20 border border-emerald-500/25 text-xs text-emerald-300">
+          <div className="flex items-center justify-between px-3.5 py-2 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-300">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <Sparkles className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
               <span className="font-sans-ui">
-                <strong className="font-semibold text-emerald-200">Calm Mode Active:</strong> Extraneous notifications and secondary modules are silenced for deep study.
+                <strong className="font-semibold text-neutral-200">Calm Mode Active:</strong> Extraneous notifications and secondary modules are silenced for deep study.
               </span>
             </div>
-            <span className="academic-tag text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/20 hidden sm:inline">
+            <span className="academic-tag text-[10px] text-neutral-400 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800 hidden sm:inline">
               Zen Focus
             </span>
           </div>
@@ -189,7 +189,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/50 pb-3">
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <BookOpen className="w-4 h-4 text-neutral-400" />
                 <span className="academic-tag text-[10px] text-slate-400">
                   Curriculum Horizon
                 </span>
@@ -201,7 +201,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="flex items-center gap-3 text-xs">
               <span className="text-slate-400 font-sans-ui">Semester Progress:</span>
-              <span className="font-mono text-emerald-400 font-semibold text-sm">
+              <span className="font-mono text-slate-100 font-semibold text-sm">
                 {overallProgressPercent}%
               </span>
               <button
@@ -228,7 +228,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   className="p-3 rounded bg-slate-900/50 border border-slate-800/70 hover:border-slate-700 hover:bg-slate-900/80 transition cursor-pointer group space-y-2 select-none"
                 >
                   <div className="flex items-center justify-between text-xs">
-                    <span className="academic-tag text-[10px] text-slate-400 group-hover:text-emerald-400 transition">
+                    <span className="academic-tag text-[10px] text-slate-400 group-hover:text-white transition">
                       {sub.code || 'CRS'}
                     </span>
                     <span className="font-mono text-xs text-slate-300 font-medium">
@@ -243,7 +243,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   {/* Clean Hairline Progress Bar */}
                   <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-emerald-500/80 group-hover:bg-emerald-400 transition-all duration-300"
+                      className="h-full bg-neutral-300 group-hover:bg-white transition-all duration-300"
                       style={{ width: `${Math.min(100, Math.max(4, subPercent))}%` }}
                     />
                   </div>
@@ -263,7 +263,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {nextClass && (
         <div className="rounded-md bg-slate-900/40 border border-slate-800/80 p-5 space-y-3.5 marginalia">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
-            <span className="academic-tag text-[10px] text-emerald-400">
+            <span className="academic-tag text-[10px] text-neutral-400">
               Immediate Agenda · Next Lecture
             </span>
             <span className="font-mono text-slate-400 text-xs">
@@ -286,7 +286,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex flex-wrap items-center gap-2.5 pt-1">
             <button
               onClick={onOpenTomorrowPrep}
-              className="px-3.5 py-1.5 rounded bg-emerald-950/50 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-300 text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shadow-2xs font-sans-ui"
+              className="px-3.5 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-100 text-xs font-medium transition cursor-pointer flex items-center gap-1.5 shadow-2xs font-sans-ui"
             >
               <span>7-Min Pre-Class Primer</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -355,7 +355,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {notifPermission === 'default' && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-md bg-slate-900/40 border border-slate-800 text-xs">
           <div className="flex items-center gap-2.5 text-slate-300">
-            <Bell className="w-4 h-4 text-emerald-400 shrink-0" />
+            <Bell className="w-4 h-4 text-neutral-400 shrink-0" />
             <div className="font-sans-ui">
               <span className="font-semibold text-slate-200">Classroom Deadlines & Timetable Alerts: </span>
               <span className="text-slate-400">
@@ -387,7 +387,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span>Today's Lectures</span>
             <span className="font-editorial italic text-slate-400">({todayClasses.length})</span>
             {activeTab === 'schedule' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-200 rounded-full" />
             )}
           </button>
 
@@ -402,7 +402,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span>Upcoming Exams</span>
             <span className="font-editorial italic text-slate-400">({upcomingExams.length})</span>
             {activeTab === 'exams' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-200 rounded-full" />
             )}
           </button>
 
@@ -417,7 +417,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span>Shared Notes & PPTs</span>
             <span className="font-editorial italic text-slate-400">({recentMaterials.length})</span>
             {activeTab === 'notes' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-200 rounded-full" />
             )}
           </button>
         </div>
@@ -443,7 +443,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 <button
                   onClick={() => onNavigateTab('ai-tutor')}
-                  className="text-xs text-slate-400 hover:text-emerald-400 transition cursor-pointer font-sans-ui shrink-0"
+                  className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
                 >
                   Study Topic →
                 </button>
@@ -481,7 +481,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </span>
                     <button
                       onClick={() => onNavigateTab('exams')}
-                      className="text-xs text-slate-400 hover:text-emerald-400 transition cursor-pointer font-sans-ui"
+                      className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui"
                     >
                       Revision Roadmap →
                     </button>
@@ -511,7 +511,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                 <button
                   onClick={() => onNavigateTab('materials')}
-                  className="text-xs text-slate-400 hover:text-emerald-400 transition cursor-pointer font-sans-ui shrink-0"
+                  className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
                 >
                   Open Notes →
                 </button>
