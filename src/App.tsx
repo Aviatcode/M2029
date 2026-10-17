@@ -579,6 +579,8 @@ export default function App() {
             onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
             onOpenClassSetup={() => setIsSetupModalOpen(true)}
             onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+            currentUser={currentUser}
+            onLogout={handleLogout}
           />
         </div>
 
@@ -600,6 +602,11 @@ export default function App() {
                 }}
                 onOpenAIKeyConfig={() => {
                   setIsAIKeyModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                currentUser={currentUser}
+                onLogout={() => {
+                  handleLogout();
                   setMobileMenuOpen(false);
                 }}
               />

@@ -11,9 +11,11 @@ import {
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
-  Compass,
   UploadCloud,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
+import type { UserProfile } from './LoginModal';
 
 export type ActiveNavTab =
   | 'landing'
@@ -39,6 +41,8 @@ interface SidebarProps {
   onToggleCollapse?: () => void;
   onOpenClassSetup?: () => void;
   onOpenAIKeyConfig?: () => void;
+  currentUser?: UserProfile;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -50,6 +54,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
   onOpenClassSetup,
   onOpenAIKeyConfig,
+  currentUser,
+  onLogout,
 }) => {
   const primaryItems = [
     { id: 'dashboard' as const, label: 'Today', icon: LayoutDashboard },
@@ -65,8 +71,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
     { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
-    { id: 'landing' as const, label: 'Sign In / Out', icon: Compass },
   ];
+
+  const isUserLoggedIn = currentUser ? currentUser.isLoggedIn : true;
+  const authLabel = isUserLoggedIn ? 'Sign Out' : 'Sign In';
+  const AuthIcon = isUserLoggedIn ? LogOut : LogIn;
+
+  const handleAuthAction = () => {
+    if (isUserLoggedIn && onLogout) {
+      onLogout();
+    } else {
+      onSelectTab('landing');
+    }
+  };
 
   return (
     <aside
@@ -181,6 +198,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
         </div>
       </nav>
+
+      {/* Pinned Bottom Left Footer: Sign Out / In */}
+      <div className={`border-t border-slate-800/60 shrink-0 ${isCollapsed ? 'p-2' : 'p-3'}`}>
+        <button
+          onClick={handleAuthAction}
+          title={authLabel}
+          className={`group w-full flex items-center rounded-md text-xs font-medium transition cursor-pointer ${
+            isCollapsed
+              ? 'justify-center py-2 px-0'
+              : 'gap-2.5 px-2.5 py-1.5 text-left'
+          } ${
+            isUserLoggedIn
+              ? 'text-slate-400 hover:text-rose-400 hover:bg-slate-900/60 border border-transparent'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent'
+          }`}
+        >
+          <AuthIcon
+            className={`w-4 h-4 shrink-0 transition-colors ${
+              isUserLoggedIn
+                ? 'text-slate-400 group-hover:text-rose-400'
+                : 'text-slate-400 group-hover:text-slate-200'
+            }`}
+          />
+          {!isCollapsed && <span className="truncate font-sans-ui">{authLabel}</span>}
+        </button>
+      </div>
     </aside>
   );
 };
