@@ -45,14 +45,7 @@ jobs:
       - name: Ensure .nojekyll exists
         run: touch dist/.nojekyll
 
-      # 1. Deploy to gh-pages branch (guarantees deployment when "Deploy from a branch" is selected in Settings)
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-
-      # 2. Deploy via GitHub Actions Pages (for when "GitHub Actions" is selected in Settings)
+      # Deploy via official GitHub Actions Pages (zero extra branches created)
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -64,4 +57,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        continue-on-error: true

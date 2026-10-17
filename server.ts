@@ -1,3 +1,4 @@
+import fs from 'fs';
 import express, { Request, Response } from 'express';
 import http from 'http';
 import { createServer as createViteServer } from 'vite';
@@ -655,10 +656,44 @@ Evaluate the answer. Return STRICT JSON only:
     });
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(path.resolve(__dirname, 'dist')));
-    app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
-    });
+    const distPath = path.resolve(__dirname, 'dist');
+    const distIndex = path.resolve(distPath, 'index.html');
+
+    if (!fs.existsSync(distIndex)) {
+      console.log('⚡ dist/index.html not found, starting Vite middleware fallback in production...');
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } else {
+      app.use(
+        express.static(distPath, {
+          setHeaders: (res, filePath) => {
+            if (
+              filePath.endsWith('index.html') ||
+              filePath.endsWith('sw.js') ||
+              filePath.endsWith('registerSW.js') ||
+              filePath.endsWith('manifest.json') ||
+              filePath.endsWith('manifest.webmanifest')
+            ) {
+              res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+              res.setHeader('Pragma', 'no-cache');
+              res.setHeader('Expires', '0');
+            } else {
+              res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+            }
+          },
+        })
+      );
+
+      app.get('*', (_req: Request, res: Response) => {
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
+        res.sendFile(distIndex);
+      });
+    }
   }
 
   httpServer.listen(PORT, '0.0.0.0', () => {
