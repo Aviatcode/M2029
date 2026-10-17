@@ -159,13 +159,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* 2. Center: Minimal Search Input */}
       <button
         onClick={onOpenSearch}
-        className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400 hover:text-neutral-200 hover:border-neutral-700 transition cursor-pointer w-56 lg:w-64 justify-between"
+        className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400 hover:text-neutral-200 hover:border-neutral-700 transition cursor-pointer w-64 lg:w-80 justify-between shadow-xs"
+        title="Search anything across syllabus, notes, PYQs, and assignments (⌘K)"
       >
-        <span className="flex items-center gap-2">
-          <Search className="w-3.5 h-3.5 text-neutral-500" />
-          <span className="truncate text-[11px]">Search syllabus, PYQs...</span>
+        <span className="flex items-center gap-2 min-w-0">
+          <Search className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+          <span className="truncate text-xs">Search anything... (Syllabus, Notes, PYQs)</span>
         </span>
-        <kbd className="text-[10px] font-mono text-neutral-500 bg-neutral-950 px-1 py-0.5 rounded border border-neutral-850">⌘K</kbd>
+        <kbd className="text-[10px] font-mono text-neutral-400 bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800 shrink-0">⌘K</kbd>
       </button>
 
       {/* 3. Right: Alerts & Minimal User DP */}

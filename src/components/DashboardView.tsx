@@ -10,9 +10,8 @@ import {
 import {
   Clock,
   ArrowRight,
-  Search,
   BookOpen,
-  Sparkles,
+  KeyRound,
   CheckCircle2,
   Calendar,
   FileText,
@@ -64,7 +63,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenAIKeyConfig,
 }) => {
   const [activeTab, setActiveTab] = useState<'schedule' | 'exams' | 'notes'>('schedule');
-  const [searchPrompt, setSearchPrompt] = useState('');
   const [notifPermission, setNotifPermission] = useState<NotificationPermissionState>(getNotificationPermission());
 
   const handleAllowNotifications = async () => {
@@ -85,13 +83,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     const target = new Date(dateStr);
     target.setHours(0, 0, 0, 0);
     return Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  };
-
-  const handleQuickSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchPrompt.trim()) {
-      onTriggerQuickAIAction(searchPrompt.trim());
-    }
   };
 
   // Calculate overall semester syllabus progress
@@ -121,9 +112,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   type="button"
                   onClick={onOpenAIKeyConfig}
                   className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-850 px-2 py-0.5 rounded inline-flex items-center gap-1 transition cursor-pointer"
-                  title="Configure AI Model Engine & Keys"
+                  title="Configure Model & Keys"
                 >
-                  <Sparkles className="w-3 h-3 text-neutral-400" />
+                  <KeyRound className="w-3 h-3 text-neutral-400" />
                   <span>API Key</span>
                 </button>
               )}
@@ -141,24 +132,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
         </div>
-
-        {/* Search Bar */}
-        <form onSubmit={handleQuickSearch} className="relative pt-1">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-          <input
-            type="text"
-            value={searchPrompt}
-            onChange={(e) => setSearchPrompt(e.target.value)}
-            placeholder="Search syllabus topics (e.g., Normalization, Page Replacement)..."
-            className="w-full bg-slate-900/50 border border-slate-800/90 rounded-md pl-10 pr-20 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-slate-600 transition font-sans-ui"
-          />
-          <button
-            type="submit"
-            className="absolute right-1 top-2 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-750 text-slate-200 text-xs font-medium transition cursor-pointer font-sans-ui border border-slate-700/60"
-          >
-            Study →
-          </button>
-        </form>
 
         {/* Study Vault Drop Zone Callout Banner */}
         <div
@@ -187,7 +160,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Calm Mode Indicator */}
         {calmMode && (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400">
-            <Sparkles className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+            <ShieldCheck className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
             <span>Calm Mode active: Notifications silenced.</span>
           </div>
         )}

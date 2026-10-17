@@ -7,7 +7,9 @@ import {
   FileQuestion,
   Compass,
   ArrowRight,
-  Layers,
+  FileCheck,
+  Award,
+  Clock,
 } from 'lucide-react';
 
 interface SearchResultItem {
@@ -96,7 +98,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     const t = type.toLowerCase();
     if (t.includes('subject')) return <BookOpen className="w-4 h-4 text-slate-400 shrink-0" />;
     if (t.includes('syllabus') || t.includes('topic')) return <Compass className="w-4 h-4 text-slate-400 shrink-0" />;
-    if (t.includes('pyq') || t.includes('exam')) return <FileQuestion className="w-4 h-4 text-slate-400 shrink-0" />;
+    if (t.includes('pyq')) return <FileQuestion className="w-4 h-4 text-slate-400 shrink-0" />;
+    if (t.includes('assignment')) return <FileCheck className="w-4 h-4 text-slate-400 shrink-0" />;
+    if (t.includes('exam')) return <Award className="w-4 h-4 text-slate-400 shrink-0" />;
+    if (t.includes('class') || t.includes('lecture')) return <Clock className="w-4 h-4 text-slate-400 shrink-0" />;
     return <FileText className="w-4 h-4 text-slate-400 shrink-0" />;
   };
 
@@ -104,7 +109,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
     const t = type.toLowerCase();
     if (t.includes('subject')) return 'Subject';
     if (t.includes('syllabus') || t.includes('topic')) return 'Syllabus';
-    if (t.includes('pyq') || t.includes('exam')) return 'PYQ';
+    if (t.includes('pyq')) return 'PYQ';
+    if (t.includes('assignment')) return 'Assignment';
+    if (t.includes('exam')) return 'Exam';
+    if (t.includes('class') || t.includes('lecture')) return 'Class';
     return 'Notes';
   };
 

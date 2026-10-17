@@ -1452,7 +1452,43 @@ apiRouter.get('/search', (req: Request, res: Response) => {
     }
   });
 
-  res.json({ results: results.slice(0, 10) });
+  // Search in assignments
+  (db.assignments || []).forEach((a) => {
+    if (a.title.toLowerCase().includes(q) || a.subjectName.toLowerCase().includes(q) || a.instructions?.toLowerCase().includes(q)) {
+      results.push({
+        type: 'Assignment',
+        title: a.title,
+        subtitle: `${a.subjectName} • Due: ${a.dueDate || 'Pending'}`,
+        id: a.id,
+      });
+    }
+  });
+
+  // Search in exams
+  SEED_EXAMS.forEach((ex) => {
+    if (ex.subjectName.toLowerCase().includes(q) || ex.examType?.toLowerCase().includes(q)) {
+      results.push({
+        type: 'Exam',
+        title: `${ex.subjectName} (${ex.examType})`,
+        subtitle: `Exam on ${ex.date} • ${ex.time}`,
+        id: ex.id,
+      });
+    }
+  });
+
+  // Search in timetable classes
+  (db.timetable['class-bca-2028'] || []).forEach((cls) => {
+    if (cls.subjectName?.toLowerCase().includes(q) || cls.professor?.toLowerCase().includes(q) || cls.room?.toLowerCase().includes(q)) {
+      results.push({
+        type: 'Class',
+        title: `${cls.subjectName} (${cls.room})`,
+        subtitle: `${cls.day} • ${cls.startTime} - ${cls.endTime} • ${cls.professor}`,
+        id: cls.id,
+      });
+    }
+  });
+
+  res.json({ results: results.slice(0, 15) });
 });
 
 // 15. AI Course & Teacher Intelligence Auto-Extraction
