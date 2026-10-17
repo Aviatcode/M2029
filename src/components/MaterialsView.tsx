@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { AcademicMaterial, Subject, ProcessingStage, UserRole } from '../types';
 import {
   UploadCloud,
@@ -44,6 +44,17 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Close upload modal on Escape key if idle
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isUploading && processingStage === 'idle') {
+        setIsUploading(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isUploading, processingStage]);
 
   const filteredMaterials = materials.filter((m) =>
     selectedSubjectFilter === 'all' ? true : m.subjectId === selectedSubjectFilter
@@ -415,8 +426,21 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
       {/* Upload Modal with Real File Drag & Drop */}
       {isUploading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-lg rounded-2xl bg-slate-950 border border-slate-800 p-6 text-slate-100 shadow-2xl">
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in ${
+            processingStage === 'idle' ? 'cursor-pointer' : ''
+          }`}
+          onClick={() => {
+            if (processingStage === 'idle') setIsUploading(false);
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Upload Study Material Modal"
+        >
+          <div
+            className="w-full max-w-lg rounded-2xl bg-slate-950 border border-slate-800 p-6 text-slate-100 shadow-2xl cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-4">
               <div className="flex items-center gap-2">
                 <UploadCloud className="w-4 h-4 text-cyan-400" />

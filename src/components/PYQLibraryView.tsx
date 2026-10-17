@@ -30,7 +30,7 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
   });
 
   return (
-    <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
+    <div className="space-y-6 animate-fade-in pb-8">
       {/* 1. Header */}
       <div className="space-y-1 border-b border-slate-800/60 pb-4">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">

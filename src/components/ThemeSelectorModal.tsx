@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   X,
   Palette,
@@ -55,6 +55,16 @@ export const ThemeSelectorModal: React.FC<ThemeSelectorModalProps> = ({
     bgConfig.type === 'custom' && bgConfig.customUrl ? bgConfig.customUrl : ''
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -132,8 +142,17 @@ export const ThemeSelectorModal: React.FC<ThemeSelectorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-      <div className="w-full max-w-2xl rounded-2xl bg-neutral-950 border border-neutral-800 p-6 md:p-7 shadow-2xl text-neutral-100 my-8 space-y-6">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in cursor-pointer"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Theme & Appearance Modal"
+    >
+      <div
+        className="w-full max-w-2xl rounded-2xl bg-neutral-950 border border-neutral-800 p-6 md:p-7 shadow-2xl text-neutral-100 my-8 space-y-6 cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
           <div className="flex items-center gap-3">

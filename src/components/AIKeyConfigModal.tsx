@@ -137,6 +137,16 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const currentPreset =
@@ -256,8 +266,17 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="w-full max-w-xl rounded-2xl bg-slate-950 border border-slate-800 p-6 shadow-2xl text-slate-100 my-8 space-y-5">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto cursor-pointer"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Model and API Key Settings Modal"
+    >
+      <div
+        className="w-full max-w-xl rounded-2xl bg-slate-950 border border-slate-800 p-6 shadow-2xl text-slate-100 my-8 space-y-5 cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header: Clean, quiet academic style */}
         <div className="flex items-center justify-between pb-3.5 border-b border-slate-800/80">
           <div className="flex items-center gap-3">

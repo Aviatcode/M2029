@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import {
   UserRole,
   ClassWorkspace,
@@ -241,6 +242,30 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [initialTutorPrompt, setInitialTutorPrompt] = useState('');
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (mobileMenuOpen) setMobileMenuOpen(false);
+        if (isNotificationsOpen) setIsNotificationsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen, isNotificationsOpen]);
+
+  // Lock body scroll when mobile drawer or notifications are open
+  useEffect(() => {
+    if (mobileMenuOpen || isNotificationsOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen, isNotificationsOpen]);
 
   // User Profile State (persisted)
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
@@ -601,40 +626,86 @@ export default function App() {
           />
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile Drawer (Phone & Tablet) */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 flex lg:hidden bg-black/80 backdrop-blur-sm">
-            <div className="w-4/5 max-w-xs h-full bg-slate-950 shadow-2xl flex flex-col">
-              <Sidebar
-                activeTab={activeTab}
-                onSelectTab={(tab) => {
-                  handleSelectTab(tab);
-                  setMobileMenuOpen(false);
-                }}
-                classCode={classCode}
-                semesterNumber={workspace.semester}
-                onOpenClassSetup={() => {
-                  setIsSetupModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                onOpenAIKeyConfig={() => {
-                  setIsAIKeyModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                currentUser={currentUser}
-                onLogout={() => {
-                  handleLogout();
-                  setMobileMenuOpen(false);
-                }}
-                isSetupDone={isSemesterSetupDone}
-              />
+          <div
+            className="fixed inset-0 z-50 flex lg:hidden bg-black/80 backdrop-blur-sm cursor-pointer transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation Menu"
+          >
+            <div
+              className="w-4/5 max-w-xs h-full bg-slate-950 shadow-2xl flex flex-col cursor-default border-r border-slate-850 animate-in slide-in-from-left duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Drawer Header with Home link & Close Button */}
+              <div className="h-13 px-3.5 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-950">
+                <button
+                  onClick={() => {
+                    handleSelectTab('dashboard');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2.5 text-left cursor-pointer group focus:outline-none"
+                  title="Return to Today (Home)"
+                >
+                  <img
+                    src="./am-logo.png"
+                    alt="AM Logo"
+                    className="w-7 h-7 rounded-md object-contain border border-slate-800"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-slate-100 font-sans tracking-tight block">
+                      SyllabusOS
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-400 block -mt-0.5">
+                      {classCode} • Sem {workspace.semester}
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer"
+                  aria-label="Close menu"
+                  title="Close menu"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Sidebar Content */}
+              <div className="flex-1 overflow-hidden">
+                <Sidebar
+                  activeTab={activeTab}
+                  onSelectTab={(tab) => {
+                    handleSelectTab(tab);
+                    setMobileMenuOpen(false);
+                  }}
+                  classCode={classCode}
+                  semesterNumber={workspace.semester}
+                  onOpenClassSetup={() => {
+                    setIsSetupModalOpen(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  onOpenAIKeyConfig={() => {
+                    setIsAIKeyModalOpen(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  currentUser={currentUser}
+                  onLogout={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  isSetupDone={isSemesterSetupDone}
+                />
+              </div>
             </div>
-            <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
           </div>
         )}
 
-        {/* Content Workspace Area */}
-        <main className="flex-1 h-full overflow-y-auto px-4 md:px-8 py-6 max-w-4xl mx-auto w-full">
+        {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
+        <main className="flex-1 h-full overflow-y-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 max-w-5xl xl:max-w-6xl mx-auto w-full">
           {activeTab === 'dashboard' && (
             <DashboardView
               studentName={currentUser.name}

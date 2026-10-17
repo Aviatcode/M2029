@@ -127,8 +127,20 @@ export const PWAInstallPopup: React.FC = () => {
 
       {/* iOS Safari Guide Modal */}
       {showIOSGuide && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-700 p-6 shadow-2xl text-slate-100">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 cursor-pointer"
+          onClick={() => {
+            setShowIOSGuide(false);
+            handleDismiss();
+          }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Install on iOS Modal"
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-700 p-6 shadow-2xl text-slate-100 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-neutral-800 text-neutral-200 border border-neutral-700">

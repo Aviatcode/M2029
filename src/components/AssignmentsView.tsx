@@ -75,6 +75,19 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     setAssignments(initialAssignments);
   }, [initialAssignments]);
 
+  // Handle Escape key to close any active modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (activeModalItem) setActiveModalItem(null);
+        if (isAddModalOpen) setIsAddModalOpen(false);
+        if (isCRPortalOpen) setIsCRPortalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeModalItem, isAddModalOpen, isCRPortalOpen]);
+
   const calculateDaysLeft = (dateStr: string) => {
     try {
       const today = new Date();
@@ -762,8 +775,17 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
       {/* 5. ASSIGNMENT DETAIL & AI SOLVER MODAL */}
       {activeModalItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-          <div className="w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-750 p-6 md:p-7 shadow-2xl text-slate-100 my-8 space-y-5">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in cursor-pointer"
+          onClick={() => setActiveModalItem(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Assignment Details Modal"
+        >
+          <div
+            className="w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-750 p-6 md:p-7 shadow-2xl text-slate-100 my-8 space-y-5 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Modal Header */}
             <div className="flex items-start justify-between pb-3 border-b border-slate-800">
               <div className="space-y-1 pr-3">
@@ -1008,8 +1030,17 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
       {/* 6. ADD WORK MODAL */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl text-slate-100 space-y-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in cursor-pointer"
+          onClick={() => setIsAddModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Add Assignment Modal"
+        >
+          <div
+            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl text-slate-100 space-y-4 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <Plus className="w-4 h-4 text-cyan-400" />
@@ -1148,8 +1179,17 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
       {/* 7. CR (CLASS REPRESENTATIVE) 1-CLICK SYNC MODAL */}
       {isCRPortalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="w-full max-w-xl rounded-2xl bg-slate-900 border border-indigo-500/40 p-6 shadow-2xl text-slate-100 space-y-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in cursor-pointer"
+          onClick={() => setIsCRPortalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Class Representative Portal Modal"
+        >
+          <div
+            className="w-full max-w-xl rounded-2xl bg-slate-900 border border-indigo-500/40 p-6 shadow-2xl text-slate-100 space-y-4 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-indigo-400" />

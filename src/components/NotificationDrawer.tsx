@@ -44,8 +44,13 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   useEffect(() => {
     if (isOpen) {
       setPermission(getNotificationPermission());
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -74,8 +79,17 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
   const hasUnread = notifications.some((n) => !n.read);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="w-full max-w-sm h-full bg-neutral-950 border-l border-neutral-850 shadow-2xl flex flex-col p-4 sm:p-5 space-y-4">
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs animate-in fade-in duration-150 cursor-pointer"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Notifications Drawer"
+    >
+      <div
+        className="w-full max-w-sm h-full bg-neutral-950 border-l border-neutral-850 shadow-2xl flex flex-col p-4 sm:p-5 space-y-4 cursor-default animate-in slide-in-from-right duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-neutral-850">
           <div className="flex items-center gap-2">

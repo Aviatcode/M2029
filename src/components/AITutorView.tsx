@@ -147,7 +147,21 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
             ))}
           </select>
 
-          {/* Pedagogy Mode Selector (Linear Segmented Control) */}
+          {/* Mobile & Tablet Pedagogy Mode Selector */}
+          <select
+            value={activeMode}
+            onChange={(e) => setActiveMode(e.target.value as TutorResponseMode)}
+            className="lg:hidden bg-slate-900 border border-slate-800/90 rounded px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-slate-700 cursor-pointer font-sans-ui"
+            aria-label="Pedagogy Mode"
+          >
+            {primaryModes.map((m) => (
+              <option key={m.mode} value={m.mode}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+
+          {/* Desktop Pedagogy Mode Selector (Linear Segmented Control) */}
           <div className="hidden lg:flex items-center rounded bg-slate-900 border border-slate-800 p-0.5">
             {primaryModes.map((m) => (
               <button
