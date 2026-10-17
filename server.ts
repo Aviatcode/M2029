@@ -656,7 +656,11 @@ Evaluate the answer. Return STRICT JSON only:
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.resolve(__dirname, 'dist');
+    const distPath = fs.existsSync(path.resolve(__dirname, 'dist', 'index.html'))
+      ? path.resolve(__dirname, 'dist')
+      : (fs.existsSync(path.resolve(__dirname, 'docs', 'index.html'))
+          ? path.resolve(__dirname, 'docs')
+          : path.resolve(__dirname));
     const distIndex = path.resolve(distPath, 'index.html');
 
     if (!fs.existsSync(distIndex)) {
@@ -691,7 +695,15 @@ Evaluate the answer. Return STRICT JSON only:
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         res.setHeader('Pragma', 'no-cache');
         res.setHeader('Expires', '0');
-        res.sendFile(distIndex);
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        try {
+          let html = fs.readFileSync(distIndex, 'utf-8');
+          html = html.replace(/<title>.*?<\/title>/i, '<title>SyllabusOS</title>');
+          html = html.replace(/<meta property="og:title" content=".*?" \/>/i, '<meta property="og:title" content="SyllabusOS" />');
+          res.send(html);
+        } catch {
+          res.sendFile(distIndex);
+        }
       });
     }
   }

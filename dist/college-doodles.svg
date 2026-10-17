@@ -1,0 +1,264 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- College Doodles Seamless Pattern -->
+
+  <!-- 1. Mortarboard / Graduation Cap (Top Left: 50, 60) -->
+  <g transform="translate(40, 45) scale(0.95)">
+    <polygon points="45,15 85,32 45,49 5,32" />
+    <path d="M22,39 L22,60 C22,70 68,70 68,60 L68,39" />
+    <path d="M85,32 L95,48 L95,68" />
+    <circle cx="95" cy="72" r="3" />
+    <path d="M93,75 L91,85 M95,75 L95,87 M97,75 L99,85" />
+  </g>
+
+  <!-- 2. Math Integral & Sum Formula (180, 50) -->
+  <g transform="translate(190, 45)">
+    <path d="M12,10 C8,10 5,14 5,22 L5,42 C5,50 2,54 -2,54" />
+    <text x="18" y="22" font-family="serif" font-size="14" fill="currentColor" stroke="none">f(x)dx</text>
+    <text x="8" y="52" font-family="serif" font-size="11" fill="currentColor" stroke="none">a</text>
+    <text x="14" y="14" font-family="serif" font-size="11" fill="currentColor" stroke="none">b</text>
+    <text x="65" y="38" font-family="serif" font-size="20" fill="currentColor" stroke="none">=</text>
+    <path d="M90,16 L114,16 L100,32 L114,48 L90,48" />
+    <text x="120" y="36" font-family="serif" font-size="15" fill="currentColor" stroke="none">x</text>
+    <text x="128" y="30" font-family="serif" font-size="10" fill="currentColor" stroke="none">2</text>
+  </g>
+
+  <!-- 3. Chemistry Erlenmeyer Flask with Bubbles (370, 40) -->
+  <g transform="translate(370, 40) scale(0.9)">
+    <path d="M35,15 L45,15 M37,15 L37,30 L15,75 C12,81 16,88 23,88 L57,88 C64,88 68,81 65,75 L43,30 L43,15" />
+    <path d="M22,68 C28,65 38,72 45,67 C52,63 58,68 62,66" />
+    <line x1="28" y1="52" x2="35" y2="52" />
+    <line x1="25" y1="60" x2="33" y2="60" />
+    <line x1="22" y1="68" x2="32" y2="68" />
+    <circle cx="35" cy="76" r="2.5" />
+    <circle cx="48" cy="72" r="3.5" />
+    <circle cx="42" cy="80" r="1.5" />
+    <circle cx="40" cy="20" r="1.5" />
+    <circle cx="41" cy="6" r="2" />
+  </g>
+
+  <!-- 4. Code Block & HTML Tag (490, 50) -->
+  <g transform="translate(485, 45)">
+    <polyline points="20,12 5,27 20,42" />
+    <polyline points="45,12 60,27 45,42" />
+    <line x1="38" y1="8" x2="27" y2="46" />
+    <text x="68" y="32" font-family="monospace" font-size="12" fill="currentColor" stroke="none">dev</text>
+  </g>
+
+  <!-- 5. Atom Orbit (50, 180) -->
+  <g transform="translate(50, 175) scale(0.85)">
+    <circle cx="45" cy="45" r="5" fill="currentColor" />
+    <ellipse cx="45" cy="45" rx="38" ry="14" transform="rotate(0 45 45)" />
+    <ellipse cx="45" cy="45" rx="38" ry="14" transform="rotate(60 45 45)" />
+    <ellipse cx="45" cy="45" rx="38" ry="14" transform="rotate(120 45 45)" />
+    <circle cx="78" cy="45" r="2.5" fill="currentColor" />
+    <circle cx="28" cy="18" r="2.5" fill="currentColor" />
+    <circle cx="32" cy="72" r="2.5" fill="currentColor" />
+  </g>
+
+  <!-- 6. Stack of Books (190, 170) -->
+  <g transform="translate(180, 165) scale(0.9)">
+    <!-- Bottom book -->
+    <rect x="10" y="55" width="80" height="16" rx="2" />
+    <line x1="10" y1="63" x2="90" y2="63" stroke-dasharray="2 3" />
+    <!-- Middle book -->
+    <rect x="16" y="37" width="70" height="16" rx="2" />
+    <path d="M72,37 L72,48 L76,45 L80,48 L80,37" fill="currentColor" />
+    <!-- Top book slightly tilted -->
+    <g transform="rotate(-6 22 25)">
+      <rect x="20" y="19" width="64" height="16" rx="2" />
+      <line x1="30" y1="27" x2="70" y2="27" />
+    </g>
+  </g>
+
+  <!-- 7. Lightbulb / Idea Eureka (345, 175) -->
+  <g transform="translate(345, 170) scale(0.85)">
+    <path d="M40,15 C26,15 15,26 15,40 C15,49 20,56 26,62 L26,72 C26,74 28,76 30,76 L50,76 C52,76 54,74 54,72 L54,62 C60,56 65,49 65,40 C65,26 54,15 40,15 Z" />
+    <line x1="28" y1="67" x2="52" y2="67" />
+    <line x1="30" y1="72" x2="50" y2="72" />
+    <path d="M34,76 L34,79 C34,81 36,83 40,83 C44,83 46,81 46,79 L46,76" />
+    <!-- Filament -->
+    <path d="M33,48 L33,38 L37,42 L43,38 L43,48" />
+    <!-- Rays -->
+    <line x1="40" y1="5" x2="40" y2="0" />
+    <line x1="15" y1="20" x2="10" y2="16" />
+    <line x1="65" y1="20" x2="70" y2="16" />
+  </g>
+
+  <!-- 8. Coffee Mug for Study Fuel (480, 180) -->
+  <g transform="translate(480, 175) scale(0.9)">
+    <rect x="15" y="24" width="42" height="42" rx="5" />
+    <path d="M57,32 C65,32 70,36 70,44 C70,52 65,56 57,56" />
+    <line x1="10" y1="66" x2="62" y2="66" />
+    <!-- Steam -->
+    <path d="M26,16 C24,11 28,7 26,2" />
+    <path d="M36,18 C34,13 38,9 36,4" />
+    <path d="M46,16 C44,11 48,7 46,2" />
+    <text x="24" y="49" font-family="sans-serif" font-weight="bold" font-size="11" fill="currentColor" stroke="none">CS</text>
+  </g>
+
+  <!-- 9. Triangle Ruler & Pencil (45, 320) -->
+  <g transform="translate(40, 310) scale(0.9)">
+    <!-- Triangle Ruler -->
+    <polygon points="10,80 85,80 10,15" />
+    <polygon points="22,70 65,70 22,35" stroke-width="1" />
+    <line x1="25" y1="80" x2="25" y2="76" />
+    <line x1="35" y1="80" x2="35" y2="74" />
+    <line x1="45" y1="80" x2="45" y2="76" />
+    <line x1="55" y1="80" x2="55" y2="74" />
+    <line x1="65" y1="80" x2="65" y2="76" />
+    <line x1="75" y1="80" x2="75" y2="74" />
+    <!-- Pencil -->
+    <g transform="translate(50, -5) rotate(42)">
+      <polygon points="10,0 20,0 20,65 10,65" />
+      <polygon points="10,65 15,77 20,65" />
+      <circle cx="15" cy="74" r="1.5" fill="currentColor" />
+      <line x1="10" y1="10" x2="20" y2="10" />
+      <line x1="15" y1="10" x2="15" y2="65" stroke-dasharray="2 2" />
+    </g>
+  </g>
+
+  <!-- 10. Open Notebook / Textbook (190, 315) -->
+  <g transform="translate(190, 315) scale(0.9)">
+    <path d="M50,15 C35,10 18,12 5,17 L5,67 C20,62 35,60 50,65 C65,60 80,62 95,67 L95,17 C82,12 65,10 50,15 Z" />
+    <line x1="50" y1="15" x2="50" y2="65" />
+    <!-- Text lines -->
+    <line x1="15" y1="26" x2="40" y2="24" stroke-width="1" />
+    <line x1="15" y1="34" x2="38" y2="32" stroke-width="1" />
+    <line x1="15" y1="42" x2="42" y2="40" stroke-width="1" />
+    <line x1="15" y1="50" x2="32" y2="48" stroke-width="1" />
+
+    <line x1="60" y1="24" x2="85" y2="26" stroke-width="1" />
+    <line x1="60" y1="32" x2="82" y2="34" stroke-width="1" />
+    <line x1="60" y1="40" x2="86" y2="42" stroke-width="1" />
+    <line x1="60" y1="48" x2="75" y2="50" stroke-width="1" />
+  </g>
+
+  <!-- 11. Coordinate Graph & Function Curve (350, 315) -->
+  <g transform="translate(345, 315) scale(0.9)">
+    <line x1="10" y1="70" x2="80" y2="70" />
+    <polyline points="75,66 80,70 75,74" />
+    <line x1="20" y1="75" x2="20" y2="10" />
+    <polyline points="16,15 20,10 24,15" />
+    <!-- Sinusoidal / Sigmoid curve -->
+    <path d="M20,60 C35,60 40,25 55,25 C65,25 70,45 80,45" stroke-width="1.8" />
+    <!-- Labels -->
+    <text x="82" y="73" font-family="sans-serif" font-size="10" fill="currentColor" stroke="none">x</text>
+    <text x="17" y="6" font-family="sans-serif" font-size="10" fill="currentColor" stroke="none">y</text>
+    <text x="36" y="20" font-family="serif" font-size="9" fill="currentColor" stroke="none">max</text>
+  </g>
+
+  <!-- 12. Graduation Diploma Scroll with Ribbon (490, 315) -->
+  <g transform="translate(485, 315) scale(0.9)">
+    <ellipse cx="20" cy="25" rx="7" ry="14" />
+    <path d="M20,11 L75,22 C82,23 86,28 86,34 L86,48 L20,39" />
+    <ellipse cx="86" cy="41" rx="6" ry="12" />
+    <!-- Tied ribbon -->
+    <rect x="45" y="21" width="10" height="23" rx="2" fill="currentColor" />
+    <path d="M47,44 L43,58 L48,54 L53,58 L49,44" fill="currentColor" />
+    <circle cx="50" cy="32" r="2" fill="#000" />
+  </g>
+
+  <!-- 13. DNA Helix (50, 465) -->
+  <g transform="translate(45, 455) scale(0.85)">
+    <path d="M15,10 C25,25 35,35 15,55 C-5,75 25,85 15,100" />
+    <path d="M35,10 C25,25 15,35 35,55 C55,75 25,85 35,100" />
+    <!-- Rungs -->
+    <line x1="20" y1="20" x2="30" y2="18" />
+    <line x1="25" y1="35" x2="25" y2="35" stroke-width="3" />
+    <line x1="16" y1="50" x2="34" y2="52" />
+    <line x1="10" y1="65" x2="40" y2="67" />
+    <line x1="20" y1="80" x2="30" y2="80" />
+    <line x1="18" y1="92" x2="32" y2="92" />
+  </g>
+
+  <!-- 14. Binary & Algorithm Logic (180, 465) -->
+  <g transform="translate(180, 465)">
+    <rect x="0" y="5" width="85" height="52" rx="6" stroke-dasharray="3 3" />
+    <text x="12" y="24" font-family="monospace" font-size="11" fill="currentColor" stroke="none">1011001</text>
+    <text x="12" y="38" font-family="monospace" font-size="11" fill="currentColor" stroke="none">0100110</text>
+    <text x="12" y="50" font-family="monospace" font-size="9" fill="currentColor" stroke="none">O(n log n)</text>
+  </g>
+
+  <!-- 15. Einstein E = mc^2 & Physics (320, 475) -->
+  <g transform="translate(325, 470)">
+    <text x="5" y="30" font-family="serif" font-style="italic" font-size="20" fill="currentColor" stroke="none">E = mc</text>
+    <text x="68" y="20" font-family="serif" font-size="13" fill="currentColor" stroke="none">2</text>
+    <!-- Delta & Planck -->
+    <text x="12" y="52" font-family="serif" font-size="13" fill="currentColor" stroke="none">Δx · Δp ≥ ℏ/2</text>
+  </g>
+
+  <!-- 16. Alarm Clock / Exam Timer (475, 460) -->
+  <g transform="translate(475, 455) scale(0.85)">
+    <circle cx="45" cy="50" r="30" />
+    <!-- Clock Hands -->
+    <line x1="45" y1="50" x2="45" y2="32" stroke-width="2" />
+    <line x1="45" y1="50" x2="58" y2="50" stroke-width="2" />
+    <circle cx="45" cy="50" r="3" fill="currentColor" />
+    <!-- Bells -->
+    <path d="M22,23 C20,18 24,12 30,15" stroke-width="3" />
+    <path d="M68,23 C70,18 66,12 60,15" stroke-width="3" />
+    <!-- Feet -->
+    <line x1="25" y1="74" x2="18" y2="83" stroke-width="3" />
+    <line x1="65" y1="74" x2="72" y2="83" stroke-width="3" />
+    <!-- Top button -->
+    <rect x="41" y="15" width="8" height="5" rx="1" />
+  </g>
+
+  <!-- Mathematical & Academic Mini-Doodles scatter fill for rich collegiate texture -->
+  <!-- Pi symbol -->
+  <g transform="translate(145, 120) scale(0.8)">
+    <path d="M6,6 L26,6 M11,6 L11,24 M21,6 L21,22 C21,24 23,25 25,24" />
+  </g>
+  <!-- Square root -->
+  <g transform="translate(290, 115) scale(0.8)">
+    <path d="M2,14 L6,14 L10,22 L16,4 L36,4" />
+    <text x="18" y="17" font-family="serif" font-size="11" fill="currentColor" stroke="none">x+1</text>
+  </g>
+  <!-- Infinity -->
+  <g transform="translate(440, 120) scale(0.8)">
+    <path d="M12,12 C6,6 0,8 0,14 C0,20 6,22 12,16 C18,10 24,8 24,14 C24,20 18,22 12,16" />
+  </g>
+  <!-- Sparkles & Stars -->
+  <g transform="translate(130, 260) scale(0.7)">
+    <polygon points="12,0 15,9 24,12 15,15 12,24 9,15 0,12 9,9" fill="currentColor" stroke="none" />
+  </g>
+  <g transform="translate(440, 270) scale(0.6)">
+    <polygon points="12,0 15,9 24,12 15,15 12,24 9,15 0,12 9,9" fill="currentColor" stroke="none" />
+  </g>
+  <g transform="translate(280, 260) scale(0.8)">
+    <text x="0" y="15" font-family="serif" font-size="16" fill="currentColor" stroke="none">∑</text>
+  </g>
+  <g transform="translate(285, 395) scale(0.8)">
+    <text x="0" y="15" font-family="serif" font-size="16" fill="currentColor" stroke="none">∂</text>
+    <text x="10" y="15" font-family="serif" font-size="12" fill="currentColor" stroke="none">y/∂x</text>
+  </g>
+  <g transform="translate(135, 400) scale(0.8)">
+    <text x="0" y="15" font-family="monospace" font-size="14" fill="currentColor" stroke="none">{ ; }</text>
+  </g>
+  <g transform="translate(435, 410) scale(0.7)">
+    <polygon points="12,0 15,9 24,12 15,15 12,24 9,15 0,12 9,9" fill="currentColor" stroke="none" />
+  </g>
+  <!-- Compass / Geometry divider -->
+  <g transform="translate(275, 545) scale(0.75)">
+    <circle cx="20" cy="8" r="4" />
+    <line x1="20" y1="12" x2="8" y2="44" stroke-width="2" />
+    <line x1="20" y1="12" x2="32" y2="44" stroke-width="2" />
+    <path d="M12,28 C16,30 24,30 28,28" />
+  </g>
+  <!-- Glasses / Geek specs -->
+  <g transform="translate(130, 540) scale(0.75)">
+    <circle cx="15" cy="15" r="10" />
+    <circle cx="45" cy="15" r="10" />
+    <line x1="25" y1="13" x2="35" y2="13" />
+    <line x1="5" y1="13" x2="0" y2="10" />
+    <line x1="55" y1="13" x2="60" y2="10" />
+  </g>
+  <!-- Rocket / Launch -->
+  <g transform="translate(425, 535) scale(0.75)">
+    <path d="M20,5 C12,12 10,25 10,38 L30,38 C30,25 28,12 20,5 Z" />
+    <circle cx="20" cy="20" r="3" />
+    <path d="M10,30 L2,38 L10,38" />
+    <path d="M30,30 L38,38 L30,38" />
+    <path d="M15,38 L20,46 L25,38" fill="currentColor" />
+  </g>
+</svg>
