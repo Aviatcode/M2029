@@ -35,23 +35,17 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
   return (
     <div className="space-y-6 animate-fade-in pb-8">
       {/* 1. Header */}
-      <div className="space-y-1 border-b border-slate-800/60 pb-4">
+      <div className="border-b border-slate-800/60 pb-3">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
           Exam Datesheet
         </h1>
-        <p className="text-xs text-slate-400 font-sans-ui">
-          Upcoming examinations.
-        </p>
       </div>
 
       {/* 2. Exam Selection Cards */}
       {exams.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-800 bg-slate-900/30 p-10 text-center space-y-3">
-          <Calendar className="w-8 h-8 text-slate-500 mx-auto" />
-          <h2 className="text-sm font-semibold text-slate-200">No Exam Datesheets Added</h2>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            Exam schedules and active recall roadmaps will appear here once dates are configured for your cohort.
-          </p>
+        <div className="rounded-xl border border-dashed border-slate-800 bg-slate-900/30 p-8 text-center space-y-2">
+          <Calendar className="w-6 h-6 text-slate-500 mx-auto" />
+          <p className="text-xs text-slate-400">No exam dates scheduled.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

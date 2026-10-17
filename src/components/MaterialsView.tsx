@@ -186,13 +186,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
       {/* 1. Academic Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-4">
-        <div className="space-y-0.5">
+        <div>
           <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
             Notes & Materials
           </h1>
-          <p className="text-xs text-slate-400 font-sans-ui">
-            Course documents and notes.
-          </p>
         </div>
 
         <button

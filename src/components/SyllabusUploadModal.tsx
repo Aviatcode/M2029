@@ -102,16 +102,11 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
       >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300">
-              <UploadCloud className="w-5 h-5" />
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">
+              <UploadCloud className="w-4 h-4" />
             </div>
-            <div>
-              <h2 className="font-bold text-lg text-white">Upload Syllabus & Auto-Create Folders</h2>
-              <p className="text-xs text-slate-400">
-                M2029 parses chapters, builds 7 AM primers, mindmaps, and 10-markers for class {classCode}
-              </p>
-            </div>
+            <h2 className="font-semibold text-base text-white">Upload Syllabus</h2>
           </div>
           <button
             onClick={onClose}
@@ -213,29 +208,22 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-2">
-            <span className="text-[11px] text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              Auto-generates folders, mindmaps & 10-markers
-            </span>
-
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-xs font-semibold text-slate-300 transition cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isParsing || !rawText.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition disabled:opacity-50 cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>{isParsing ? 'Analyzing & Building Folders...' : 'Parse & Build Curriculum'}</span>
-              </button>
-            </div>
+          <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-xs font-medium text-slate-300 transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isParsing || !rawText.trim()}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition disabled:opacity-50 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <span>{isParsing ? 'Analyzing...' : 'Parse Syllabus'}</span>
+            </button>
           </div>
         </form>
       </div>

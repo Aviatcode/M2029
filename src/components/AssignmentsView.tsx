@@ -419,13 +419,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in text-slate-100 pb-12">
       {/* 1. Header with Stats & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 border-b border-slate-800/60">
-        <div className="space-y-1">
+        <div>
           <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-            Assignments & Presentations
+            Assignments
           </h1>
-          <p className="text-xs text-slate-400 font-sans-ui">
-            Deadlines and presentation roster.
-          </p>
         </div>
 
         {/* Action Buttons */}

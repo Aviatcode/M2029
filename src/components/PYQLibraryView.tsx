@@ -32,13 +32,10 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
   return (
     <div className="space-y-6 animate-fade-in pb-8">
       {/* 1. Header */}
-      <div className="space-y-1 border-b border-slate-800/60 pb-4">
+      <div className="border-b border-slate-800/60 pb-3">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
           Previous Year Questions
         </h1>
-        <p className="text-xs text-slate-400 font-sans-ui">
-          Past exam questions.
-        </p>
       </div>
 
       {/* 2. High-Yield Topics */}

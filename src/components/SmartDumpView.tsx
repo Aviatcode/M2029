@@ -285,38 +285,14 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. HERO SECTION */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-6 md:p-7 shadow-lg space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-xl md:text-2xl font-semibold text-white tracking-tight font-serif-heading">
-              Study Drop
-            </h1>
-            <p className="text-xs text-slate-400 font-sans-ui">
-              Drop notes or slides. Automatically organized into your subjects.
-            </p>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 shrink-0 bg-slate-900/60 p-2 rounded-xl border border-slate-800/80">
-            <div className="text-center px-2 py-0.5">
-              <div className="text-sm font-bold text-slate-100 font-mono-code">{totalMaterials}</div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider">Docs</div>
-            </div>
-            <div className="text-center px-2 py-0.5">
-              <div className="text-sm font-bold text-slate-100 font-mono-code">{totalMnemonics}</div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider">Mnemonics</div>
-            </div>
-            <div className="text-center px-2 py-0.5">
-              <div className="text-sm font-bold text-slate-100 font-mono-code">{total10Markers}</div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider">10-Markers</div>
-            </div>
-            <div className="text-center px-2 py-0.5">
-              <div className="text-sm font-bold text-slate-100 font-mono-code">{totalQuizzes}</div>
-              <div className="text-[10px] text-slate-500 uppercase tracking-wider">Quizzes</div>
-            </div>
-          </div>
-        </div>
+      {/* 1. Header */}
+      <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
+        <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+          Study Drop
+        </h1>
+        <span className="text-xs font-mono text-slate-400">
+          {filteredMaterials.length} {filteredMaterials.length === 1 ? 'file' : 'files'}
+        </span>
       </div>
 
       {/* 2. DUMP ZONE (DRAG & DROP / RAW TEXT / QUICK TEST SAMPLES) */}
@@ -400,33 +376,10 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
               <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 shadow-xs">
                 <UploadCloud className="w-5 h-5" />
               </div>
-              <div className="space-y-0.5">
-                <p className="text-sm font-medium text-slate-200">
-                  Drop study files here, or <span className="text-slate-100 underline underline-offset-2 font-semibold">browse</span>
-                </p>
-                <p className="text-xs text-slate-400">
-                  PDF, DOCX, PPTX, or images
-                </p>
-              </div>
+              <p className="text-xs font-medium text-slate-300">
+                Drop files here or <span className="text-slate-100 underline underline-offset-2 font-semibold">browse</span>
+              </p>
             </div>
-
-            {/* Mobile / Phone Quick Install if available */}
-            {!isInstalled && isInstallable && (
-              <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3 flex items-center justify-between gap-3 text-xs">
-                <div className="flex items-center gap-2.5 text-slate-300">
-                  <Smartphone className="w-4 h-4 text-slate-400 shrink-0" />
-                  <span>Install app to enable system share sheet</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={install}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer shrink-0"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Install</span>
-                </button>
-              </div>
-            )}
           </div>
         )}
 
@@ -653,19 +606,14 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                       {activeItem.unitTitle || (activeItem.unitNumber ? `Unit ${activeItem.unitNumber}` : 'General')}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Classroom Shared Cache</span>
+                  <span className="text-[10px] text-slate-500 font-mono">
+                    Synced
                   </span>
                 </div>
 
                 <h2 className="text-xl font-semibold text-white font-serif-heading">{activeItem.title}</h2>
-                <div className="text-xs text-slate-400 flex flex-wrap items-center gap-3">
-                  <span>File: <strong className="text-slate-300 font-mono-code">{activeItem.fileName}</strong></span>
-                  <span>•</span>
-                  <span>Size: {activeItem.fileSize}</span>
-                  <span>•</span>
-                  <span>Uploaded by: {activeItem.uploaderName}</span>
+                <div className="text-[11px] text-slate-400 font-mono">
+                  {activeItem.fileName} · {activeItem.fileSize}
                 </div>
               </div>
 
@@ -680,7 +628,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   }`}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
-                  <span>Notes & Summary</span>
+                  <span>Notes</span>
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('mnemonics')}
@@ -691,7 +639,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   }`}
                 >
                   <Lightbulb className="w-3.5 h-3.5" />
-                  <span>Mnemonics ({activeItem.resources?.mnemonics?.length || 1})</span>
+                  <span>Mnemonics</span>
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('mindmap')}
@@ -702,7 +650,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   }`}
                 >
                   <Network className="w-3.5 h-3.5" />
-                  <span>Visual Mindmap</span>
+                  <span>Mindmap</span>
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('10marker')}
@@ -713,7 +661,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   }`}
                 >
                   <Award className="w-3.5 h-3.5" />
-                  <span>10-Marker Outline</span>
+                  <span>10-Marker</span>
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('quiz')}
@@ -724,7 +672,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   }`}
                 >
                   <FileQuestion className="w-3.5 h-3.5" />
-                  <span>Self-Quiz ({activeItem.resources?.quiz?.length || 0})</span>
+                  <span>Quiz</span>
                 </button>
               </div>
 
@@ -734,7 +682,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
                     <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                       <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Executive Lecture Notes</span>
+                      <span>Summary</span>
                     </h3>
                     <p className="text-xs text-slate-200 leading-relaxed font-sans-ui">
                       {activeItem.resources?.summary || 'Synthesized high-yield lecture overview for semester exam preparation.'}
@@ -796,10 +744,6 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
               {/* TAB 2: MNEMONICS & MEMORY HACKS */}
               {activeDetailTab === 'mnemonics' && (
                 <div className="space-y-4">
-                  <div className="p-3 rounded-xl bg-slate-900/40 border border-slate-800 text-xs text-slate-400">
-                    Memory Retention: Mnemonics convert complex conditions and lists into memorable structures for exams.
-                  </div>
-
                   <div className="space-y-3">
                     {activeItem.resources?.mnemonics && activeItem.resources.mnemonics.length > 0 ? (
                       activeItem.resources.mnemonics.map((mn, idx) => (

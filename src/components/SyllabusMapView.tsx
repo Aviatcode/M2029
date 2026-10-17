@@ -49,13 +49,10 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
       {/* 1. Header */}
       <div className="space-y-3 border-b border-slate-800/60 pb-4">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-          <div className="space-y-0.5">
+          <div>
             <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-              Syllabus Directory
+              Syllabus
             </h1>
-            <p className="text-xs text-slate-400 font-sans-ui">
-              {currentSubject?.name || 'Course Curriculum'}
-            </p>
           </div>
         </div>
 
