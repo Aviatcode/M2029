@@ -123,7 +123,7 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
         compact ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-xs'
       }`}
     >
-      <Smartphone className="w-3.5 h-3.5 text-cyan-400" />
+      <Smartphone className="w-3.5 h-3.5 text-slate-400" />
       <span>WebAPK Ready</span>
     </button>
   );

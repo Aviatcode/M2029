@@ -84,8 +84,8 @@ export const ClassroomDoubtsBoard: React.FC<ClassroomDoubtsBoardProps> = ({
 
       {/* Ask New Doubt Form */}
       <form onSubmit={handleAskDoubt} className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider">
-          <Sparkles className="w-4 h-4 text-cyan-400" />
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
+          <MessageSquare className="w-4 h-4 text-slate-400" />
           <span>Ask a Question on {topicTitle}</span>
         </div>
 
@@ -95,7 +95,7 @@ export const ClassroomDoubtsBoard: React.FC<ClassroomDoubtsBoardProps> = ({
             placeholder="Your Name / Roll No. (Optional)"
             value={studentName}
             onChange={(e) => setStudentName(e.target.value)}
-            className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-cyan-500"
+            className="bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-slate-500"
           />
           <input
             type="text"
@@ -103,17 +103,17 @@ export const ClassroomDoubtsBoard: React.FC<ClassroomDoubtsBoardProps> = ({
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             required
-            className="md:col-span-2 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-cyan-500"
+            className="md:col-span-2 bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-slate-500"
           />
         </div>
 
         <button
           type="submit"
           disabled={isSubmitting || !question.trim()}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md transition disabled:opacity-50 ml-auto cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-white text-slate-950 text-xs font-semibold shadow-sm transition disabled:opacity-50 ml-auto cursor-pointer"
         >
           <Send className="w-3.5 h-3.5" />
-          <span>{isSubmitting ? 'AI Answering & Pinning...' : 'Ask & Pin to Class Notes'}</span>
+          <span>{isSubmitting ? 'Answering & Pinning...' : 'Ask & Pin to Class Notes'}</span>
         </button>
       </form>
 
@@ -142,19 +142,19 @@ export const ClassroomDoubtsBoard: React.FC<ClassroomDoubtsBoardProps> = ({
                     onClick={() => handleUpvote(doubt.id, doubt.upvotes)}
                     className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-slate-900 hover:bg-slate-850 text-slate-300 text-xs border border-slate-800 transition cursor-pointer"
                   >
-                    <ThumbsUp className="w-3 h-3 text-cyan-400" />
+                    <ThumbsUp className="w-3 h-3 text-slate-400" />
                     <span>{votes} helpful</span>
                   </button>
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <MessageSquare className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                  <MessageSquare className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                   <p className="text-xs md:text-sm font-medium text-slate-100">{doubt.question}</p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-blue-950/30 border border-blue-500/20 text-xs md:text-sm text-slate-300 leading-relaxed">
-                  <div className="text-[11px] font-mono text-cyan-300 font-semibold mb-1 flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-cyan-400" /> AI Class Answer:
+                <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-xs md:text-sm text-slate-300 leading-relaxed">
+                  <div className="text-[11px] font-mono text-slate-300 font-semibold mb-1 flex items-center gap-1.5">
+                    <span>Explanation:</span>
                   </div>
                   {doubt.answer}
                 </div>

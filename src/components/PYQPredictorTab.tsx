@@ -77,8 +77,8 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
                 <div className="border-t border-slate-800/80 p-5 md:p-6 bg-slate-950/60 space-y-4">
                   {/* Model Answer */}
                   <div>
-                    <h4 className="text-xs uppercase tracking-wider font-semibold text-cyan-400 mb-2 flex items-center gap-1.5">
-                      <HelpCircle className="w-4 h-4" /> Step-by-Step Model Answer
+                    <h4 className="text-xs uppercase tracking-wider font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                      <HelpCircle className="w-4 h-4 text-slate-400" /> Step-by-Step Model Answer
                     </h4>
                     <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">
                       {pyq.modelAnswer}
@@ -87,9 +87,9 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
 
                   {/* Marking Scheme */}
                   {pyq.keyPointsForExaminer && pyq.keyPointsForExaminer.length > 0 && (
-                    <div className="p-4 rounded-xl bg-indigo-950/30 border border-indigo-500/30">
-                      <h4 className="text-xs uppercase tracking-wider font-semibold text-indigo-300 mb-2 flex items-center gap-1.5">
-                        <CheckCircle className="w-4 h-4 text-indigo-400" />
+                    <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                      <h4 className="text-xs uppercase tracking-wider font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                        <CheckCircle className="w-4 h-4 text-slate-400" />
                         Examiner Marking Rubric (Where Marks Are Awarded)
                       </h4>
                       <ul className="space-y-1.5 text-xs text-slate-300">

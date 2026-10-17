@@ -182,7 +182,7 @@ export const PWAInstallPopup: React.FC = () => {
                 setShowIOSGuide(false);
                 handleDismiss();
               }}
-              className="w-full rounded-xl bg-cyan-600 hover:bg-cyan-500 py-2.5 text-sm font-semibold text-white transition cursor-pointer"
+              className="w-full rounded-xl bg-slate-100 hover:bg-white py-2.5 text-sm font-semibold text-slate-950 transition cursor-pointer shadow-xs"
             >
               Got It
             </button>

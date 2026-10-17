@@ -250,8 +250,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                       preset.role === 'cr'
                         ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
                         : preset.role === 'teacher'
-                        ? 'bg-purple-950/80 border-purple-500/30 text-purple-300'
-                        : 'bg-cyan-950/80 border-cyan-500/30 text-cyan-300'
+                        ? 'bg-slate-800 border-slate-700 text-slate-300'
+                        : 'bg-slate-900 border-slate-800 text-slate-400'
                     }`}
                   >
                     {preset.role === 'cr' ? 'CR' : preset.role === 'teacher' ? 'Faculty' : 'Student'}

@@ -205,13 +205,13 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-600 text-white shadow-md">
-              <Settings className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-neutral-800 border border-neutral-750 flex items-center justify-center text-slate-200 shadow-sm">
+              <Settings className="w-5 h-5 text-slate-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-lg text-white">Semester Setup Wizard</h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/30 text-cyan-300">
+                <h3 className="font-semibold text-base md:text-lg text-slate-100">Semester Setup Wizard</h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">
                   CR Authenticated
                 </span>
               </div>
@@ -242,7 +242,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition ${
                   step === s
-                    ? 'bg-cyan-500 text-slate-950 ring-4 ring-cyan-500/20'
+                    ? 'bg-slate-100 text-slate-950 ring-2 ring-slate-400/20'
                     : step > s
                     ? 'bg-neutral-200 text-slate-950'
                     : 'bg-slate-800 text-slate-400'
@@ -251,7 +251,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 {step > s ? '✓' : s}
               </div>
               <span className={`text-[11px] sm:text-xs hidden sm:inline ${
-                step === s ? 'text-cyan-300 font-semibold' : 'text-slate-400'
+                step === s ? 'text-slate-100 font-semibold' : 'text-slate-400'
               }`}>
                 {label}
               </span>
@@ -273,7 +273,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   value={className}
                   onChange={(e) => setClassName(e.target.value)}
                   placeholder="e.g. BCA Batch of 2028"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
                 />
               </div>
 
@@ -286,7 +286,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     <button
                       type="button"
                       onClick={generateRandomClassCode}
-                      className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium transition cursor-pointer"
+                      className="text-[10px] text-slate-400 hover:text-slate-200 flex items-center gap-1 font-medium transition cursor-pointer"
                       title="Generate random unique class code like Google Classroom"
                     >
                       <RefreshCw className="w-2.5 h-2.5" />
@@ -298,7 +298,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     value={classCode}
                     onChange={(e) => setClassCode(e.target.value.toUpperCase())}
                     placeholder="e.g. BCA-2028 or BCA-7K9M"
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono uppercase tracking-wider outline-none transition"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono uppercase tracking-wider outline-none transition"
                   />
                   <span className="text-[10px] text-slate-500 mt-0.5 block">
                     Unique ID for students to join
@@ -311,7 +311,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   <select
                     value={semester}
                     onChange={(e) => setSemester(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3 py-2 text-xs md:text-sm text-slate-200 outline-none transition cursor-pointer"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs md:text-sm text-slate-200 outline-none transition cursor-pointer"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                       <option key={s} value={s}>
@@ -331,7 +331,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   value={university}
                   onChange={(e) => setUniversity(e.target.value)}
                   placeholder="e.g. Guru Gobind Singh Indraprastha University"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
                 />
               </div>
             </div>
@@ -343,10 +343,10 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
-                    <BookOpen className="w-4 h-4 text-cyan-400" />
+                    <BookOpen className="w-4 h-4 text-slate-400" />
                     <span>Add Semester Subjects</span>
                   </label>
-                  <span className="text-[11px] text-cyan-300 font-mono bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/20">
+                  <span className="text-[11px] text-slate-300 font-mono bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
                     {subjects.length} Subjects Added
                   </span>
                 </div>
@@ -365,12 +365,12 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     }}
                     onKeyDown={handleKeyDownSubject}
                     placeholder="Enter subject title (e.g. Artificial Intelligence, Cloud Computing)..."
-                    className="flex-1 bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
+                    className="flex-1 bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
                   />
                   <button
                     type="button"
                     onClick={handleAddSubject}
-                    className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs transition cursor-pointer flex items-center gap-1.5 shrink-0 shadow-sm"
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition cursor-pointer flex items-center gap-1.5 shrink-0 shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add Subject</span>
@@ -401,10 +401,10 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                         className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition text-xs"
                       >
                         <div className="flex items-center gap-2.5 truncate">
-                          <span className="w-5 h-5 rounded-md bg-slate-800 text-cyan-300 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                          <span className="w-5 h-5 rounded-md bg-slate-800 text-slate-300 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
                             {idx + 1}
                           </span>
-                          <Folder className="w-4 h-4 text-cyan-400 shrink-0" />
+                          <Folder className="w-4 h-4 text-slate-400 shrink-0" />
                           <span className="font-medium text-slate-100 truncate">{sub}</span>
                         </div>
                         <button
@@ -427,7 +427,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                       const input = document.querySelector<HTMLInputElement>('input[placeholder*="Enter subject title"]');
                       if (input) input.focus();
                     }}
-                    className="text-xs text-cyan-400 hover:text-cyan-300 font-medium inline-flex items-center gap-1 pt-1 cursor-pointer"
+                    className="text-xs text-slate-400 hover:text-slate-200 font-medium inline-flex items-center gap-1 pt-1 cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Add Another Subject</span>
@@ -448,7 +448,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 value={syllabusSnippet}
                 onChange={(e) => setSyllabusSnippet(e.target.value)}
                 placeholder="Paste course modules, units, or topics from your university syllabus PDF..."
-                className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl p-3 text-xs md:text-sm text-slate-200 font-mono resize-none outline-none transition"
+                className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl p-3 text-xs md:text-sm text-slate-200 font-mono resize-none outline-none transition"
               />
               <p className="text-[11px] text-slate-400">
                 The AI will parse chapters, map likely topics, and seed the class knowledge base across all {subjects.length} subjects.
@@ -459,14 +459,14 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
           {/* STEP 4: CLASS REPRESENTATIVE (CR) VERIFICATION & AUTHENTICATION */}
           {step === 4 && (
             <div className="space-y-4 animate-fade-in">
-              <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-950/40 via-slate-900/60 to-cyan-950/40 border border-blue-500/30 text-xs">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs">
                 <div className="flex items-start gap-2.5">
-                  <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-5 h-5 text-slate-300 shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
                     <h4 className="font-semibold text-slate-100">
                       Class Representative (CR) Authentication Required
                     </h4>
-                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
                       To ensure accuracy for the entire class and prevent unauthorized curriculum resets, semester setup must be authenticated once by the designated CR.
                     </p>
                   </div>
@@ -484,7 +484,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     disabled={isCrAuthenticated}
                     onChange={(e) => setCrName(e.target.value)}
                     placeholder="e.g. Aarav Sharma (CR)"
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 disabled:opacity-60 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 disabled:opacity-60 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 outline-none transition"
                   />
                 </div>
                 <div>
@@ -497,7 +497,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     disabled={isCrAuthenticated}
                     onChange={(e) => setCrRollNo(e.target.value)}
                     placeholder="e.g. BCA-28-042"
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 disabled:opacity-60 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 disabled:opacity-60 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
                   />
                 </div>
               </div>
@@ -513,12 +513,12 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     disabled={isCrAuthenticated}
                     onChange={(e) => setCrPasskey(e.target.value)}
                     placeholder="Enter CR Passkey (Default: CR-2028)"
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 disabled:opacity-60 rounded-xl pl-9 pr-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 disabled:opacity-60 rounded-xl pl-9 pr-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
                   />
                   <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-1 block">
-                  Default authorization passkey for this semester: <strong className="text-cyan-300 font-mono">CR-2028</strong>
+                  Default authorization passkey for this semester: <strong className="text-slate-200 font-mono">CR-2028</strong>
                 </span>
               </div>
 
@@ -533,7 +533,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   disabled={isCrAuthenticated}
                   onChange={(e) => setCrGeminiApiKey(e.target.value)}
                   placeholder="Paste Gemini API key (e.g. AIzaSy...)"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 disabled:opacity-60 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 disabled:opacity-60 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
                 />
                 <span className="text-[10px] text-slate-400 mt-1 block">
                   Ask the CR or any student to provide a free Gemini key from Google AI Studio, or leave blank and we will provide the built-in basic model for all class teaching.
@@ -547,7 +547,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   checked={crDeclared}
                   disabled={isCrAuthenticated}
                   onChange={(e) => setCrDeclared(e.target.checked)}
-                  className="mt-0.5 rounded border-slate-700 text-cyan-500 focus:ring-0"
+                  className="mt-0.5 rounded border-slate-700 text-slate-300 focus:ring-0"
                 />
                 <span className="leading-relaxed">
                   I, as the authorized Class Representative (CR), certify that this semester's subject list ({subjects.length} subjects) and academic configuration are verified and approved for <strong>{classCode}</strong>.
@@ -566,7 +566,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 <button
                   type="button"
                   onClick={handleAuthenticateCR}
-                  className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-xs transition cursor-pointer shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-2 px-4 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition cursor-pointer shadow-sm flex items-center justify-center gap-2"
                 >
                   <UserCheck className="w-4 h-4" />
                   <span>Verify & Authenticate as CR</span>
@@ -609,7 +609,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-2.5">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                   <span className="text-slate-400">Class Identifier:</span>
-                  <span className="font-mono font-bold text-cyan-300">{classCode}</span>
+                  <span className="font-mono font-bold text-slate-100">{classCode}</span>
                 </div>
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                   <span className="text-slate-400">Configured Subjects:</span>
@@ -662,7 +662,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 setStep((p) => Math.min(p + 1, 5));
               }}
               disabled={!canProceedToNext()}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 text-white text-xs font-bold transition cursor-pointer shadow-md"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-bold text-xs transition cursor-pointer shadow-md disabled:opacity-40"
             >
               <span>{step === 4 && !isCrAuthenticated ? 'Verify & Continue' : 'Next'}</span>
               <ArrowRight className="w-3.5 h-3.5" />

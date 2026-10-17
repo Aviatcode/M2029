@@ -100,8 +100,8 @@ ${exam.examinerTraps.join('\n')}
       {/* 2. Architecture / ASCII Block Diagram */}
       <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-5 md:p-6 shadow-lg">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs uppercase tracking-wider">
-            <Cpu className="w-4 h-4 text-cyan-400" />
+          <div className="flex items-center gap-2 text-slate-300 font-semibold text-xs uppercase tracking-wider">
+            <Cpu className="w-4 h-4 text-slate-400" />
             <span>2. Architectural Block Diagram (2 Marks)</span>
           </div>
           <button
@@ -113,7 +113,7 @@ ${exam.examinerTraps.join('\n')}
           </button>
         </div>
         <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 overflow-x-auto">
-          <pre className="font-mono text-xs md:text-sm text-cyan-300 leading-tight whitespace-pre">
+          <pre className="font-mono text-xs md:text-sm text-slate-200 leading-tight whitespace-pre">
             {exam.architectureDiagramText}
           </pre>
         </div>

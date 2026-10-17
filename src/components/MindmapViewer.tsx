@@ -38,10 +38,10 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
     const hasChildren = node.children && node.children.length > 0;
 
     const depthColors = [
-      'border-blue-500/50 bg-gradient-to-r from-blue-950/60 to-indigo-950/60 text-blue-200',
-      'border-cyan-500/40 bg-slate-900/80 text-cyan-250',
-      'border-amber-500/30 bg-slate-900/60 text-slate-200',
-      'border-slate-700 bg-slate-950/60 text-slate-300',
+      'border-slate-700 bg-slate-900 text-slate-100 font-semibold shadow-xs',
+      'border-slate-800 bg-slate-950/80 text-slate-200',
+      'border-slate-800/80 bg-slate-950/60 text-slate-300',
+      'border-slate-800/60 bg-slate-950/40 text-slate-400',
     ];
 
     const currentStyle = depthColors[Math.min(depth, depthColors.length - 1)];
@@ -54,17 +54,17 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
         <div
           onClick={() => hasChildren && toggleNode(node.id)}
           className={`flex items-start gap-2.5 p-3 rounded-xl border transition-all ${currentStyle} ${
-            hasChildren ? 'cursor-pointer hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10' : ''
+            hasChildren ? 'cursor-pointer hover:border-slate-600' : ''
           }`}
         >
           {hasChildren && (
             <button className="mt-0.5 text-slate-400 hover:text-white shrink-0">
-              {isExpanded ? <ChevronDown className="w-4 h-4 text-cyan-400" /> : <ChevronRight className="w-4 h-4 text-cyan-400" />}
+              {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
             </button>
           )}
 
           {!hasChildren && (
-            <div className="mt-1.5 w-2 h-2 rounded-full bg-cyan-400 shrink-0" />
+            <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0" />
           )}
 
           <div className="flex-1">
@@ -98,11 +98,11 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
       {/* Mindmap Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800 mb-5">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
-            <Network className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-neutral-800 border border-neutral-700 flex items-center justify-center text-slate-200">
+            <Network className="w-5 h-5 text-slate-300" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-100 text-base md:text-lg">Visual Mindmap & Concept Tree</h3>
+            <h3 className="font-semibold text-slate-100 text-base md:text-lg">Visual Mindmap & Concept Tree</h3>
             <p className="text-xs text-slate-400">Interactive hierarchical memory network for {topicTitle}</p>
           </div>
         </div>
@@ -112,7 +112,7 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
             <button
               onClick={() => setViewMode('visual')}
               className={`px-3 py-1 rounded-md font-medium transition ${
-                viewMode === 'visual' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-white'
+                viewMode === 'visual' ? 'bg-slate-800 text-slate-100' : 'text-slate-400 hover:text-white'
               }`}
             >
               Interactive Tree
@@ -120,7 +120,7 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
             <button
               onClick={() => setViewMode('mermaid')}
               className={`px-3 py-1 rounded-md font-medium transition ${
-                viewMode === 'mermaid' ? 'bg-cyan-600 text-white' : 'text-slate-400 hover:text-white'
+                viewMode === 'mermaid' ? 'bg-slate-800 text-slate-100' : 'text-slate-400 hover:text-white'
               }`}
             >
               Mermaid Syntax
@@ -153,8 +153,8 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
         </div>
       ) : (
         <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 relative">
-          <div className="text-[11px] font-mono text-cyan-400 mb-2 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-cyan-400" /> Mermaid.js Flowchart Source:
+          <div className="text-[11px] font-mono text-slate-400 mb-2 flex items-center gap-1">
+            <span>Mermaid.js Flowchart Source:</span>
           </div>
           <pre className="font-mono text-xs text-slate-300 overflow-x-auto p-3 bg-slate-900 rounded-lg border border-slate-800 leading-relaxed whitespace-pre-wrap">
             {mermaidSyntax || 'graph TD\n  A[Concept] --> B[Detail]'}
