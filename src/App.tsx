@@ -533,6 +533,20 @@ export default function App() {
     }
   };
 
+  const handleUpdateUsername = (newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+    setCurrentUser((prev) => {
+      const updated = { ...prev, name: trimmed };
+      try {
+        localStorage.setItem('syllabus_user_profile', JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+      return updated;
+    });
+  };
+
   const handleLogout = () => {
     const guestProfile: UserProfile = {
       id: 'user-guest',
@@ -815,6 +829,7 @@ export default function App() {
           <Navbar
             classCode={classCode}
             currentUser={currentUser}
+            onUpdateUsername={handleUpdateUsername}
             onNavigateHome={() => setActiveTab('dashboard')}
             onNavigateLanding={() => {
               setActiveTab('landing');
@@ -1074,6 +1089,8 @@ export default function App() {
               semesterNumber={workspace.semester}
               subjects={subjects}
               onOpenClassSetup={() => setIsSetupModalOpen(true)}
+              currentUser={currentUser}
+              onUpdateUsername={handleUpdateUsername}
             />
           )}
         </main>

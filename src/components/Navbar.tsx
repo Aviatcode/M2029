@@ -11,6 +11,9 @@ import {
   LogOut,
   Sliders,
   Compass,
+  Pencil,
+  Check,
+  X,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
 import {
@@ -37,6 +40,7 @@ interface NavbarProps {
   onToggleCalmMode?: () => void;
   onOpenThemeSelector?: () => void;
   onOpenAIKeyConfig?: () => void;
+  onUpdateUsername?: (newName: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -66,9 +70,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleCalmMode,
   onOpenThemeSelector,
   onOpenAIKeyConfig,
+  onUpdateUsername,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [editedUsername, setEditedUsername] = useState(currentUser.name);
+
+  useEffect(() => {
+    setEditedUsername(currentUser.name);
+  }, [currentUser.name]);
 
   const [currentAiModel, setCurrentAiModel] = useState(() => {
     const s = getStoredAiSettings();
@@ -258,6 +269,71 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               </div>
 
+              {/* Username Option & Inline Edit */}
+              <div className="px-3 py-2 border-b border-neutral-850 bg-neutral-900/40">
+                <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-neutral-400" />
+                    <span>Username</span>
+                  </span>
+                  {!isEditingUsername && (
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingUsername(true)}
+                      className="text-neutral-400 hover:text-white flex items-center gap-1 text-[11px] transition cursor-pointer"
+                      title="Edit Username"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      <span>Edit</span>
+                    </button>
+                  )}
+                </div>
+
+                {isEditingUsername ? (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (editedUsername.trim()) {
+                        onUpdateUsername?.(editedUsername.trim());
+                        setIsEditingUsername(false);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 mt-1"
+                  >
+                    <input
+                      type="text"
+                      value={editedUsername}
+                      onChange={(e) => setEditedUsername(e.target.value)}
+                      autoFocus
+                      className="w-full bg-neutral-950 border border-neutral-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-neutral-500 font-medium"
+                      placeholder="Enter new username"
+                    />
+                    <button
+                      type="submit"
+                      title="Save Username"
+                      className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-emerald-400 hover:text-emerald-300 transition cursor-pointer"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      title="Cancel"
+                      onClick={() => {
+                        setEditedUsername(currentUser.name);
+                        setIsEditingUsername(false);
+                      }}
+                      className="p-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-neutral-200 transition cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </form>
+                ) : (
+                  <div className="text-xs font-semibold text-neutral-100 truncate pl-0.5">
+                    {currentUser.name}
+                  </div>
+                )}
+              </div>
+
               {/* Menu Items (Minimal, Clean Rows) */}
               <div className="p-1 text-xs">
                 {/* Appearance / Theme */}
@@ -357,17 +433,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Account Actions */}
               <div className="pt-1 mt-1 border-t border-neutral-850 px-1 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                    onOpenLogin();
-                  }}
-                  className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
-                >
-                  <User className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>{currentUser.isLoggedIn ? 'Switch Account' : 'Sign In'}</span>
-                </button>
+                {!currentUser.isLoggedIn && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      onOpenLogin();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
+                  >
+                    <User className="w-3.5 h-3.5 text-neutral-400" />
+                    <span>Sign In</span>
+                  </button>
+                )}
 
                 {currentUser.isLoggedIn && onLogout && (
                   <button

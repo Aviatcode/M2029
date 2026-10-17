@@ -19,14 +19,20 @@ import {
   HelpCircle,
   Cpu,
   Check,
+  User,
+  Pencil,
+  X,
 } from 'lucide-react';
 import { Subject } from '../types';
+import { UserProfile } from './LoginModal';
 
 interface SettingsViewProps {
   classCode: string;
   semesterNumber: number;
   subjects: Subject[];
   onOpenClassSetup?: () => void;
+  currentUser?: UserProfile;
+  onUpdateUsername?: (newName: string) => void;
 }
 
 export type SupportedProvider =
@@ -67,7 +73,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   semesterNumber,
   subjects,
   onOpenClassSetup,
+  currentUser,
+  onUpdateUsername,
 }) => {
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const [editedUsername, setEditedUsername] = useState(currentUser?.name || '');
+
+  useEffect(() => {
+    if (currentUser?.name) {
+      setEditedUsername(currentUser.name);
+    }
+  }, [currentUser?.name]);
   // Universal AI State
   const [provider, setProvider] = useState<SupportedProvider>('auto');
   const [apiKey, setApiKey] = useState<string>('');
@@ -410,6 +426,86 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <span>{statusMessage.text}</span>
         </div>
       )}
+
+      {/* SECTION: USER PROFILE & USERNAME */}
+      <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+              <User className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-white">Profile & Username</h2>
+              <p className="text-xs text-slate-400">
+                Display name across notes, chat, and workspace.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-lg bg-slate-950/70 border border-slate-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            <span className="text-[11px] text-slate-400 block font-medium">Username</span>
+            {isEditingUsername ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (editedUsername.trim()) {
+                    onUpdateUsername?.(editedUsername.trim());
+                    setIsEditingUsername(false);
+                  }
+                }}
+                className="flex items-center gap-2 mt-1.5 max-w-md"
+              >
+                <input
+                  type="text"
+                  value={editedUsername}
+                  onChange={(e) => setEditedUsername(e.target.value)}
+                  autoFocus
+                  placeholder="Enter username"
+                  className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-slate-500"
+                />
+                <button
+                  type="submit"
+                  className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-emerald-400 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Save</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditedUsername(currentUser?.name || '');
+                    setIsEditingUsername(false);
+                  }}
+                  className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 text-xs font-medium flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>Cancel</span>
+                </button>
+              </form>
+            ) : (
+              <div className="text-base font-semibold text-white mt-1 flex items-center gap-3">
+                <span>{currentUser?.name || 'Guest User'}</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded border border-slate-800 bg-slate-900 text-slate-400 uppercase">
+                  {currentUser?.role || 'student'}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {!isEditingUsername && (
+            <button
+              type="button"
+              onClick={() => setIsEditingUsername(true)}
+              className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 transition cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+            >
+              <Pencil className="w-3.5 h-3.5 text-slate-400" />
+              <span>Edit Username</span>
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* SECTION 1: IN-APP UNIVERSAL API KEY CONFIGURATION */}
       <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-5 space-y-5">
