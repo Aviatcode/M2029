@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { AcademicMaterial, Subject, ProcessingStage, UserRole } from '../types';
 import {
   UploadCloud,
@@ -7,6 +7,12 @@ import {
   X,
   CheckCircle2,
   BookOpen,
+  Image as ImageIcon,
+  Download,
+  Sparkles,
+  HelpCircle,
+  File,
+  Layers,
 } from 'lucide-react';
 
 interface MaterialsViewProps {
@@ -30,28 +36,80 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   const [uploadSubjectId, setUploadSubjectId] = useState<string>(subjects[0]?.id || 'sub-dbms');
   const [uploadTitle, setUploadTitle] = useState<string>('');
   const [uploadFileName, setUploadFileName] = useState<string>('');
+  const [uploadFileType, setUploadFileType] = useState<string>('pdf');
+  const [uploadFileSize, setUploadFileSize] = useState<string>('');
+  const [uploadFileDataUrl, setUploadFileDataUrl] = useState<string>('');
   const [uploadTextSnippet, setUploadTextSnippet] = useState<string>('');
   const [processingStage, setProcessingStage] = useState<ProcessingStage>('idle');
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const filteredMaterials = materials.filter((m) =>
     selectedSubjectFilter === 'all' ? true : m.subjectId === selectedSubjectFilter
   );
+
+  // Handle incoming file selection (PDF, DOCX, JPG, PNG, TXT, etc.)
+  const handleFileSelected = (file: File) => {
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+    setUploadFileName(file.name);
+    setUploadFileType(ext);
+
+    // Format file size
+    const sizeInMB = file.size / (1024 * 1024);
+    const sizeStr = sizeInMB >= 1 ? `${sizeInMB.toFixed(1)} MB` : `${Math.max(1, Math.round(file.size / 1024))} KB`;
+    setUploadFileSize(sizeStr);
+
+    // Auto-derive clean title if empty
+    if (!uploadTitle.trim()) {
+      const cleanName = file.name
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[_-]+/g, ' ')
+        .trim();
+      setUploadTitle(cleanName);
+    }
+
+    // Read file contents
+    const reader = new FileReader();
+
+    if (file.type.startsWith('image/')) {
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setUploadFileDataUrl(result);
+        setUploadTextSnippet(`[Scanned Image / Handwritten Notes: ${file.name}]`);
+      };
+      reader.readAsDataURL(file);
+    } else if (file.type === 'text/plain' || file.name.endsWith('.md') || file.name.endsWith('.txt')) {
+      reader.onload = (e) => {
+        const text = e.target?.result as string;
+        setUploadTextSnippet(text);
+      };
+      reader.readAsText(file);
+    } else {
+      // PDF, DOCX, PPTX: read as DataURL for client-side offline storage & previews
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setUploadFileDataUrl(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleStartProcessing = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadTitle.trim()) return;
 
     setProcessingStage('uploading');
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 300));
 
     setProcessingStage('reading');
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 350));
 
     setProcessingStage('understanding');
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 350));
 
     setProcessingStage('organizing');
-    await new Promise((r) => setTimeout(r, 400));
+    await new Promise((r) => setTimeout(r, 350));
 
     setProcessingStage('generating');
 
@@ -65,23 +123,31 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           subjectId: uploadSubjectId,
           subjectName: targetSub?.name || 'Academic Subject',
           title: uploadTitle.trim(),
-          fileName: uploadFileName.trim() || `${uploadTitle.trim().replace(/\s+/g, '_')}.pdf`,
-          fileType: 'pdf',
-          rawTextContent: uploadTextSnippet.trim(),
+          fileName: uploadFileName.trim() || `${uploadTitle.trim().replace(/\s+/g, '_')}.${uploadFileType}`,
+          fileType: uploadFileType,
+          fileSize: uploadFileSize || '2.4 MB',
+          rawTextContent: uploadTextSnippet.trim() || undefined,
+          fileDataUrl: uploadFileDataUrl || undefined,
           uploaderRole: currentRole,
+          uploaderName: currentRole === 'cr' ? 'Class Representative (CR)' : currentRole === 'teacher' ? 'Faculty Professor' : 'Classmate',
         }),
       });
 
       const data = await res.json();
       setProcessingStage('complete');
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 350));
 
-      onMaterialUploaded(data.material);
-      setSelectedMaterial(data.material);
+      if (data.material) {
+        onMaterialUploaded(data.material);
+        setSelectedMaterial(data.material);
+      }
       setIsUploading(false);
       setProcessingStage('idle');
       setUploadTitle('');
       setUploadFileName('');
+      setUploadFileType('pdf');
+      setUploadFileSize('');
+      setUploadFileDataUrl('');
       setUploadTextSnippet('');
     } catch (err) {
       console.error('Failed processing material:', err);
@@ -89,26 +155,48 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     }
   };
 
+  const getFormatBadge = (type: string) => {
+    const t = type.toLowerCase();
+    if (t.includes('pdf')) {
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-rose-950/80 text-rose-300 border border-rose-500/30">PDF</span>;
+    }
+    if (t.includes('doc')) {
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-blue-950/80 text-blue-300 border border-blue-500/30">DOCX</span>;
+    }
+    if (t.includes('image') || t.includes('jpg') || t.includes('png') || t.includes('jpeg')) {
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-500/30">IMAGE</span>;
+    }
+    if (t.includes('ppt')) {
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-950/80 text-amber-300 border border-amber-500/30">PPTX</span>;
+    }
+    return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-slate-800 text-slate-300 border border-slate-700">{type.toUpperCase()}</span>;
+  };
+
   return (
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
       {/* 1. Academic Header */}
-      {/* 1. Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-4">
         <div className="space-y-1">
-          <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-            Notes & Slides
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+              Notes & Materials Sync
+            </h1>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-emerald-400" />
+              <span>0 Tokens Fetch</span>
+            </span>
+          </div>
           <p className="text-xs text-slate-400 font-sans-ui">
-            Lecture notes, professor slides, and study resources.
+            Upload PDFs, DOCX, notes & images once. Automatically synced across every classmate's device without AI recreation.
           </p>
         </div>
 
         <button
           onClick={() => setIsUploading(true)}
-          className="px-3.5 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
+          className="px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md transition cursor-pointer self-start sm:self-auto flex items-center gap-2 font-sans-ui"
         >
-          <UploadCloud className="w-3.5 h-3.5" />
-          <span>Upload Material</span>
+          <UploadCloud className="w-4 h-4" />
+          <span>Upload Material (PDF, DOCX, JPG)</span>
         </button>
       </div>
 
@@ -143,8 +231,9 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Files Column */}
         <div className="space-y-2.5">
-          <h2 className="academic-tag text-[10px] text-slate-400">
-            Document Archive ({filteredMaterials.length})
+          <h2 className="academic-tag text-[10px] text-slate-400 flex items-center justify-between">
+            <span>Document Archive ({filteredMaterials.length})</span>
+            <span className="text-emerald-400">⚡ Pre-Cached</span>
           </h2>
 
           <div className="space-y-1.5">
@@ -155,18 +244,26 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 <div
                   key={mat.id}
                   onClick={() => setSelectedMaterial(mat)}
-                  className={`p-3 rounded-md border cursor-pointer transition text-xs space-y-1 select-none ${
+                  className={`p-3 rounded-md border cursor-pointer transition text-xs space-y-1.5 select-none ${
                     isSelected
-                      ? 'bg-slate-900 border-slate-700 text-slate-100 shadow-2xs'
+                      ? 'bg-slate-900 border-cyan-500/40 text-slate-100 shadow-sm'
                       : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-700 text-slate-300'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <h3 className="font-sans-ui font-medium truncate">{mat.title}</h3>
+                  <div className="flex items-center justify-between gap-1.5">
+                    <div className="flex items-center gap-2 truncate">
+                      {mat.fileType?.toLowerCase().includes('image') || mat.fileType === 'jpg' || mat.fileType === 'png' ? (
+                        <ImageIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      ) : (
+                        <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                      )}
+                      <h3 className="font-sans-ui font-medium truncate">{mat.title}</h3>
+                    </div>
+                    {getFormatBadge(mat.fileType || 'pdf')}
                   </div>
-                  <div className="text-[10px] text-slate-400 font-mono">
-                    {mat.subjectName} · Shared by {mat.uploaderName}
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                    <span className="truncate">{mat.subjectName}</span>
+                    <span>{mat.fileSize || '2.8 MB'}</span>
                   </div>
                 </div>
               );
@@ -177,47 +274,86 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
         {/* Selected File Details */}
         <div className="md:col-span-2">
           {selectedMaterial ? (
-            <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
-              <div className="pb-3 border-b border-slate-800/60">
-                <div className="text-[11px] text-slate-400 font-sans-ui">
-                  {selectedMaterial.subjectName} · Deposited by {selectedMaterial.uploaderName}
+            <div className="rounded-xl bg-slate-900/40 border border-slate-800/80 p-5 space-y-5">
+              <div className="pb-3 border-b border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 text-[11px] text-slate-400 font-sans-ui">
+                    <span>{selectedMaterial.subjectName}</span>
+                    <span>·</span>
+                    <span>Shared by {selectedMaterial.uploaderName}</span>
+                    <span>·</span>
+                    {getFormatBadge(selectedMaterial.fileType || 'pdf')}
+                  </div>
+                  <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-100 mt-0.5">
+                    {selectedMaterial.title}
+                  </h2>
                 </div>
-                <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-100 mt-0.5">
-                  {selectedMaterial.title}
-                </h2>
+
+                {selectedMaterial.fileDataUrl && (
+                  <a
+                    href={selectedMaterial.fileDataUrl}
+                    download={selectedMaterial.fileName || `${selectedMaterial.title}.${selectedMaterial.fileType || 'pdf'}`}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium flex items-center gap-1.5 shrink-0 transition"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download File</span>
+                  </a>
+                )}
               </div>
+
+              {/* Real Image Preview if user uploaded photos of notes or diagrams */}
+              {selectedMaterial.fileDataUrl &&
+                (selectedMaterial.fileType?.includes('image') ||
+                  selectedMaterial.fileType === 'jpg' ||
+                  selectedMaterial.fileType === 'png' ||
+                  selectedMaterial.fileType === 'jpeg') && (
+                  <div className="space-y-2">
+                    <h3 className="academic-tag text-[10px] text-emerald-400 flex items-center gap-1">
+                      <ImageIcon className="w-3 h-3" />
+                      <span>Original Lecture Scan / Image Preview</span>
+                    </h3>
+                    <div className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 p-2 max-h-80 flex items-center justify-center">
+                      <img
+                        src={selectedMaterial.fileDataUrl}
+                        alt={selectedMaterial.title}
+                        className="max-h-76 object-contain rounded-lg"
+                      />
+                    </div>
+                  </div>
+                )}
 
               {/* Summary */}
               <div className="space-y-2">
-                <h3 className="academic-tag text-[10px] text-slate-400">
-                  Synthesized Curriculum Summary
+                <h3 className="academic-tag text-[10px] text-slate-400 flex items-center gap-1">
+                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  <span>Synthesized Curriculum Summary (0 Tokens Re-used)</span>
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900/40 p-3.5 rounded border border-slate-800/60 font-sans-ui">
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/60 font-sans-ui">
                   {selectedMaterial.resources.summary}
                 </p>
               </div>
 
               {/* Hinglish Explanation */}
               {selectedMaterial.resources.hinglishSummary && (
-                <div className="space-y-2 marginalia">
-                  <h3 className="academic-tag text-[10px] text-neutral-300">
-                    Conceptual Takeaway (Hinglish Primer)
+                <div className="space-y-2">
+                  <h3 className="academic-tag text-[10px] text-amber-300">
+                    Conceptual Takeaway (Indian College Hinglish Primer)
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans-ui">
+                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans-ui bg-amber-950/20 p-3 rounded-xl border border-amber-500/20">
                     {selectedMaterial.resources.hinglishSummary}
                   </p>
                 </div>
               )}
 
               {/* Definitions */}
-              {selectedMaterial.resources.importantDefinitions.length > 0 && (
+              {selectedMaterial.resources.importantDefinitions?.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="academic-tag text-[10px] text-slate-400">
                     Core Architectural Terms & Definitions
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedMaterial.resources.importantDefinitions.map((d, i) => (
-                      <div key={i} className="p-3 rounded bg-slate-900/40 border border-slate-800/60 font-sans-ui">
+                      <div key={i} className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/60 font-sans-ui">
                         <strong className="text-slate-100 block mb-0.5 font-medium">{d.term}</strong>
                         <span className="text-slate-400 text-[11px]">{d.definition}</span>
                       </div>
@@ -227,16 +363,42 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               )}
 
               {/* Flashcards */}
-              {selectedMaterial.resources.flashcards.length > 0 && (
+              {selectedMaterial.resources.flashcards?.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="academic-tag text-[10px] text-slate-400">
                     Active Recall Flashcards
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedMaterial.resources.flashcards.map((fc) => (
-                      <div key={fc.id} className="p-3 rounded bg-slate-900/40 border border-slate-800/60 space-y-1.5 font-sans-ui">
+                      <div key={fc.id} className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1.5 font-sans-ui">
                         <span className="text-slate-100 font-medium block">Q: {fc.question}</span>
                         <span className="text-slate-400 text-[11px] block">A: {fc.answer}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Possible Exam Questions */}
+              {selectedMaterial.resources.possibleQuestions?.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="academic-tag text-[10px] text-cyan-400">
+                    Expected University Exam Questions & Outlines
+                  </h3>
+                  <div className="space-y-2 text-xs">
+                    {selectedMaterial.resources.possibleQuestions.map((pq, i) => (
+                      <div key={i} className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1">
+                        <div className="flex items-center justify-between text-slate-300 font-semibold">
+                          <span>{pq.question}</span>
+                          <span className="text-[10px] font-mono text-amber-300 px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-500/20">
+                            {pq.marks} Marks
+                          </span>
+                        </div>
+                        {pq.answerOutline && (
+                          <div className="text-[11px] text-slate-400 font-mono">
+                            Blueprint: {pq.answerOutline}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -251,37 +413,129 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
         </div>
       </div>
 
-      {/* Upload Modal */}
+      {/* Upload Modal with Real File Drag & Drop */}
       {isUploading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs p-4">
-          <div className="w-full max-w-lg rounded-xl bg-slate-950 border border-slate-800 p-6 text-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="w-full max-w-lg rounded-2xl bg-slate-950 border border-slate-800 p-6 text-slate-100 shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-4">
-              <h2 className="font-semibold text-base text-slate-100">Upload Lecture Material</h2>
+              <div className="flex items-center gap-2">
+                <UploadCloud className="w-4 h-4 text-cyan-400" />
+                <h2 className="font-semibold text-base text-slate-100">Upload Study Material</h2>
+              </div>
               {processingStage === 'idle' && (
                 <button
                   onClick={() => setIsUploading(false)}
-                  className="text-slate-400 hover:text-white"
+                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
             </div>
 
+            {/* Zero-Token Sync Banner */}
+            <div className="mb-4 p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-xs text-emerald-300 flex items-start gap-2.5">
+              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-emerald-200 block mb-0.5">⚡ Zero-Token Classroom Cache Active</strong>
+                <span>
+                  Once uploaded, this document and its AI notes are saved on the shared classroom server for all classmates. No duplicate AI tokens will ever be spent recreating it.
+                </span>
+              </div>
+            </div>
+
             {processingStage !== 'idle' ? (
-              <div className="py-6 text-center space-y-3">
-                <span className="w-4 h-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin inline-block" />
+              <div className="py-8 text-center space-y-3">
+                <span className="w-6 h-6 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin inline-block" />
                 <p className="text-xs text-slate-300 capitalize">
-                  {processingStage} lecture material...
+                  {processingStage === 'uploading' && 'Transferring file payload...'}
+                  {processingStage === 'reading' && 'Extracting multi-format text & structure...'}
+                  {processingStage === 'understanding' && 'Querying classroom cache for zero-token deduplication...'}
+                  {processingStage === 'organizing' && 'Formulating semester syllabus notes...'}
+                  {processingStage === 'generating' && 'Finalizing flashcards and exam questions...'}
+                  {processingStage === 'complete' && 'Synchronized across all student devices!'}
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleStartProcessing} className="space-y-3.5">
+              <form onSubmit={handleStartProcessing} className="space-y-4 text-xs">
+                {/* Drag and Drop Zone */}
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(true);
+                  }}
+                  onDragLeave={() => setIsDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(false);
+                    if (e.dataTransfer.files?.[0]) {
+                      handleFileSelected(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`p-5 rounded-xl border-2 border-dashed transition text-center cursor-pointer flex flex-col items-center justify-center gap-2 ${
+                    isDragOver
+                      ? 'border-cyan-400 bg-cyan-950/30'
+                      : uploadFileName
+                      ? 'border-emerald-500/50 bg-emerald-950/20'
+                      : 'border-slate-800 hover:border-slate-700 bg-slate-900/40'
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt,.md,.ppt,.pptx"
+                    onChange={(e) => {
+                      if (e.target.files?.[0]) {
+                        handleFileSelected(e.target.files[0]);
+                      }
+                    }}
+                    className="hidden"
+                  />
+
+                  {uploadFileName ? (
+                    <div className="space-y-1.5 w-full">
+                      <div className="flex items-center justify-center gap-2 text-emerald-400 font-semibold">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span className="truncate max-w-[280px]">{uploadFileName}</span>
+                      </div>
+                      <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400">
+                        {getFormatBadge(uploadFileType)}
+                        <span>{uploadFileSize}</span>
+                        <span>· Click to change file</span>
+                      </div>
+                      {uploadFileDataUrl && uploadFileType.match(/jpg|jpeg|png/) && (
+                        <div className="pt-2">
+                          <img
+                            src={uploadFileDataUrl}
+                            alt="preview"
+                            className="max-h-24 mx-auto rounded border border-slate-800 object-contain"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-cyan-400">
+                        <UploadCloud className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="font-semibold text-slate-200 block">
+                          Drag & drop PDF, Word (.docx), PPT or Images (.jpg, .png)
+                        </span>
+                        <span className="text-[11px] text-slate-400">
+                          Or click to browse from your device
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Subject</label>
+                  <label className="text-slate-400 block mb-1">Subject</label>
                   <select
                     value={uploadSubjectId}
                     onChange={(e) => setUploadSubjectId(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
                   >
                     {subjects.map((sub) => (
                       <option key={sub.id} value={sub.id}>
@@ -292,41 +546,42 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Document Title</label>
+                  <label className="text-slate-400 block mb-1">Document Title</label>
                   <input
                     type="text"
-                    placeholder="e.g. Unit 3 Concurrency PPT"
+                    placeholder="e.g. Unit 3 Concurrency PPT or Chapter 4 Lecture Notes"
                     value={uploadTitle}
                     onChange={(e) => setUploadTitle(e.target.value)}
                     required
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Lecture Text / Notes Outline</label>
+                  <label className="text-slate-400 block mb-1">Lecture Text / Notes Outline (Optional)</label>
                   <textarea
-                    rows={4}
-                    placeholder="Paste slides text or outline here..."
+                    rows={3}
+                    placeholder="Optional text excerpt or key topics covered in the lecture..."
                     value={uploadTextSnippet}
                     onChange={(e) => setUploadTextSnippet(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50 resize-none font-sans"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50 resize-none font-sans"
                   />
                 </div>
 
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-800/80">
                   <button
                     type="button"
                     onClick={() => setIsUploading(false)}
-                    className="px-3 py-1.5 rounded-lg bg-slate-900 text-slate-400 text-xs hover:text-white"
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 text-xs hover:text-white transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium cursor-pointer"
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md transition cursor-pointer flex items-center gap-1.5"
                   >
-                    Process with AI
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Upload & Sync Classwide</span>
                   </button>
                 </div>
               </form>

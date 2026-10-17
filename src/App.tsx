@@ -52,6 +52,7 @@ import {
   BackgroundConfig,
   getStoredBackgroundConfig,
 } from './utils/backgroundService';
+import { initClassroomAutoSync } from './utils/classSyncService';
 
 const DEFAULT_USER: UserProfile = {
   id: 'user-cr-1',
@@ -150,6 +151,41 @@ export default function App() {
     return SEED_NOTIFICATIONS;
   });
   const [assignments, setAssignments] = useState<AcademicAssignment[]>(SEED_ASSIGNMENTS);
+
+  // Continuous Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
+  useEffect(() => {
+    const unsub = initClassroomAutoSync(classCode, (syncData) => {
+      if (syncData.materials && syncData.materials.length > 0) {
+        setMaterials(syncData.materials);
+      }
+      if (syncData.assignments && syncData.assignments.length > 0) {
+        setAssignments(syncData.assignments);
+      }
+      if (syncData.units) {
+        setUnitsBySubject(syncData.units);
+      }
+      if (syncData.exams && syncData.exams.length > 0) {
+        setExams(syncData.exams);
+      }
+      if (syncData.announcements && syncData.announcements.length > 0) {
+        setAnnouncements(syncData.announcements);
+      }
+      if (syncData.notifications && syncData.notifications.length > 0) {
+        setNotifications((prev) => {
+          const existingIds = new Set(prev.map((n) => n.id));
+          const newItems = syncData.notifications.filter((n) => !existingIds.has(n.id));
+          return [...newItems, ...prev];
+        });
+      }
+      if (syncData.timetable && syncData.timetable.length > 0) {
+        setTimetable(syncData.timetable);
+      }
+    });
+
+    return () => {
+      unsub();
+    };
+  }, [classCode]);
 
   const handleMarkAllRead = () => {
     setNotifications((prev) => {

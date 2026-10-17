@@ -123,7 +123,7 @@ export interface AcademicMaterial {
   topicTitle?: string;
   title: string;
   fileName: string;
-  fileType: 'pdf' | 'ppt' | 'doc' | 'notes' | 'image';
+  fileType: 'pdf' | 'ppt' | 'pptx' | 'doc' | 'docx' | 'notes' | 'image' | 'jpg' | 'png' | 'txt' | string;
   fileSize: string;
   uploaderName: string;
   uploaderRole: UserRole;
@@ -131,6 +131,8 @@ export interface AcademicMaterial {
   createdAt: string;
   resources: MaterialResources;
   downloadUrl?: string;
+  fileDataUrl?: string;
+  rawTextContent?: string;
 }
 
 export interface HistoricalPYQ {
@@ -195,6 +197,9 @@ export interface AcademicAssignment {
   presenterName?: string;
   completed?: boolean;
   aiSolvedAnswer?: string;
+  solution?: string;
+  solvedBy?: string;
+  solvedAt?: string;
 }
 
 export interface ClassAnnouncement {

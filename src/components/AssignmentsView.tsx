@@ -243,21 +243,36 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     }
   };
 
-  // AI Assignment Solver
-  const handleSolveWithAI = async () => {
+  // Auto-load pre-cached solution when modal opens
+  useEffect(() => {
+    if (activeModalItem) {
+      const existing = activeModalItem.solution || activeModalItem.aiSolvedAnswer || '';
+      setAiSolution(existing);
+      setStudentNotes('');
+      setStudentDraft('');
+      setReviewResult('');
+    }
+  }, [activeModalItem]);
+
+  // AI Assignment Solver (Zero-Token Cache & Synchronized across all devices)
+  const handleSolveWithAI = async (forceRegenerate = false) => {
     if (!activeModalItem) return;
     setIsSolving(true);
-    setAiSolution('');
+    if (forceRegenerate) {
+      setAiSolution('');
+    }
 
     try {
       const res = await fetch('/api/assignments/solve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          assignmentId: activeModalItem.id,
           assignmentTitle: activeModalItem.title,
           subjectName: activeModalItem.subjectName,
           instructions: activeModalItem.instructions,
           studentNotes: studentNotes.trim() || undefined,
+          forceRegenerate,
           ...getAiRequestPayload(),
         }),
       });
@@ -265,6 +280,19 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       if (res.ok) {
         const data = await res.json();
         setAiSolution(data.answer);
+
+        // Update local item and list so it's permanently cached in this session
+        const updatedItem: AcademicAssignment = {
+          ...activeModalItem,
+          solution: data.answer,
+          aiSolvedAnswer: data.answer,
+          solvedBy: data.solvedBy || 'Class AI Model (Auto-Cached)',
+          solvedAt: data.solvedAt || new Date().toISOString(),
+        };
+        setActiveModalItem(updatedItem);
+        const updatedList = assignments.map((a) => (a.id === updatedItem.id ? updatedItem : a));
+        setAssignments(updatedList);
+        if (onUpdateAssignments) onUpdateAssignments(updatedList);
       } else {
         const err = await res.json();
         setAiSolution('Error solving assignment: ' + (err.error || 'Unknown error'));
@@ -623,16 +651,25 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                     }`}
                   >
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span
-                          className={`font-mono px-2 py-0.5 rounded border ${
-                            item.type === 'ppt_presentation'
-                              ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/30'
-                              : 'bg-slate-950 text-slate-400 border-slate-800'
-                          }`}
-                        >
-                          {item.type === 'ppt_presentation' ? '🎤 PPT Presentation' : '📝 Written Assignment'}
-                        </span>
+                      <div className="flex items-center justify-between text-[11px] gap-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={`font-mono px-2 py-0.5 rounded border ${
+                              item.type === 'ppt_presentation'
+                                ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/30'
+                                : 'bg-slate-950 text-slate-400 border-slate-800'
+                            }`}
+                          >
+                            {item.type === 'ppt_presentation' ? '🎤 PPT Presentation' : '📝 Written Assignment'}
+                          </span>
+
+                          {(item.solution || item.aiSolvedAnswer) && (
+                            <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-semibold">
+                              <Sparkles className="w-3 h-3 text-emerald-400" />
+                              <span>Solved (0 Tokens)</span>
+                            </span>
+                          )}
+                        </div>
 
                         <span
                           className={`font-mono font-medium ${
@@ -698,14 +735,21 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         onClick={(e) => {
                           e.stopPropagation();
                           setActiveModalItem(item);
-                          setAiSolution('');
                           setReviewResult('');
                           setAssistantTab('ai_solver');
                         }}
-                        className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-medium text-xs cursor-pointer hover:underline"
+                        className={`flex items-center gap-1.5 font-medium text-xs cursor-pointer hover:underline ${
+                          item.solution || item.aiSolvedAnswer
+                            ? 'text-emerald-400 hover:text-emerald-300 font-semibold'
+                            : 'text-cyan-400 hover:text-cyan-300'
+                        }`}
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Solve with AI →</span>
+                        <span>
+                          {item.solution || item.aiSolvedAnswer
+                            ? '⚡ View Solution (0 Tokens) →'
+                            : 'Solve with AI →'}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -822,37 +866,76 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               {/* Tab 1: AI Assignment Solver */}
               {assistantTab === 'ai_solver' && (
                 <div className="space-y-3 animate-fade-in text-xs">
-                  <input
-                    type="text"
-                    placeholder="Optional constraints (e.g. 'Use Python code', 'Include BCNF decomposition proof')..."
-                    value={studentNotes}
-                    onChange={(e) => setStudentNotes(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
-                  />
+                  {/* Zero-Token Model Solution Banner */}
+                  {aiSolution ? (
+                    <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <div>
+                          <div className="font-semibold text-emerald-200">
+                            ⚡ Class Model Answer Synced (0 Tokens Consumed)
+                          </div>
+                          <div className="text-[11px] text-emerald-400/80">
+                            Solved once & cached for all students across mobile, tablet & desktop.
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleSolveWithAI(true)}
+                        disabled={isSolving}
+                        className="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition cursor-pointer shrink-0"
+                      >
+                        Re-solve
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="p-3 bg-cyan-950/30 border border-cyan-500/20 rounded-xl text-slate-300">
+                      <div className="font-medium text-cyan-300 mb-0.5">
+                        💡 Solve once for the whole class
+                      </div>
+                      <div className="text-[11px] text-slate-400">
+                        Generating this answer will save it to the shared classroom cache so no classmate burns extra tokens!
+                      </div>
+                    </div>
+                  )}
 
-                  <button
-                    onClick={handleSolveWithAI}
-                    disabled={isSolving}
-                    className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold shadow-md transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <Sparkles className={`w-4 h-4 ${isSolving ? 'animate-spin' : ''}`} />
-                    <span>{isSolving ? 'Generating University Full-Mark Answer...' : 'Generate Full-Credit Model Answer'}</span>
-                  </button>
+                  {!aiSolution && (
+                    <>
+                      <input
+                        type="text"
+                        placeholder="Optional constraints (e.g. 'Use Python code', 'Include BCNF decomposition proof')..."
+                        value={studentNotes}
+                        onChange={(e) => setStudentNotes(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
+                      />
+
+                      <button
+                        onClick={() => handleSolveWithAI(false)}
+                        disabled={isSolving}
+                        className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold shadow-md transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <Sparkles className={`w-4 h-4 ${isSolving ? 'animate-spin' : ''}`} />
+                        <span>{isSolving ? 'Generating University Full-Mark Answer...' : 'Generate Full-Credit Model Answer'}</span>
+                      </button>
+                    </>
+                  )}
 
                   {aiSolution && (
                     <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden space-y-2 animate-fade-in">
                       <div className="p-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs">
                         <span className="font-semibold text-cyan-300 flex items-center gap-1.5">
                           <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                          Academic Model Submission
+                          Academic Model Submission (Verified Solution)
                         </span>
-                        <button
-                          onClick={handleCopySolution}
-                          className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
-                        >
-                          {copiedSolution ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
-                          <span>{copiedSolution ? 'Copied' : 'Copy Solution'}</span>
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={handleCopySolution}
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+                          >
+                            {copiedSolution ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span>{copiedSolution ? 'Copied' : 'Copy Solution'}</span>
+                          </button>
+                        </div>
                       </div>
 
                       <div className="p-4 max-h-[400px] overflow-y-auto text-xs text-slate-200 whitespace-pre-wrap leading-relaxed font-sans select-text">

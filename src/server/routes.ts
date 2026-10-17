@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { Router, Request, Response } from 'express';
 import { AIProviderFactory, UniversalKeyConfig, UniversalAIProvider } from './ai/provider.js';
 
@@ -61,7 +63,9 @@ import {
 
 export const apiRouter = Router();
 
-// In-Memory Database Store (Persists during server lifecycle, pre-seeded with BCA 2028)
+const CACHE_FILE = path.resolve(process.cwd(), 'curriculum-repo', '.classroom_cache.json');
+
+// Persistent & In-Memory Classroom Store (Synchronized across all students with 0 tokens recreation)
 class MemoryStore {
   classes: Record<string, ClassWorkspace> = {
     'BCA-2028': JSON.parse(JSON.stringify(SEED_CLASS)),
@@ -86,7 +90,59 @@ class MemoryStore {
   };
   announcements = JSON.parse(JSON.stringify(SEED_ANNOUNCEMENTS));
   notifications = JSON.parse(JSON.stringify(SEED_NOTIFICATIONS));
-  assignments = JSON.parse(JSON.stringify(SEED_ASSIGNMENTS));
+  assignments: AcademicAssignment[] = JSON.parse(JSON.stringify(SEED_ASSIGNMENTS));
+
+  constructor() {
+    this.loadFromDisk();
+  }
+
+  saveToDisk() {
+    try {
+      const dir = path.dirname(CACHE_FILE);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      const data = {
+        classes: this.classes,
+        subjects: this.subjects,
+        units: this.units,
+        materials: this.materials,
+        assignments: this.assignments,
+        exams: this.exams,
+        announcements: this.announcements,
+        notifications: this.notifications,
+        lastSaved: new Date().toISOString(),
+      };
+      fs.writeFileSync(CACHE_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('[Classroom Cache] Disk write notice:', e);
+    }
+  }
+
+  loadFromDisk() {
+    try {
+      if (fs.existsSync(CACHE_FILE)) {
+        const raw = fs.readFileSync(CACHE_FILE, 'utf-8');
+        const data = JSON.parse(raw);
+        if (data.classes) this.classes = data.classes;
+        if (data.subjects) this.subjects = data.subjects;
+        if (data.units) this.units = data.units;
+        if (data.materials) this.materials = data.materials;
+        if (data.assignments && Array.isArray(data.assignments)) {
+          const map = new Map<string, AcademicAssignment>();
+          this.assignments.forEach((a) => map.set(a.id, a));
+          data.assignments.forEach((a: AcademicAssignment) => map.set(a.id, { ...map.get(a.id), ...a }));
+          this.assignments = Array.from(map.values());
+        }
+        if (data.exams) this.exams = data.exams;
+        if (data.announcements) this.announcements = data.announcements;
+        if (data.notifications) this.notifications = data.notifications;
+        console.log(`[Classroom Cache] Restored shared cache from disk (Materials: ${Object.values(this.materials).flat().length}, Assignments: ${this.assignments.length})`);
+      }
+    } catch (e) {
+      console.warn('[Classroom Cache] Disk read fallback to seeds:', e);
+    }
+  }
 }
 
 export const db = new MemoryStore();
@@ -555,24 +611,57 @@ Evaluate the answer. Return STRICT JSON only:
   }
 });
 
-// 7. Material Upload & Processing Pipeline
+// 7. Material Upload & Processing Pipeline (PDF, DOCX, JPG, PPT, Notes)
 apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
-  const { classId, subjectId, subjectName, title, fileName, fileType, rawTextContent, uploaderRole } =
-    req.body;
+  const {
+    classId = 'class-bca-2028',
+    subjectId,
+    subjectName,
+    title,
+    fileName,
+    fileType,
+    fileSize,
+    rawTextContent,
+    fileDataUrl,
+    uploaderRole,
+    uploaderName,
+  } = req.body;
+
+  const targetClassId = classId || 'class-bca-2028';
+  if (!db.materials[targetClassId]) {
+    db.materials[targetClassId] = [];
+  }
+
+  // 1. Zero-Token Classroom Cache Check: If identical document already exists, fetch cached notes!
+  const cleanTitle = (title || fileName || 'Lecture Material').trim();
+  const existing = db.materials[targetClassId].find(
+    (m) => m.title.toLowerCase() === cleanTitle.toLowerCase() || (fileName && m.fileName === fileName)
+  );
+
+  if (existing && existing.resources) {
+    return res.json({
+      status: 'success',
+      material: existing,
+      cached: true,
+      tokenCost: 0,
+      message: '⚡ Instant fetch from Shared Classroom Cache (0 tokens consumed).',
+    });
+  }
 
   const ai = AIProviderFactory.getProvider(extractAiConfig(req));
 
   // Generate processed academic pack
-  let summary = `Synthesized overview of ${title || 'uploaded document'}. Highlights key university curriculum principles.`;
-  let hinglishSummary = `Is PPT mein ${title} ke core points explain kiye gaye hain jo exam ke liye must-revise hain.`;
+  let summary = `Synthesized overview of ${cleanTitle}. Highlights key university curriculum principles and exam patterns.`;
+  let hinglishSummary = `Is document mein ${cleanTitle} ke core exam points explain kiye gaye hain.`;
 
   try {
     if (ai.isAvailable()) {
       const prompt = `Analyze this college lecture material:
-Title: "${title}"
-Content snippet: "${(rawTextContent || title).slice(0, 4000)}"
+Title: "${cleanTitle}"
+Document Type: ${fileType || 'Document'}
+Content snippet: "${(rawTextContent || cleanTitle).slice(0, 4000)}"
 
-Return a clean 3-sentence summary of the core concepts for university students.`;
+Provide a clean, high-yield 3-sentence summary of the core concepts for university semester exams.`;
       summary = await ai.generateText(prompt);
     }
   } catch {
@@ -581,65 +670,66 @@ Return a clean 3-sentence summary of the core concepts for university students.`
 
   const newMaterial: AcademicMaterial = {
     id: `mat-${Date.now()}`,
-    classId: classId || 'class-bca-2028',
+    classId: targetClassId,
     subjectId: subjectId || 'sub-dbms',
     subjectName: subjectName || 'Database Management Systems',
-    title: title || fileName || 'Lecture Material',
-    fileName: fileName || 'Document.pdf',
+    title: cleanTitle,
+    fileName: fileName || `${cleanTitle.replace(/\s+/g, '_')}.${fileType || 'pdf'}`,
     fileType: fileType || 'pdf',
-    fileSize: '3.6 MB',
-    uploaderName: uploaderRole === 'teacher' ? 'Faculty Professor' : 'Classmate',
+    fileSize: fileSize || '2.8 MB',
+    fileDataUrl: fileDataUrl || undefined,
+    rawTextContent: rawTextContent || undefined,
+    uploaderName: uploaderName || (uploaderRole === 'teacher' ? 'Faculty Professor' : 'Classmate'),
     uploaderRole: uploaderRole || 'student',
     verificationStatus: uploaderRole === 'teacher' ? 'teacher_verified' : 'student_shared',
     createdAt: 'Just now',
     resources: {
       summary,
       hinglishSummary,
-      mindmapMermaid: `graph TD\n  A[${title}] --> B[Key Theory]\n  A --> C[Algorithms]\n  A --> D[Exam Questions]`,
+      mindmapMermaid: `graph TD\n  A[${cleanTitle}] --> B[Core Principles]\n  A --> C[Algorithms & Schema]\n  A --> D[University 10-Markers]`,
       keyConcepts: [
-        { concept: 'Primary Principle', explanation: 'Foundational framework introduced in this lecture unit.' },
-        { concept: 'Boundary Conditions', explanation: 'Critical constraints tested in end-term examinations.' },
+        { concept: 'Foundational Theory', explanation: `Core conceptual framework introduced in ${cleanTitle}.` },
+        { concept: 'Evaluation Invariant', explanation: 'Crucial university syllabus boundary conditions.' },
       ],
       importantDefinitions: [
-        { term: title, definition: 'Standardized university definition from lecture notes.' },
+        { term: cleanTitle, definition: 'Standardized university definition from prescribed textbook.' },
       ],
       examples: [
         {
-          title: 'Practical Scenario',
-          scenario: 'Real-world application demonstrating the lecture concept.',
-          takeaway: 'Ensures data safety and system performance.',
+          title: 'Industry Application',
+          scenario: 'Real-world enterprise system implementing this curriculum concept.',
+          takeaway: 'Guarantees fault-tolerance and system optimization.',
         },
       ],
       examPoints: ['Write formal definition in first 2 lines.', 'Draw block diagram with pencil and ruler.'],
       flashcards: [
-        { id: 'fc-new-1', question: `What is the main goal of ${title}?`, answer: 'To ensure correctness and efficiency.' },
+        { id: `fc-${Date.now()}-1`, question: `What is the primary role of ${cleanTitle}?`, answer: 'Guarantees correctness and performance.' },
       ],
       quiz: [
         {
-          id: 'q-new-1',
-          question: `Which layer or module does ${title} primarily govern?`,
-          options: ['Application Layer', 'Core Architecture', 'Hardware only', 'None'],
+          id: `q-${Date.now()}-1`,
+          question: `Which layer or module does ${cleanTitle} primarily govern?`,
+          options: ['Application Layer', 'Core Architecture', 'Hardware Only', 'None of the above'],
           correctIndex: 1,
           explanation: 'It operates as a central design mechanism in the curriculum.',
         },
       ],
       possibleQuestions: [
-        { marks: 10, question: `Explain ${title} with neat diagram and working algorithm.`, answerOutline: 'Definition -> Mechanism -> Code -> Gotchas' },
+        { marks: 10, question: `Explain ${cleanTitle} with neat architectural diagram and implementation steps.`, answerOutline: 'Definition -> Working Mechanism -> Code/Schema -> Gotchas' },
       ],
       relatedPYQs: [
-        { year: 2024, marks: 10, question: `University 10-Marker on ${title}` },
+        { year: 2024, marks: 10, question: `University 10-Marker on ${cleanTitle}` },
       ],
     },
   };
 
-  if (!db.materials[newMaterial.classId]) {
-    db.materials[newMaterial.classId] = [];
-  }
-  db.materials[newMaterial.classId].unshift(newMaterial);
+  db.materials[targetClassId].unshift(newMaterial);
+  db.saveToDisk();
 
   res.json({
     status: 'success',
     material: newMaterial,
+    cached: false,
   });
 });
 
@@ -648,6 +738,24 @@ apiRouter.get('/materials/:classId', (req: Request, res: Response) => {
   const classId = req.params.classId || 'class-bca-2028';
   const list = db.materials[classId] || [];
   res.json(list);
+});
+
+// 8.5 Unified Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
+apiRouter.get('/sync/classroom/:classCode', (req: Request, res: Response) => {
+  const code = (req.params.classCode || 'BCA-2028').toUpperCase();
+  const classId = 'class-bca-2028';
+  res.json({
+    classCode: code,
+    classId,
+    materials: db.materials[classId] || [],
+    assignments: db.assignments || [],
+    units: db.units[classId] || db.units || [],
+    exams: db.exams[classId] || [],
+    announcements: db.announcements || [],
+    notifications: db.notifications || [],
+    timetable: db.timetable[classId] || [],
+    lastSyncedAt: new Date().toISOString(),
+  });
 });
 
 // 9. PYQs and Analysis
@@ -774,6 +882,7 @@ apiRouter.post('/assignments/add', (req: Request, res: Response) => {
   };
 
   db.assignments.unshift(newAssignment);
+  db.saveToDisk();
 
   // Publish classwide notification
   db.notifications.unshift({
@@ -829,6 +938,8 @@ apiRouter.post('/assignments/cr-sync', (req: Request, res: Response) => {
     }
   }
 
+  db.saveToDisk();
+
   // Broadcast classwide announcement
   db.announcements.unshift({
     id: `ann-${Date.now()}`,
@@ -858,6 +969,7 @@ apiRouter.patch('/assignments/:id/toggle-done', (req: Request, res: Response) =>
   }
 
   assignment.completed = !assignment.completed;
+  db.saveToDisk();
 
   // Silently refine & synchronize repository in background
   executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
@@ -865,10 +977,30 @@ apiRouter.patch('/assignments/:id/toggle-done', (req: Request, res: Response) =>
   res.json({ success: true, completed: assignment.completed, assignment });
 });
 
-// 12e. AI Assignment Solver (Recognizes assignment context and outputs proper big answers)
+// 12e. AI Assignment Solver (Recognizes assignment context and outputs proper big answers with 0-token caching)
 apiRouter.post('/assignments/solve', async (req: Request, res: Response) => {
   try {
-    const { assignmentTitle, subjectName, instructions, studentNotes } = req.body;
+    const { assignmentId, assignmentTitle, subjectName, instructions, studentNotes, forceRegenerate } = req.body;
+
+    // 1. Zero-Token Classroom Cache Check: If already solved by any student or teacher, return instantly
+    const targetAssignment = db.assignments.find(
+      (a: AcademicAssignment) =>
+        (assignmentId && a.id === assignmentId) ||
+        (assignmentTitle && a.title.toLowerCase() === assignmentTitle.toLowerCase())
+    );
+
+    if (targetAssignment && (targetAssignment.solution || targetAssignment.aiSolvedAnswer) && !forceRegenerate) {
+      return res.json({
+        success: true,
+        answer: targetAssignment.solution || targetAssignment.aiSolvedAnswer,
+        cached: true,
+        tokenCost: 0,
+        solvedBy: targetAssignment.solvedBy || 'Class AI Model (Auto-Cached)',
+        solvedAt: targetAssignment.solvedAt || new Date().toISOString(),
+        message: '⚡ Instant fetch from Shared Classroom Cache (0 tokens consumed).',
+      });
+    }
+
     const ai = AIProviderFactory.getProvider(extractAiConfig(req));
 
     const prompt = `You are SyllabusOS AI Academic Assignment Solver for university-level curricula.
@@ -894,11 +1026,28 @@ Provide a proper, big, beautifully formatted markdown solution with code blocks,
     const systemInstruction = `You are a distinguished university professor and academic assignment evaluator who provides thorough, exhaustive, top-scoring assignment solutions with proper academic rigor and full technical depth.`;
 
     const answer = await ai.generateText(prompt, systemInstruction);
+    const solvedAt = new Date().toISOString();
+    const solvedBy = `${ai.name} (Class Shared Solution)`;
+
+    if (targetAssignment) {
+      targetAssignment.solution = answer;
+      targetAssignment.aiSolvedAnswer = answer;
+      targetAssignment.solvedBy = solvedBy;
+      targetAssignment.solvedAt = solvedAt;
+    }
+    db.saveToDisk();
 
     // Silently refine & synchronize repository in background
     executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
 
-    res.json({ success: true, answer });
+    res.json({
+      success: true,
+      answer,
+      cached: false,
+      tokenCost: answer.length,
+      solvedBy,
+      solvedAt,
+    });
   } catch (err: any) {
     console.error('Assignment solver error:', err);
     res.status(500).json({ error: 'Failed to solve assignment', details: err.message });

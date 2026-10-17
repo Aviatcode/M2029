@@ -701,6 +701,92 @@ export const SEED_ASSIGNMENTS: AcademicAssignment[] = [
     ],
     sampleDraftGuidance:
       'Focus on explaining WHY the decomposition prevents insertion and deletion anomalies rather than just listing tables.',
+    solution: `# 💡 Full-Credit Academic Solution: Hospital Management ER & 3NF Normalization
+
+## 🎓 1. Executive Summary & Problem Formulation
+In university database systems, un-normalized relational schemas cause severe data redundancy and update/deletion anomalies. This solution presents the formal functional dependency analysis and progressive schema normalization from 1NF to 3NF.
+
+## 📐 2. Functional Dependencies (FDs)
+Given un-normalized relation R(PatientID, PatientName, DoctorID, DoctorName, Department, RoomNo, BillAmount):
+1. PatientID → PatientName, RoomNo
+2. DoctorID → DoctorName, Department
+3. (PatientID, DoctorID) → BillAmount
+
+## 📝 3. Step-by-Step 3NF Decomposition
+* **1NF:** Ensure all attributes are atomic and no repeating groups exist.
+* **2NF:** Eliminate partial dependencies. All non-key attributes must be fully functionally dependent on candidate key (PatientID, DoctorID).
+* **3NF:** Eliminate transitive dependencies (DoctorID → Department).
+
+### Decomposed Relational Schemas:
+\`\`\`sql
+CREATE TABLE Doctors (
+    DoctorID VARCHAR(20) PRIMARY KEY,
+    DoctorName VARCHAR(100) NOT NULL,
+    Department VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Patients (
+    PatientID VARCHAR(20) PRIMARY KEY,
+    PatientName VARCHAR(100) NOT NULL,
+    RoomNo INT NOT NULL
+);
+
+CREATE TABLE Appointments (
+    AppointmentID VARCHAR(20) PRIMARY KEY,
+    PatientID VARCHAR(20) NOT NULL,
+    DoctorID VARCHAR(20) NOT NULL,
+    BillAmount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+\`\`\`
+
+## 📚 4. Academic References:
+Silberschatz, Korth, Sudarshan - Database System Concepts (Chapter 7 Normalization).`,
+    aiSolvedAnswer: `# 💡 Full-Credit Academic Solution: Hospital Management ER & 3NF Normalization
+
+## 🎓 1. Executive Summary & Problem Formulation
+In university database systems, un-normalized relational schemas cause severe data redundancy and update/deletion anomalies. This solution presents the formal functional dependency analysis and progressive schema normalization from 1NF to 3NF.
+
+## 📐 2. Functional Dependencies (FDs)
+Given un-normalized relation R(PatientID, PatientName, DoctorID, DoctorName, Department, RoomNo, BillAmount):
+1. PatientID → PatientName, RoomNo
+2. DoctorID → DoctorName, Department
+3. (PatientID, DoctorID) → BillAmount
+
+## 📝 3. Step-by-Step 3NF Decomposition
+* **1NF:** Ensure all attributes are atomic and no repeating groups exist.
+* **2NF:** Eliminate partial dependencies. All non-key attributes must be fully functionally dependent on candidate key (PatientID, DoctorID).
+* **3NF:** Eliminate transitive dependencies (DoctorID → Department).
+
+### Decomposed Relational Schemas:
+\`\`\`sql
+CREATE TABLE Doctors (
+    DoctorID VARCHAR(20) PRIMARY KEY,
+    DoctorName VARCHAR(100) NOT NULL,
+    Department VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Patients (
+    PatientID VARCHAR(20) PRIMARY KEY,
+    PatientName VARCHAR(100) NOT NULL,
+    RoomNo INT NOT NULL
+);
+
+CREATE TABLE Appointments (
+    AppointmentID VARCHAR(20) PRIMARY KEY,
+    PatientID VARCHAR(20) NOT NULL,
+    DoctorID VARCHAR(20) NOT NULL,
+    BillAmount DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (PatientID) REFERENCES Patients(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID)
+);
+\`\`\`
+
+## 📚 4. Academic References:
+Silberschatz, Korth, Sudarshan - Database System Concepts (Chapter 7 Normalization).`,
+    solvedBy: 'Faculty Verified Model Solution',
+    solvedAt: '2026-10-17T09:00:00.000Z',
   },
   {
     id: 'assign-2',
@@ -723,6 +809,100 @@ export const SEED_ASSIGNMENTS: AcademicAssignment[] = [
     ],
     keyReferences: ['Herbert Schildt - Java: The Complete Reference (Chapter 11 Multi-threading)'],
     sampleDraftGuidance: 'Always put wait() inside a while-loop condition to handle spurious wakeups.',
+    solution: `# ☕ Thread Synchronization: Bounded-Buffer Producer-Consumer in Java
+
+## 🎓 1. Theoretical Architecture & Synchronization Invariants
+The classical Bounded-Buffer Producer-Consumer model requires:
+1. **Mutual exclusion:** Only one worker thread accesses the shared buffer queue at a time.
+2. **Underflow prevention:** Consumer thread waits when buffer is empty (\`queue.isEmpty()\`).
+3. **Overflow prevention:** Producer thread waits when buffer reaches capacity (\`queue.size() == capacity\`).
+4. **Spurious Wakeup Prevention:** The condition check MUST be inside a \`while\` loop, never an \`if\` statement.
+
+## 💻 2. Production Java Implementation
+\`\`\`java
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class BoundedBuffer<T> {
+    private final Queue<T> queue = new LinkedList<>();
+    private final int capacity;
+
+    public BoundedBuffer(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public synchronized void produce(T item) throws InterruptedException {
+        // ALWAYS use while loop to guard against spurious wakeups
+        while (queue.size() == capacity) {
+            wait();
+        }
+        queue.add(item);
+        System.out.println("[PRODUCED]: " + item + " (Queue Size: " + queue.size() + ")");
+        notifyAll();
+    }
+
+    public synchronized T consume() throws InterruptedException {
+        while (queue.isEmpty()) {
+            wait();
+        }
+        T item = queue.poll();
+        System.out.println("[CONSUMED]: " + item + " (Remaining: " + queue.size() + ")");
+        notifyAll();
+        return item;
+    }
+}
+\`\`\`
+
+## 📚 3. Academic References:
+Herbert Schildt - Java: The Complete Reference (Chapter 11 Multi-threaded Programming).`,
+    aiSolvedAnswer: `# ☕ Thread Synchronization: Bounded-Buffer Producer-Consumer in Java
+
+## 🎓 1. Theoretical Architecture & Synchronization Invariants
+The classical Bounded-Buffer Producer-Consumer model requires:
+1. **Mutual exclusion:** Only one worker thread accesses the shared buffer queue at a time.
+2. **Underflow prevention:** Consumer thread waits when buffer is empty (\`queue.isEmpty()\`).
+3. **Overflow prevention:** Producer thread waits when buffer reaches capacity (\`queue.size() == capacity\`).
+4. **Spurious Wakeup Prevention:** The condition check MUST be inside a \`while\` loop, never an \`if\` statement.
+
+## 💻 2. Production Java Implementation
+\`\`\`java
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class BoundedBuffer<T> {
+    private final Queue<T> queue = new LinkedList<>();
+    private final int capacity;
+
+    public BoundedBuffer(int capacity) {
+        this.capacity = capacity;
+    }
+
+    public synchronized void produce(T item) throws InterruptedException {
+        // ALWAYS use while loop to guard against spurious wakeups
+        while (queue.size() == capacity) {
+            wait();
+        }
+        queue.add(item);
+        System.out.println("[PRODUCED]: " + item + " (Queue Size: " + queue.size() + ")");
+        notifyAll();
+    }
+
+    public synchronized T consume() throws InterruptedException {
+        while (queue.isEmpty()) {
+            wait();
+        }
+        T item = queue.poll();
+        System.out.println("[CONSUMED]: " + item + " (Remaining: " + queue.size() + ")");
+        notifyAll();
+        return item;
+    }
+}
+\`\`\`
+
+## 📚 3. Academic References:
+Herbert Schildt - Java: The Complete Reference (Chapter 11 Multi-threaded Programming).`,
+    solvedBy: 'Faculty Verified Model Solution',
+    solvedAt: '2026-10-17T09:00:00.000Z',
   },
   {
     id: 'ppt-1',
@@ -747,6 +927,70 @@ export const SEED_ASSIGNMENTS: AcademicAssignment[] = [
     ],
     keyReferences: ['Galvin, Silberschatz - Operating System Concepts (Chapter 8 Deadlocks)'],
     sampleDraftGuidance: 'Highlight that Banker\'s algorithm requires knowing maximum resource requests in advance, which is its main practical drawback.',
+    solution: `# 🖥️ Deadlock Avoidance: Banker's Algorithm Numerical Matrix Trace
+
+## 🎓 1. System State Definition
+Consider a system with 5 Processes (\`P0, P1, P2, P3, P4\`) and 3 Resource Types (\`A: 10, B: 5, C: 7\`).
+
+### Snapshot at Time T0:
+* **Available Vector:** \`[3, 3, 2]\`
+* **Need Matrix Calculation:** \`Need[i][j] = Max[i][j] - Allocation[i][j]\`
+
+| Process | Allocation (A B C) | Max (A B C) | Need (A B C) |
+| :-: | :-: | :-: | :-: |
+| **P0** | 0 1 0 | 7 5 3 | 7 4 3 |
+| **P1** | 2 0 0 | 3 2 2 | 1 2 2 |
+| **P2** | 3 0 2 | 9 0 2 | 6 0 0 |
+| **P3** | 2 1 1 | 2 2 2 | 0 1 1 |
+| **P4** | 0 0 2 | 4 3 3 | 4 3 1 |
+
+## 🔍 2. Safety Algorithm Step-by-Step Trace:
+1. **Check P1:** Need \`[1, 2, 2] <= Available [3, 3, 2]\` -> **TRUE**.  
+   *P1 executes.* \`New Available = [3, 3, 2] + Allocation[2, 0, 0] = [5, 3, 2]\`.
+2. **Check P3:** Need \`[0, 1, 1] <= Available [5, 3, 2]\` -> **TRUE**.  
+   *P3 executes.* \`New Available = [5, 3, 2] + Allocation[2, 1, 1] = [7, 4, 3]\`.
+3. **Check P4:** Need \`[4, 3, 1] <= Available [7, 4, 3]\` -> **TRUE**.  
+   *P4 executes.* \`New Available = [7, 4, 3] + Allocation[0, 0, 2] = [7, 4, 5]\`.
+4. **Check P0:** Need \`[7, 4, 3] <= Available [7, 4, 5]\` -> **TRUE**.  
+   *P0 executes.* \`New Available = [7, 4, 5] + Allocation[0, 1, 0] = [7, 5, 5]\`.
+5. **Check P2:** Need \`[6, 0, 0] <= Available [7, 5, 5]\` -> **TRUE**.  
+   *P2 executes.* \`New Available = [7, 5, 5] + Allocation[3, 0, 2] = [10, 5, 7]\`.
+
+**Result:** The system is in a **SAFE STATE** with Safe Execution Sequence:  
+\`<P1, P3, P4, P0, P2>\``,
+    aiSolvedAnswer: `# 🖥️ Deadlock Avoidance: Banker's Algorithm Numerical Matrix Trace
+
+## 🎓 1. System State Definition
+Consider a system with 5 Processes (\`P0, P1, P2, P3, P4\`) and 3 Resource Types (\`A: 10, B: 5, C: 7\`).
+
+### Snapshot at Time T0:
+* **Available Vector:** \`[3, 3, 2]\`
+* **Need Matrix Calculation:** \`Need[i][j] = Max[i][j] - Allocation[i][j]\`
+
+| Process | Allocation (A B C) | Max (A B C) | Need (A B C) |
+| :-: | :-: | :-: | :-: |
+| **P0** | 0 1 0 | 7 5 3 | 7 4 3 |
+| **P1** | 2 0 0 | 3 2 2 | 1 2 2 |
+| **P2** | 3 0 2 | 9 0 2 | 6 0 0 |
+| **P3** | 2 1 1 | 2 2 2 | 0 1 1 |
+| **P4** | 0 0 2 | 4 3 3 | 4 3 1 |
+
+## 🔍 2. Safety Algorithm Step-by-Step Trace:
+1. **Check P1:** Need \`[1, 2, 2] <= Available [3, 3, 2]\` -> **TRUE**.  
+   *P1 executes.* \`New Available = [3, 3, 2] + Allocation[2, 0, 0] = [5, 3, 2]\`.
+2. **Check P3:** Need \`[0, 1, 1] <= Available [5, 3, 2]\` -> **TRUE**.  
+   *P3 executes.* \`New Available = [5, 3, 2] + Allocation[2, 1, 1] = [7, 4, 3]\`.
+3. **Check P4:** Need \`[4, 3, 1] <= Available [7, 4, 3]\` -> **TRUE**.  
+   *P4 executes.* \`New Available = [7, 4, 3] + Allocation[0, 0, 2] = [7, 4, 5]\`.
+4. **Check P0:** Need \`[7, 4, 3] <= Available [7, 4, 5]\` -> **TRUE**.  
+   *P0 executes.* \`New Available = [7, 4, 5] + Allocation[0, 1, 0] = [7, 5, 5]\`.
+5. **Check P2:** Need \`[6, 0, 0] <= Available [7, 5, 5]\` -> **TRUE**.  
+   *P2 executes.* \`New Available = [7, 5, 5] + Allocation[3, 0, 2] = [10, 5, 7]\`.
+
+**Result:** The system is in a **SAFE STATE** with Safe Execution Sequence:  
+\`<P1, P3, P4, P0, P2>\``,
+    solvedBy: 'Faculty Verified Model Solution',
+    solvedAt: '2026-10-17T09:00:00.000Z',
   },
   {
     id: 'ppt-2',
