@@ -17,3 +17,12 @@ try {
 }
 
 createRoot(document.getElementById('root')!).render(<App />);
+
+// Register Service Worker for PWA Web Share Target & Offline Resilience
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {
+      // Ignore if running without sw in some environments
+    });
+  });
+}

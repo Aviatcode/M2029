@@ -18,7 +18,19 @@ self.addEventListener('fetch', (event) => {
       (async () => {
         try {
           const formData = await event.request.formData();
-          const files = formData.getAll('files') || [];
+          const files = [];
+
+          // Retrieve all files regardless of key name ('files', 'file', 'media', etc.)
+          for (const [key, value] of formData.entries()) {
+            if (value && typeof value === 'object' && typeof value.arrayBuffer === 'function') {
+              files.push(value);
+            }
+          }
+          if (files.length === 0) {
+            const namedFiles = formData.getAll('files') || [];
+            files.push(...namedFiles);
+          }
+
           const text = (formData.get('text') || '').toString();
           const title = (formData.get('title') || '').toString();
           const sharedUrl = (formData.get('url') || '').toString();
@@ -74,7 +86,8 @@ self.addEventListener('fetch', (event) => {
         }
 
         // Redirect user directly into the Study Drop & Auto-Sort tab
-        return Response.redirect('/#dump?from_share=1', 303);
+        const redirectUrl = new URL('./#dump?from_share=1', event.request.url).href;
+        return Response.redirect(redirectUrl, 303);
       })()
     );
   }

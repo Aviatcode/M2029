@@ -53,6 +53,11 @@ async function startServer() {
   // Mount M2028 API Router
   app.use('/api', apiRouter);
 
+  // Fallback endpoint for PWA Web Share Target
+  app.all('/share-target', (req: Request, res: Response) => {
+    res.redirect(303, '/#dump?from_share=1');
+  });
+
   // 1. Get or Create Classroom
   app.get('/api/classroom/:code', (req: Request, res: Response) => {
     const code = (req.params.code || 'BCA-SEM3').toUpperCase().trim();
