@@ -14,6 +14,7 @@ import {
   UploadCloud,
   LogOut,
   LogIn,
+  GraduationCap,
 } from 'lucide-react';
 import type { UserProfile } from './LoginModal';
 
@@ -43,6 +44,7 @@ interface SidebarProps {
   onOpenAIKeyConfig?: () => void;
   currentUser?: UserProfile;
   onLogout?: () => void;
+  isSetupDone?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -56,6 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAIKeyConfig,
   currentUser,
   onLogout,
+  isSetupDone = true,
 }) => {
   const primaryItems = [
     { id: 'dashboard' as const, label: 'Today', icon: LayoutDashboard },
@@ -70,6 +73,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const secondaryItems = [
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
+    ...(isSetupDone !== false
+      ? [{ id: 'setup' as const, label: 'Semester Setup', icon: GraduationCap }]
+      : []),
     { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
   ];
 

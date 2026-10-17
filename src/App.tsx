@@ -39,6 +39,7 @@ import { AssignmentsView } from './components/AssignmentsView';
 import { SmartDumpView } from './components/SmartDumpView';
 import { TomorrowPrepModal } from './components/TomorrowPrepModal';
 import { SemesterSetupModal } from './components/SemesterSetupModal';
+import { SemesterSetupView } from './components/SemesterSetupView';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { NotificationDrawer } from './components/NotificationDrawer';
 import { OfflineIndicator } from './components/OfflineIndicator';
@@ -152,6 +153,15 @@ export default function App() {
     return SEED_NOTIFICATIONS;
   });
   const [assignments, setAssignments] = useState<AcademicAssignment[]>(SEED_ASSIGNMENTS);
+  const [isSemesterSetupDone, setIsSemesterSetupDone] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem('syllabus_semester_setup_done');
+      if (stored !== null) return stored === 'true';
+      return true;
+    } catch {
+      return true;
+    }
+  });
 
   // Continuous Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
   useEffect(() => {
@@ -441,6 +451,12 @@ export default function App() {
     if (classData.subjects) {
       setSubjects(classData.subjects);
     }
+    setIsSemesterSetupDone(true);
+    try {
+      localStorage.setItem('syllabus_semester_setup_done', 'true');
+    } catch {
+      // ignore
+    }
     if (classData.workspace?.verifiedByCR) {
       setNotifications((prev) => [
         {
@@ -454,7 +470,7 @@ export default function App() {
         ...prev,
       ]);
     }
-    setActiveTab('dashboard');
+    handleSelectTab('setup');
   };
 
   const handleSearchResultClick = (type: string, title: string) => {
@@ -581,6 +597,7 @@ export default function App() {
             onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
             currentUser={currentUser}
             onLogout={handleLogout}
+            isSetupDone={isSemesterSetupDone}
           />
         </div>
 
@@ -609,6 +626,7 @@ export default function App() {
                   handleLogout();
                   setMobileMenuOpen(false);
                 }}
+                isSetupDone={isSemesterSetupDone}
               />
             </div>
             <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
@@ -752,18 +770,12 @@ export default function App() {
           )}
 
           {activeTab === 'setup' && (
-            <div className="max-w-2xl mx-auto py-8 text-center space-y-4">
-              <h2 className="text-2xl font-bold text-white">Semester Configuration</h2>
-              <p className="text-xs text-slate-400">
-                Update your class code, add subjects, or re-parse university syllabi.
-              </p>
-              <button
-                onClick={() => setIsSetupModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg cursor-pointer"
-              >
-                Open Semester Setup Wizard ⚙️
-              </button>
-            </div>
+            <SemesterSetupView
+              workspace={workspace}
+              subjects={subjects}
+              onOpenClassSetup={() => setIsSetupModalOpen(true)}
+              onNavigateTab={(tab) => handleSelectTab(tab)}
+            />
           )}
 
           {activeTab === 'settings' && (
