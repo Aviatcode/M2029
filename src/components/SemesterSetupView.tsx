@@ -15,7 +15,8 @@ import {
   Copy,
   Check,
   Share2,
-  KeyRound,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { ClassWorkspace, Subject } from '../types/index';
 import { ActiveNavTab } from './Sidebar';
@@ -33,6 +34,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
   onOpenClassSetup,
   onNavigateTab,
 }) => {
+  const [showClassCode, setShowClassCode] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -88,68 +90,57 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
         </button>
       </div>
 
-      {/* Google Classroom-style Class Code & Invite Share Center */}
-      <div className="rounded-xl border border-slate-800/90 bg-slate-900/40 p-5 md:p-6 backdrop-blur-sm shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-slate-800/80 border border-slate-700/60 px-2 py-0.5 rounded flex items-center gap-1 font-semibold">
-                <KeyRound className="w-3 h-3 text-slate-400" />
-                Classroom Code
-              </span>
-              <span className="text-xs text-slate-500">• Unique Cohort Key</span>
-            </div>
-            <h2 className="text-base md:text-lg font-semibold text-slate-100 mt-2 flex items-center gap-2.5 flex-wrap">
-              Class Invite Code:
-              <span className="font-mono text-slate-100 bg-slate-950 border border-slate-700/80 px-3 py-1 rounded-lg tracking-wider select-all font-bold">
-                {workspace.code}
-              </span>
-            </h2>
-            <p className="text-xs text-slate-400 mt-1 max-w-xl">
-              Share this code with students. Entering this code on login connects their dashboard, notes, and timetable to this cohort.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <button
-              onClick={handleCopyCode}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-semibold transition cursor-pointer shadow-xs"
-            >
-              {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedCode ? 'Copied' : 'Copy Code'}</span>
-            </button>
-
-            <button
-              onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition cursor-pointer"
-            >
-              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-slate-400" />}
-              <span>{copiedLink ? 'Link Copied' : 'Copy Invite Link'}</span>
-            </button>
-
-            <button
-              onClick={handleShareWhatsApp}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/80 text-xs font-medium transition cursor-pointer"
-              title="Share invite code and link directly to Class WhatsApp group"
-            >
-              <span>Share to WhatsApp</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Cohort Overview Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-lg border border-slate-800/80 bg-slate-900/30">
-          <div className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-slate-400" />
-            Class Code
+          <div className="flex items-center justify-between">
+            <div className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-slate-400" />
+              Class Code
+            </div>
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                onClick={() => setShowClassCode(!showClassCode)}
+                className="p-1 rounded text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                title={showClassCode ? 'Hide class code' : 'Reveal class code'}
+                aria-label={showClassCode ? 'Hide class code' : 'Reveal class code'}
+              >
+                {showClassCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              </button>
+              <button
+                type="button"
+                onClick={handleCopyCode}
+                className="p-1 rounded text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                title="Copy class code"
+                aria-label="Copy class code"
+              >
+                {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              </button>
+            </div>
           </div>
-          <div className="text-base font-semibold text-slate-100 mt-1 truncate">
-            {workspace.code}
+          <div className="text-base font-semibold text-slate-100 mt-1 font-mono tracking-wider truncate select-all">
+            {showClassCode ? workspace.code : '••••••••'}
           </div>
-          <div className="text-[11px] text-slate-400 truncate mt-0.5">
-            {workspace.name}
+          <div className="text-[11px] text-slate-400 truncate mt-0.5 flex items-center justify-between">
+            <span className="truncate">{workspace.name}</span>
+            <div className="flex items-center gap-1.5 shrink-0 ml-1">
+              <button
+                onClick={handleCopyLink}
+                className="text-[10px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
+                title="Copy direct invite link"
+              >
+                {copiedLink ? 'Link Copied' : 'Invite'}
+              </button>
+              <span className="text-slate-600">•</span>
+              <button
+                onClick={handleShareWhatsApp}
+                className="text-[10px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
+                title="Share to WhatsApp"
+              >
+                WA
+              </button>
+            </div>
           </div>
         </div>
 

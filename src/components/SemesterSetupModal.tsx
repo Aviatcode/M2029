@@ -17,6 +17,8 @@ import {
   AlertCircle,
   Check,
   RefreshCw,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 interface SemesterSetupModalProps {
@@ -33,6 +35,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   const [step, setStep] = useState<number>(1);
   const [className, setClassName] = useState<string>('BCA Batch of 2028');
   const [classCode, setClassCode] = useState<string>('BCA-2028');
+  const [showClassCode, setShowClassCode] = useState<boolean>(false);
   const [university, setUniversity] = useState<string>('State University');
   const [semester, setSemester] = useState<number>(3);
 
@@ -283,23 +286,44 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     <label className="text-xs font-semibold text-slate-300">
                       Class Code
                     </label>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowClassCode(!showClassCode)}
+                        className="text-[10px] text-slate-400 hover:text-slate-200 flex items-center gap-1 font-medium transition cursor-pointer"
+                        title={showClassCode ? 'Hide class code' : 'Reveal class code'}
+                      >
+                        {showClassCode ? <EyeOff className="w-2.5 h-2.5" /> : <Eye className="w-2.5 h-2.5" />}
+                        <span>{showClassCode ? 'Hide' : 'Reveal'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={generateRandomClassCode}
+                        className="text-[10px] text-slate-400 hover:text-slate-200 flex items-center gap-1 font-medium transition cursor-pointer"
+                        title="Generate random unique class code like Google Classroom"
+                      >
+                        <RefreshCw className="w-2.5 h-2.5" />
+                        <span>Generate</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showClassCode ? 'text' : 'password'}
+                      value={classCode}
+                      onChange={(e) => setClassCode(e.target.value.toUpperCase())}
+                      placeholder="e.g. BCA-2028 or BCA-7K9M"
+                      className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl pl-3.5 pr-8 py-2 text-xs md:text-sm text-slate-200 font-mono uppercase tracking-wider outline-none transition"
+                    />
                     <button
                       type="button"
-                      onClick={generateRandomClassCode}
-                      className="text-[10px] text-slate-400 hover:text-slate-200 flex items-center gap-1 font-medium transition cursor-pointer"
-                      title="Generate random unique class code like Google Classroom"
+                      onClick={() => setShowClassCode(!showClassCode)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-0.5 cursor-pointer"
+                      title={showClassCode ? 'Hide class code' : 'Reveal class code'}
                     >
-                      <RefreshCw className="w-2.5 h-2.5" />
-                      <span>Generate</span>
+                      {showClassCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
                   </div>
-                  <input
-                    type="text"
-                    value={classCode}
-                    onChange={(e) => setClassCode(e.target.value.toUpperCase())}
-                    placeholder="e.g. BCA-2028 or BCA-7K9M"
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono uppercase tracking-wider outline-none transition"
-                  />
                   <span className="text-[10px] text-slate-500 mt-0.5 block">
                     Unique ID for students to join
                   </span>
@@ -609,7 +633,19 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-2.5">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                   <span className="text-slate-400">Class Identifier:</span>
-                  <span className="font-mono font-bold text-slate-100">{classCode}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-mono font-bold text-slate-100">
+                      {showClassCode ? classCode : '••••••••'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowClassCode(!showClassCode)}
+                      className="p-0.5 text-slate-400 hover:text-slate-200 cursor-pointer"
+                      title={showClassCode ? 'Hide code' : 'Reveal code'}
+                    >
+                      {showClassCode ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                   <span className="text-slate-400">Configured Subjects:</span>
