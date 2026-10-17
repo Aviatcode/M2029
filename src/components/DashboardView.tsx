@@ -150,7 +150,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Study Vault & Drop
             </div>
           </div>
-          <span className="px-3 py-1 rounded-md bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium shrink-0 transition cursor-pointer">
+          <span className="px-3 py-1 rounded-md bg-slate-800 hover:bg-slate-750 text-slate-200 hover:text-white border border-slate-700/80 hover:border-slate-600 text-xs font-medium shrink-0 transition cursor-pointer">
             Open Vault →
           </span>
         </div>

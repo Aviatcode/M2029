@@ -928,10 +928,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                       <button
                         onClick={() => handleSolveWithAI(false)}
                         disabled={isSolving}
-                        className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold shadow-md transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                        className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
                       >
-                        <Sparkles className={`w-4 h-4 ${isSolving ? 'animate-spin' : ''}`} />
-                        <span>{isSolving ? 'Generating University Full-Mark Answer...' : 'Generate Full-Credit Model Answer'}</span>
+                        <Sparkles className={`w-4 h-4 text-cyan-400 ${isSolving ? 'animate-spin' : ''}`} />
+                        <span>{isSolving ? 'Generating Answer...' : 'Generate Model Answer'}</span>
                       </button>
                     </>
                   )}

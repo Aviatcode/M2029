@@ -103,7 +103,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800 mb-5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white shadow-md">
+            <div className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-300">
               <UploadCloud className="w-5 h-5" />
             </div>
             <div>
@@ -230,9 +230,9 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               <button
                 type="submit"
                 disabled={isParsing || !rawText.trim()}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-blue-500/25 transition disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition disabled:opacity-50 cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-cyan-300" />
+                <Sparkles className="w-4 h-4 text-cyan-400" />
                 <span>{isParsing ? 'Analyzing & Building Folders...' : 'Parse & Build Curriculum'}</span>
               </button>
             </div>

@@ -168,18 +168,18 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   const getFormatBadge = (type: string) => {
     const t = type.toLowerCase();
     if (t.includes('pdf')) {
-      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-rose-950/80 text-rose-300 border border-rose-500/30">PDF</span>;
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-slate-800/80 text-rose-300/90 border border-rose-500/20">PDF</span>;
     }
     if (t.includes('doc')) {
-      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-blue-950/80 text-blue-300 border border-blue-500/30">DOCX</span>;
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-slate-800/80 text-blue-300/90 border border-blue-500/20">DOCX</span>;
     }
     if (t.includes('image') || t.includes('jpg') || t.includes('png') || t.includes('jpeg')) {
-      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-500/30">IMAGE</span>;
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-slate-800/80 text-emerald-300/90 border border-emerald-500/20">IMAGE</span>;
     }
     if (t.includes('ppt')) {
-      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-950/80 text-amber-300 border border-amber-500/30">PPTX</span>;
+      return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-slate-800/80 text-amber-300/90 border border-amber-500/20">PPTX</span>;
     }
-    return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-slate-800 text-slate-300 border border-slate-700">{type.toUpperCase()}</span>;
+    return <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-medium bg-slate-800 text-slate-400 border border-slate-750">{type.toUpperCase()}</span>;
   };
 
   return (
@@ -197,10 +197,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
         <button
           onClick={() => setIsUploading(true)}
-          className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
+          className="group px-3.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-850 text-slate-200 hover:text-white text-xs font-medium border border-slate-700/80 hover:border-slate-600 ring-1 ring-cyan-500/20 hover:ring-cyan-500/40 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] transition-all cursor-pointer self-start sm:self-auto flex items-center gap-2 font-sans-ui"
         >
-          <UploadCloud className="w-3.5 h-3.5" />
-          <span>Upload</span>
+          <UploadCloud className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-105 transition-transform" />
+          <span>Upload Material</span>
         </button>
       </div>
 
@@ -208,10 +208,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       <div className="flex items-center gap-1.5 border-b border-slate-800/80 overflow-x-auto no-scrollbar pb-1 text-xs">
         <button
           onClick={() => setSelectedSubjectFilter('all')}
-          className={`px-3 py-1.5 rounded transition shrink-0 cursor-pointer font-sans-ui text-xs ${
+          className={`px-3 py-1.5 rounded-lg transition shrink-0 cursor-pointer font-sans-ui text-xs ${
             selectedSubjectFilter === 'all'
-              ? 'bg-slate-900 text-white font-medium border border-slate-800 shadow-2xs'
-              : 'text-slate-400 hover:text-slate-200 border border-transparent'
+              ? 'bg-slate-800 text-slate-100 font-medium border border-slate-700 shadow-2xs'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850/60 border border-transparent'
           }`}
         >
           All Subjects ({materials.length})
@@ -220,10 +220,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           <button
             key={sub.id}
             onClick={() => setSelectedSubjectFilter(sub.id)}
-            className={`px-3 py-1.5 rounded transition shrink-0 cursor-pointer font-sans-ui text-xs ${
+            className={`px-3 py-1.5 rounded-lg transition shrink-0 cursor-pointer font-sans-ui text-xs ${
               selectedSubjectFilter === sub.id
-                ? 'bg-slate-900 text-white font-medium border border-slate-800 shadow-2xs'
-                : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                ? 'bg-slate-800 text-slate-100 font-medium border border-slate-700 shadow-2xs'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-850/60 border border-transparent'
             }`}
           >
             {sub.name}
@@ -259,18 +259,18 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 <div
                   key={mat.id}
                   onClick={() => setSelectedMaterial(mat)}
-                  className={`p-3 rounded-md border cursor-pointer transition text-xs space-y-1.5 select-none ${
+                  className={`p-3 rounded-lg border cursor-pointer transition text-xs space-y-1.5 select-none ${
                     isSelected
-                      ? 'bg-slate-900 border-cyan-500/40 text-slate-100 shadow-sm'
-                      : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-700 text-slate-300'
+                      ? 'bg-slate-850 border-slate-700 text-slate-100 shadow-xs ring-1 ring-white/10'
+                      : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/70 text-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1.5">
                     <div className="flex items-center gap-2 truncate">
                       {mat.fileType?.toLowerCase().includes('image') || mat.fileType === 'jpg' || mat.fileType === 'png' ? (
-                        <ImageIcon className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <ImageIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       ) : (
-                        <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                        <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       )}
                       <h3 className="font-sans-ui font-medium truncate">{mat.title}</h3>
                     </div>
@@ -339,22 +339,21 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
               {/* Summary */}
               <div className="space-y-2">
-                <h3 className="academic-tag text-[10px] text-slate-400 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-cyan-400" />
-                  <span>Synthesized Curriculum Summary (0 Tokens Re-used)</span>
+                <h3 className="academic-tag text-[10px] text-slate-400">
+                  Curriculum Summary
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/60 font-sans-ui">
                   {selectedMaterial.resources.summary}
                 </p>
               </div>
 
-              {/* Hinglish Explanation */}
+              {/* Conceptual Takeaway */}
               {selectedMaterial.resources.hinglishSummary && (
                 <div className="space-y-2">
-                  <h3 className="academic-tag text-[10px] text-amber-300">
-                    Conceptual Takeaway (Indian College Hinglish Primer)
+                  <h3 className="academic-tag text-[10px] text-slate-400">
+                    Conceptual Takeaway
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans-ui bg-amber-950/20 p-3 rounded-xl border border-amber-500/20">
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans-ui bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/60">
                     {selectedMaterial.resources.hinglishSummary}
                   </p>
                 </div>
@@ -364,7 +363,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               {selectedMaterial.resources.importantDefinitions?.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="academic-tag text-[10px] text-slate-400">
-                    Core Architectural Terms & Definitions
+                    Terms & Definitions
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedMaterial.resources.importantDefinitions.map((d, i) => (
@@ -381,7 +380,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               {selectedMaterial.resources.flashcards?.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="academic-tag text-[10px] text-slate-400">
-                    Active Recall Flashcards
+                    Recall Flashcards
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {selectedMaterial.resources.flashcards.map((fc) => (
@@ -397,15 +396,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               {/* Possible Exam Questions */}
               {selectedMaterial.resources.possibleQuestions?.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="academic-tag text-[10px] text-cyan-400">
-                    Expected University Exam Questions & Outlines
+                  <h3 className="academic-tag text-[10px] text-slate-400">
+                    Exam Questions & Outlines
                   </h3>
                   <div className="space-y-2 text-xs">
                     {selectedMaterial.resources.possibleQuestions.map((pq, i) => (
                       <div key={i} className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/60 space-y-1">
                         <div className="flex items-center justify-between text-slate-300 font-semibold">
                           <span>{pq.question}</span>
-                          <span className="text-[10px] font-mono text-amber-300 px-1.5 py-0.5 rounded bg-amber-950/60 border border-amber-500/20">
+                          <span className="text-[10px] font-mono text-slate-400 px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700/60">
                             {pq.marks} Marks
                           </span>
                         </div>
@@ -476,13 +475,13 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               )}
             </div>
 
-            {/* Zero-Token Sync Banner */}
-            <div className="mb-4 p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-xs text-emerald-300 flex items-start gap-2.5">
-              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            {/* Sync Notice */}
+            <div className="mb-4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 flex items-start gap-2.5">
+              <UploadCloud className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
               <div>
-                <strong className="text-emerald-200 block mb-0.5">⚡ Zero-Token Classroom Cache Active</strong>
+                <strong className="text-slate-300 block mb-0.5">Shared Classroom Sync</strong>
                 <span>
-                  Once uploaded, this document and its AI notes are saved on the shared classroom server for all classmates. No duplicate AI tokens will ever be spent recreating it.
+                  Once uploaded, this document is saved to the shared classroom database for all classmates.
                 </span>
               </div>
             </div>
@@ -616,16 +615,16 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsUploading(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 text-xs hover:text-white transition cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-400 text-xs hover:text-slate-200 border border-slate-800 transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md transition cursor-pointer flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition cursor-pointer flex items-center gap-1.5"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Upload & Sync Classwide</span>
+                    <UploadCloud className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Upload Document</span>
                   </button>
                 </div>
               </form>
