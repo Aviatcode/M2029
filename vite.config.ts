@@ -25,8 +25,8 @@ export default defineConfig(() => {
         ],
         manifest: {
           id: '/',
-          name: 'M2029',
-          short_name: 'M2029',
+          name: 'SyllabusOS',
+          short_name: 'SyllabusOS',
           description:
             'Autonomous curriculum operating system that parses your syllabus, delivers 7 AM pre-lecture ELI9 primers, visual mindmaps, university 10-marker answers, PYQs, and shared token-saving classroom cache with installable WebAPK PWA support.',
           theme_color: '#0f172a',

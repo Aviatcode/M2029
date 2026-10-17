@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "M2029",
-  "short_name": "M2029",
+  "name": "SyllabusOS",
+  "short_name": "SyllabusOS",
   "description": "Your semester. Your class. Your AI. Shared academic workspace for college classes.",
   "start_url": "/",
   "scope": "/",
