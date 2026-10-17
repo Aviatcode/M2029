@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, UploadCloud, CheckCircle2 } from 'lucide-react';
 import {
   UserRole,
   ClassWorkspace,
@@ -56,6 +56,10 @@ import {
   getStoredBackgroundConfig,
 } from './utils/backgroundService';
 import { initClassroomAutoSync } from './utils/classSyncService';
+import {
+  checkAndRetrieveSharedFiles,
+  registerLaunchQueueHandler,
+} from './utils/shareTargetService';
 
 const DEFAULT_USER: UserProfile = {
   id: 'user-cr-1',
@@ -134,6 +138,97 @@ export default function App() {
       // ignore
     }
   };
+
+  // Files queued for AI auto-sorting (from PC Drag & Drop or Mobile Share Sheet)
+  const [pendingIngestFiles, setPendingIngestFiles] = useState<File[]>([]);
+  const [isGlobalDragging, setIsGlobalDragging] = useState(false);
+  const dragCounterRef = useRef(0);
+  const [shareToast, setShareToast] = useState<string>('');
+
+  // 1. PC Global Drag & Drop: Drag files anywhere on PC to trigger AI auto-sort
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+        dragCounterRef.current++;
+        setIsGlobalDragging(true);
+      }
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+      }
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      dragCounterRef.current--;
+      if (dragCounterRef.current <= 0) {
+        dragCounterRef.current = 0;
+        setIsGlobalDragging(false);
+      }
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      dragCounterRef.current = 0;
+      setIsGlobalDragging(false);
+
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        e.preventDefault();
+        const filesArray = Array.from(e.dataTransfer.files);
+        setPendingIngestFiles(filesArray);
+        handleSelectTab('dump');
+        setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. AI auto-sorting into syllabus folders...`);
+        setTimeout(() => setShareToast(''), 4500);
+      }
+    };
+
+    window.addEventListener('dragenter', handleDragEnter);
+    window.addEventListener('dragover', handleDragOver);
+    window.addEventListener('dragleave', handleDragLeave);
+    window.addEventListener('drop', handleDrop);
+
+    return () => {
+      window.removeEventListener('dragenter', handleDragEnter);
+      window.removeEventListener('dragover', handleDragOver);
+      window.removeEventListener('dragleave', handleDragLeave);
+      window.removeEventListener('drop', handleDrop);
+    };
+  }, []);
+
+  // 2. Phone Share Target & Web File Handling API: Ingest files shared from phone apps
+  useEffect(() => {
+    const checkShares = async () => {
+      const payload = await checkAndRetrieveSharedFiles();
+      if (payload && payload.files.length > 0) {
+        setPendingIngestFiles(payload.files);
+        handleSelectTab('dump');
+        setShareToast(`📱 Received ${payload.files.length} file(s) via Phone Share Sheet. Auto-sorting with AI...`);
+        setTimeout(() => setShareToast(''), 5000);
+      }
+    };
+
+    checkShares();
+
+    // Register File Handling API for direct "Open with..." file launches on phone / PC
+    registerLaunchQueueHandler((files) => {
+      if (files.length > 0) {
+        setPendingIngestFiles(files);
+        handleSelectTab('dump');
+        setShareToast(`📂 Opened ${files.length} file(s). Auto-sorting with AI...`);
+        setTimeout(() => setShareToast(''), 5000);
+      }
+    });
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkShares();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   // Core Academic State
   const [workspace, setWorkspace] = useState<ClassWorkspace>(SEED_CLASS);
@@ -762,6 +857,8 @@ export default function App() {
               classCode={classCode}
               onMaterialUploaded={handleMaterialUploaded}
               onNavigateToTab={(tab) => setActiveTab(tab as any)}
+              pendingFiles={pendingIngestFiles}
+              onClearPendingFiles={() => setPendingIngestFiles([])}
             />
           )}
 
@@ -919,6 +1016,43 @@ export default function App() {
       {/* 4. OFFLINE PWA RESILIENCE INDICATOR & FIRST-TIME INSTALL POPUP */}
       <OfflineIndicator />
       <PWAInstallPopup />
+
+      {/* 5. PC FULL-SCREEN DRAG & DROP OVERLAY */}
+      {isGlobalDragging && (
+        <div className="fixed inset-0 z-50 pointer-events-none bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-6 border-4 border-dashed border-slate-500 animate-fade-in">
+          <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-8 max-w-md w-full text-center space-y-4 shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-slate-100 shadow-md">
+              <UploadCloud className="w-8 h-8 animate-pulse text-slate-300" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-semibold text-white tracking-tight">
+                Drop Files to Auto-Sort with AI
+              </h3>
+              <p className="text-xs text-slate-400">
+                Release your PDF, DOCX, PowerPoint, or Notes anywhere to categorize into syllabus units.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-mono text-slate-300">
+              <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">.PDF</span>
+              <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">.DOCX</span>
+              <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">.PPTX</span>
+              <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">.TXT / .MD</span>
+              <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">IMAGES</span>
+            </div>
+            <p className="text-[11px] text-slate-400 font-sans">
+              ⚡ Auto-generates visual mindmaps, mnemonics & 10-marker answers
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 6. TOAST FOR DRAG & DROP / PHONE SHARE CONFIRMATION */}
+      {shareToast && (
+        <div className="fixed bottom-6 right-6 z-50 p-3.5 rounded-xl bg-slate-900 border border-slate-750 text-slate-100 text-xs font-medium shadow-2xl flex items-center gap-2.5 animate-slide-up">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{shareToast}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   UploadCloud,
   Folder,
@@ -27,11 +27,17 @@ import {
   Hash,
   AlertCircle,
   Eye,
+  Smartphone,
+  Download,
+  Laptop,
+  Share,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { AcademicMaterial, Subject, Unit, UserRole } from '../types';
 import { MindmapViewer } from './MindmapViewer';
 import { getAiRequestPayload } from '../utils/aiModelService';
+import { usePWAInstall } from '../hooks/usePWAInstall';
+import { checkAndRetrieveSharedFiles } from '../utils/shareTargetService';
 
 interface SmartDumpViewProps {
   materials: AcademicMaterial[];
@@ -41,6 +47,8 @@ interface SmartDumpViewProps {
   classCode: string;
   onMaterialUploaded?: (mat: AcademicMaterial) => void;
   onNavigateToTab?: (tab: string) => void;
+  pendingFiles?: File[];
+  onClearPendingFiles?: () => void;
 }
 
 export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
@@ -51,7 +59,10 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
   classCode,
   onMaterialUploaded,
   onNavigateToTab,
+  pendingFiles,
+  onClearPendingFiles,
 }) => {
+  const { isInstallable, isInstalled, install } = usePWAInstall();
   // Input State
   const [dumpMode, setDumpMode] = useState<'files' | 'text'>('files');
   const [rawText, setRawText] = useState('');
@@ -157,38 +168,64 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     }
   };
 
-  // 2. Handle File Drop / Select
-  const handleFiles = (fileList: FileList | null) => {
-    if (!fileList || fileList.length === 0) return;
-    const file = fileList[0];
+  // 2. Handle File Drop / Select (Supports Single or Multi-File Drops from PC or Phone)
+  const handleFiles = (fileList: FileList | File[] | null) => {
+    if (!fileList) return;
+    const filesArray = Array.from(fileList);
+    if (filesArray.length === 0) return;
 
-    const reader = new FileReader();
-    const isImage = file.type.startsWith('image/');
+    filesArray.forEach((file) => {
+      const reader = new FileReader();
+      const isImage = file.type.startsWith('image/');
 
-    reader.onload = () => {
-      const result = reader.result as string;
-      const fileExt = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+      reader.onload = () => {
+        const result = reader.result as string;
+        const fileExt = file.name.split('.').pop()?.toLowerCase() || 'pdf';
 
-      let rawTextContent = '';
-      if (!isImage) {
-        rawTextContent = typeof result === 'string' ? result.slice(0, 8000) : '';
+        let rawTextContent = '';
+        if (!isImage) {
+          rawTextContent = typeof result === 'string' ? result.slice(0, 8000) : '';
+        }
+
+        processAndIngest({
+          fileName: file.name,
+          fileType: fileExt,
+          fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+          rawTextContent: rawTextContent || `${file.name.replace(/\.[^/.]+$/, '')} curriculum notes`,
+          fileDataUrl: isImage ? result : undefined,
+        });
+      };
+
+      if (isImage) {
+        reader.readAsDataURL(file);
+      } else {
+        reader.readAsText(file);
       }
-
-      processAndIngest({
-        fileName: file.name,
-        fileType: fileExt,
-        fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        rawTextContent: rawTextContent || `${file.name.replace(/\.[^/.]+$/, '')} curriculum notes`,
-        fileDataUrl: isImage ? result : undefined,
-      });
-    };
-
-    if (isImage) {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsText(file);
-    }
+    });
   };
+
+  // Process files passed via Global PC Drag & Drop
+  useEffect(() => {
+    if (pendingFiles && pendingFiles.length > 0) {
+      handleFiles(pendingFiles);
+      onClearPendingFiles?.();
+    }
+  }, [pendingFiles, onClearPendingFiles]);
+
+  // Check if opened from native mobile phone Share Sheet
+  useEffect(() => {
+    checkAndRetrieveSharedFiles().then((payload) => {
+      if (payload) {
+        if (payload.files && payload.files.length > 0) {
+          handleFiles(payload.files);
+        } else if (payload.text) {
+          setRawText(payload.text);
+          if (payload.title) setTextTitle(payload.title);
+          setDumpMode('text');
+        }
+      }
+    });
+  }, []);
 
   // 3. Handle Raw Text / Note Dump
   const handleRawTextDump = () => {
@@ -417,49 +454,112 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
 
         {/* MODE 1: FILE DROP ZONE */}
         {dumpMode === 'files' && (
-          <div
-            onDragOver={(e) => {
-              e.preventDefault();
-              setIsDragging(true);
-            }}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setIsDragging(false);
-              handleFiles(e.dataTransfer.files);
-            }}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border border-dashed rounded-xl p-8 md:p-10 text-center transition cursor-pointer flex flex-col items-center justify-center gap-3 ${
-              isDragging
-                ? 'border-slate-600 bg-slate-900/80'
-                : 'border-slate-800 hover:border-slate-700 bg-slate-900/20 hover:bg-slate-900/50'
-            }`}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept=".pdf,.docx,.doc,.ppt,.pptx,.txt,.md,.jpg,.jpeg,.png"
-              className="hidden"
-              onChange={(e) => handleFiles(e.target.files)}
-            />
-            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 shadow-xs">
-              <UploadCloud className="w-6 h-6" />
+          <div className="space-y-3">
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                handleFiles(e.dataTransfer.files);
+              }}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border border-dashed rounded-xl p-7 md:p-9 text-center transition cursor-pointer flex flex-col items-center justify-center gap-3 ${
+                isDragging
+                  ? 'border-slate-500 bg-slate-900/90 ring-2 ring-slate-600/30'
+                  : 'border-slate-800 hover:border-slate-700 bg-slate-900/20 hover:bg-slate-900/40'
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.docx,.doc,.ppt,.pptx,.txt,.md,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={(e) => handleFiles(e.target.files)}
+              />
+              <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 shadow-xs">
+                <UploadCloud className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-slate-200">
+                  Drag & Drop study files here from your PC, or <span className="text-slate-100 underline underline-offset-2 font-semibold">browse files</span>
+                </p>
+                <p className="text-xs text-slate-400">
+                  PDFs, DOCX, PowerPoint slides, Lecture Scans, or Text notes.
+                </p>
+              </div>
+
+              {/* Supported Format Pills */}
+              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-[10px] font-mono text-slate-400">
+                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 font-semibold text-slate-300">.PDF</span>
+                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 font-semibold text-slate-300">.DOCX</span>
+                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 font-semibold text-slate-300">.PPTX</span>
+                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 font-semibold text-slate-300">.TXT / .MD</span>
+                <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 font-semibold text-slate-300">IMAGES</span>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-[10px] text-slate-500">
+                <span>✓ Auto-Detects Subject & Unit</span>
+                <span>•</span>
+                <span>✓ Mindmaps</span>
+                <span>•</span>
+                <span>✓ Mnemonics</span>
+                <span>•</span>
+                <span>✓ 10-Marker Outlines</span>
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-slate-200">
-                Drag & Drop study files here, or <span className="text-slate-100 underline underline-offset-2">browse files</span>
-              </p>
-              <p className="text-xs text-slate-400">
-                PDFs, DOCX, PowerPoint slides, Lecture Scans, or Text notes.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 text-[10px] text-slate-400">
-              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Auto-Detects Subject</span>
-              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Visual Mindmaps</span>
-              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Memory Mnemonics</span>
-              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">10-Marker Outlines</span>
-              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Practice Quizzes</span>
+
+            {/* Mobile / Phone Quick Upload & Native Share Sheet Banner */}
+            <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 shrink-0">
+                  <Smartphone className="w-4 h-4" />
+                </div>
+                <div className="space-y-0.5">
+                  <div className="font-medium text-slate-200 flex items-center gap-1.5">
+                    <span>Phone Share Option & Instant Upload</span>
+                    {isInstalled ? (
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-400">
+                        Share Target Active ✓
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                        PWA Web Share
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    On phone: Share any PDF/notes directly from WhatsApp, Chrome Downloads, or Files into SyllabusOS.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition cursor-pointer"
+                >
+                  <UploadCloud className="w-3.5 h-3.5" />
+                  <span>Upload File</span>
+                </button>
+
+                {!isInstalled && isInstallable && (
+                  <button
+                    type="button"
+                    onClick={install}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 text-xs font-medium transition cursor-pointer"
+                    title="Install app to enable system share sheet on phone"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Install App</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}

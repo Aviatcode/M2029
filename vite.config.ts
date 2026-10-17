@@ -24,7 +24,11 @@ export default defineConfig(() => {
           'pwa-192x192.png',
           'pwa-512x512.png',
           'pwa-maskable-512x512.png',
+          'sw-share-target.js',
         ],
+        workbox: {
+          importScripts: ['./sw-share-target.js'],
+        },
         manifest: {
           id: '/',
           name: 'SyllabusOS',
@@ -36,6 +40,52 @@ export default defineConfig(() => {
           display: 'standalone',
           start_url: '/',
           scope: '/',
+          share_target: {
+            action: '/share-target',
+            method: 'POST',
+            enctype: 'multipart/form-data',
+            params: {
+              title: 'title',
+              text: 'text',
+              url: 'url',
+              files: [
+                {
+                  name: 'files',
+                  accept: [
+                    'application/pdf',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'application/vnd.ms-powerpoint',
+                    'text/plain',
+                    'text/markdown',
+                    'image/*',
+                    '.pdf',
+                    '.doc',
+                    '.docx',
+                    '.ppt',
+                    '.pptx',
+                    '.txt',
+                    '.md',
+                  ],
+                },
+              ],
+            },
+          },
+          file_handlers: [
+            {
+              action: '/#dump?open_file=1',
+              accept: {
+                'application/pdf': ['.pdf'],
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+                'application/msword': ['.doc'],
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+                'application/vnd.ms-powerpoint': ['.ppt'],
+                'text/plain': ['.txt'],
+                'text/markdown': ['.md'],
+              },
+            },
+          ],
           icons: [
             {
               src: '/am-logo.png',

@@ -1,8 +1,15 @@
+try {
+  importScripts('/sw-share-target.js');
+} catch {
+  // Offline or relative fallback
+}
+
 const CACHE_NAME = 'm2029-cache-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/sw-share-target.js',
   '/am-logo.png',
   '/icon.svg',
   '/pwa-192x192.png',
