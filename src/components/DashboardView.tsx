@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   TimetableClass,
   ExamDateSheetItem,
@@ -64,16 +64,25 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'schedule' | 'exams' | 'notes'>('schedule');
   const [notifPermission, setNotifPermission] = useState<NotificationPermissionState>(getNotificationPermission());
+  const [currentTime, setCurrentTime] = useState<Date>(() => new Date());
+
+  // Keep greeting and clock synchronized live in real-time
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleAllowNotifications = async () => {
     const result = await requestNotificationPermission();
     setNotifPermission(result);
   };
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
+  const getGreeting = (date: Date = currentTime) => {
+    const hour = date.getHours();
+    if (hour >= 5 && hour < 12) return 'Good morning';
+    if (hour >= 12 && hour < 17) return 'Good afternoon';
     return 'Good evening';
   };
 
@@ -110,12 +119,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             <h1 className="font-editorial text-2xl sm:text-3xl text-slate-100 font-normal italic tracking-tight">
-              {getGreeting()}, {studentName}
+              {getGreeting(currentTime)}, {studentName}
             </h1>
           </div>
 
           <div className="text-left sm:text-right text-xs text-slate-400 font-sans">
-            <div>{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+            <div className="flex items-center sm:justify-end gap-1.5">
+              <span>{currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+              <span className="text-slate-600">·</span>
+              <span className="font-mono text-slate-300">
+                {currentTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })}
+              </span>
+            </div>
             <div className="font-mono text-slate-400 text-[11px]">
               {todayClasses.length} {todayClasses.length === 1 ? 'lecture' : 'lectures'} today
             </div>
