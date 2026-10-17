@@ -189,20 +189,25 @@ export default function App() {
   // 1. PC Global Drag & Drop: Drag files anywhere on PC to trigger AI auto-sort
   useEffect(() => {
     const handleDragEnter = (e: DragEvent) => {
-      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
-        dragCounterRef.current++;
-        setIsGlobalDragging(true);
+      e.preventDefault();
+      if (e.dataTransfer) {
+        const types = Array.from(e.dataTransfer.types || []);
+        if (types.includes('Files') || types.includes('public.file-url') || types.length === 0) {
+          dragCounterRef.current++;
+          setIsGlobalDragging(true);
+        }
       }
     };
 
     const handleDragOver = (e: DragEvent) => {
-      if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
-        e.preventDefault();
+      e.preventDefault();
+      if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'copy';
       }
     };
 
     const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
       dragCounterRef.current--;
       if (dragCounterRef.current <= 0) {
         dragCounterRef.current = 0;
@@ -211,14 +216,18 @@ export default function App() {
     };
 
     const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
       dragCounterRef.current = 0;
       setIsGlobalDragging(false);
 
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        e.preventDefault();
         const filesArray = Array.from(e.dataTransfer.files);
         setPendingIngestFiles(filesArray);
-        handleSelectTab('dump');
+        setActiveTab('dump');
+        try {
+          window.location.hash = 'dump';
+        } catch {}
         setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. AI auto-sorting into syllabus folders...`);
         setTimeout(() => setShareToast(''), 4500);
       }
@@ -714,7 +723,16 @@ export default function App() {
   };
 
   const handleMaterialUploaded = (newMat: AcademicMaterial) => {
-    setMaterials((prev) => [newMat, ...prev]);
+    setMaterials((prev) => {
+      const filtered = prev.filter((m) => m.id !== newMat.id && m.fileName !== newMat.fileName);
+      const updated = [newMat, ...filtered];
+      try {
+        localStorage.setItem('syllabus_materials', JSON.stringify(updated));
+      } catch (err) {
+        console.warn('Failed saving materials to localStorage:', err);
+      }
+      return updated;
+    });
   };
 
   const handleSetupComplete = (classData: any) => {
@@ -1158,8 +1176,33 @@ export default function App() {
 
       {/* 5. PC FULL-SCREEN DRAG & DROP OVERLAY */}
       {isGlobalDragging && (
-        <div className="fixed inset-0 z-50 pointer-events-none bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-6 border-4 border-dashed border-slate-500 animate-fade-in">
-          <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-8 max-w-md w-full text-center space-y-4 shadow-2xl">
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounterRef.current = 0;
+            setIsGlobalDragging(false);
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+              const filesArray = Array.from(e.dataTransfer.files);
+              setPendingIngestFiles(filesArray);
+              setActiveTab('dump');
+              try {
+                window.location.hash = 'dump';
+              } catch {}
+              setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. AI auto-sorting into syllabus folders...`);
+              setTimeout(() => setShareToast(''), 4500);
+            }
+          }}
+          className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-6 border-4 border-dashed border-slate-500 animate-fade-in cursor-copy"
+        >
+          <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-8 max-w-md w-full text-center space-y-4 shadow-2xl pointer-events-none">
             <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-slate-100 shadow-md">
               <UploadCloud className="w-8 h-8 animate-pulse text-slate-300" />
             </div>
