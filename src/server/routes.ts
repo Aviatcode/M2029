@@ -1,5 +1,24 @@
 import { Router, Request, Response } from 'express';
-import { AIProviderFactory } from './ai/provider.js';
+import { AIProviderFactory, UniversalKeyConfig, UniversalAIProvider } from './ai/provider.js';
+
+export function extractAiConfig(req: Request): UniversalKeyConfig | undefined {
+  if (req.body?.userAiConfig && (req.body.userAiConfig.apiKey?.trim() || req.body.userAiConfig.baseUrl?.trim())) {
+    return req.body.userAiConfig;
+  }
+  const headerKey = req.headers['x-ai-key'] as string;
+  const headerProvider = req.headers['x-ai-provider'] as any;
+  const headerModel = req.headers['x-ai-model'] as string;
+  const headerBaseUrl = req.headers['x-ai-base-url'] as string;
+  if (headerKey || headerBaseUrl) {
+    return {
+      apiKey: headerKey,
+      provider: headerProvider,
+      modelName: headerModel,
+      baseUrl: headerBaseUrl,
+    };
+  }
+  return undefined;
+}
 import {
   SEED_CLASS,
   SEED_SUBJECTS,
@@ -374,6 +393,39 @@ Format as strict JSON:
   });
 });
 
+// 5.4 AI Connection Test Endpoint (Tests latency and validity of personal or class keys)
+apiRouter.post('/ai/test', async (req: Request, res: Response) => {
+  const startTime = Date.now();
+  const config: UniversalKeyConfig = req.body?.userAiConfig || req.body;
+  try {
+    const testProvider = new UniversalAIProvider(config);
+    if (!testProvider.isAvailable()) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Please provide a valid API key or endpoint URL to test.',
+        latencyMs: Date.now() - startTime,
+      });
+    }
+    const testPrompt = 'Respond in 1 very short sentence confirming connection, e.g. "AI connection operational for M2029 curriculum."';
+    const reply = await testProvider.generateText(testPrompt);
+    const latencyMs = Date.now() - startTime;
+    res.json({
+      ok: true,
+      providerName: testProvider.name,
+      modelName: testProvider.modelName,
+      provider: testProvider.provider,
+      reply,
+      latencyMs,
+    });
+  } catch (err: any) {
+    res.status(400).json({
+      ok: false,
+      error: err.message || 'Connection test failed',
+      latencyMs: Date.now() - startTime,
+    });
+  }
+});
+
 // 5.5 AI Engine Configuration (Universal Model API Key or Built-in Basic Model)
 apiRouter.get('/ai/config', (_req: Request, res: Response) => {
   res.json(AIProviderFactory.getStatus());
@@ -395,7 +447,8 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const { mode, subjectName, topicName } = req.body;
   const tutorMode: TutorResponseMode = mode || 'simple';
 
-  const ai = AIProviderFactory.getProvider();
+  const userAiConfig = extractAiConfig(req);
+  const ai = AIProviderFactory.getProvider(userAiConfig);
 
   // Mode instructions
   const modeGuides: Record<TutorResponseMode, string> = {
@@ -425,6 +478,7 @@ Ground your response in authoritative university curricula and standard textbook
       answer: responseText,
       text: responseText,
       modeUsed: tutorMode,
+      modelUsed: ai.name,
       sourcesUsed: [
         { title: `${subjectName || 'Class'} Syllabus & Verified PPTs`, type: 'Class Knowledge Base' },
         { title: 'Past University Question Paper Bank', type: 'PYQ Database' },
@@ -435,12 +489,78 @@ Ground your response in authoritative university curricula and standard textbook
   }
 });
 
+// 6.5 Interactive Concept Check Quiz Evaluator
+apiRouter.post('/quiz/evaluate', async (req: Request, res: Response) => {
+  try {
+    const { topicTitle, question, studentAnswer, correctOption, isOption } = req.body;
+
+    if (isOption) {
+      const passed = studentAnswer === correctOption;
+      return res.json({
+        score: passed ? 10 : 0,
+        passed,
+        feedback: passed
+          ? 'Spot on! You nailed the core concept and avoided the examiner trap.'
+          : 'Not quite. Check the explanation to see why the boundary condition matters.',
+        misconceptions: passed ? [] : ['Review the modulo formula and boundary pointer checks.'],
+      });
+    }
+
+    if (!studentAnswer || studentAnswer.trim().length < 5) {
+      return res.status(400).json({ error: 'Please provide your explanation.' });
+    }
+
+    const ai = AIProviderFactory.getProvider(extractAiConfig(req));
+    if (!ai.isAvailable()) {
+      const passed = studentAnswer.length > 25;
+      return res.json({
+        score: passed ? 8 : 4,
+        passed,
+        feedback: passed
+          ? 'Good conceptual attempt. You captured the primary purpose.'
+          : 'A bit brief. Make sure to mention the mathematical wrap-around mechanism.',
+        misconceptions: passed ? [] : ['Remember to mention what happens to memory space.'],
+      });
+    }
+
+    const prompt = `You are a strict but encouraging University Exam Evaluator.
+Topic: "${topicTitle}"
+Prompt Question: "${question}"
+Student's Typed Answer: "${studentAnswer}"
+
+Evaluate the answer. Return STRICT JSON only:
+{
+  "score": number from 0 to 10,
+  "passed": boolean (true if score >= 6),
+  "feedback": "2-3 sentences diagnosing exact strengths and gaps",
+  "misconceptions": ["Misconception 1 if any", "Misconception 2 if any"]
+}`;
+
+    const evaluated = await ai.generateStructuredJson<{
+      score: number;
+      passed: boolean;
+      feedback: string;
+      misconceptions: string[];
+    }>(prompt);
+
+    res.json({
+      score: evaluated.score ?? 7,
+      passed: Boolean(evaluated.passed),
+      feedback: evaluated.feedback || 'Answer evaluated based on university syllabus requirements.',
+      misconceptions: evaluated.misconceptions || [],
+      evaluatedBy: ai.name,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Quiz evaluation error' });
+  }
+});
+
 // 7. Material Upload & Processing Pipeline
 apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
   const { classId, subjectId, subjectName, title, fileName, fileType, rawTextContent, uploaderRole } =
     req.body;
 
-  const ai = AIProviderFactory.getProvider();
+  const ai = AIProviderFactory.getProvider(extractAiConfig(req));
 
   // Generate processed academic pack
   let summary = `Synthesized overview of ${title || 'uploaded document'}. Highlights key university curriculum principles.`;
@@ -749,7 +869,7 @@ apiRouter.patch('/assignments/:id/toggle-done', (req: Request, res: Response) =>
 apiRouter.post('/assignments/solve', async (req: Request, res: Response) => {
   try {
     const { assignmentTitle, subjectName, instructions, studentNotes } = req.body;
-    const ai = AIProviderFactory.getProvider();
+    const ai = AIProviderFactory.getProvider(extractAiConfig(req));
 
     const prompt = `You are SyllabusOS AI Academic Assignment Solver for university-level curricula.
 You are tasked with providing a full-credit, comprehensive, highly detailed, and exhaustive academic assignment submission (800-1200 words).
@@ -851,7 +971,7 @@ apiRouter.get('/search', (req: Request, res: Response) => {
 apiRouter.post('/ai/extract-course-info', async (req: Request, res: Response) => {
   try {
     const { rawText, subjectId } = req.body;
-    const provider = AIProviderFactory.getProvider();
+    const provider = AIProviderFactory.getProvider(extractAiConfig(req));
 
     let contextSubject: Subject | undefined;
     if (subjectId) {

@@ -31,11 +31,12 @@ interface SettingsViewProps {
 
 export type SupportedProvider =
   | 'auto'
+  | 'gemini'
   | 'openai'
   | 'claude'
-  | 'gemini'
   | 'deepseek'
   | 'groq'
+  | 'openrouter'
   | 'custom'
   | 'sandbox';
 
@@ -50,13 +51,14 @@ interface ProviderBadge {
 }
 
 const PROVIDERS: ProviderBadge[] = [
-  { id: 'auto', name: 'Auto-Detect', badge: 'Universal', defaultModel: 'Auto-detect', keyPrefix: 'Any' },
-  { id: 'openai', name: 'OpenAI', badge: 'GPT-4o', defaultModel: 'gpt-4o-mini', keyPrefix: 'sk-', url: 'https://platform.openai.com/api-keys', urlText: 'OpenAI Keys' },
-  { id: 'claude', name: 'Claude', badge: 'Anthropic', defaultModel: 'claude-3-5-haiku-20241022', keyPrefix: 'sk-ant-', url: 'https://console.anthropic.com/', urlText: 'Anthropic Console' },
-  { id: 'deepseek', name: 'DeepSeek', badge: 'V3/R1', defaultModel: 'deepseek-chat', keyPrefix: 'sk-', url: 'https://platform.deepseek.com/', urlText: 'DeepSeek Platform' },
-  { id: 'groq', name: 'Groq', badge: 'Llama 3.3', defaultModel: 'llama-3.3-70b-versatile', keyPrefix: 'gsk_', url: 'https://console.groq.com/keys', urlText: 'Groq Console' },
   { id: 'gemini', name: 'Gemini', badge: 'Flash 2.5', defaultModel: 'gemini-2.5-flash', keyPrefix: 'AIzaSy', url: 'https://aistudio.google.com/app/apikey', urlText: 'Google AI Studio' },
+  { id: 'openai', name: 'OpenAI', badge: 'GPT-4o', defaultModel: 'gpt-4o-mini', keyPrefix: 'sk-', url: 'https://platform.openai.com/api-keys', urlText: 'OpenAI Keys' },
+  { id: 'claude', name: 'Claude', badge: 'Anthropic', defaultModel: 'claude-3-5-sonnet-20241022', keyPrefix: 'sk-ant-', url: 'https://console.anthropic.com/', urlText: 'Anthropic Console' },
+  { id: 'deepseek', name: 'DeepSeek', badge: 'V3 / R1', defaultModel: 'deepseek-chat', keyPrefix: 'sk-', url: 'https://platform.deepseek.com/', urlText: 'DeepSeek Platform' },
+  { id: 'groq', name: 'Groq', badge: 'Llama 3.3', defaultModel: 'llama-3.3-70b-versatile', keyPrefix: 'gsk_', url: 'https://console.groq.com/keys', urlText: 'Groq Console' },
+  { id: 'openrouter', name: 'OpenRouter', badge: '100+ Models', defaultModel: 'deepseek/deepseek-r1', keyPrefix: 'sk-or-', url: 'https://openrouter.ai/keys', urlText: 'OpenRouter Hub' },
   { id: 'custom', name: 'Custom/Ollama', badge: 'Local', defaultModel: 'llama3:latest', keyPrefix: 'Custom' },
+  { id: 'auto', name: 'Auto-Detect', badge: 'Universal', defaultModel: 'Auto-detect', keyPrefix: 'Any' },
   { id: 'sandbox', name: 'Sandbox', badge: 'Zero Quota', defaultModel: 'sandbox-academic-engine', keyPrefix: 'TEST' },
 ];
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LessonContent } from '../types';
 import confetti from 'canvas-confetti';
 import { CheckCircle2, XCircle, Sparkles, Send, RefreshCw, Trophy, HelpCircle } from 'lucide-react';
+import { getAiRequestPayload } from '../utils/aiModelService';
 
 interface ConceptCheckQuizProps {
   lesson: LessonContent;
@@ -67,6 +68,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
           question: quiz.openEndedPrompt || quiz.question,
           studentAnswer: openAnswer,
           isOption: false,
+          ...getAiRequestPayload(),
         }),
       });
       const data = await res.json();

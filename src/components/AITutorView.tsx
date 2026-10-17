@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { TutorResponseMode, ChatMessage, Subject } from '../types';
-import { Bot, Send, Sparkles, BookOpen, KeyRound, Zap, ShieldCheck } from 'lucide-react';
+import { Bot, Send, Sparkles, BookOpen, KeyRound, Zap, ShieldCheck, Cpu } from 'lucide-react';
 import { AIKeyConfigModal } from './AIKeyConfigModal';
+import {
+  getAiRequestPayload,
+  getStoredAiSettings,
+  subscribeToAiSettings,
+  MODEL_PRESETS,
+  StoredAiSettings,
+} from '../utils/aiModelService';
 
 interface AITutorViewProps {
   subjects: Subject[];
@@ -17,25 +24,31 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isKeyModalOpen, setIsKeyModalOpen] = useState<boolean>(false);
 
-  const [aiStatus, setAiStatus] = useState<{
+  const [aiSettings, setAiSettings] = useState<StoredAiSettings>(getStoredAiSettings());
+  const [classModelInfo, setClassModelInfo] = useState<{
     hasCustomKey: boolean;
-    modelType: string;
     providerName: string;
   }>({
     hasCustomKey: false,
-    modelType: 'basic',
-    providerName: 'Built-in Basic Academic Model',
+    providerName: 'Built-in Academic Model',
   });
 
   useEffect(() => {
     fetch('/api/ai/config')
       .then((r) => r.json())
       .then((data) => {
-        if (data && data.modelType) {
-          setAiStatus(data);
+        if (data) {
+          setClassModelInfo({
+            hasCustomKey: Boolean(data.hasCustomKey),
+            providerName: data.providerName || 'Built-in Academic Model',
+          });
         }
       })
       .catch(() => {});
+
+    return subscribeToAiSettings((s) => {
+      setAiSettings(s);
+    });
   }, []);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -73,6 +86,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
           question: queryText.trim(),
           mode: activeMode,
           subjectName: selectedSubject,
+          ...getAiRequestPayload(),
         }),
       });
 
@@ -152,35 +166,42 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
         </div>
       </div>
 
-      {/* 2. Academic Model Tier & Shared Classroom Key Docket */}
+      {/* 2. Academic Model Tier & Personal vs Shared Classroom Key Docket */}
       <div className="px-4 py-2 border-b border-slate-800/60 bg-slate-900/30 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2 shrink-0">
         <div className="flex items-center gap-2 text-slate-300">
-          {aiStatus.hasCustomKey ? (
-            <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
-              <Sparkles className="w-3 h-3 text-neutral-400" />
-              <span>{aiStatus.providerName || 'AI Model'} Active</span>
+          {aiSettings.mode === 'personal' && (aiSettings.personalApiKey || aiSettings.personalProvider === 'custom') ? (
+            <span className="academic-tag text-[10px] text-indigo-300 bg-indigo-950/60 border border-indigo-700/60 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
+              <Cpu className="w-3 h-3 text-indigo-400" />
+              <span>
+                Personal: {MODEL_PRESETS.find((p) => p.id === aiSettings.personalModel)?.name || aiSettings.personalModel}
+              </span>
+            </span>
+          ) : classModelInfo.hasCustomKey ? (
+            <span className="academic-tag text-[10px] text-purple-300 bg-purple-950/60 border border-purple-700/60 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-purple-400" />
+              <span>Class Shared: {classModelInfo.providerName}</span>
             </span>
           ) : (
             <span className="academic-tag text-[10px] text-slate-300 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded inline-flex items-center gap-1.5">
               <Zap className="w-3 h-3 text-amber-400" />
-              <span>Basic Academic Model</span>
+              <span>Basic Academic Engine</span>
             </span>
           )}
           <span className="text-slate-600 hidden sm:inline">·</span>
           <span className="text-[11px] text-slate-400 font-sans-ui hidden sm:inline">
-            {aiStatus.hasCustomKey
-              ? 'Shared class AI key unlocked for syllabus reasoning'
-              : 'CR or any classmate can add an API key for higher intelligence'}
+            {aiSettings.mode === 'personal' && (aiSettings.personalApiKey || aiSettings.personalProvider === 'custom')
+              ? 'Using your private device key'
+              : 'Shared for all classmates'}
           </span>
         </div>
 
         <button
           onClick={() => setIsKeyModalOpen(true)}
-          className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer shrink-0 self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
-          title="Configure AI API Keys or switch to basic model"
+          className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/40 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer shrink-0 self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
+          title="Switch AI Models or Configure Keys"
         >
-          <KeyRound className="w-3 h-3 text-slate-400" />
-          <span>{aiStatus.hasCustomKey ? 'Manage AI Keys' : 'Configure AI Key (CR/Student)'}</span>
+          <Sparkles className="w-3 h-3 text-indigo-400" />
+          <span>Switch Model / Key</span>
         </button>
       </div>
 
@@ -307,7 +328,11 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
         isOpen={isKeyModalOpen}
         onClose={() => setIsKeyModalOpen(false)}
         onConfigUpdated={(updated) => {
-          setAiStatus(updated);
+          setClassModelInfo({
+            hasCustomKey: updated.hasCustomKey,
+            providerName: updated.providerName,
+          });
+          setAiSettings(getStoredAiSettings());
         }}
       />
     </div>

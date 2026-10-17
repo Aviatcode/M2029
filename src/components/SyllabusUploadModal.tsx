@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UploadCloud, FileText, Sparkles, X, CheckCircle, BookOpen } from 'lucide-react';
+import { getAiRequestPayload } from '../utils/aiModelService';
 
 interface SyllabusUploadModalProps {
   isOpen: boolean;
@@ -61,6 +62,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
           classCode,
           subjectName: subjectName.trim() || 'Core Curriculum',
           rawText: rawText.trim(),
+          ...getAiRequestPayload(),
         }),
       });
 

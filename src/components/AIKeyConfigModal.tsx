@@ -9,114 +9,27 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-  Bot,
-  Zap,
+  Cpu,
+  Layers,
   Database,
   ArrowRight,
   Server,
-  Cpu,
-  Layers,
-  Code2,
+  User,
+  Users,
+  Zap,
+  Activity,
   Check,
+  RotateCcw,
 } from 'lucide-react';
-
-export type SupportedModelProvider =
-  | 'auto'
-  | 'openai'
-  | 'claude'
-  | 'gemini'
-  | 'deepseek'
-  | 'groq'
-  | 'custom'
-  | 'sandbox';
-
-interface ProviderOption {
-  id: SupportedModelProvider;
-  name: string;
-  badge: string;
-  defaultModel: string;
-  placeholder: string;
-  keyPrefix: string;
-  portalUrl?: string;
-  portalLabel?: string;
-}
-
-const PROVIDER_OPTIONS: ProviderOption[] = [
-  {
-    id: 'auto',
-    name: 'Auto-Detect',
-    badge: 'Universal',
-    defaultModel: 'Auto-selected',
-    placeholder: 'Paste key from any provider (sk-..., AIzaSy..., gsk_..., etc.)',
-    keyPrefix: 'Any',
-  },
-  {
-    id: 'openai',
-    name: 'OpenAI',
-    badge: 'GPT-4o',
-    defaultModel: 'gpt-4o-mini',
-    placeholder: 'sk-proj-... or sk-...',
-    keyPrefix: 'sk-',
-    portalUrl: 'https://platform.openai.com/api-keys',
-    portalLabel: 'OpenAI Dashboard',
-  },
-  {
-    id: 'claude',
-    name: 'Anthropic Claude',
-    badge: 'Claude 3.5',
-    defaultModel: 'claude-3-5-haiku-20241022',
-    placeholder: 'sk-ant-api03-...',
-    keyPrefix: 'sk-ant-',
-    portalUrl: 'https://console.anthropic.com/',
-    portalLabel: 'Anthropic Console',
-  },
-  {
-    id: 'deepseek',
-    name: 'DeepSeek AI',
-    badge: 'V3 / R1',
-    defaultModel: 'deepseek-chat',
-    placeholder: 'sk-... (DeepSeek API Key)',
-    keyPrefix: 'sk-',
-    portalUrl: 'https://platform.deepseek.com/',
-    portalLabel: 'DeepSeek Platform',
-  },
-  {
-    id: 'groq',
-    name: 'Groq Cloud',
-    badge: 'Llama 3.3 Ultra-Fast',
-    defaultModel: 'llama-3.3-70b-versatile',
-    placeholder: 'gsk_...',
-    keyPrefix: 'gsk_',
-    portalUrl: 'https://console.groq.com/keys',
-    portalLabel: 'Groq Console',
-  },
-  {
-    id: 'gemini',
-    name: 'Google Gemini',
-    badge: 'Flash 2.5',
-    defaultModel: 'gemini-2.5-flash',
-    placeholder: 'AIzaSy...',
-    keyPrefix: 'AIzaSy',
-    portalUrl: 'https://aistudio.google.com/app/apikey',
-    portalLabel: 'Google AI Studio',
-  },
-  {
-    id: 'custom',
-    name: 'Custom / Ollama',
-    badge: 'Local / Self-Hosted',
-    defaultModel: 'llama3:latest',
-    placeholder: 'Optional API key or token',
-    keyPrefix: 'Custom',
-  },
-  {
-    id: 'sandbox',
-    name: 'Testing Sandbox',
-    badge: 'Instant Simulator',
-    defaultModel: 'sandbox-academic-engine',
-    placeholder: 'AIzaSy-TESTING-DEMO-KEY',
-    keyPrefix: 'TEST',
-  },
-];
+import {
+  ModelProviderType,
+  MODEL_PRESETS,
+  PROVIDER_PORTALS,
+  getStoredAiSettings,
+  saveStoredAiSettings,
+  testAiConnection,
+  StoredAiSettings,
+} from '../utils/aiModelService';
 
 interface AIKeyConfigModalProps {
   isOpen: boolean;
@@ -129,26 +42,38 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
   onClose,
   onConfigUpdated,
 }) => {
-  const [activeTab, setActiveTab] = useState<'ai_model' | 'supabase'>('ai_model');
+  const [activeTab, setActiveTab] = useState<'personal' | 'class_server' | 'supabase'>('personal');
 
-  // Universal AI Model State
-  const [selectedProvider, setSelectedProvider] = useState<SupportedModelProvider>('auto');
-  const [apiKey, setApiKey] = useState<string>('');
-  const [modelName, setModelName] = useState<string>('');
-  const [baseUrl, setBaseUrl] = useState<string>('');
-  const [showKey, setShowKey] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  // Personal Settings State
+  const [settings, setSettings] = useState<StoredAiSettings>(getStoredAiSettings());
+  const [selectedPresetId, setSelectedPresetId] = useState<string>(settings.personalModel || 'gemini-2.5-flash');
+  const [showPersonalKey, setShowPersonalKey] = useState<boolean>(false);
+  const [testingStatus, setTestingStatus] = useState<{
+    isLoading: boolean;
+    result?: { ok: boolean; message: string; latencyMs?: number };
+  }>({ isLoading: false });
 
-  const [currentStatus, setCurrentStatus] = useState<{
+  // Class Server Status State
+  const [classStatus, setClassStatus] = useState<{
     hasCustomKey: boolean;
     modelType: string;
     providerName: string;
+    provider: string;
+    modelName: string;
   }>({
     hasCustomKey: false,
     modelType: 'basic',
-    providerName: 'Built-in Basic Academic Model',
+    providerName: 'Loading class status...',
+    provider: 'gemini',
+    modelName: 'gemini-2.5-flash',
   });
+
+  // Class Key Form State (for CR / Admin to update server)
+  const [classApiKey, setClassApiKey] = useState<string>('');
+  const [classProvider, setClassProvider] = useState<ModelProviderType>('gemini');
+  const [classModelName, setClassModelName] = useState<string>('gemini-2.5-flash');
+  const [isSavingClass, setIsSavingClass] = useState<boolean>(false);
+  const [classSaveMessage, setClassSaveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Supabase State
   const [supabaseUrl, setSupabaseUrl] = useState<string>('');
@@ -161,231 +86,160 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
   }>({
     configured: false,
     ok: false,
-    message: 'Checking status...',
+    message: 'Checking database...',
   });
 
+  // Sync state on open
   useEffect(() => {
     if (isOpen) {
-      // Check localStorage for saved keys
-      try {
-        const savedKey =
-          localStorage.getItem('syllabus_ai_api_key') ||
-          localStorage.getItem('syllabus_gemini_key') ||
-          '';
-        if (savedKey) setApiKey(savedKey);
+      const current = getStoredAiSettings();
+      setSettings(current);
+      setSelectedPresetId(current.personalModel || 'gemini-2.5-flash');
+      setTestingStatus({ isLoading: false });
+      setClassSaveMessage(null);
 
-        const savedProvider = (localStorage.getItem('syllabus_ai_provider') as SupportedModelProvider) || 'auto';
-        setSelectedProvider(savedProvider);
-
-        const savedModel = localStorage.getItem('syllabus_ai_model') || '';
-        if (savedModel) setModelName(savedModel);
-
-        const savedBaseUrl = localStorage.getItem('syllabus_ai_base_url') || '';
-        if (savedBaseUrl) setBaseUrl(savedBaseUrl);
-
-        const savedUrl = localStorage.getItem('syllabus_supabase_url') || '';
-        if (savedUrl) setSupabaseUrl(savedUrl);
-        const savedSbKey = localStorage.getItem('syllabus_supabase_key') || '';
-        if (savedSbKey) setSupabaseKey(savedSbKey);
-      } catch {
-        // ignore storage restrictions
-      }
-
-      // Fetch AI config from server
+      // Fetch server class status
       fetch('/api/ai/config')
         .then((r) => r.json())
         .then((data) => {
-          if (data && data.providerName) {
-            setCurrentStatus({
+          if (data) {
+            setClassStatus({
               hasCustomKey: Boolean(data.hasCustomKey),
-              modelType: data.modelType || 'custom_ai',
-              providerName: data.providerName,
+              modelType: data.modelType || 'basic',
+              providerName: data.providerName || 'Built-in Academic Model (Free)',
+              provider: data.provider || 'gemini',
+              modelName: data.modelName || 'gemini-2.5-flash',
             });
-            if (data.provider && data.provider !== 'auto') {
-              setSelectedProvider(data.provider);
-            }
-            if (data.modelName) {
-              setModelName(data.modelName);
-            }
+            setClassProvider(data.provider || 'gemini');
+            setClassModelName(data.modelName || 'gemini-2.5-flash');
           }
         })
-        .catch(() => {
-          const localKey =
-            localStorage.getItem('syllabus_ai_api_key') ||
-            localStorage.getItem('syllabus_gemini_key');
-          if (localKey) {
-            setCurrentStatus({
-              hasCustomKey: true,
-              modelType: 'custom_ai',
-              providerName: 'Custom AI Model (Browser Storage)',
-            });
-          }
-        });
+        .catch(() => {});
 
       // Fetch Supabase status
+      try {
+        setSupabaseUrl(localStorage.getItem('syllabus_supabase_url') || '');
+        setSupabaseKey(localStorage.getItem('syllabus_supabase_key') || '');
+      } catch {}
+
       fetch('/api/supabase/status')
         .then((r) => r.json())
         .then((data) => {
           if (data) setSupabaseStatus(data);
         })
         .catch(() => {
-          setSupabaseStatus({
-            configured: false,
-            ok: false,
-            message: 'Static / Client-side mode active.',
-          });
+          setSupabaseStatus({ configured: false, ok: false, message: 'Offline mode active.' });
         });
-
-      setStatusMessage(null);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const currentProviderInfo = PROVIDER_OPTIONS.find((p) => p.id === selectedProvider) || PROVIDER_OPTIONS[0];
+  const currentPortal = PROVIDER_PORTALS[settings.personalProvider] || PROVIDER_PORTALS.gemini;
+  const currentPreset = MODEL_PRESETS.find((p) => p.id === selectedPresetId) || MODEL_PRESETS[0];
 
-  const handleProviderChange = (newProvider: SupportedModelProvider) => {
-    setSelectedProvider(newProvider);
-    const info = PROVIDER_OPTIONS.find((p) => p.id === newProvider);
-    if (info && info.id !== 'auto' && info.defaultModel && (!modelName || modelName.includes('auto'))) {
-      setModelName(info.defaultModel);
-    }
-    if (newProvider === 'custom' && !baseUrl) {
-      setBaseUrl('http://localhost:11434/v1');
+  const handleSelectPreset = (preset: (typeof MODEL_PRESETS)[0]) => {
+    setSelectedPresetId(preset.id);
+    const updated: StoredAiSettings = {
+      ...settings,
+      mode: 'personal',
+      personalProvider: preset.provider,
+      personalModel: preset.id,
+      personalBaseUrl: preset.provider === 'custom' ? 'http://localhost:11434/v1' : settings.personalBaseUrl,
+    };
+    setSettings(updated);
+    saveStoredAiSettings(updated);
+  };
+
+  const handleSavePersonalKey = (newKey: string) => {
+    const updated: StoredAiSettings = {
+      ...settings,
+      mode: 'personal',
+      personalApiKey: newKey.trim(),
+    };
+    setSettings(updated);
+    saveStoredAiSettings(updated);
+  };
+
+  const handleToggleMode = (mode: 'class' | 'personal') => {
+    const updated: StoredAiSettings = {
+      ...settings,
+      mode,
+    };
+    setSettings(updated);
+    saveStoredAiSettings(updated);
+    if (onConfigUpdated) {
+      onConfigUpdated({
+        hasCustomKey: mode === 'personal' ? Boolean(settings.personalApiKey) : classStatus.hasCustomKey,
+        modelType: mode === 'personal' ? 'personal_ai' : 'class_ai',
+        providerName: mode === 'personal' ? currentPreset.name : classStatus.providerName,
+      });
     }
   };
 
-  const handleSaveUniversalKey = async () => {
-    const cleanKey = apiKey.trim();
-    const cleanModel = modelName.trim();
-    const cleanBaseUrl = baseUrl.trim();
+  const handleTestConnection = async () => {
+    setTestingStatus({ isLoading: true });
+    const targetConfig =
+      activeTab === 'personal'
+        ? {
+            apiKey: settings.personalApiKey,
+            provider: settings.personalProvider,
+            modelName: settings.personalModel,
+            baseUrl: settings.personalBaseUrl,
+          }
+        : {
+            apiKey: classApiKey,
+            provider: classProvider,
+            modelName: classModelName,
+          };
 
-    if (!cleanKey && selectedProvider !== 'custom') {
-      setStatusMessage({
-        type: 'error',
-        text: 'Please enter an API key or click "Load Sandbox Test Key" for instant testing.',
-      });
-      return;
-    }
+    const res = await testAiConnection(targetConfig);
+    setTestingStatus({
+      isLoading: false,
+      result: {
+        ok: res.ok,
+        message: res.ok
+          ? `✓ Operational! Latency: ${res.latencyMs}ms (${res.providerName})`
+          : `✗ Test failed: ${res.error}`,
+        latencyMs: res.latencyMs,
+      },
+    });
+  };
 
-    setIsLoading(true);
-    setStatusMessage(null);
-
-    // Save locally
-    try {
-      localStorage.setItem('syllabus_ai_api_key', cleanKey);
-      localStorage.setItem('syllabus_gemini_key', cleanKey); // backward compatibility
-      localStorage.setItem('syllabus_ai_provider', selectedProvider);
-      if (cleanModel) localStorage.setItem('syllabus_ai_model', cleanModel);
-      if (cleanBaseUrl) localStorage.setItem('syllabus_ai_base_url', cleanBaseUrl);
-    } catch {
-      // ignore
-    }
-
+  const handleSaveClassServerConfig = async () => {
+    setIsSavingClass(true);
+    setClassSaveMessage(null);
     try {
       const res = await fetch('/api/ai/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          apiKey: cleanKey,
-          provider: selectedProvider,
-          modelName: cleanModel,
-          baseUrl: cleanBaseUrl,
+          apiKey: classApiKey.trim(),
+          provider: classProvider,
+          modelName: classModelName.trim(),
         }),
       });
-
       const data = await res.json();
-      if (data.status === 'success' || data.success) {
-        setCurrentStatus({
+      if (data.status === 'success') {
+        setClassStatus({
           hasCustomKey: Boolean(data.hasCustomKey),
           modelType: data.modelType || 'custom_ai',
-          providerName: data.providerName || 'Universal AI Engine',
+          providerName: data.providerName,
+          provider: data.provider,
+          modelName: data.modelName,
         });
-        setStatusMessage({
+        setClassSaveMessage({
           type: 'success',
-          text: `✓ Successfully activated ${data.providerName || 'Universal AI'}! Deep reasoning and tutor queries are now live.`,
+          text: `✓ Class default model updated to ${data.providerName}. All students without a personal key will now use this!`,
         });
-        if (onConfigUpdated) {
-          onConfigUpdated({
-            hasCustomKey: true,
-            modelType: data.modelType || 'custom_ai',
-            providerName: data.providerName || 'Universal AI Engine',
-          });
-        }
+        setClassApiKey('');
       } else {
-        setStatusMessage({ type: 'error', text: 'Failed to configure model. Please check the credentials.' });
+        setClassSaveMessage({ type: 'error', text: 'Failed to update server class key.' });
       }
-    } catch {
-      // Fallback for static GitHub Pages / client-side execution
-      const providerLabel = currentProviderInfo.name;
-      const staticStatus = {
-        hasCustomKey: true,
-        modelType: 'custom_ai',
-        providerName: `${providerLabel} (Browser Storage)`,
-      };
-      setCurrentStatus(staticStatus);
-      setStatusMessage({
-        type: 'success',
-        text: `✓ Key saved to browser storage for ${providerLabel}. Ready for AI study tutor & exam solvers!`,
-      });
-      if (onConfigUpdated) onConfigUpdated(staticStatus);
+    } catch (err: any) {
+      setClassSaveMessage({ type: 'error', text: err.message || 'Error updating server key.' });
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleUseBasicModel = async () => {
-    setIsLoading(true);
-    setStatusMessage(null);
-
-    try {
-      localStorage.removeItem('syllabus_ai_api_key');
-      localStorage.removeItem('syllabus_gemini_key');
-      localStorage.removeItem('syllabus_ai_provider');
-      localStorage.removeItem('syllabus_ai_model');
-      localStorage.removeItem('syllabus_ai_base_url');
-    } catch {
-      // ignore
-    }
-
-    try {
-      const res = await fetch('/api/ai/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey: '' }),
-      });
-
-      const data = await res.json();
-      const fallback = {
-        hasCustomKey: false,
-        modelType: 'basic',
-        providerName: 'Built-in Basic Academic Model',
-      };
-      setCurrentStatus(fallback);
-      setStatusMessage({
-        type: 'success',
-        text: '✓ Active engine set to Built-in Basic Academic Model (Zero API key needed).',
-      });
-      setApiKey('');
-      setModelName('');
-      setBaseUrl('');
-      setSelectedProvider('auto');
-      if (onConfigUpdated) onConfigUpdated(fallback);
-    } catch {
-      const fallback = {
-        hasCustomKey: false,
-        modelType: 'basic',
-        providerName: 'Built-in Basic Academic Model',
-      };
-      setCurrentStatus(fallback);
-      setStatusMessage({
-        type: 'success',
-        text: '✓ Active engine set to Built-in Basic Academic Model.',
-      });
-      setApiKey('');
-      if (onConfigUpdated) onConfigUpdated(fallback);
-    } finally {
-      setIsLoading(false);
+      setIsSavingClass(false);
     }
   };
 
@@ -393,34 +247,34 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     try {
       localStorage.setItem('syllabus_supabase_url', supabaseUrl.trim());
       localStorage.setItem('syllabus_supabase_key', supabaseKey.trim());
-      setStatusMessage({
-        type: 'success',
-        text: '✓ Supabase credentials saved in browser storage. Remember to also add them to .env and run npm run db:push to seed!',
-      });
-    } catch {
-      setStatusMessage({ type: 'error', text: 'Failed to save to local storage.' });
-    }
+      alert('✓ Supabase credentials saved locally. Ensure you also add them to Render Environment variables.');
+    } catch {}
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto animate-fade-in">
-      <div className="w-full max-w-xl rounded-2xl bg-slate-900 border border-slate-750 p-6 shadow-2xl text-slate-100 my-8 space-y-5">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-cyan-600 via-indigo-600 to-purple-600 text-white shadow-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto animate-fade-in">
+      <div className="w-full max-w-2xl rounded-2xl bg-neutral-900 border border-neutral-800 p-6 shadow-2xl text-neutral-100 my-8 space-y-5">
+        {/* Header */}
+        <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-base text-white">Universal AI Models & API Key</h3>
-              <p className="text-xs text-slate-400">
-                Connect any model provider: OpenAI, Claude, DeepSeek, Groq, Gemini, Ollama, or Sandbox
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-base text-white">AI Model Hub & Key Center</h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  Multi-Model
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400">
+                Choose models for personal study or configure shared access for your whole class.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition cursor-pointer"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -428,119 +282,148 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex rounded-lg bg-slate-950 p-1 border border-slate-800 text-xs">
+        <div className="grid grid-cols-3 rounded-xl bg-neutral-950 p-1 border border-neutral-800 text-xs">
           <button
             type="button"
-            onClick={() => {
-              setActiveTab('ai_model');
-              setStatusMessage(null);
-            }}
-            className={`flex-1 py-1.5 px-3 rounded-md font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
-              activeTab === 'ai_model'
-                ? 'bg-cyan-950/70 text-cyan-200 border border-cyan-500/40 shadow-xs'
-                : 'text-slate-400 hover:text-slate-200'
+            onClick={() => setActiveTab('personal')}
+            className={`py-2 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
+              activeTab === 'personal'
+                ? 'bg-neutral-850 text-white border border-neutral-700 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Universal AI Engine</span>
+            <User className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Personal Model</span>
+            {settings.mode === 'personal' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+            )}
           </button>
+
           <button
             type="button"
-            onClick={() => {
-              setActiveTab('supabase');
-              setStatusMessage(null);
-            }}
-            className={`flex-1 py-1.5 px-3 rounded-md font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
-              activeTab === 'supabase'
-                ? 'bg-neutral-800 text-white border border-neutral-700 shadow-xs'
-                : 'text-slate-400 hover:text-slate-200'
+            onClick={() => setActiveTab('class_server')}
+            className={`py-2 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
+              activeTab === 'class_server'
+                ? 'bg-neutral-850 text-white border border-neutral-700 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            <Database className="w-3.5 h-3.5 text-neutral-400" />
-            <span>Supabase Cloud DB</span>
+            <Users className="w-3.5 h-3.5 text-purple-400" />
+            <span>Class Shared Key</span>
+            {settings.mode === 'class' && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('supabase')}
+            className={`py-2 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
+              activeTab === 'supabase'
+                ? 'bg-neutral-850 text-white border border-neutral-700 shadow-sm'
+                : 'text-neutral-400 hover:text-neutral-200'
+            }`}
+          >
+            <Database className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Cloud DB</span>
           </button>
         </div>
 
-        {activeTab === 'ai_model' ? (
-          <>
-            {/* Current Active Engine Status Card */}
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
-              <div className="space-y-0.5">
-                <span className="text-[11px] text-slate-400">Active AI Engine:</span>
-                <div className="font-semibold text-slate-100 flex items-center gap-1.5">
-                  {currentStatus.hasCustomKey ? (
-                    <>
-                      <Sparkles className="w-4 h-4 text-neutral-300" />
-                      <span className="text-neutral-200">{currentStatus.providerName}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4 text-amber-400" />
-                      <span className="text-cyan-300">{currentStatus.providerName}</span>
-                    </>
-                  )}
-                </div>
+        {/* TAB 1: PERSONAL MODEL */}
+        {activeTab === 'personal' && (
+          <div className="space-y-4 animate-fade-in">
+            {/* Mode Toggle Banner */}
+            <div className="p-3.5 rounded-xl bg-neutral-950/70 border border-neutral-800 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-white">Current Active Engine for this Browser</p>
+                <p className="text-[11px] text-neutral-400 mt-0.5">
+                  {settings.mode === 'personal'
+                    ? `Using Personal Key: ${currentPreset.name} (${currentPreset.badge})`
+                    : `Using Class Shared Key: ${classStatus.providerName}`}
+                </p>
               </div>
-              <span
-                className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                  currentStatus.hasCustomKey
-                    ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
-                    : 'bg-cyan-950/80 border-cyan-500/30 text-cyan-300'
-                }`}
-              >
-                {currentStatus.hasCustomKey ? 'Active & Ready' : 'Basic Model'}
-              </span>
+              <div className="flex items-center gap-1 bg-neutral-900 p-1 rounded-lg border border-neutral-800">
+                <button
+                  type="button"
+                  onClick={() => handleToggleMode('class')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
+                    settings.mode === 'class'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  Class Key
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleToggleMode('personal')}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
+                    settings.mode === 'personal'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  My Key
+                </button>
+              </div>
             </div>
 
-            {/* Provider Grid Selector */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
-                <span>Select Model Provider:</span>
-                <span className="text-[11px] text-slate-400 font-normal">
-                  Auto-detects from key or select manually
-                </span>
-              </label>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {PROVIDER_OPTIONS.map((prov) => {
-                  const isSelected = selectedProvider === prov.id;
+            {/* Model Presets Grid */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-semibold text-neutral-300">Choose Your AI Model</label>
+                <span className="text-[11px] text-neutral-500">Pick from top providers</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1">
+                {MODEL_PRESETS.map((preset) => {
+                  const isSelected = selectedPresetId === preset.id;
                   return (
                     <button
-                      key={prov.id}
+                      key={preset.id}
                       type="button"
-                      onClick={() => handleProviderChange(prov.id)}
-                      className={`p-2.5 rounded-xl text-left border transition cursor-pointer flex flex-col justify-between h-16 ${
+                      onClick={() => handleSelectPreset(preset)}
+                      className={`text-left p-2.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
-                          ? 'bg-cyan-950/50 border-cyan-500/60 ring-1 ring-cyan-500/40 text-white'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/60 hover:border-slate-700'
+                          ? 'bg-indigo-950/40 border-indigo-500/60 ring-1 ring-indigo-500/30'
+                          : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900/60'
                       }`}
                     >
-                      <div className="flex items-center justify-between w-full">
-                        <span className="text-xs font-semibold truncate">{prov.name}</span>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+                      <div className="flex items-start justify-between gap-1 w-full mb-1">
+                        <span className="text-xs font-bold text-white truncate">{preset.name}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
                       </div>
-                      <span className="text-[10px] text-slate-400 truncate">{prov.badge}</span>
+                      <div className="flex items-center gap-1.5 mt-auto">
+                        <span
+                          className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${
+                            preset.freeTierAvailable
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                              : 'bg-neutral-800 text-neutral-400'
+                          }`}
+                        >
+                          {preset.badge}
+                        </span>
+                      </div>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Input: API Key for Selected Model */}
-            <div className="space-y-3 pt-1">
+            {/* API Key Input */}
+            <div className="space-y-1.5 bg-neutral-950/50 p-3.5 rounded-xl border border-neutral-800">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
-                  <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{currentProviderInfo.name} API Key</span>
+                <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
+                  <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>{currentPortal.name} API Key</span>
                 </label>
-                {currentProviderInfo.portalUrl && (
+                {currentPortal.url && (
                   <a
-                    href={currentProviderInfo.portalUrl}
+                    href={currentPortal.url}
                     target="_blank"
-                    rel="noreferrer"
-                    className="text-[11px] text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1 hover:underline"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition"
                   >
-                    <span>Get Key ({currentProviderInfo.portalLabel})</span>
+                    <span>Get Free Key</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
                 )}
@@ -548,233 +431,262 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
 
               <div className="relative">
                 <input
-                  type={showKey ? 'text' : 'password'}
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder={currentProviderInfo.placeholder}
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono pr-10 outline-none transition shadow-inner"
+                  type={showPersonalKey ? 'text' : 'password'}
+                  value={settings.personalApiKey}
+                  onChange={(e) => handleSavePersonalKey(e.target.value)}
+                  placeholder={currentPortal.placeholder}
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-indigo-500 pr-10"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowKey(!showKey)}
-                  className="absolute right-3 top-2.5 text-slate-400 hover:text-white transition cursor-pointer"
+                  onClick={() => setShowPersonalKey(!showPersonalKey)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition cursor-pointer"
+                  aria-label="Toggle visibility"
                 >
-                  {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPersonalKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
-              {/* Optional: Model Name & Base URL for Custom/Advanced */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                <div>
-                  <label className="text-[11px] text-slate-400 block mb-1">
-                    Model Name (Optional):
-                  </label>
+              {settings.personalProvider === 'custom' && (
+                <div className="mt-2 space-y-1">
+                  <label className="text-[11px] text-neutral-400">Local Endpoint Base URL</label>
                   <input
                     type="text"
-                    value={modelName}
-                    onChange={(e) => setModelName(e.target.value)}
-                    placeholder={currentProviderInfo.defaultModel || 'e.g. gpt-4o, deepseek-chat'}
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono outline-none transition"
+                    value={settings.personalBaseUrl}
+                    onChange={(e) => {
+                      const updated = { ...settings, personalBaseUrl: e.target.value };
+                      setSettings(updated);
+                      saveStoredAiSettings(updated);
+                    }}
+                    placeholder="http://localhost:11434/v1"
+                    className="w-full px-3 py-1.5 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-indigo-500"
                   />
-                </div>
-
-                <div>
-                  <label className="text-[11px] text-slate-400 block mb-1">
-                    Base URL (Optional / Ollama):
-                  </label>
-                  <input
-                    type="text"
-                    value={baseUrl}
-                    onChange={(e) => setBaseUrl(e.target.value)}
-                    placeholder="https://api.openai.com/v1"
-                    className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono outline-none transition"
-                  />
-                </div>
-              </div>
-
-              {/* Status Message */}
-              {statusMessage && (
-                <div
-                  className={`p-3 rounded-xl text-xs flex items-center gap-2 border animate-fade-in ${
-                    statusMessage.type === 'success'
-                      ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
-                      : statusMessage.type === 'error'
-                      ? 'bg-rose-950/60 border-rose-500/40 text-rose-200'
-                      : 'bg-neutral-900 border-neutral-750 text-neutral-300'
-                  }`}
-                >
-                  {statusMessage.type === 'success' && <CheckCircle2 className="w-4 h-4 text-neutral-300 shrink-0" />}
-                  {statusMessage.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />}
-                  <span>{statusMessage.text}</span>
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={handleSaveUniversalKey}
-                  disabled={isLoading || (!apiKey.trim() && selectedProvider !== 'custom')}
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-cyan-600 via-indigo-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 disabled:opacity-40 text-white font-semibold text-xs transition cursor-pointer shadow-md flex items-center justify-center gap-1.5"
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>{isLoading ? 'Activating Engine...' : 'Activate Model in App'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const testKey = 'AIzaSy-TESTING-DEMO-KEY';
-                    setApiKey(testKey);
-                    setSelectedProvider('sandbox');
-                    setModelName('sandbox-academic-engine');
-                  }}
-                  className="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-cyan-300 border border-slate-700 text-xs font-medium transition cursor-pointer flex items-center justify-center gap-1 shrink-0"
-                  title="Insert instant testing key (Zero external quota required)"
-                >
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Load Sandbox Test Key</span>
-                </button>
-              </div>
+              <p className="text-[11px] text-neutral-500 leading-relaxed mt-1">
+                🔒 Your personal key is stored only inside your browser (never saved on the server). It is transmitted
+                securely over HTTPS to answer your syllabus and assignment questions.
+              </p>
             </div>
 
-            {/* Fallback to Basic Free Model */}
-            <div className="pt-2 border-t border-slate-800/80">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400 text-[11px]">
-                  No API key right now? Use the offline academic model:
-                </span>
-                <button
-                  type="button"
-                  onClick={handleUseBasicModel}
-                  disabled={isLoading || (!currentStatus.hasCustomKey && currentStatus.modelType === 'basic')}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 hover:text-white font-medium text-xs transition cursor-pointer border border-slate-700 flex items-center gap-1"
-                >
-                  <Zap className="w-3 h-3 text-amber-400" />
-                  <span>Use Basic Free Model</span>
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* Supabase Status Card */}
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
-              <div className="space-y-0.5">
-                <span className="text-[11px] text-slate-400">Database Connection:</span>
-                <div className="font-semibold text-slate-100 flex items-center gap-1.5">
-                  <Database className="w-4 h-4 text-neutral-400" />
-                  <span className={supabaseStatus.ok ? 'text-neutral-200' : 'text-slate-300'}>
-                    {supabaseStatus.ok ? 'Supabase Connected' : 'Local / Offline DB'}
-                  </span>
-                </div>
-              </div>
-              <span
-                className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                  supabaseStatus.ok
-                    ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
-                    : 'bg-slate-850 border-slate-700 text-slate-400'
+            {/* Test Connection Result */}
+            {testingStatus.result && (
+              <div
+                className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 ${
+                  testingStatus.result.ok
+                    ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
+                    : 'bg-rose-950/30 border-rose-500/30 text-rose-300'
                 }`}
               >
-                {supabaseStatus.ok ? 'Cloud Sync' : 'Memory DB'}
-              </span>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-neutral-900/60 border border-neutral-800 text-xs space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-200 flex items-center gap-1.5">
-                  <Database className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>Cloud PostgreSQL Setup</span>
-                </span>
-                <a
-                  href="https://supabase.com/dashboard"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[11px] text-neutral-300 hover:text-white inline-flex items-center gap-1 hover:underline"
-                >
-                  <span>Supabase Dashboard</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                {testingStatus.result.ok ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                )}
+                <div className="flex-1">
+                  <p className="font-medium">{testingStatus.result.message}</p>
+                </div>
               </div>
-              <p className="text-[11px] text-slate-300">
-                1. Run <code>supabase/schema.sql</code> in your Supabase SQL Editor.
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-between pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  handleSavePersonalKey('');
+                  handleToggleMode('class');
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition cursor-pointer flex items-center gap-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset to Class Default</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleTestConnection}
+                  disabled={testingStatus.isLoading || (!settings.personalApiKey && settings.personalProvider !== 'custom')}
+                  className="px-3.5 py-2 rounded-lg text-xs font-medium bg-neutral-800 hover:bg-neutral-750 text-neutral-200 border border-neutral-700 transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Activity className={`w-3.5 h-3.5 ${testingStatus.isLoading ? 'animate-spin' : 'text-indigo-400'}`} />
+                  <span>{testingStatus.isLoading ? 'Testing...' : 'Test Connection'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 2: CLASS SHARED KEY (SERVER-WIDE) */}
+        {activeTab === 'class_server' && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-500/30 space-y-2">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-purple-400" />
+                <span className="text-xs font-bold text-purple-200">Shared Class Key Architecture</span>
+              </div>
+              <p className="text-xs text-neutral-300 leading-relaxed">
+                When you configure a shared key here, it is saved on the Render server. Any classmate or student who
+                opens the website <strong>without</strong> their own API key automatically uses this model for free!
               </p>
-              <p className="text-[11px] text-slate-300">
-                2. Enter your Project URL & Anon Key below or in <code>.env</code>.
+              <div className="pt-2 flex items-center gap-2">
+                <span className="text-[11px] text-neutral-400">Current Server Status:</span>
+                <span
+                  className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
+                    classStatus.hasCustomKey
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                  }`}
+                >
+                  {classStatus.providerName}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800">
+              <label className="text-xs font-semibold text-neutral-300">Set New Shared Server Key</label>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[11px] text-neutral-400 mb-1 block">Provider</label>
+                  <select
+                    value={classProvider}
+                    onChange={(e) => setClassProvider(e.target.value as ModelProviderType)}
+                    className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white focus:outline-none focus:border-purple-500 cursor-pointer"
+                  >
+                    <option value="gemini">Google Gemini (Recommended for Class)</option>
+                    <option value="groq">Groq Cloud (Fast Free Llama 3.3)</option>
+                    <option value="deepseek">DeepSeek AI</option>
+                    <option value="openai">OpenAI (GPT-4o Mini)</option>
+                    <option value="claude">Anthropic Claude</option>
+                    <option value="openrouter">OpenRouter</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[11px] text-neutral-400 mb-1 block">Model Name</label>
+                  <input
+                    type="text"
+                    value={classModelName}
+                    onChange={(e) => setClassModelName(e.target.value)}
+                    placeholder="gemini-2.5-flash"
+                    className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] text-neutral-400 mb-1 block">API Key</label>
+                <input
+                  type="password"
+                  value={classApiKey}
+                  onChange={(e) => setClassApiKey(e.target.value)}
+                  placeholder="Paste class API key (e.g. AIzaSy... or gsk_...)"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              {classSaveMessage && (
+                <p
+                  className={`text-xs p-2.5 rounded-lg border ${
+                    classSaveMessage.type === 'success'
+                      ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
+                      : 'bg-rose-950/40 border-rose-500/30 text-rose-300'
+                  }`}
+                >
+                  {classSaveMessage.text}
+                </p>
+              )}
+
+              <div className="flex items-center justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleSaveClassServerConfig}
+                  disabled={isSavingClass || !classApiKey.trim()}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white shadow-sm transition cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingClass ? 'Saving to Server...' : 'Save Class Server Key'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: CLOUD DATABASE */}
+        {activeTab === 'supabase' && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="p-3.5 rounded-xl bg-neutral-950/70 border border-neutral-800 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Database className="w-4 h-4 text-cyan-400" />
+                  <span>PostgreSQL Cloud Database</span>
+                </span>
+                <span
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                    supabaseStatus.configured
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                      : 'bg-neutral-800 text-neutral-400'
+                  }`}
+                >
+                  {supabaseStatus.configured ? 'Configured' : 'In-Memory / Static Mode'}
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400 leading-relaxed">
+                Connect Neon or Supabase to persist your syllabus units, past question papers, and assignments forever.
               </p>
             </div>
 
-            <div className="space-y-3 pt-1">
+            <div className="space-y-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800">
               <div>
-                <label className="text-xs font-semibold text-slate-200 block mb-1">
-                  Supabase Project URL
-                </label>
+                <label className="text-[11px] text-neutral-400 mb-1 block">Supabase Project URL</label>
                 <input
                   type="text"
                   value={supabaseUrl}
                   onChange={(e) => setSupabaseUrl(e.target.value)}
                   placeholder="https://xyzcompany.supabase.co"
-                  className="w-full bg-slate-950 border border-slate-700 focus:border-neutral-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono outline-none transition"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-cyan-500"
                 />
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-200">
-                    Supabase Anon Public API Key
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowSupabaseKey(!showSupabaseKey)}
-                    className="text-[11px] text-slate-400 hover:text-white"
-                  >
-                    {showSupabaseKey ? 'Hide' : 'Show'}
-                  </button>
-                </div>
+                <label className="text-[11px] text-neutral-400 mb-1 block">Supabase Anon Key</label>
                 <div className="relative">
                   <input
                     type={showSupabaseKey ? 'text' : 'password'}
                     value={supabaseKey}
                     onChange={(e) => setSupabaseKey(e.target.value)}
-                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-neutral-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 font-mono outline-none transition pr-10"
+                    placeholder="eyJhbGciOi..."
+                    className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-cyan-500 pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowSupabaseKey(!showSupabaseKey)}
-                    className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition cursor-pointer"
                   >
-                    {showSupabaseKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showSupabaseKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               </div>
 
-              {statusMessage && (
-                <div
-                  className={`p-3 rounded-xl text-xs flex items-center gap-2 border animate-fade-in ${
-                    statusMessage.type === 'success'
-                      ? 'bg-neutral-900 border-neutral-700 text-neutral-200'
-                      : 'bg-rose-950/60 border-rose-500/40 text-rose-200'
-                  }`}
+              <div className="flex items-center justify-end pt-1">
+                <button
+                  type="button"
+                  onClick={handleSaveSupabase}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white shadow-sm transition cursor-pointer"
                 >
-                  {statusMessage.type === 'success' ? (
-                    <CheckCircle2 className="w-4 h-4 text-neutral-300 shrink-0" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-                  )}
-                  <span>{statusMessage.text}</span>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={handleSaveSupabase}
-                className="w-full py-2.5 px-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white font-semibold text-xs transition cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
-              >
-                <Database className="w-3.5 h-3.5" />
-                <span>Save Supabase Credentials</span>
-              </button>
+                  Save DB Settings
+                </button>
+              </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

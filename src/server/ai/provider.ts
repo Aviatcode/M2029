@@ -7,6 +7,7 @@ export type ModelProviderType =
   | 'gemini'
   | 'deepseek'
   | 'groq'
+  | 'openrouter'
   | 'custom'
   | 'sandbox'
   | 'basic';
@@ -27,10 +28,10 @@ export interface UniversalKeyConfig {
 
 export class UniversalAIProvider implements AIProvider {
   name: string;
-  private apiKey: string;
-  private provider: ModelProviderType;
-  private modelName: string;
-  private baseUrl: string;
+  public apiKey: string;
+  public provider: ModelProviderType;
+  public modelName: string;
+  public baseUrl: string;
   private geminiClient: GoogleGenAI | null = null;
 
   constructor(config: UniversalKeyConfig) {
@@ -46,6 +47,8 @@ export class UniversalAIProvider implements AIProvider {
         this.provider = 'gemini';
       } else if (this.apiKey.startsWith('gsk_')) {
         this.provider = 'groq';
+      } else if (this.apiKey.startsWith('sk-or-')) {
+        this.provider = 'openrouter';
       } else if (this.apiKey.startsWith('sk-') && (this.baseUrl.includes('deepseek') || this.apiKey.length === 35)) {
         this.provider = 'deepseek';
       } else if (this.apiKey.startsWith('sk-')) {
@@ -68,7 +71,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'gpt-4o-mini';
           break;
         case 'claude':
-          this.modelName = 'claude-3-5-haiku-20241022';
+          this.modelName = 'claude-3-5-sonnet-20241022';
           break;
         case 'deepseek':
           this.modelName = 'deepseek-chat';
@@ -76,11 +79,14 @@ export class UniversalAIProvider implements AIProvider {
         case 'groq':
           this.modelName = 'llama-3.3-70b-versatile';
           break;
+        case 'openrouter':
+          this.modelName = 'deepseek/deepseek-r1';
+          break;
         case 'gemini':
-          this.modelName = 'gemini-3.8-flash';
+          this.modelName = 'gemini-2.5-flash';
           break;
         case 'custom':
-          this.modelName = 'default-model';
+          this.modelName = 'llama3:latest';
           break;
         default:
           this.modelName = 'built-in-academic';
@@ -91,11 +97,12 @@ export class UniversalAIProvider implements AIProvider {
       openai: `OpenAI (${this.modelName})`,
       claude: `Anthropic Claude (${this.modelName})`,
       deepseek: `DeepSeek AI (${this.modelName})`,
-      groq: `Groq Llama (${this.modelName})`,
+      groq: `Groq Cloud (${this.modelName})`,
+      openrouter: `OpenRouter (${this.modelName})`,
       gemini: `Google Gemini (${this.modelName})`,
-      custom: `Custom / Ollama Endpoint (${this.baseUrl || 'Local'})`,
+      custom: `Custom / Local (${this.baseUrl || 'Local'})`,
       sandbox: `Universal AI Testing Sandbox Engine`,
-      basic: `Built-in Basic Academic Model (Free)`,
+      basic: `Built-in Academic Model (Free)`,
     };
 
     this.name = providerDisplayNames[this.provider] || `AI Engine (${this.modelName})`;
@@ -127,26 +134,57 @@ export class UniversalAIProvider implements AIProvider {
     }
 
     try {
-      // 1. Google Gemini via SDK
-      if (this.provider === 'gemini' && this.geminiClient) {
-        const resp = await this.geminiClient.models.generateContent({
-          model: this.modelName || 'gemini-3.8-flash',
-          contents: prompt,
-          config: systemInstruction ? { systemInstruction } : undefined,
-        });
-        return resp.text || '';
+      // 1. Google Gemini via SDK or direct REST fallback
+      if (this.provider === 'gemini') {
+        const model = this.modelName || 'gemini-2.5-flash';
+        if (this.geminiClient) {
+          try {
+            const resp = await this.geminiClient.models.generateContent({
+              model,
+              contents: prompt,
+              config: systemInstruction ? { systemInstruction } : undefined,
+            });
+            if (resp.text) return resp.text;
+          } catch (sdkErr: any) {
+            console.warn(`Gemini SDK fallback trigger: ${sdkErr.message}`);
+          }
+        }
+
+        // Direct REST API fallback for Gemini if SDK encounters environment issues
+        if (this.apiKey) {
+          const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+          const contents: any[] = [];
+          if (systemInstruction) {
+            contents.push({ role: 'user', parts: [{ text: `[System Instruction: ${systemInstruction}]` }] });
+          }
+          contents.push({ role: 'user', parts: [{ text: prompt }] });
+
+          const res = await fetch(geminiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents }),
+          });
+
+          if (res.ok) {
+            const data: any = await res.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (text) return text;
+          }
+        }
       }
 
-      // 2. OpenAI / DeepSeek / Groq / Custom via OpenAI-compatible Chat API
+      // 2. OpenAI / DeepSeek / Groq / OpenRouter / Custom via OpenAI-compatible Chat API
       if (
         this.provider === 'openai' ||
         this.provider === 'deepseek' ||
         this.provider === 'groq' ||
+        this.provider === 'openrouter' ||
         this.provider === 'custom'
       ) {
         let endpoint = 'https://api.openai.com/v1/chat/completions';
         if (this.provider === 'deepseek') endpoint = 'https://api.deepseek.com/chat/completions';
         if (this.provider === 'groq') endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        if (this.provider === 'openrouter') endpoint = 'https://openrouter.ai/api/v1/chat/completions';
         if (this.provider === 'custom' && this.baseUrl) {
           endpoint = this.baseUrl.endsWith('/chat/completions')
             ? this.baseUrl
@@ -159,12 +197,18 @@ export class UniversalAIProvider implements AIProvider {
         }
         messages.push({ role: 'user', content: prompt });
 
+        const reqHeaders: Record<string, string> = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
+        };
+        if (this.provider === 'openrouter') {
+          reqHeaders['HTTP-Referer'] = 'https://m2029.onrender.com';
+          reqHeaders['X-Title'] = 'M2029 Curriculum OS';
+        }
+
         const res = await fetch(endpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.apiKey}`,
-          },
+          headers: reqHeaders,
           body: JSON.stringify({
             model: this.modelName,
             messages,
@@ -174,11 +218,13 @@ export class UniversalAIProvider implements AIProvider {
 
         if (!res.ok) {
           const errText = await res.text();
-          throw new Error(`API returned ${res.status}: ${errText.slice(0, 100)}`);
+          throw new Error(`API returned ${res.status}: ${errText.slice(0, 120)}`);
         }
 
         const data: any = await res.json();
-        return data.choices?.[0]?.message?.content || '';
+        const msg = data.choices?.[0]?.message;
+        const resultText = msg?.content || msg?.reasoning_content || '';
+        if (resultText) return resultText;
       }
 
       // 3. Anthropic Claude via Messages API
@@ -191,8 +237,8 @@ export class UniversalAIProvider implements AIProvider {
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model: this.modelName,
-            max_tokens: 2048,
+            model: this.modelName || 'claude-3-5-sonnet-20241022',
+            max_tokens: 3072,
             system: systemInstruction || undefined,
             messages: [{ role: 'user', content: prompt }],
           }),
@@ -200,11 +246,12 @@ export class UniversalAIProvider implements AIProvider {
 
         if (!res.ok) {
           const errText = await res.text();
-          throw new Error(`Claude API returned ${res.status}: ${errText.slice(0, 100)}`);
+          throw new Error(`Claude API returned ${res.status}: ${errText.slice(0, 120)}`);
         }
 
         const data: any = await res.json();
-        return data.content?.[0]?.text || '';
+        const text = data.content?.map((c: any) => c.text || '').join('\n');
+        if (text) return text;
       }
     } catch (err: any) {
       console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, err.message);
@@ -506,24 +553,36 @@ A formal computational or structural paradigm designed to guarantee consistency,
 }
 
 export class AIProviderFactory {
-  private static instance: AIProvider | null = null;
-  private static currentConfig: UniversalKeyConfig = {};
+  private static classInstance: AIProvider | null = null;
+  private static classConfig: UniversalKeyConfig = {};
 
-  static getProvider(): AIProvider {
-    if (!this.instance) {
-      const envKey = process.env.AI_API_KEY || process.env.GEMINI_API_KEY || '';
-      if (this.currentConfig.apiKey || envKey) {
-        this.instance = new UniversalAIProvider({
-          apiKey: this.currentConfig.apiKey || envKey,
-          provider: this.currentConfig.provider || 'auto',
-          modelName: this.currentConfig.modelName,
-          baseUrl: this.currentConfig.baseUrl,
+  /**
+   * Returns a provider:
+   * 1. If userConfig provides a valid personal API key or custom endpoint, returns a personal request-scoped provider.
+   * 2. Otherwise returns the shared classroom server provider.
+   */
+  static getProvider(userConfig?: UniversalKeyConfig): AIProvider {
+    if (userConfig && (userConfig.apiKey?.trim() || userConfig.baseUrl?.trim())) {
+      return new UniversalAIProvider(userConfig);
+    }
+    return this.getClassProvider();
+  }
+
+  static getClassProvider(): AIProvider {
+    if (!this.classInstance) {
+      const envKey = (process.env.AI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
+      if (this.classConfig.apiKey || (envKey && !envKey.includes('MY_GEMINI_API_KEY') && !envKey.startsWith('your_'))) {
+        this.classInstance = new UniversalAIProvider({
+          apiKey: this.classConfig.apiKey || envKey,
+          provider: this.classConfig.provider || (envKey.startsWith('AIzaSy') ? 'gemini' : 'auto'),
+          modelName: this.classConfig.modelName || 'gemini-2.5-flash',
+          baseUrl: this.classConfig.baseUrl,
         });
       } else {
-        this.instance = new MockAIProvider();
+        this.classInstance = new MockAIProvider();
       }
     }
-    return this.instance;
+    return this.classInstance;
   }
 
   static setConfig(config: UniversalKeyConfig): {
@@ -533,21 +592,21 @@ export class AIProviderFactory {
   } {
     const key = (config.apiKey || '').trim();
     if (key.length > 0 || (config.baseUrl && config.baseUrl.trim().length > 0)) {
-      this.currentConfig = {
+      this.classConfig = {
         apiKey: key,
         provider: config.provider || 'auto',
         modelName: config.modelName,
         baseUrl: config.baseUrl,
       };
-      this.instance = new UniversalAIProvider(this.currentConfig);
+      this.classInstance = new UniversalAIProvider(this.classConfig);
       return {
         success: true,
         modelType: 'custom_ai',
-        providerName: this.instance.name,
+        providerName: this.classInstance.name,
       };
     } else {
-      this.currentConfig = {};
-      this.instance = new MockAIProvider();
+      this.classConfig = {};
+      this.classInstance = null;
       return {
         success: true,
         modelType: 'basic',
@@ -567,19 +626,21 @@ export class AIProviderFactory {
     providerName: string;
     provider: ModelProviderType;
     modelName: string;
+    isClassShared: boolean;
   } {
-    const provider = this.getProvider();
+    const provider = this.getClassProvider();
     const hasKey = provider instanceof UniversalAIProvider && provider.isAvailable();
     return {
       hasCustomKey: hasKey,
       modelType: hasKey ? 'custom_ai' : 'basic',
       providerName: hasKey ? provider.name : 'Built-in Basic Academic Model (Free)',
-      provider: this.currentConfig.provider || 'auto',
-      modelName: this.currentConfig.modelName || 'default',
+      provider: this.classConfig.provider || 'gemini',
+      modelName: this.classConfig.modelName || 'gemini-2.5-flash',
+      isClassShared: true,
     };
   }
 
   static setProvider(provider: AIProvider): void {
-    this.instance = provider;
+    this.classInstance = provider;
   }
 }

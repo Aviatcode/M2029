@@ -13,6 +13,11 @@ import {
   Compass,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
+import {
+  getStoredAiSettings,
+  subscribeToAiSettings,
+  MODEL_PRESETS,
+} from '../utils/aiModelService';
 
 interface NavbarProps {
   classCode: string;
@@ -64,6 +69,26 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [currentAiModel, setCurrentAiModel] = useState(() => {
+    const s = getStoredAiSettings();
+    if (s.mode === 'personal' && (s.personalApiKey || s.personalProvider === 'custom')) {
+      const preset = MODEL_PRESETS.find((p) => p.id === s.personalModel);
+      return preset ? `${preset.name}` : `Personal AI`;
+    }
+    return 'Class Shared AI';
+  });
+
+  useEffect(() => {
+    return subscribeToAiSettings((s) => {
+      if (s.mode === 'personal' && (s.personalApiKey || s.personalProvider === 'custom')) {
+        const preset = MODEL_PRESETS.find((p) => p.id === s.personalModel);
+        setCurrentAiModel(preset ? `${preset.name}` : `Personal AI`);
+      } else {
+        setCurrentAiModel('Class Shared AI');
+      }
+    });
+  }, []);
 
   const notificationCount =
     totalNotificationsCount !== undefined && totalNotificationsCount > 0
@@ -153,6 +178,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           aria-label="Search"
         >
           <Search className="w-4 h-4" />
+        </button>
+
+        {/* AI Model Hub Trigger */}
+        <button
+          onClick={onOpenAIKeyConfig}
+          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-neutral-900/70 hover:bg-neutral-800 border border-neutral-800 hover:border-indigo-500/40 text-neutral-300 hover:text-white transition cursor-pointer"
+          title="Switch AI Models or Configure Keys"
+          aria-label="AI Model Settings"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <span className="text-[11px] max-w-[130px] truncate">{currentAiModel}</span>
         </button>
 
         {/* Notifications Icon with count number badge */}

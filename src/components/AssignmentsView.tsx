@@ -21,6 +21,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { AcademicAssignment, Subject, ClassworkType } from '../types';
+import { getAiRequestPayload } from '../utils/aiModelService';
 
 interface AssignmentsViewProps {
   assignments: AcademicAssignment[];
@@ -257,6 +258,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           subjectName: activeModalItem.subjectName,
           instructions: activeModalItem.instructions,
           studentNotes: studentNotes.trim() || undefined,
+          ...getAiRequestPayload(),
         }),
       });
 
