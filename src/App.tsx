@@ -458,11 +458,11 @@ export default function App() {
   };
 
   const handleSearchResultClick = (type: string, title: string) => {
-    if (type.includes('Topic')) {
+    if (type.includes('Topic') || type.includes('Syllabus')) {
       handleStudyTopic(title, 'Computer Science');
     } else if (type.includes('PYQ')) {
       setActiveTab('pyqs');
-    } else if (type.includes('Material') || type.includes('PPT')) {
+    } else if (type.includes('Note') || type.includes('Material') || type.includes('PPT')) {
       setActiveTab('materials');
     } else {
       setActiveTab('syllabus');

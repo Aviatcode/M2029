@@ -1419,7 +1419,7 @@ apiRouter.get('/search', (req: Request, res: Response) => {
     u.topics.forEach((t) => {
       if (t.title.toLowerCase().includes(q)) {
         results.push({
-          type: 'Syllabus Topic',
+          type: 'Syllabus',
           title: t.title,
           subtitle: `${u.title} • ${t.examWeightage}`,
           id: t.id,
@@ -1432,7 +1432,7 @@ apiRouter.get('/search', (req: Request, res: Response) => {
   (db.materials['class-bca-2028'] || []).forEach((m) => {
     if (m.title.toLowerCase().includes(q) || m.resources.summary.toLowerCase().includes(q)) {
       results.push({
-        type: 'Lecture PPT/Notes',
+        type: 'Notes',
         title: m.title,
         subtitle: `${m.subjectName} • ${m.verificationStatus}`,
         id: m.id,
@@ -1444,7 +1444,7 @@ apiRouter.get('/search', (req: Request, res: Response) => {
   SEED_PYQS.forEach((p) => {
     if (p.question.toLowerCase().includes(q) || p.topicTitle.toLowerCase().includes(q)) {
       results.push({
-        type: 'University PYQ',
+        type: 'PYQ',
         title: p.question,
         subtitle: `${p.subjectName} • ${p.year} (${p.marks} Marks)`,
         id: p.id,
