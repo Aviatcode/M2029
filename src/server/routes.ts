@@ -755,26 +755,35 @@ apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
   const fileExt = file.fileType || rawFileName.split('.').pop()?.toLowerCase() || 'pdf';
   const rawText = (file.rawTextContent || rawFileName).trim();
 
-  // 1. Zero-Token Classroom Cache Check
-  const existing = db.materials[targetClassId].find(
-    (m) =>
-      m.fileName.toLowerCase() === rawFileName.toLowerCase() ||
-      (m.title && m.title.toLowerCase() === rawFileName.replace(/\.[^/.]+$/, '').replace(/_/g, ' ').toLowerCase())
-  );
+  // 1. Zero-Token Classroom Cache & Deduplication Check
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const rawClean = normalize(rawFileName.replace(/\.[^/.]+$/, ''));
+  const textSample = `${rawFileName} ${rawText}`.toLowerCase();
+  const textSnippet = rawText.length > 60 ? rawText.slice(0, 200).toLowerCase() : '';
+
+  const existing = db.materials[targetClassId].find((m) => {
+    // Check filename
+    if (m.fileName.toLowerCase() === rawFileName.toLowerCase()) return true;
+    // Check normalized title
+    if (m.title && normalize(m.title) === rawClean) return true;
+    // Check text content snippet if non-trivial
+    if (textSnippet && m.rawTextContent && m.rawTextContent.toLowerCase().includes(textSnippet)) return true;
+    return false;
+  });
 
   if (existing && existing.resources) {
     return res.json({
       status: 'success',
       material: existing,
       cached: true,
+      duplicate: true,
       tokenCost: 0,
-      message: '⚡ Instant fetch from Shared Classroom Cache (0 tokens consumed).',
+      message: '⚡ Duplicate detected: This material is already processed and available in the shared classroom vault (0 tokens consumed).',
     });
   }
 
   // 2. Identify Subject & Category automatically from known curriculum
   const knownSubjects = db.subjects[targetClassId] || [];
-  const textSample = `${rawFileName} ${rawText}`.toLowerCase();
 
   let matchedSubject = knownSubjects.find((s) => textSample.includes(s.name.toLowerCase()) || textSample.includes(s.code.toLowerCase()));
 

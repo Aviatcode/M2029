@@ -125,10 +125,17 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
 
       const data = await response.json();
       setProcessingProgress(100);
-      setProcessingStage('✅ Auto-sorted into classroom folders! Ready across all student devices.');
+      if (data.cached || data.duplicate) {
+        setProcessingStage('⚡ Duplicate recognized: Already analyzed & sorted in classroom vault! (0 API tokens consumed)');
+      } else {
+        setProcessingStage('✅ Auto-sorted into classroom folders! Ready across all student devices.');
+      }
 
       if (data.status === 'success' && data.material) {
-        onMaterialUploaded?.(data.material);
+        // Only append to materials if it's not already in the list
+        if (!data.cached && !data.duplicate) {
+          onMaterialUploaded?.(data.material);
+        }
         setLastUploadedMaterial(data.material);
         setActiveItem(data.material);
 
