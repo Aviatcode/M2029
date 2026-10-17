@@ -113,9 +113,9 @@ export async function testNeonConnection(): Promise<{
 }
 
 /**
- * Initialize all Neon tables and optionally seed them with BCA-2028 curriculum
+ * Initialize all Neon tables
  */
-export async function initializeNeonSchema(seed: boolean = true): Promise<{
+export async function initializeNeonSchema(seed: boolean = false): Promise<{
   ok: boolean;
   message: string;
   tablesCreated: string[];

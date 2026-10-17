@@ -30,10 +30,9 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 }) => {
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
   const [selectedMaterial, setSelectedMaterial] = useState<AcademicMaterial | null>(materials[0] || null);
-
   // Upload Modal State
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [uploadSubjectId, setUploadSubjectId] = useState<string>(subjects[0]?.id || 'sub-dbms');
+  const [uploadSubjectId, setUploadSubjectId] = useState<string>(subjects[0]?.id || '');
   const [uploadTitle, setUploadTitle] = useState<string>('');
   const [uploadFileName, setUploadFileName] = useState<string>('');
   const [uploadFileType, setUploadFileType] = useState<string>('pdf');
@@ -248,7 +247,19 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           </h2>
 
           <div className="space-y-1.5">
-            {filteredMaterials.map((mat) => {
+            {filteredMaterials.length === 0 ? (
+              <div className="py-8 text-center text-xs text-slate-500 rounded-md border border-dashed border-slate-800 bg-slate-900/20 space-y-2">
+                <FileText className="w-6 h-6 text-slate-600 mx-auto" />
+                <p>No documents uploaded yet.</p>
+                <button
+                  onClick={() => setIsUploading(true)}
+                  className="text-xs text-slate-400 hover:text-white underline underline-offset-4 cursor-pointer"
+                >
+                  Upload notes or PDF →
+                </button>
+              </div>
+            ) : (
+              filteredMaterials.map((mat) => {
               const isSelected = selectedMaterial?.id === mat.id;
 
               return (
@@ -278,7 +289,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
         </div>
 
@@ -417,8 +428,24 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               )}
             </div>
           ) : (
-            <div className="text-center py-16 text-slate-400 text-xs">
-              Select a lecture file to view synthesized notes.
+            <div className="rounded-xl bg-slate-900/30 border border-dashed border-slate-800 p-12 text-center space-y-3">
+              <UploadCloud className="w-10 h-10 text-slate-600 mx-auto" />
+              <h3 className="text-sm font-medium text-slate-300">
+                {materials.length === 0 ? 'Document vault is empty' : 'Select a file to inspect'}
+              </h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                {materials.length === 0
+                  ? 'Upload course lecture notes, PPTs, or scanned papers. AI will generate summaries, mnemonics, and exam answers.'
+                  : 'Click any document on the left to read its summary and study outline.'}
+              </p>
+              {materials.length === 0 && (
+                <button
+                  onClick={() => setIsUploading(true)}
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer"
+                >
+                  Upload First Document
+                </button>
+              )}
             </div>
           )}
         </div>

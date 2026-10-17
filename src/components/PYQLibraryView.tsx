@@ -42,35 +42,37 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
       </div>
 
       {/* 2. High-Yield Topics */}
-      <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800/50 pb-2">
-          <h2 className="text-xs font-semibold text-slate-200 font-sans-ui">
-            High-Frequency Questions (2020–2025)
-          </h2>
-        </div>
+      {analysisItems && analysisItems.length > 0 && (
+        <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-slate-800/50 pb-2">
+            <h2 className="text-xs font-semibold text-slate-200 font-sans-ui">
+              High-Frequency Questions (2020–2025)
+            </h2>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {analysisItems.map((item, idx) => (
-            <div
-              key={idx}
-              className="p-3.5 rounded bg-slate-900/50 border border-slate-800/80 text-xs space-y-1.5 hover:border-slate-700 transition"
-            >
-              <div className="flex items-center justify-between text-slate-400">
-                <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
-                  Asked {item.frequency}×
-                </span>
-                <span className="font-mono text-[10px] text-slate-400">Max {item.highestMarks}M</span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {analysisItems.map((item, idx) => (
+              <div
+                key={idx}
+                className="p-3.5 rounded bg-slate-900/50 border border-slate-800/80 text-xs space-y-1.5 hover:border-slate-700 transition"
+              >
+                <div className="flex items-center justify-between text-slate-400">
+                  <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
+                    Asked {item.frequency}×
+                  </span>
+                  <span className="font-mono text-[10px] text-slate-400">Max {item.highestMarks}M</span>
+                </div>
+                <h3 className="font-sans-ui font-semibold text-slate-100 line-clamp-1">
+                  {item.topicTitle}
+                </h3>
+                <p className="text-[10px] text-slate-400 font-mono">
+                  Papers: {item.yearsAsked.join(', ')}
+                </p>
               </div>
-              <h3 className="font-sans-ui font-semibold text-slate-100 line-clamp-1">
-                {item.topicTitle}
-              </h3>
-              <p className="text-[10px] text-slate-400 font-mono">
-                Papers: {item.yearsAsked.join(', ')}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 3. Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
@@ -109,61 +111,71 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
 
       {/* 4. Question Archive List */}
       <div className="space-y-3">
-        {filteredPYQs.map((pyq) => {
-          const isExpanded = expandedId === pyq.id;
+        {filteredPYQs.length === 0 ? (
+          <div className="p-10 rounded-xl bg-slate-900/30 border border-dashed border-slate-800 text-center space-y-3">
+            <HelpCircle className="w-8 h-8 text-slate-600 mx-auto" />
+            <h3 className="text-xs font-semibold text-slate-300">No Previous Year Questions in Archive</h3>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              Drop past university exam question papers or notes in the Study Vault to index question patterns and 10-marker model solutions.
+            </p>
+          </div>
+        ) : (
+          filteredPYQs.map((pyq) => {
+            const isExpanded = expandedId === pyq.id;
 
-          return (
-            <div
-              key={pyq.id}
-              className="rounded-md bg-slate-900/30 border border-slate-800/80 overflow-hidden"
-            >
+            return (
               <div
-                onClick={() => setExpandedId(isExpanded ? null : pyq.id)}
-                className="p-4 sm:p-5 flex items-start justify-between gap-4 cursor-pointer hover:bg-slate-900/50 transition select-none"
+                key={pyq.id}
+                className="rounded-md bg-slate-900/30 border border-slate-800/80 overflow-hidden"
               >
-                <div className="space-y-1.5">
-                  <div className="text-[11px] text-slate-400 flex items-center gap-2 font-sans-ui">
-                    <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-1.5 py-0.2 rounded">
-                      {pyq.marks} Marks
-                    </span>
-                    <span>·</span>
-                    <span className="font-mono text-[11px] text-slate-300">{pyq.year} University Paper</span>
-                    <span>·</span>
-                    <span className="text-slate-400">{pyq.source}</span>
+                <div
+                  onClick={() => setExpandedId(isExpanded ? null : pyq.id)}
+                  className="p-4 sm:p-5 flex items-start justify-between gap-4 cursor-pointer hover:bg-slate-900/50 transition select-none"
+                >
+                  <div className="space-y-1.5">
+                    <div className="text-[11px] text-slate-400 flex items-center gap-2 font-sans-ui">
+                      <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-700 px-1.5 py-0.2 rounded">
+                        {pyq.marks} Marks
+                      </span>
+                      <span>·</span>
+                      <span className="font-mono text-[11px] text-slate-300">{pyq.year} University Paper</span>
+                      <span>·</span>
+                      <span className="text-slate-400">{pyq.source}</span>
+                    </div>
+
+                    <h3 className="font-editorial text-base sm:text-lg font-medium text-slate-100 leading-snug">
+                      {pyq.question}
+                    </h3>
                   </div>
 
-                  <h3 className="font-editorial text-base sm:text-lg font-medium text-slate-100 leading-snug">
-                    {pyq.question}
-                  </h3>
+                  <div className="text-slate-400 pt-1 shrink-0">
+                    {isExpanded ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    )}
+                  </div>
                 </div>
 
-                <div className="text-slate-400 pt-1 shrink-0">
-                  {isExpanded ? (
-                    <ChevronUp className="w-4 h-4" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4" />
-                  )}
-                </div>
+                {isExpanded && (
+                  <div className="border-t border-slate-800/60 p-4 sm:p-5 bg-slate-950/60 space-y-3 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="academic-tag text-[10px] text-slate-300">
+                        Standard Scoring Scheme & Model Answer:
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        Faculty Evaluator Standard
+                      </span>
+                    </div>
+                    <div className="p-4 rounded bg-slate-900/60 border border-slate-800/80 text-slate-200 leading-relaxed whitespace-pre-wrap font-sans-ui text-xs sm:text-sm marginalia">
+                      {pyq.modelAnswer}
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {isExpanded && (
-                <div className="border-t border-slate-800/60 p-4 sm:p-5 bg-slate-950/60 space-y-3 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="academic-tag text-[10px] text-slate-300">
-                      Standard Scoring Scheme & Model Answer:
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      Faculty Evaluator Standard
-                    </span>
-                  </div>
-                  <div className="p-4 rounded bg-slate-900/60 border border-slate-800/80 text-slate-200 leading-relaxed whitespace-pre-wrap font-sans-ui text-xs sm:text-sm marginalia">
-                    {pyq.modelAnswer}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </div>
   );

@@ -22,9 +22,7 @@ const apiKey = (rawKey && !rawKey.includes('MY_GEMINI_API_KEY') && !rawKey.start
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 // In-memory persistent store of classrooms
-const classroomsStore: Record<string, Classroom> = {
-  'BCA-SEM3': JSON.parse(JSON.stringify(DEFAULT_CLASSROOM)),
-};
+const classroomsStore: Record<string, Classroom> = {};
 
 import { apiRouter } from './src/server/routes.js';
 import { initDailyAutoSyncScheduler } from './src/server/autoSyncService.js';

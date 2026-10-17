@@ -163,7 +163,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
             University
           </div>
           <div className="text-base font-semibold text-slate-100 mt-1 truncate">
-            {workspace.university || 'State University'}
+            {workspace.university || 'Affiliated University'}
           </div>
           <div className="text-[11px] text-slate-400 mt-0.5">
             Verified Syllabus
@@ -176,10 +176,10 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
             CR Verification
           </div>
           <div className="text-base font-semibold text-emerald-300 mt-1 truncate flex items-center gap-1">
-            <span>{workspace.crName || 'Aarav Sharma'}</span>
+            <span>{workspace.crName || 'Class Representative'}</span>
           </div>
           <div className="text-[11px] text-slate-400 truncate mt-0.5 font-mono">
-            {workspace.crRollNo || 'CR-Authenticated'}
+            {workspace.crRollNo || 'CR-Verified'}
           </div>
         </div>
       </div>
@@ -205,11 +205,27 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {subjects.map((subj) => (
-            <div
-              key={subj.id}
-              className="p-3.5 rounded-lg border border-slate-800/70 bg-slate-950/40 hover:border-slate-700/80 transition flex flex-col justify-between gap-3 group"
-            >
+          {subjects.length === 0 ? (
+            <div className="col-span-full py-8 text-center rounded-lg border border-dashed border-slate-800 bg-slate-950/30 p-6 space-y-3">
+              <BookOpen className="w-8 h-8 text-slate-500 mx-auto" />
+              <h3 className="text-sm font-medium text-slate-300">No subjects configured yet</h3>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                Configure your semester subjects to unlock syllabus mind maps, notes segregation, and exam prep.
+              </p>
+              <button
+                onClick={onOpenClassSetup}
+                className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5 shadow-2xs"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>Configure Semester Subjects</span>
+              </button>
+            </div>
+          ) : (
+            subjects.map((subj) => (
+              <div
+                key={subj.id}
+                className="p-3.5 rounded-lg border border-slate-800/70 bg-slate-950/40 hover:border-slate-700/80 transition flex flex-col justify-between gap-3 group"
+              >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-start gap-2.5">
                   <div className="w-8 h-8 rounded-md bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 shrink-0 mt-0.5">
@@ -260,7 +276,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
                 </div>
               </div>
             </div>
-          ))}
+          )))}
         </div>
       </div>
 

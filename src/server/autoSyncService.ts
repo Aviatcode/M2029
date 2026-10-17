@@ -164,7 +164,7 @@ function buildMasterReadme(db: any): string {
             return `| \`${ppt.rollNumber || 'Cohort'}\` | **${ppt.presenterName || 'Team'}** | ${ppt.subjectName} | ${cleanTitle} | \`${ppt.dueDate}\` | ${status} |`;
           })
           .join('\n')
-      : '| `BCA-01 to 05` | **Aman Kumar & Team** | Operating Systems | Banker\'s Algorithm & Deadlock Avoidance | `2026-10-22` | ⏳ Scheduled |';
+      : '| `Cohort` | **Class Presentation** | General | Schedule will be posted by CR | — | ⏳ Scheduled |';
 
   const timetableRows =
     timetable.length > 0
@@ -174,7 +174,7 @@ function buildMasterReadme(db: any): string {
               `| **${t.day}** | ${t.time} | ${t.subjectName} (${t.subjectCode}) | \`${t.room}\` | ${t.teacherName} |`
           )
           .join('\n')
-      : '| **Monday** | 09:30 AM - 10:45 AM | Database Management Systems (CS301) | `Room 402` | Dr. Rajesh Sharma |';
+      : '| **Mon - Fri** | As per schedule | Timetable will be configured by CR | — | Class Faculty |';
 
   const subjectRows = subjects
     .map(
@@ -507,7 +507,7 @@ function buildPPTScheduleMarkdown(db: any): string {
             return `| \`${p.rollNumber || 'BCA-01 to 05'}\` | **${p.presenterName || 'Team'}** | ${p.subjectName} | ${cleanTitle} | \`${p.dueDate}\` | ${p.completed ? '✅ Presented' : '⏳ Scheduled'} |`;
           })
           .join('\n')
-      : '| `BCA-01 to BCA-05` | **Aman Kumar & Team** | Operating Systems | Banker\'s Algorithm & Deadlock Avoidance | `2026-10-22` | ⏳ Scheduled |';
+      : '| `Cohort` | **Class Presentation** | General | Schedule will be posted by CR | — | ⏳ Scheduled |';
 
   const detailedDirectives = pptItems
     .map((p, idx) => {

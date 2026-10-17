@@ -17,8 +17,14 @@ interface AITutorViewProps {
 
 export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPrompt }) => {
   const [selectedSubject, setSelectedSubject] = useState<string>(
-    subjects[0]?.name || 'Database Management Systems'
+    subjects[0]?.name || 'Course Subject'
   );
+
+  useEffect(() => {
+    if ((selectedSubject === 'Course Subject' || !selectedSubject) && subjects[0]?.name) {
+      setSelectedSubject(subjects[0].name);
+    }
+  }, [subjects, selectedSubject]);
   const [activeMode, setActiveMode] = useState<TutorResponseMode>('simple');
   const [inputQuery, setInputQuery] = useState<string>(initialPrompt || '');
   const [isLoading, setIsLoading] = useState<boolean>(false);

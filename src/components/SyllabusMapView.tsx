@@ -22,11 +22,8 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
   onUpdateTopicStatus,
   onStudyTopic,
 }) => {
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string>(subjects[0]?.id || 'sub-dbms');
-  const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>({
-    'unit-dbms-1': true,
-    'unit-dbms-2': true,
-  });
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>(subjects[0]?.id || '');
+  const [expandedUnits, setExpandedUnits] = useState<Record<string, boolean>>({});
 
   const currentSubject = subjects.find((s) => s.id === selectedSubjectId) || subjects[0];
   const units = unitsBySubject[selectedSubjectId] || [];
@@ -120,9 +117,15 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
 
       {/* 2. Units & Topics Chapter Book */}
       <div className="space-y-3.5">
-        {units.length === 0 ? (
+        {subjects.length === 0 ? (
+          <div className="text-center py-12 rounded-xl bg-slate-900/30 border border-dashed border-slate-800 text-slate-400 text-xs font-sans-ui space-y-2">
+            <BookOpen className="w-8 h-8 text-slate-600 mx-auto" />
+            <p className="text-slate-300 font-medium">No subjects configured yet</p>
+            <p className="text-[11px] text-slate-500">Configure your semester subjects to map units, topics, and exam weightage.</p>
+          </div>
+        ) : units.length === 0 ? (
           <div className="text-center py-12 rounded-md bg-slate-900/30 border border-slate-800 text-slate-400 text-xs font-sans-ui">
-            No syllabus units uploaded for this subject yet.
+            No syllabus units uploaded for this subject yet. Drop lecture notes or syllabus in the Study Vault.
           </div>
         ) : (
           units.map((unit) => {

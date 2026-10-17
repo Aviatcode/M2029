@@ -62,13 +62,13 @@ import {
 } from './utils/shareTargetService';
 
 const DEFAULT_USER: UserProfile = {
-  id: 'user-cr-1',
-  name: 'Aman Kumar',
-  email: 'aman.cr@cs.university.edu',
-  rollNumber: 'BCA-2028-042',
-  role: 'cr',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-  classCode: 'BCA-2028',
+  id: '',
+  name: '',
+  email: '',
+  rollNumber: '',
+  role: 'student',
+  avatarUrl: '',
+  classCode: '',
   isLoggedIn: false,
 };
 
@@ -97,6 +97,31 @@ export default function App() {
       // fallback
     }
 
+    // Purge previous hardcoded demo state (Aman Kumar, BCA-2028) so new users get a clean slate
+    try {
+      const isPurged = localStorage.getItem('syllabus_demo_purged_v2');
+      if (!isPurged) {
+        const savedUser = localStorage.getItem('syllabus_user_profile');
+        if (savedUser && (savedUser.includes('Aman Kumar') || savedUser.includes('user-cr-1'))) {
+          localStorage.removeItem('syllabus_user_profile');
+          localStorage.removeItem('syllabus_workspace');
+          localStorage.removeItem('syllabus_subjects');
+          localStorage.removeItem('syllabus_units');
+          localStorage.removeItem('syllabus_timetable');
+          localStorage.removeItem('syllabus_materials');
+          localStorage.removeItem('syllabus_pyqs');
+          localStorage.removeItem('syllabus_exams');
+          localStorage.removeItem('syllabus_announcements');
+          localStorage.removeItem('syllabus_assignments');
+          localStorage.removeItem('syllabus_notifications');
+          localStorage.removeItem('syllabus_semester_setup_done');
+        }
+        localStorage.setItem('syllabus_demo_purged_v2', 'true');
+      }
+    } catch {
+      // ignore
+    }
+
     // Check if user has an existing active session in localStorage
     try {
       const saved = localStorage.getItem('syllabus_user_profile');
@@ -115,7 +140,23 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState<ActiveNavTab>(getInitialTab);
   const [currentRole, setCurrentRole] = useState<UserRole>('student');
-  const [classCode, setClassCode] = useState<string>('BCA-2028');
+  const [classCode, setClassCode] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_user_profile');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.classCode) return parsed.classCode;
+      }
+      const savedWs = localStorage.getItem('syllabus_workspace');
+      if (savedWs) {
+        const parsedWs = JSON.parse(savedWs);
+        if (parsedWs?.code) return parsedWs.code;
+      }
+    } catch {
+      // ignore
+    }
+    return '';
+  });
   const [bgConfig, setBgConfig] = useState<BackgroundConfig>(getStoredBackgroundConfig);
 
   // Sync tab with URL hash
@@ -230,15 +271,63 @@ export default function App() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  // Core Academic State
-  const [workspace, setWorkspace] = useState<ClassWorkspace>(SEED_CLASS);
-  const [subjects, setSubjects] = useState<Subject[]>(SEED_SUBJECTS);
-  const [unitsBySubject, setUnitsBySubject] = useState<Record<string, any>>(SEED_UNITS);
-  const [timetable, setTimetable] = useState<TimetableClass[]>(SEED_TIMETABLE);
-  const [materials, setMaterials] = useState<AcademicMaterial[]>(SEED_MATERIALS);
-  const [pyqs, setPyqs] = useState<HistoricalPYQ[]>(SEED_PYQS);
-  const [exams, setExams] = useState<ExamDateSheetItem[]>(SEED_EXAMS);
-  const [announcements, setAnnouncements] = useState<ClassAnnouncement[]>(SEED_ANNOUNCEMENTS);
+  // Core Academic State (Clean slate with localStorage persistence for real student use)
+  const [workspace, setWorkspace] = useState<ClassWorkspace>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_workspace');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_CLASS;
+  });
+  const [subjects, setSubjects] = useState<Subject[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_subjects');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_SUBJECTS;
+  });
+  const [unitsBySubject, setUnitsBySubject] = useState<Record<string, any>>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_units');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_UNITS;
+  });
+  const [timetable, setTimetable] = useState<TimetableClass[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_timetable');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_TIMETABLE;
+  });
+  const [materials, setMaterials] = useState<AcademicMaterial[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_materials');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_MATERIALS;
+  });
+  const [pyqs, setPyqs] = useState<HistoricalPYQ[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_pyqs');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_PYQS;
+  });
+  const [exams, setExams] = useState<ExamDateSheetItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_exams');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_EXAMS;
+  });
+  const [announcements, setAnnouncements] = useState<ClassAnnouncement[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_announcements');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_ANNOUNCEMENTS;
+  });
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     try {
       const saved = localStorage.getItem('syllabus_notifications');
@@ -248,16 +337,77 @@ export default function App() {
     }
     return SEED_NOTIFICATIONS;
   });
-  const [assignments, setAssignments] = useState<AcademicAssignment[]>(SEED_ASSIGNMENTS);
+  const [assignments, setAssignments] = useState<AcademicAssignment[]>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_assignments');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return SEED_ASSIGNMENTS;
+  });
   const [isSemesterSetupDone, setIsSemesterSetupDone] = useState<boolean>(() => {
     try {
       const stored = localStorage.getItem('syllabus_semester_setup_done');
       if (stored !== null) return stored === 'true';
-      return true;
+      return false;
     } catch {
-      return true;
+      return false;
     }
   });
+
+  // LocalStorage Persistence Sync
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_workspace', JSON.stringify(workspace));
+    } catch {}
+  }, [workspace]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_subjects', JSON.stringify(subjects));
+    } catch {}
+  }, [subjects]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_units', JSON.stringify(unitsBySubject));
+    } catch {}
+  }, [unitsBySubject]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_timetable', JSON.stringify(timetable));
+    } catch {}
+  }, [timetable]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_materials', JSON.stringify(materials));
+    } catch {}
+  }, [materials]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_pyqs', JSON.stringify(pyqs));
+    } catch {}
+  }, [pyqs]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_exams', JSON.stringify(exams));
+    } catch {}
+  }, [exams]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_announcements', JSON.stringify(announcements));
+    } catch {}
+  }, [announcements]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('syllabus_assignments', JSON.stringify(assignments));
+    } catch {}
+  }, [assignments]);
 
   // Continuous Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
   useEffect(() => {
@@ -447,47 +597,29 @@ export default function App() {
 
   // 7-Minute Prep state
   const [tomorrowPrepData, setTomorrowPrepData] = useState<SevenMinutePrep>({
-    subjectName: 'Java Programming',
-    topicTitle: 'Inheritance & super Keyword',
-    room: 'Room 204',
-    time: '10:00 AM',
+    subjectName: 'Upcoming Lecture',
+    topicTitle: 'Lecture Preparation',
+    room: 'Classroom',
+    time: 'Next Lecture',
     step1WhatIsIt:
-      'Inheritance is an OOP mechanism that allows a subclass to inherit fields and methods from a superclass using the extends keyword.',
+      'Enter your timetable lectures and subjects to generate 7-minute intuition primers before class.',
     step2WhyUsed:
-      'It prevents rewriting boilerplate logic, ensures modular maintenance, and enables runtime polymorphism.',
+      'Pre-class review improves conceptual retention and exam readiness.',
     step3AnalogyAndExample:
-      'Think of a parent giving their car blueprint to their child: the child inherits the engine and wheels, but adds their own customized stereo. class Car extends Vehicle { }',
-    step4MiniQuiz: [
-      {
-        question: 'Which keyword is used to inherit a class in Java?',
-        options: ['implements', 'extends', 'inherits', 'import'],
-        correctIndex: 1,
-        explanation: 'extends connects two classes in Java.',
-      },
-      {
-        question: 'Can a Java class extend multiple classes simultaneously?',
-        options: ['Yes', 'No (Disallowed to prevent Diamond Ambiguity)', 'Only in interfaces', 'Only if final'],
-        correctIndex: 1,
-        explanation: 'Classes only support single and multilevel inheritance; interfaces allow multiple inheritance.',
-      },
-      {
-        question: 'What does the super() method call?',
-        options: ['The parent constructor', 'Garbage collection', 'System exit', 'Private variables'],
-        correctIndex: 0,
-        explanation: 'super() delegates initialization to the immediate superclass constructor.',
-      },
-    ],
+      'AI will formulate real-world analogies based on your actual syllabus topics.',
+    step4MiniQuiz: [],
   });
 
   // Fetch live tomorrow prep from server
   useEffect(() => {
-    fetch('/api/tomorrow/class-bca-2028')
+    if (!classCode) return;
+    fetch(`/api/tomorrow/${classCode}`)
       .then((r) => r.json())
       .then((data) => {
         if (data.prep) setTomorrowPrepData(data.prep);
       })
       .catch((err) => console.warn('Using local prep data:', err));
-  }, []);
+  }, [classCode]);
 
   const handleUpdateTopicStatus = (subjectId: string, topicId: string, status: TopicStatus) => {
     setUnitsBySubject((prev) => {
@@ -515,14 +647,22 @@ export default function App() {
   const handleQuickAIAction = (actionType: string) => {
     switch (actionType) {
       case 'explain':
-        setInitialTutorPrompt('Explain Database Normalization (1NF, 2NF, 3NF, BCNF) simply with real-life analogies.');
+        setInitialTutorPrompt(
+          subjects[0]
+            ? `Explain the core concepts and high-yield exam questions for ${subjects[0].name} simply with real-life analogies.`
+            : 'Explain the core concepts and high-yield exam questions for our syllabus simply with real-life analogies.'
+        );
         setActiveTab('ai-tutor');
         break;
       case 'summarize':
         setActiveTab('materials');
         break;
       case 'mindmap':
-        setInitialTutorPrompt('Create a Mermaid mind map and architecture breakdown for Operating System Deadlocks & Banker Algorithm.');
+        setInitialTutorPrompt(
+          subjects[0]
+            ? `Create a Mermaid mind map and architecture breakdown for ${subjects[0].name}.`
+            : 'Create a Mermaid mind map and architecture breakdown for our syllabus topics.'
+        );
         setActiveTab('ai-tutor');
         break;
       case 'quiz':
@@ -887,32 +1027,14 @@ export default function App() {
           {activeTab === 'pyqs' && (
             <PYQLibraryView
               pyqs={pyqs}
-              analysisItems={[
-                {
-                  topicTitle: 'Normalization (1NF, 2NF, 3NF, BCNF)',
-                  subjectName: 'Database Management Systems',
-                  frequency: 4,
-                  yearsAsked: [2021, 2022, 2024, 2025],
-                  highestMarks: 10,
-                  importanceTier: 'Very High (Must Prepare)',
-                },
-                {
-                  topicTitle: 'ACID Properties & Transaction Schedules',
-                  subjectName: 'Database Management Systems',
-                  frequency: 3,
-                  yearsAsked: [2022, 2023, 2024],
-                  highestMarks: 10,
-                  importanceTier: 'High',
-                },
-                {
-                  topicTitle: 'Deadlock: Coffman Conditions & Banker Algorithm',
-                  subjectName: 'Operating Systems',
-                  frequency: 4,
-                  yearsAsked: [2021, 2023, 2024, 2025],
-                  highestMarks: 10,
-                  importanceTier: 'Very High (Must Prepare)',
-                },
-              ]}
+              analysisItems={pyqs.map((p) => ({
+                topicTitle: p.topicTitle,
+                subjectName: p.subjectName,
+                frequency: p.frequencyCount || 1,
+                yearsAsked: [p.year],
+                highestMarks: p.marks,
+                importanceTier: (p.frequencyCount || 1) >= 3 ? 'Very High (Must Prepare)' : 'High',
+              }))}
               subjects={subjects}
             />
           )}

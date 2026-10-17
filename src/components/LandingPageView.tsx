@@ -20,42 +20,6 @@ interface LandingPageViewProps {
   onGoToDashboard: () => void;
 }
 
-const POPULAR_CLASSES = [
-  { code: 'BCA-2028', name: 'BCA 2028' },
-  { code: 'BTECH-CS-2027', name: 'B.Tech 2027' },
-  { code: 'MCA-2026', name: 'MCA 2026' },
-];
-
-const PRESET_PROFILES: Array<Omit<UserProfile, 'isLoggedIn'>> = [
-  {
-    id: 'user-cr-1',
-    name: 'Aman Kumar',
-    email: 'aman.cr@cs.university.edu',
-    rollNumber: 'BCA-2028-042',
-    role: 'cr',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    classCode: 'BCA-2028',
-  },
-  {
-    id: 'user-stu-2',
-    name: 'Rohan Verma',
-    email: 'rohan.v@cs.university.edu',
-    rollNumber: 'BCA-2028-018',
-    role: 'student',
-    avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
-    classCode: 'BCA-2028',
-  },
-  {
-    id: 'user-fac-3',
-    name: 'Dr. Neha Verma',
-    email: 'neha.verma@faculty.university.edu',
-    rollNumber: 'FACULTY-CS-09',
-    role: 'teacher',
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    classCode: 'BCA-2028',
-  },
-];
-
 export const LandingPageView: React.FC<LandingPageViewProps> = ({
   currentUser,
   classCode,
@@ -76,7 +40,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
     } catch {
       // ignore
     }
-    return classCode || 'BCA-2028';
+    return classCode || '';
   });
   const [selectedRole, setSelectedRole] = useState<UserRole>(
     currentUser.isLoggedIn ? (currentUser.role as UserRole) : 'student'
@@ -103,7 +67,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
     }
 
     if (!cleanClassId) {
-      setFormError('Please specify a Class ID (e.g. BCA-2028).');
+      setFormError('Please enter your Class ID (e.g. CS-2026).');
       return;
     }
 
@@ -121,18 +85,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
     };
 
     onEnterWorkspace(newProfile);
-  };
-
-  const handleSelectPreset = (preset: typeof PRESET_PROFILES[0]) => {
-    setName(preset.name);
-    setEmail(preset.email);
-    setSelectedClassId(preset.classCode);
-    setSelectedRole(preset.role as UserRole);
-
-    onEnterWorkspace({
-      ...preset,
-      isLoggedIn: true,
-    });
   };
 
   return (
@@ -311,7 +263,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                   type={showClassCode ? 'text' : 'password'}
                   value={selectedClassId}
                   onChange={(e) => setSelectedClassId(e.target.value.toUpperCase())}
-                  placeholder="BCA-2028"
+                  placeholder="e.g. CS-2026 or BCA-B"
                   required
                   className="w-full pl-3 pr-9 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-mono uppercase tracking-wider"
                 />
@@ -324,27 +276,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 >
                   {showClassCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
-              </div>
-
-              {/* Quick Class Chips */}
-              <div className="flex items-center gap-1.5 pt-0.5">
-                {POPULAR_CLASSES.map((cls) => (
-                  <button
-                    key={cls.code}
-                    type="button"
-                    onClick={() => {
-                      setSelectedClassId(cls.code);
-                      setShowClassCode(false); // Hide code once entered/selected
-                    }}
-                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition cursor-pointer border ${
-                      selectedClassId === cls.code
-                        ? 'bg-neutral-800 text-white border-neutral-600'
-                        : 'bg-neutral-950 text-neutral-400 border-neutral-850 hover:border-neutral-700'
-                    }`}
-                  >
-                    {showClassCode || selectedClassId !== cls.code ? cls.code : '••••••••'}
-                  </button>
-                ))}
               </div>
             </div>
 
@@ -381,41 +312,17 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 type="submit"
                 className="w-full py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
               >
-                <span>{authMode === 'signup' ? 'Join Workspace' : 'Sign In'}</span>
+                <span>{authMode === 'signup' ? 'Enter Workspace' : 'Sign In'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </form>
 
-          {/* 1-Click Instant Profiles */}
-          <div className="mt-4 pt-3.5 border-t border-neutral-800/80">
-            <span className="text-[10px] text-neutral-500 block mb-2 font-mono">
-              Quick demo profiles:
-            </span>
-            <div className="grid grid-cols-3 gap-2">
-              {PRESET_PROFILES.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => handleSelectPreset(preset)}
-                  className="p-1.5 rounded-lg bg-neutral-950/70 hover:bg-neutral-850 border border-neutral-800/80 hover:border-neutral-700 transition cursor-pointer flex items-center gap-1.5 group min-w-0"
-                >
-                  <img
-                    src={preset.avatarUrl}
-                    alt={preset.name}
-                    className="w-5 h-5 rounded-full object-cover shrink-0 border border-neutral-800"
-                  />
-                  <div className="min-w-0 text-left">
-                    <div className="text-[11px] font-medium text-neutral-300 group-hover:text-white truncate">
-                      {preset.name.split(' ')[0]}
-                    </div>
-                    <div className="text-[9px] text-neutral-500 font-mono uppercase">
-                      {preset.role}
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
+          {/* Clean Guidance */}
+          <div className="mt-4 pt-3.5 border-t border-neutral-800/80 text-center">
+            <p className="text-[11px] text-neutral-400">
+              🎓 Enter your class ID to join your live cohort, or sign up as <span className="text-neutral-200 font-medium">CR</span> to set up your semester curriculum.
+            </p>
           </div>
         </div>
       </main>
@@ -427,7 +334,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           <span>M2029</span>
         </div>
         <div>
-          <span>BCA 2028 Cohort</span>
+          <span>{selectedClassId ? `Class ${selectedClassId}` : 'Academic Workspace'}</span>
         </div>
       </footer>
     </div>

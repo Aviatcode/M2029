@@ -46,6 +46,8 @@ import {
   PYQAnalysisItem,
   ExtractedCourseInfo,
   AcademicAssignment,
+  ClassAnnouncement,
+  AppNotification,
 } from '../types/index.js';
 import { generateGitHubFiles, generateZipBuffer } from './githubExporter.js';
 import { getAutoSyncStatus, executeAutoSync, registerDbProvider } from './autoSyncService.js';
@@ -67,30 +69,16 @@ const CACHE_FILE = path.resolve(process.cwd(), 'curriculum-repo', '.classroom_ca
 
 // Persistent & In-Memory Classroom Store (Synchronized across all students with 0 tokens recreation)
 class MemoryStore {
-  classes: Record<string, ClassWorkspace> = {
-    'BCA-2028': JSON.parse(JSON.stringify(SEED_CLASS)),
-  };
-  subjects: Record<string, Subject[]> = {
-    'class-bca-2028': JSON.parse(JSON.stringify(SEED_SUBJECTS)),
-  };
-  units: Record<string, Unit[]> = JSON.parse(JSON.stringify(SEED_UNITS));
-  timetable: Record<string, any[]> = {
-    'class-bca-2028': JSON.parse(JSON.stringify(SEED_TIMETABLE)),
-  };
-  materials: Record<string, AcademicMaterial[]> = {
-    'class-bca-2028': JSON.parse(JSON.stringify(SEED_MATERIALS)),
-  };
-  pyqs: Record<string, HistoricalPYQ[]> = {
-    'sub-dbms': JSON.parse(JSON.stringify(SEED_PYQS.filter((p) => p.subjectId === 'sub-dbms'))),
-    'sub-java': JSON.parse(JSON.stringify(SEED_PYQS.filter((p) => p.subjectId === 'sub-java'))),
-    'sub-os': JSON.parse(JSON.stringify(SEED_PYQS.filter((p) => p.subjectId === 'sub-os'))),
-  };
-  exams: Record<string, ExamDateSheetItem[]> = {
-    'class-bca-2028': JSON.parse(JSON.stringify(SEED_EXAMS)),
-  };
-  announcements = JSON.parse(JSON.stringify(SEED_ANNOUNCEMENTS));
-  notifications = JSON.parse(JSON.stringify(SEED_NOTIFICATIONS));
-  assignments: AcademicAssignment[] = JSON.parse(JSON.stringify(SEED_ASSIGNMENTS));
+  classes: Record<string, ClassWorkspace> = {};
+  subjects: Record<string, Subject[]> = {};
+  units: Record<string, Unit[]> = {};
+  timetable: Record<string, any[]> = {};
+  materials: Record<string, AcademicMaterial[]> = {};
+  pyqs: Record<string, HistoricalPYQ[]> = {};
+  exams: Record<string, ExamDateSheetItem[]> = {};
+  announcements: ClassAnnouncement[] = [];
+  notifications: AppNotification[] = [];
+  assignments: AcademicAssignment[] = [];
 
   constructor() {
     this.loadFromDisk();

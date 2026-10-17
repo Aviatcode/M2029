@@ -33,11 +33,11 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   onSetupComplete,
 }) => {
   const [step, setStep] = useState<number>(1);
-  const [className, setClassName] = useState<string>('BCA Batch of 2028');
-  const [classCode, setClassCode] = useState<string>('BCA-2028');
+  const [className, setClassName] = useState<string>('');
+  const [classCode, setClassCode] = useState<string>('');
   const [showClassCode, setShowClassCode] = useState<boolean>(false);
-  const [university, setUniversity] = useState<string>('State University');
-  const [semester, setSemester] = useState<number>(3);
+  const [university, setUniversity] = useState<string>('');
+  const [semester, setSemester] = useState<number>(1);
 
   // Google Classroom-style unique code generator
   const generateRandomClassCode = () => {
@@ -49,18 +49,12 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
     const cleanPrefix = className
       .replace(/[^a-zA-Z]/g, '')
       .slice(0, 3)
-      .toUpperCase() || 'BCA';
+      .toUpperCase() || 'SEM';
     setClassCode(`${cleanPrefix}-${rand}`);
   };
 
   // Subjects list: individual items, not comma separated
-  const [subjects, setSubjects] = useState<string[]>([
-    'Java Programming',
-    'Database Management Systems',
-    'Web Development',
-    'Operating Systems',
-    'Computer Networks',
-  ]);
+  const [subjects, setSubjects] = useState<string[]>([]);
   const [newSubjectInput, setNewSubjectInput] = useState<string>('');
   const [subjectError, setSubjectError] = useState<string>('');
 
@@ -68,11 +62,11 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   const [syllabusSnippet, setSyllabusSnippet] = useState<string>('');
 
   // CR Verification & Authentication
-  const [crName, setCrName] = useState<string>('Aarav Sharma (CR)');
-  const [crRollNo, setCrRollNo] = useState<string>('BCA-28-042');
-  const [crPasskey, setCrPasskey] = useState<string>('CR-2028');
+  const [crName, setCrName] = useState<string>('');
+  const [crRollNo, setCrRollNo] = useState<string>('');
+  const [crPasskey, setCrPasskey] = useState<string>('');
   const [crGeminiApiKey, setCrGeminiApiKey] = useState<string>('');
-  const [crDeclared, setCrDeclared] = useState<boolean>(true);
+  const [crDeclared, setCrDeclared] = useState<boolean>(false);
   const [isCrAuthenticated, setIsCrAuthenticated] = useState<boolean>(false);
   const [crAuthError, setCrAuthError] = useState<string>('');
 
@@ -120,7 +114,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
       return;
     }
     if (!crPasskey.trim()) {
-      setCrAuthError('Please enter the CR authentication passkey (default: CR-2028).');
+      setCrAuthError('Please create a CR authentication passkey (minimum 4 characters).');
       return;
     }
     if (!crDeclared) {
@@ -128,9 +122,8 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
       return;
     }
 
-    // Authenticate passkey (accept CR-2028 or any 4+ char key in this environment)
-    if (crPasskey.trim().toUpperCase() !== 'CR-2028' && crPasskey.trim().length < 4) {
-      setCrAuthError('Invalid CR passkey. Use default passkey: CR-2028');
+    if (crPasskey.trim().length < 4) {
+      setCrAuthError('CR passkey must be at least 4 characters long.');
       return;
     }
 
@@ -536,13 +529,13 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     value={crPasskey}
                     disabled={isCrAuthenticated}
                     onChange={(e) => setCrPasskey(e.target.value)}
-                    placeholder="Enter CR Passkey (Default: CR-2028)"
+                    placeholder="Create or enter CR passkey (min 4 chars)"
                     className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 disabled:opacity-60 rounded-xl pl-9 pr-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono outline-none transition"
                   />
                   <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                 </div>
                 <span className="text-[10px] text-slate-400 mt-1 block">
-                  Default authorization passkey for this semester: <strong className="text-slate-200 font-mono">CR-2028</strong>
+                  This passkey protects curriculum edits from unauthorized changes.
                 </span>
               </div>
 

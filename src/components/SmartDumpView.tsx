@@ -244,46 +244,6 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     setTextTitle('');
   };
 
-  // 4. Quick Sample Dumps for One-Click Testing
-  const handleSampleDump = (sampleType: 'os_deadlocks' | 'dbms_norm' | 'cn_osi') => {
-    if (sampleType === 'os_deadlocks') {
-      processAndIngest({
-        fileName: 'OS_Unit3_Deadlocks_Coffman_Conditions.pdf',
-        fileType: 'pdf',
-        fileSize: '1.8 MB',
-        rawTextContent: `Operating Systems Unit 3: Deadlocks and Process Synchronization.
-A deadlock situation can arise if and only if 4 Coffman conditions hold simultaneously:
-1. Mutual Exclusion: At least one resource must be held in a non-shareable mode.
-2. Hold and Wait: A process must be holding at least one resource and waiting to acquire additional resources.
-3. No Preemption: Resources cannot be preempted; a resource can be released only voluntarily by the process holding it.
-4. Circular Wait: A closed chain of processes exists such that each process holds at least one resource needed by the next.
-Banker's Algorithm is used for deadlock avoidance using safe sequences. Available, Max, Allocation, Need matrices.`,
-      });
-    } else if (sampleType === 'dbms_norm') {
-      processAndIngest({
-        fileName: 'DBMS_PYQ_2024_Normalization_1NF_to_BCNF.docx',
-        fileType: 'docx',
-        fileSize: '2.4 MB',
-        rawTextContent: `Database Management Systems University Exam Paper 2024.
-Question 4 (10 Marks): What is Normalization? Explain 1NF, 2NF, 3NF, and BCNF with functional dependencies and anomalous decomposition examples.
-Answer Outline:
-1. Definition of Normalization: Minimizes data redundancy and prevents insertion, deletion, and update anomalies.
-2. 1NF: Atomic values only. No repeating groups.
-3. 2NF: In 1NF and no partial dependencies (every non-prime attribute is fully functionally dependent on primary key).
-4. 3NF: In 2NF and no transitive dependencies (X -> Y where neither is superkey).
-5. BCNF (Boyce-Codd NF): For every functional dependency X -> Y, X must be a super key.`,
-      });
-    } else {
-      processAndIngest({
-        fileName: 'Computer_Networks_Unit2_OSI_7_Layers_Cheatsheet.png',
-        fileType: 'png',
-        fileSize: '3.1 MB',
-        rawTextContent: `Computer Networks OSI 7 Layer Reference Model:
-Application (HTTP, DNS, FTP) -> Presentation (Encryption, ASCII) -> Session (RPC, Sockets) -> Transport (TCP, UDP) -> Network (IP, Routers) -> Data Link (Ethernet, MAC, Switches) -> Physical (Cables, Bits).
-Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please Do Not Throw Sausage Pizza Away" (Bottom to Top).`,
-      });
-    }
-  };
 
   // Group materials into folders: Subject -> Unit -> Category
   const folderTree = React.useMemo(() => {
@@ -400,35 +360,6 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
             >
               <FileText className="w-4 h-4 text-slate-300" />
               <span>Paste Notes / PYQs / Text</span>
-            </button>
-          </div>
-
-          {/* Quick Demo Pre-sets */}
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-slate-500 text-[11px] mr-1 hidden sm:inline">Sample Files:</span>
-            <button
-              onClick={() => handleSampleDump('os_deadlocks')}
-              disabled={isProcessing}
-              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
-              title="Test ingestion with OS Deadlocks notes"
-            >
-              OS Deadlocks
-            </button>
-            <button
-              onClick={() => handleSampleDump('dbms_norm')}
-              disabled={isProcessing}
-              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
-              title="Test ingestion with DBMS Normalization PYQ"
-            >
-              DBMS Normalization
-            </button>
-            <button
-              onClick={() => handleSampleDump('cn_osi')}
-              disabled={isProcessing}
-              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
-              title="Test ingestion with OSI Model Cheatsheet"
-            >
-              OSI 7 Layers
             </button>
           </div>
         </div>
@@ -1217,9 +1148,13 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
           ) : (
             <div className="py-16 text-center space-y-3">
               <FolderOpen className="w-12 h-12 text-slate-600 mx-auto" />
-              <div className="text-sm font-semibold text-slate-300">Select a material from the folder tree</div>
+              <div className="text-sm font-semibold text-slate-300">
+                {materials.length === 0 ? 'Your Vault is Clean & Ready' : 'Select a material from the folder tree'}
+              </div>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Click any note, PYQ, or assignment on the left to inspect its executive notes, mnemonics, visual mindmap, and quiz.
+                {materials.length === 0
+                  ? 'Drop any lecture PDF, slides, or paste notes above. The system will auto-classify them into syllabus folders and generate mindmaps & 10-markers.'
+                  : 'Click any note, PYQ, or assignment on the left to inspect its executive notes, mnemonics, visual mindmap, and quiz.'}
               </p>
             </div>
           )}

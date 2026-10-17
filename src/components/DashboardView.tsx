@@ -167,7 +167,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* 2. Syllabus Horizon */}
-      {subjects.length > 0 && (
+      {subjects.length > 0 ? (
         <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-4 sm:p-5 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/50 pb-3">
             <div className="flex items-center gap-2">
@@ -233,6 +233,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-xl bg-slate-900/40 border border-dashed border-slate-800 p-6 sm:p-7 text-center space-y-3">
+          <BookOpen className="w-8 h-8 text-slate-500 mx-auto" />
+          <h2 className="text-sm font-semibold text-slate-200">Start Your Semester Setup</h2>
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            No subjects configured yet. Add your semester subjects to auto-sort notes into folders, track syllabus progress, and generate AI 10-marker answers.
+          </p>
+          <div className="flex items-center justify-center gap-2 pt-1">
+            <button
+              onClick={() => onNavigateTab('setup')}
+              className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer inline-flex items-center gap-1.5 shadow-2xs"
+            >
+              <span>Configure Semester Curriculum →</span>
+            </button>
+            <button
+              onClick={() => onNavigateTab('dump')}
+              className="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition cursor-pointer border border-slate-700"
+            >
+              <span>Drop Study Notes</span>
+            </button>
           </div>
         </div>
       )}
@@ -394,100 +416,139 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Schedule List */}
         {activeTab === 'schedule' && (
-          <div className="divide-y divide-slate-800/50">
-            {todayClasses.map((cls) => (
-              <div
-                key={cls.id}
-                className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
+          todayClasses.length === 0 ? (
+            <div className="py-8 text-center text-xs text-slate-500 space-y-2 rounded-lg border border-dashed border-slate-800 bg-slate-950/30">
+              <Calendar className="w-6 h-6 text-slate-600 mx-auto" />
+              <p>No lectures scheduled for today.</p>
+              <button
+                onClick={() => onNavigateTab('timetable')}
+                className="text-xs text-slate-400 hover:text-white underline underline-offset-4 cursor-pointer"
               >
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition">
-                      {cls.subjectName}
-                    </h3>
-                  </div>
-                  <p className="text-xs text-slate-400 font-sans-ui">
-                    <span className="font-mono text-slate-300">{cls.time}</span> · Room {cls.room} · Prof. {cls.teacherName}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => onNavigateTab('ai-tutor')}
-                  className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
+                View weekly timetable →
+              </button>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-800/50">
+              {todayClasses.map((cls) => (
+                <div
+                  key={cls.id}
+                  className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
                 >
-                  Study Topic →
-                </button>
-              </div>
-            ))}
-          </div>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition">
+                        {cls.subjectName}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-400 font-sans-ui">
+                      <span className="font-mono text-slate-300">{cls.time}</span> · Room {cls.room} · Prof. {cls.teacherName}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => onNavigateTab('ai-tutor')}
+                    className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
+                  >
+                    Study Topic →
+                  </button>
+                </div>
+              ))}
+            </div>
+          )
         )}
 
         {/* Exams List */}
         {activeTab === 'exams' && (
-          <div className="divide-y divide-slate-800/50">
-            {upcomingExams.map((ex) => {
-              const daysLeft = calculateDaysLeft(ex.date);
-              return (
-                <div
-                  key={ex.id}
-                  className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
-                >
-                  <div className="space-y-0.5">
-                    <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition">
-                      {ex.subjectName}
-                    </h3>
-                    <p className="text-xs text-slate-400 font-sans-ui">
-                      {new Date(ex.date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                      })}{' '}
-                      · {ex.time} · {ex.examType}
-                    </p>
-                  </div>
+          upcomingExams.length === 0 ? (
+            <div className="py-8 text-center text-xs text-slate-500 space-y-2 rounded-lg border border-dashed border-slate-800 bg-slate-950/30">
+              <Calendar className="w-6 h-6 text-slate-600 mx-auto" />
+              <p>No upcoming exams scheduled.</p>
+              <button
+                onClick={() => onNavigateTab('exams')}
+                className="text-xs text-slate-400 hover:text-white underline underline-offset-4 cursor-pointer"
+              >
+                View exam datesheet & revision →
+              </button>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-800/50">
+              {upcomingExams.map((ex) => {
+                const daysLeft = calculateDaysLeft(ex.date);
+                return (
+                  <div
+                    key={ex.id}
+                    className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
+                  >
+                    <div className="space-y-0.5">
+                      <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition">
+                        {ex.subjectName}
+                      </h3>
+                      <p className="text-xs text-slate-400 font-sans-ui">
+                        {new Date(ex.date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                        })}{' '}
+                        · {ex.time} · {ex.examType}
+                      </p>
+                    </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="academic-tag text-[10px] text-slate-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                      {daysLeft} days left
-                    </span>
-                    <button
-                      onClick={() => onNavigateTab('exams')}
-                      className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui"
-                    >
-                      Revision Roadmap →
-                    </button>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="academic-tag text-[10px] text-slate-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                        {daysLeft} days left
+                      </span>
+                      <button
+                        onClick={() => onNavigateTab('exams')}
+                        className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui"
+                      >
+                        Revision Roadmap →
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )
         )}
 
         {/* Notes List */}
         {activeTab === 'notes' && (
-          <div className="divide-y divide-slate-800/50">
-            {recentMaterials.map((mat) => (
-              <div
-                key={mat.id}
-                className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
+          recentMaterials.length === 0 ? (
+            <div className="py-8 text-center text-xs text-slate-500 space-y-2 rounded-lg border border-dashed border-slate-800 bg-slate-950/30">
+              <FileText className="w-6 h-6 text-slate-600 mx-auto" />
+              <p>No materials or notes uploaded yet.</p>
+              <button
+                onClick={() => onNavigateTab('dump')}
+                className="text-xs text-slate-400 hover:text-white underline underline-offset-4 cursor-pointer"
               >
-                <div className="space-y-0.5 truncate pr-2">
-                  <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition truncate">
-                    {mat.title}
-                  </h3>
-                  <p className="text-xs text-slate-400 font-sans-ui truncate">
-                    {mat.subjectName} · Shared by {mat.uploaderName}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => onNavigateTab('materials')}
-                  className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
+                Upload notes, PDFs or slides →
+              </button>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-800/50">
+              {recentMaterials.map((mat) => (
+                <div
+                  key={mat.id}
+                  className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
                 >
-                  Open Notes →
-                </button>
-              </div>
-            ))}
-          </div>
+                  <div className="space-y-0.5 truncate pr-2">
+                    <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition truncate">
+                      {mat.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 font-sans-ui truncate">
+                      {mat.subjectName} · Shared by {mat.uploaderName}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => onNavigateTab('materials')}
+                    className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
+                  >
+                    Open Notes →
+                  </button>
+                </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 

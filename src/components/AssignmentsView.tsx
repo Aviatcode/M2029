@@ -57,7 +57,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
   // New Assignment Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
-  const [newSubject, setNewSubject] = useState(subjects[0]?.name || 'Database Management Systems');
+  const [newSubject, setNewSubject] = useState(subjects[0]?.name || '');
   const [newDueDate, setNewDueDate] = useState('');
   const [newType, setNewType] = useState<ClassworkType>('assignment');
   const [newInstructions, setNewInstructions] = useState('');
@@ -177,57 +177,35 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     const lines = crRosterText.split('\n').filter((l) => l.trim().length > 0);
     const parsedItems: Partial<AcademicAssignment>[] = [];
 
-    if (lines.length > 0) {
-      lines.forEach((line, idx) => {
-        const parts = line.split('-').map((p) => p.trim());
-        const rollAndName = parts[0] || `Roll ${idx + 101}`;
-        const topic = parts[1] || 'Syllabus Presentation Topic';
-        const date = parts[2] || new Date(Date.now() + (idx + 2) * 86400000).toISOString().slice(0, 10);
-
-        parsedItems.push({
-          id: `cr-ppt-${Date.now()}-${idx}`,
-          title: `PPT Presentation: ${topic}`,
-          type: 'ppt_presentation',
-          subjectName: newSubject || 'Database Management Systems',
-          subjectId: 'sub-dbms',
-          dueDate: date,
-          presenterName: rollAndName,
-          rollNumber: rollAndName.split(' ')[1] || `Roll ${idx + 101}`,
-          instructions: `Formal 10-slide PowerPoint presentation on ${topic}. Ensure diagrams and practical examples are included.`,
-          assignedBy: 'Class Representative (CR Official Roster)',
-          completed: false,
-        });
-      });
-    } else {
-      parsedItems.push(
-        {
-          id: `cr-ppt-1-${Date.now()}`,
-          title: 'PPT Presentation: Deadlock Coffman Conditions & Banker Algorithm',
-          type: 'ppt_presentation',
-          subjectName: 'Operating Systems',
-          subjectId: 'sub-os',
-          dueDate: '2026-10-22',
-          presenterName: 'Roll 101 to 105 (Aman Kumar, Priya Singh, Rohit Verma)',
-          rollNumber: 'Roll 101-105',
-          instructions: 'Explain Banker algorithm safety condition, Need Matrix, and Allocation Matrix with dry run.',
-          assignedBy: 'Class Representative (CR)',
-          completed: false,
-        },
-        {
-          id: `cr-ppt-2-${Date.now()}`,
-          title: 'PPT Presentation: BCNF vs 3NF Decomposition & Lossless Join Proof',
-          type: 'ppt_presentation',
-          subjectName: 'Database Management Systems',
-          subjectId: 'sub-dbms',
-          dueDate: '2026-10-25',
-          presenterName: 'Roll 106 to 110 (Ananya Sen, Rahul Sharma, Tanvi Jain)',
-          rollNumber: 'Roll 106-110',
-          instructions: 'Show practical examples of dependency preservation vs BCNF anomalies.',
-          assignedBy: 'Class Representative (CR)',
-          completed: false,
-        }
-      );
+    if (lines.length === 0) {
+      alert('Please enter at least one presentation line (e.g. Roll 101 - Presentation Topic - 2026-10-25)');
+      setIsSyncingCR(false);
+      return;
     }
+
+    const defaultSubject = subjects[0]?.name || 'General';
+    const defaultSubjectId = subjects[0]?.id || 'sub-gen';
+
+    lines.forEach((line, idx) => {
+      const parts = line.split('-').map((p) => p.trim());
+      const rollAndName = parts[0] || `Roll ${idx + 101}`;
+      const topic = parts[1] || 'Syllabus Presentation Topic';
+      const date = parts[2] || new Date(Date.now() + (idx + 2) * 86400000).toISOString().slice(0, 10);
+
+      parsedItems.push({
+        id: `cr-ppt-${Date.now()}-${idx}`,
+        title: `PPT Presentation: ${topic}`,
+        type: 'ppt_presentation',
+        subjectName: newSubject || defaultSubject,
+        subjectId: defaultSubjectId,
+        dueDate: date,
+        presenterName: rollAndName,
+        rollNumber: rollAndName.split(' ')[1] || `Roll ${idx + 101}`,
+        instructions: `Formal 10-slide PowerPoint presentation on ${topic}. Ensure diagrams and practical examples are included.`,
+        assignedBy: 'Class Representative (CR Official Roster)',
+        completed: false,
+      });
+    });
 
     try {
       const res = await fetch('/api/assignments/cr-sync', {
@@ -535,7 +513,23 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-            {subjectFolders.map((folder) => {
+            {subjectFolders.length === 0 ? (
+              <div className="col-span-full py-10 rounded-xl bg-slate-900/30 border border-dashed border-slate-800 text-center space-y-3">
+                <Folder className="w-8 h-8 text-slate-600 mx-auto" />
+                <h3 className="text-xs font-semibold text-slate-300">No coursework or assignments yet</h3>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Add your first class assignment, lab task, or presentation roster to track deadlines and generate AI guides.
+                </p>
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add First Assignment</span>
+                </button>
+              </div>
+            ) : (
+              subjectFolders.map((folder) => {
               const percentDone =
                 folder.totalCount > 0 ? Math.round((folder.completedCount / folder.totalCount) * 100) : 0;
 
@@ -590,7 +584,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
         </div>
       ) : (
@@ -1127,7 +1121,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                     <label className="block text-slate-400 mb-1">Presenter Name</label>
                     <input
                       type="text"
-                      placeholder="e.g. Aman Kumar & Team"
+                      placeholder="e.g. Student Name or Team"
                       value={newPresenter}
                       onChange={(e) => setNewPresenter(e.target.value)}
                       className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-200"
@@ -1221,22 +1215,9 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-slate-300 font-medium">
-                      Paste Presentation Order / Classwork Lines:
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCrRosterText(
-                          `Roll 101 - Aman Kumar & Team - Banker Algorithm & Coffman Conditions - 2026-10-22\nRoll 106 - Priya Singh & Team - B+ Tree vs B-Tree Indexing in MySQL - 2026-10-25\nRoll 111 - Rahul Sharma - Two-Phase Locking & Serializability - 2026-10-28`
-                        )
-                      }
-                      className="text-[11px] text-cyan-400 hover:underline cursor-pointer"
-                    >
-                      Load Sample Schedule
-                    </button>
-                  </div>
+                  <label className="block text-slate-300 font-medium mb-1">
+                    Paste Presentation Order / Classwork Lines:
+                  </label>
                   <textarea
                     rows={6}
                     placeholder="Format: [Roll & Name] - [Presentation Topic] - [Due Date YYYY-MM-DD]&#10;Example:&#10;Roll 101-105 - Banker Algorithm Simulation - 2026-10-22&#10;Roll 106-110 - 3NF and BCNF Normalization - 2026-10-25"
@@ -1245,7 +1226,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                     className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500 resize-none leading-relaxed"
                   />
                   <span className="text-[11px] text-slate-400 block mt-1">
-                    Leave empty to automatically load the standard faculty roster.
+                    Enter one presentation slot per line following the format above.
                   </span>
                 </div>
 

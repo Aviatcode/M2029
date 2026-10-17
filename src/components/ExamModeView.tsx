@@ -45,47 +45,57 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
       </div>
 
       {/* 2. Exam Selection Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {exams.map((ex) => {
-          const isSelected = ex.id === activeExam?.id;
-          const daysLeft = calculateDaysLeft(ex.date);
+      {exams.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-slate-800 bg-slate-900/30 p-10 text-center space-y-3">
+          <Calendar className="w-8 h-8 text-slate-500 mx-auto" />
+          <h2 className="text-sm font-semibold text-slate-200">No Exam Datesheets Added</h2>
+          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            Exam schedules and active recall roadmaps will appear here once dates are configured for your cohort.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {exams.map((ex) => {
+            const isSelected = ex.id === activeExam?.id;
+            const daysLeft = calculateDaysLeft(ex.date);
 
-          return (
-            <div
-              key={ex.id}
-              onClick={() => setSelectedExamId(ex.id)}
-              className={`p-4 rounded-md border cursor-pointer transition space-y-2 select-none ${
-                isSelected
-                  ? 'bg-slate-900 border-slate-700 shadow-2xs'
-                  : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-700'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="academic-tag text-[9px] text-slate-400">
-                  {ex.examType}
-                </span>
-                <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
-                  {daysLeft} Days Left
-                </span>
+            return (
+              <div
+                key={ex.id}
+                onClick={() => setSelectedExamId(ex.id)}
+                className={`p-4 rounded-md border cursor-pointer transition space-y-2 select-none ${
+                  isSelected
+                    ? 'bg-slate-900 border-slate-700 shadow-2xs'
+                    : 'bg-slate-900/30 border-slate-800/80 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="academic-tag text-[9px] text-slate-400">
+                    {ex.examType}
+                  </span>
+                  <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.2 rounded">
+                    {daysLeft} Days Left
+                  </span>
+                </div>
+
+                <h2 className="font-sans-ui font-semibold text-sm text-slate-100 truncate">
+                  {ex.subjectName}
+                </h2>
+
+                <p className="text-xs text-slate-400 font-sans-ui">
+                  <span className="font-mono text-slate-300">
+                    {new Date(ex.date).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>{' '}
+                  · {ex.time}
+                </p>
               </div>
-
-              <h2 className="font-sans-ui font-semibold text-sm text-slate-100 truncate">
-                {ex.subjectName}
-              </h2>
-
-              <p className="text-xs text-slate-400 font-sans-ui">
-                <span className="font-mono text-slate-300">
-                  {new Date(ex.date).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </span>{' '}
-                · {ex.time}
-              </p>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* 3. Active Exam Roadmap Details */}
       {activeExam && (
