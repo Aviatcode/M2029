@@ -63,7 +63,19 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
   const [authMode, setAuthMode] = useState<'signup' | 'signin'>('signup');
   const [name, setName] = useState(currentUser.isLoggedIn ? currentUser.name : '');
   const [email, setEmail] = useState(currentUser.isLoggedIn ? currentUser.email : '');
-  const [selectedClassId, setSelectedClassId] = useState(classCode || 'BCA-2028');
+  const [selectedClassId, setSelectedClassId] = useState(() => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const qCode = searchParams.get('class') || searchParams.get('code');
+      if (qCode) return qCode.trim().toUpperCase();
+      const hash = window.location.hash;
+      const hashMatch = hash.match(/class=([a-zA-Z0-9_-]+)/i) || hash.match(/code=([a-zA-Z0-9_-]+)/i);
+      if (hashMatch) return hashMatch[1].trim().toUpperCase();
+    } catch {
+      // ignore
+    }
+    return classCode || 'BCA-2028';
+  });
   const [selectedRole, setSelectedRole] = useState<UserRole>(
     currentUser.isLoggedIn ? (currentUser.role as UserRole) : 'student'
   );

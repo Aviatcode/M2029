@@ -16,6 +16,7 @@ import {
   Folder,
   AlertCircle,
   Check,
+  RefreshCw,
 } from 'lucide-react';
 
 interface SemesterSetupModalProps {
@@ -34,6 +35,20 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   const [classCode, setClassCode] = useState<string>('BCA-2028');
   const [university, setUniversity] = useState<string>('State University');
   const [semester, setSemester] = useState<number>(3);
+
+  // Google Classroom-style unique code generator
+  const generateRandomClassCode = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let rand = '';
+    for (let i = 0; i < 4; i++) {
+      rand += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const cleanPrefix = className
+      .replace(/[^a-zA-Z]/g, '')
+      .slice(0, 3)
+      .toUpperCase() || 'BCA';
+    setClassCode(`${cleanPrefix}-${rand}`);
+  };
 
   // Subjects list: individual items, not comma separated
   const [subjects, setSubjects] = useState<string[]>([
@@ -264,16 +279,30 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-300 block mb-1">
-                    Class Code
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-slate-300">
+                      Class Code
+                    </label>
+                    <button
+                      type="button"
+                      onClick={generateRandomClassCode}
+                      className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-medium transition cursor-pointer"
+                      title="Generate random unique class code like Google Classroom"
+                    >
+                      <RefreshCw className="w-2.5 h-2.5" />
+                      <span>Generate</span>
+                    </button>
+                  </div>
                   <input
                     type="text"
                     value={classCode}
-                    onChange={(e) => setClassCode(e.target.value)}
-                    placeholder="e.g. BCA-2028"
-                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono uppercase outline-none transition"
+                    onChange={(e) => setClassCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. BCA-2028 or BCA-7K9M"
+                    className="w-full bg-slate-950 border border-slate-700 focus:border-cyan-500 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 font-mono uppercase tracking-wider outline-none transition"
                   />
+                  <span className="text-[10px] text-slate-500 mt-0.5 block">
+                    Unique ID for students to join
+                  </span>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-slate-300 block mb-1">

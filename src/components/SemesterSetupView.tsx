@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GraduationCap,
   ShieldCheck,
@@ -12,6 +12,10 @@ import {
   ArrowRight,
   ExternalLink,
   FolderOpen,
+  Copy,
+  Check,
+  Share2,
+  KeyRound,
 } from 'lucide-react';
 import { ClassWorkspace, Subject } from '../types/index';
 import { ActiveNavTab } from './Sidebar';
@@ -29,6 +33,28 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
   onOpenClassSetup,
   onNavigateTab,
 }) => {
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(workspace.code);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  const handleCopyLink = () => {
+    const inviteUrl = `${window.location.origin}${window.location.pathname}#class=${workspace.code}`;
+    navigator.clipboard.writeText(inviteUrl);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const handleShareWhatsApp = () => {
+    const inviteUrl = `${window.location.origin}${window.location.pathname}#class=${workspace.code}`;
+    const text = `Join our ${workspace.name} on SyllabusOS!\nClass Code: ${workspace.code}\nDirect Join Link: ${inviteUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Header Banner */}
@@ -60,6 +86,56 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
           <Sliders className="w-3.5 h-3.5 text-slate-300" />
           <span>Edit Semester Setup</span>
         </button>
+      </div>
+
+      {/* Google Classroom-style Class Code & Invite Share Center */}
+      <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-cyan-950/20 p-5 md:p-6 backdrop-blur-md shadow-lg relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-2 py-0.5 rounded-md flex items-center gap-1 font-semibold">
+                <KeyRound className="w-3 h-3" />
+                Google Classroom Style Code
+              </span>
+              <span className="text-xs text-slate-400">• Unique Cohort Key</span>
+            </div>
+            <h2 className="text-lg md:text-xl font-bold text-white mt-1.5 flex items-center gap-2 flex-wrap">
+              Class Invite Code:
+              <span className="font-mono text-cyan-300 bg-slate-950 border border-cyan-500/40 px-3 py-1 rounded-xl tracking-wider select-all font-bold">
+                {workspace.code}
+              </span>
+            </h2>
+            <p className="text-xs text-slate-400 mt-1 max-w-xl">
+              Give this unique code to students to join your classroom. Entering this code on login or opening the invite link connects their dashboard, notes, and timetable.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              onClick={handleCopyCode}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition cursor-pointer shadow-md"
+            >
+              {copiedCode ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedCode ? 'Code Copied!' : 'Copy Code'}</span>
+            </button>
+
+            <button
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition cursor-pointer"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-slate-400" />}
+              <span>{copiedLink ? 'Link Copied!' : 'Copy Invite Link'}</span>
+            </button>
+
+            <button
+              onClick={handleShareWhatsApp}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-medium transition cursor-pointer"
+              title="Share invite code and link directly to Class WhatsApp group"
+            >
+              <span>Share to WhatsApp</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Cohort Overview Cards */}
