@@ -36,6 +36,7 @@ import { PYQLibraryView } from './components/PYQLibraryView';
 import { ExamModeView } from './components/ExamModeView';
 import { TimetableView } from './components/TimetableView';
 import { AssignmentsView } from './components/AssignmentsView';
+import { SmartDumpView } from './components/SmartDumpView';
 import { TomorrowPrepModal } from './components/TomorrowPrepModal';
 import { SemesterSetupModal } from './components/SemesterSetupModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
@@ -654,6 +655,18 @@ export default function App() {
                 </p>
               </div>
             </div>
+          )}
+
+          {activeTab === 'dump' && (
+            <SmartDumpView
+              materials={materials}
+              subjects={subjects}
+              unitsBySubject={unitsBySubject}
+              currentRole={currentRole}
+              classCode={classCode}
+              onMaterialUploaded={handleMaterialUploaded}
+              onNavigateToTab={(tab) => setActiveTab(tab as any)}
+            />
           )}
 
           {activeTab === 'syllabus' && (

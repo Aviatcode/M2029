@@ -159,6 +159,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </button>
         </form>
 
+        {/* Universal AI Drop Zone Callout Banner */}
+        <div
+          onClick={() => onNavigateTab('dump')}
+          className="p-3 rounded-xl border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 via-slate-900 to-indigo-950/40 hover:border-cyan-500/50 transition cursor-pointer flex items-center justify-between gap-3 shadow-sm group"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4 group-hover:scale-110 transition" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <span>Universal AI Drop & Auto-Sort</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Zero Prompting</span>
+              </div>
+              <p className="text-[11px] text-slate-400 hidden sm:block">
+                Dump notes, PDFs, or pasted text. AI files into folders & generates mindmaps, mnemonics & quizzes!
+              </p>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded-md bg-cyan-600/90 hover:bg-cyan-500 text-white text-xs font-bold shrink-0 transition cursor-pointer">
+            Drop In →
+          </span>
+        </div>
+
         {/* Calm Mode Indicator */}
         {calmMode && (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400">

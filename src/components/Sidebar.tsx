@@ -12,12 +12,14 @@ import {
   ChevronRight,
   SlidersHorizontal,
   Compass,
+  Sparkles,
 } from 'lucide-react';
 
 export type ActiveNavTab =
   | 'landing'
   | 'dashboard'
   | 'tomorrow'
+  | 'dump'
   | 'syllabus'
   | 'timetable'
   | 'ai-tutor'
@@ -51,6 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const primaryItems = [
     { id: 'dashboard' as const, label: 'Today', icon: LayoutDashboard },
+    { id: 'dump' as const, label: 'AI Drop Hub', icon: Sparkles },
     { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot },
     { id: 'syllabus' as const, label: 'Syllabus', icon: Map },
     { id: 'materials' as const, label: 'Notes', icon: FolderOpen },

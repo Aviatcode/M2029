@@ -88,10 +88,18 @@ export interface MaterialResources {
   summary: string;
   hinglishSummary?: string;
   mindmapMermaid?: string;
+  mindmapNodes?: any[];
   keyConcepts: { concept: string; explanation: string }[];
   importantDefinitions: { term: string; definition: string }[];
   examples: { title: string; scenario: string; takeaway: string }[];
   examPoints: string[];
+  mnemonics?: { term: string; acronym?: string; mnemonic: string; explanation: string }[];
+  exam10Marker?: {
+    question: string;
+    answerStructure: string;
+    modelAnswerMarkdown: string;
+    keyDiagramText?: string;
+  };
   flashcards: { id: string; question: string; answer: string }[];
   quiz: {
     id: string;
@@ -102,6 +110,9 @@ export interface MaterialResources {
   }[];
   possibleQuestions: { marks: number; question: string; answerOutline: string }[];
   relatedPYQs: { year: number; marks: number; question: string }[];
+  detectedCategory?: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'cheat_sheet' | 'lab';
+  folderPath?: string;
+  crossReferences?: string[];
 }
 
 export type ProcessingStage =
@@ -121,6 +132,10 @@ export interface AcademicMaterial {
   subjectName: string;
   topicId?: string;
   topicTitle?: string;
+  unitNumber?: number;
+  unitTitle?: string;
+  folderPath?: string;
+  detectedCategory?: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'cheat_sheet' | 'lab';
   title: string;
   fileName: string;
   fileType: 'pdf' | 'ppt' | 'pptx' | 'doc' | 'docx' | 'notes' | 'image' | 'jpg' | 'png' | 'txt' | string;

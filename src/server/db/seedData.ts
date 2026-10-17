@@ -423,6 +423,20 @@ export const SEED_MATERIALS: AcademicMaterial[] = [
         'Always find the candidate key using attribute closure before attempting normal form classification.',
         'State explicitly whether a decomposition is both Lossless and Dependency Preserving.',
       ],
+      mnemonics: [
+        {
+          term: 'Normalization Hierarchy (1NF to BCNF)',
+          acronym: 'A-P-T-S',
+          mnemonic: 'All Prime Turbines Spin (Atomic, Partial, Transitive, Superkey)',
+          explanation: '1NF requires Atomic values; 2NF eliminates Partial dependencies; 3NF eliminates Transitive dependencies; BCNF requires left-side to be a Superkey.',
+        },
+      ],
+      exam10Marker: {
+        question: 'Explain Database Normalization from 1NF to BCNF with functional dependency proofs and anomalous decomposition examples.',
+        answerStructure: '1. Definition & Need for Normalization (2 Marks)\n2. 1NF, 2NF, 3NF & BCNF Invariants (4 Marks)\n3. Numerical Decomposition Proof (3 Marks)\n4. Lossless Join vs Dependency Preservation Matrix (1 Mark)',
+        modelAnswerMarkdown: `### 1. Introduction & Objectives of Normalization\nNormalization is a formal database design technique that decomposes complex relations to eliminate redundant data and avoid Insert, Update, and Delete anomalies.\n\n### 2. Normal Forms Hierarchy\n- **First Normal Form (1NF)**: Every cell contains only atomic (indivisible) values. No multi-valued or composite attributes.\n- **Second Normal Form (2NF)**: Must be in 1NF, and all non-prime attributes must be fully functionally dependent on candidate keys (No partial dependencies).\n- **Third Normal Form (3NF)**: Must be in 2NF, and no non-prime attribute should transitively depend on the primary key.\n- **Boyce-Codd Normal Form (BCNF)**: Stricter version of 3NF. For every FD X -> Y, X must strictly be a Superkey.\n\n### 3. Step-by-Step Numerical Example\nGiven relation R(StudentID, CourseID, Professor, Office):\n- FDs: {StudentID, CourseID} -> Professor; Professor -> Office.\n- Candidate Key: {StudentID, CourseID}.\n- Decompose into R1(StudentID, CourseID, Professor) and R2(Professor, Office).\n- Result: Lossless and satisfies BCNF.\n\n### 4. University Evaluator Advice\nAlways draw the dependency arrow diagrams and write the attribute closures (e.g. {X}+) before writing the decomposition tables.`,
+        keyDiagramText: 'Dependency Diagram: {StudentID, CourseID} -> Professor; Professor -> Office (Transitive Dependency highlighted)',
+      },
       flashcards: [
         {
           id: 'fc-1',
@@ -466,9 +480,13 @@ export const SEED_MATERIALS: AcademicMaterial[] = [
     id: 'mat-2',
     classId: 'class-bca-2028',
     subjectId: 'sub-java',
-    subjectName: 'Java Programming',
+    subjectName: 'Core Java Programming',
     topicId: 'topic-java-inheritance',
     topicTitle: 'Inheritance & Method Overriding',
+    unitNumber: 2,
+    unitTitle: 'Unit 2: Inheritance, Polymorphism & Interfaces',
+    folderPath: 'Core Java Programming / Unit 2 - Inheritance & Interfaces / NOTES',
+    detectedCategory: 'notes',
     title: 'Unit 2 OOPs Inheritance Notes & Code Snippets.pdf',
     fileName: 'Java_Unit2_Inheritance_Shared.pdf',
     fileType: 'pdf',
@@ -483,6 +501,20 @@ export const SEED_MATERIALS: AcademicMaterial[] = [
       hinglishSummary:
         'Inheritance ka matlab code reuse karna. Parent class ke methods aur properties child class use kar sakti hai. Java mein `extends` keyword use hota hai. Multiple inheritance classes ke through allow nahi hoti taaki Diamond Problem na aaye, par Interfaces se hum ise achieve karte hain.',
       mindmapMermaid: `graph TD\n  A[Inheritance in Java] --> B[Single Inheritance]\n  A --> C[Multilevel Inheritance]\n  A --> D[Hierarchical Inheritance]\n  A --> E[Multiple: Disallowed for Classes, Allowed via Interfaces]`,
+      mnemonics: [
+        {
+          term: 'OOPs 4 Pillars',
+          acronym: 'A-P-I-E',
+          mnemonic: 'A Piece of Indian Earth (Abstraction, Polymorphism, Inheritance, Encapsulation)',
+          explanation: 'Standard foundational mnemonic for any university Java examination.',
+        },
+      ],
+      exam10Marker: {
+        question: 'Differentiate Method Overloading and Method Overriding with suitable Java programs and dynamic method dispatch illustration.',
+        answerStructure: '1. Comparison Table: Overloading vs Overriding (4 Marks)\n2. Working Java Program for Overriding with super() (3 Marks)\n3. Dynamic Method Dispatch & Runtime Polymorphism (2 Marks)\n4. Diamond Problem Resolution via Interfaces (1 Mark)',
+        modelAnswerMarkdown: `### 1. Conceptual Distinction\n- **Method Overloading**: Compile-time polymorphism occurring in the same class with identical method names but differing argument lists.\n- **Method Overriding**: Runtime polymorphism occurring between Superclass and Subclass with identical method name, parameter list, and return type.\n\n### 2. Java Code Illustration\n\`\`\`java\nclass Bank {\n    double getInterestRate() { return 5.0; }\n}\nclass HDFC extends Bank {\n    @Override\n    double getInterestRate() { return 7.5; }\n}\n\`\`\`\n\n### 3. Dynamic Method Dispatch\nWhen a superclass reference variable refers to a subclass object, Java determines which version of an overridden method to call at runtime based on the object type, not the reference type.`,
+        keyDiagramText: 'Inheritance Tree Diagram: Bank (Base) <- HDFC (Child overrides getInterestRate())',
+      },
       keyConcepts: [
         { concept: 'super keyword', explanation: 'Invokes parent constructor or overridden parent methods.' },
         { concept: 'Diamond Problem', explanation: 'Ambiguity when two parent classes implement the same method.' },
@@ -519,6 +551,83 @@ export const SEED_MATERIALS: AcademicMaterial[] = [
       relatedPYQs: [
         { year: 2024, marks: 10, question: 'Explain dynamic method dispatch in Java with a complete program.' },
         { year: 2023, marks: 5, question: 'What is the role of super keyword in constructor chaining?' },
+      ],
+    },
+  },
+  {
+    id: 'mat-3',
+    classId: 'class-bca-2028',
+    subjectId: 'sub-os',
+    subjectName: 'Operating Systems',
+    topicId: 'topic-os-deadlocks',
+    topicTitle: 'Deadlocks & Process Synchronization',
+    unitNumber: 3,
+    unitTitle: 'Unit 3: Deadlocks & Synchronization',
+    folderPath: 'Operating Systems / Unit 3 - Deadlocks & Synchronization / NOTES',
+    detectedCategory: 'notes',
+    title: 'Unit 3 Deadlock Coffman Conditions & Banker Algorithm.pdf',
+    fileName: 'OS_Unit3_Deadlocks_Coffman.pdf',
+    fileType: 'pdf',
+    fileSize: '3.1 MB',
+    uploaderName: 'Prof. Rajesh Sharma (Faculty)',
+    uploaderRole: 'teacher',
+    verificationStatus: 'teacher_verified',
+    createdAt: '3 days ago',
+    resources: {
+      summary:
+        'Detailed analysis of the 4 Coffman conditions for deadlocks, Resource Allocation Graphs (RAG), and Banker Algorithm for deadlock avoidance.',
+      hinglishSummary:
+        'Deadlock tab hota hai jab processes ek dusre ke resources hold karke wait kar rahe hote hain. Iske 4 mandatory conditions hain (MHNC). Banker\'s Algorithm se OS check karta hai ki state safe hai ya nahi.',
+      mindmapMermaid: `graph TD\n  A[Deadlocks] --> B[4 Coffman Conditions: MHNC]\n  A --> C[Deadlock Prevention]\n  A --> D[Deadlock Avoidance: Banker Algorithm]\n  A --> E[Deadlock Detection & Recovery]`,
+      mnemonics: [
+        {
+          term: 'The 4 Coffman Conditions',
+          acronym: 'M-H-N-C',
+          mnemonic: 'Must Have No Circularity (Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait)',
+          explanation: 'All 4 conditions must hold simultaneously for a deadlock to exist.',
+        },
+      ],
+      exam10Marker: {
+        question: 'Explain the 4 Necessary Conditions for Deadlock (Coffman Conditions). Describe Banker\'s Algorithm with Safe State mathematical proof.',
+        answerStructure: '1. Formal Definition & Coffman Conditions (4 Marks)\n2. Resource Allocation Graph (RAG) with Cycle Example (2 Marks)\n3. Banker\'s Algorithm Data Structures (Allocation, Max, Available, Need) (3 Marks)\n4. Recovery Strategies (1 Mark)',
+        modelAnswerMarkdown: `### 1. The Four Coffman Conditions (1971)\nA deadlock can arise if and only if all four conditions hold concurrently in the system:\n1. **Mutual Exclusion**: At least one resource must be non-shareable.\n2. **Hold and Wait**: A process holds at least one resource and is waiting for others.\n3. **No Preemption**: Resources cannot be forcibly seized; only released voluntarily.\n4. **Circular Wait**: A closed chain P0 -> P1 -> ... -> Pn -> P0 exists where each waits for a resource held by the next.\n\n### 2. Banker's Algorithm Data Structures\n- \`Available[m]\`: Free instances of resource types.\n- \`Max[n][m]\`: Maximum demand of process \`i\`.\n- \`Allocation[n][m]\`: Currently held instances.\n- \`Need[n][m] = Max[n][m] - Allocation[n][m]\`.\n\n### 3. Safety Algorithm Proof\nFind an index \`i\` such that \`Finish[i] == false\` and \`Need[i] <= Work\`. Update \`Work = Work + Allocation[i]\` and \`Finish[i] = true\`. Repeat until all processes finish. If all processes finish, state is SAFE.`,
+        keyDiagramText: 'Resource Allocation Graph: P1 -> R1 -> P2 -> R2 -> P1 (Closed Cycle implies deadlock)',
+      },
+      keyConcepts: [
+        { concept: 'Safe State Invariant', explanation: 'System can allocate resources to each process in some sequence without deadlocking.' },
+        { concept: 'Resource Allocation Graph', explanation: 'Directed graph where cycles indicate deadlocks in single-instance systems.' },
+      ],
+      importantDefinitions: [
+        {
+          term: 'Deadlock',
+          definition: 'A state in which every process in a set is waiting for an event that only another process in the set can cause.',
+        },
+      ],
+      examples: [
+        {
+          title: 'Single Lane Bridge Anomaly',
+          scenario: 'Two cars meet head-on on a single-lane bridge. Neither can move forward without the other backing up.',
+          takeaway: 'Starvation and deadlock resolved only by preemption (one car backs up).',
+        },
+      ],
+      examPoints: ['Always compute the Need Matrix: Need = Max - Allocation before starting the algorithm steps.'],
+      flashcards: [
+        { id: 'fc-os1', question: 'Which Coffman condition is broken by spooling?', answer: 'Mutual Exclusion (spooling allows virtual concurrency for non-shareable printers).' },
+      ],
+      quiz: [
+        {
+          id: 'q-os1',
+          question: 'Which of the following is NOT one of the 4 Coffman conditions for deadlocks?',
+          options: ['Mutual Exclusion', 'Hold and Wait', 'Aging Priority', 'Circular Wait'],
+          correctIndex: 2,
+          explanation: 'Aging is a scheduling technique to prevent starvation, not a Coffman condition.',
+        },
+      ],
+      possibleQuestions: [
+        { marks: 10, question: 'Given a resource matrix with 5 processes and 3 resources, determine if the system is in a safe state using Banker Algorithm.', answerOutline: 'Compute Need matrix -> Apply safety test -> Print safe sequence.' },
+      ],
+      relatedPYQs: [
+        { year: 2024, marks: 10, question: 'State Coffman conditions and solve given Banker Algorithm numerical.' },
       ],
     },
   },
