@@ -164,7 +164,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       >
         <span className="flex items-center gap-2 min-w-0">
           <Search className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
-          <span className="truncate text-xs">Search anything... (Syllabus, Notes, PYQs)</span>
+          <span className="truncate text-xs">Search...</span>
         </span>
         <kbd className="text-[10px] font-mono text-neutral-400 bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800 shrink-0">⌘K</kbd>
       </button>
@@ -179,17 +179,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           aria-label="Search"
         >
           <Search className="w-4 h-4" />
-        </button>
-
-        {/* AI Key / Model Configuration Trigger */}
-        <button
-          onClick={onOpenAIKeyConfig}
-          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-neutral-900/70 hover:bg-neutral-850 border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white transition cursor-pointer"
-          title="Configure API Key & Models"
-          aria-label="API Key Settings"
-        >
-          <KeyRound className="w-3.5 h-3.5 text-neutral-400" />
-          <span className="text-[11px] max-w-[130px] truncate">{currentAiModel}</span>
         </button>
 
         {/* Notifications Icon with count number badge */}

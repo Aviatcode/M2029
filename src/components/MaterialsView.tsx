@@ -186,27 +186,21 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in">
       {/* 1. Academic Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-              Notes & Materials Sync
-            </h1>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-emerald-400" />
-              <span>0 Tokens Fetch</span>
-            </span>
-          </div>
+        <div className="space-y-0.5">
+          <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+            Notes & Materials
+          </h1>
           <p className="text-xs text-slate-400 font-sans-ui">
-            Upload PDFs, DOCX, notes & images once. Automatically synced across every classmate's device without AI recreation.
+            Course documents and notes.
           </p>
         </div>
 
         <button
           onClick={() => setIsUploading(true)}
-          className="px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold shadow-md transition cursor-pointer self-start sm:self-auto flex items-center gap-2 font-sans-ui"
+          className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
         >
-          <UploadCloud className="w-4 h-4" />
-          <span>Upload Material (PDF, DOCX, JPG)</span>
+          <UploadCloud className="w-3.5 h-3.5" />
+          <span>Upload</span>
         </button>
       </div>
 
@@ -241,9 +235,8 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Files Column */}
         <div className="space-y-2.5">
-          <h2 className="academic-tag text-[10px] text-slate-400 flex items-center justify-between">
-            <span>Document Archive ({filteredMaterials.length})</span>
-            <span className="text-emerald-400">⚡ Pre-Cached</span>
+          <h2 className="academic-tag text-[10px] text-slate-400">
+            Document Archive ({filteredMaterials.length})
           </h2>
 
           <div className="space-y-1.5">

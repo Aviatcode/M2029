@@ -145,12 +145,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             alt="AM Logo"
             className="w-14 h-14 rounded-2xl object-contain shadow-lg mb-1 border border-neutral-800"
           />
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 text-[11px] font-mono">
-            <Sparkles className="w-3 h-3 text-neutral-400" />
-            <span>M2029 Classroom Desk</span>
-          </div>
-
-          <h1 className="font-editorial text-3xl sm:text-4xl font-normal tracking-tight text-white">
+          <h1 className="font-editorial text-3xl sm:text-4xl font-normal tracking-tight text-white mt-1">
             Your syllabus, lecture-ready.
           </h1>
 
@@ -208,7 +203,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Aman Kumar"
+                  placeholder="Your full name"
                   required={authMode === 'signup'}
                   className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-sans"
                 />
@@ -233,30 +228,10 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
 
             {/* Common Class ID */}
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label className="text-[11px] font-medium text-neutral-400 flex items-center gap-1">
-                  <Hash className="w-3 h-3 text-neutral-500" />
-                  <span>Class ID</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowClassCode(!showClassCode)}
-                  className="text-[10px] text-neutral-400 hover:text-neutral-200 transition cursor-pointer flex items-center gap-1"
-                  title={showClassCode ? 'Hide class ID' : 'Reveal class ID'}
-                >
-                  {showClassCode ? (
-                    <>
-                      <EyeOff className="w-3 h-3" />
-                      <span>Hide</span>
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="w-3 h-3" />
-                      <span>Reveal</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              <label className="text-[11px] font-medium text-neutral-400 flex items-center gap-1">
+                <Hash className="w-3 h-3 text-neutral-500" />
+                <span>Class ID</span>
+              </label>
 
               <div className="relative">
                 <input
@@ -317,13 +292,6 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               </button>
             </div>
           </form>
-
-          {/* Clean Guidance */}
-          <div className="mt-4 pt-3.5 border-t border-neutral-800/80 text-center">
-            <p className="text-[11px] text-neutral-400">
-              🎓 Enter your class ID to join your live cohort, or sign up as <span className="text-neutral-200 font-medium">CR</span> to set up your semester curriculum.
-            </p>
-          </div>
         </div>
       </main>
 

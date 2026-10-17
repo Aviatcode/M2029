@@ -186,44 +186,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
         </div>
       </div>
 
-      {/* 2. Academic Model Tier & Personal vs Shared Classroom Key Docket */}
-      <div className="px-4 py-2 border-b border-slate-800/60 bg-slate-900/30 flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-2 shrink-0">
-        <div className="flex items-center gap-2 text-slate-300">
-          {aiSettings.mode === 'personal' && (aiSettings.personalApiKey || aiSettings.personalProvider === 'custom') ? (
-            <span className="academic-tag text-[10px] text-slate-200 bg-slate-800 border border-slate-700 px-2 py-0.5 rounded inline-flex items-center gap-1.5 font-medium">
-              <Cpu className="w-3 h-3 text-slate-400" />
-              <span>
-                Personal: {MODEL_PRESETS.find((p) => p.id === aiSettings.personalModel)?.name || aiSettings.personalModel}
-              </span>
-            </span>
-          ) : classModelInfo.hasCustomKey ? (
-            <span className="academic-tag text-[10px] text-slate-200 bg-slate-800 border border-slate-700 px-2 py-0.5 rounded inline-flex items-center gap-1.5 font-medium">
-              <BookOpen className="w-3 h-3 text-slate-400" />
-              <span>Class Shared: {classModelInfo.providerName}</span>
-            </span>
-          ) : (
-            <span className="academic-tag text-[10px] text-slate-300 bg-slate-800/80 border border-slate-700/80 px-2 py-0.5 rounded inline-flex items-center gap-1.5 font-medium">
-              <BookOpen className="w-3 h-3 text-slate-400" />
-              <span>Standard Model</span>
-            </span>
-          )}
-          <span className="text-slate-600 hidden sm:inline">·</span>
-          <span className="text-[11px] text-slate-400 font-sans-ui hidden sm:inline">
-            {aiSettings.mode === 'personal' && (aiSettings.personalApiKey || aiSettings.personalProvider === 'custom')
-              ? 'Using your private device key'
-              : 'Shared for all classmates'}
-          </span>
-        </div>
 
-        <button
-          onClick={() => setIsKeyModalOpen(true)}
-          className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer shrink-0 self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
-          title="Switch Models or Configure Keys"
-        >
-          <BookOpen className="w-3 h-3 text-slate-400" />
-          <span>Switch Model / Key</span>
-        </button>
-      </div>
 
       {/* 3. Integrated Study Stream (Scholarly Entries, not chat bubbles) */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
@@ -249,15 +212,10 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
               key={msg.id}
               className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-4"
             >
-              <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
-                    {msg.modeUsed ? msg.modeUsed.toUpperCase().replace('_', ' ') : 'ACADEMIC LESSON'}
-                  </span>
-                  <span className="text-slate-400 text-[11px] font-sans-ui hidden sm:inline">
-                    Curriculum & Exam Archive Alignment
-                  </span>
-                </div>
+              <div className="flex items-center justify-between border-b border-slate-800/60 pb-2 text-xs">
+                <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
+                  {msg.modeUsed ? msg.modeUsed.toUpperCase().replace('_', ' ') : 'ACADEMIC LESSON'}
+                </span>
                 <span className="font-mono text-[10px] text-slate-500">{msg.timestamp}</span>
               </div>
 
@@ -268,8 +226,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
 
               {/* Citations & Syllabus References */}
               {msg.sourcesUsed && msg.sourcesUsed.length > 0 && (
-                <div className="pt-3 border-t border-slate-800/60 flex flex-wrap items-center gap-2 text-xs">
-                  <span className="academic-tag text-[9px] text-slate-500">References:</span>
+                <div className="pt-2.5 border-t border-slate-800/60 flex flex-wrap items-center gap-1.5 text-xs">
                   {msg.sourcesUsed.map((src, i) => (
                     <span
                       key={i}
@@ -282,25 +239,24 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
               )}
 
               {/* Suggested Academic Follow-up Inquiries */}
-              <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
-                <span className="text-[10px] text-slate-500 academic-tag">Actions:</span>
+              <div className="pt-1.5 flex flex-wrap items-center gap-1.5 text-xs">
                 <button
                   onClick={() => handleSend(`Structure this explanation as a standard 10-marker university exam answer with diagrams and key scoring points.`)}
                   className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] transition cursor-pointer font-sans-ui"
                 >
-                  10-Marker Exam Format
+                  10-Marker
                 </button>
                 <button
                   onClick={() => handleSend(`Explain this concept using a simple real-world analogy (ELI9) with intuitive takeaways.`)}
                   className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] transition cursor-pointer font-sans-ui"
                 >
-                  ELI9 Analogy
+                  ELI9
                 </button>
                 <button
                   onClick={() => handleSend(`Provide a 5-mark conceptual practice question with an evaluation rubric on this topic.`)}
                   className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] transition cursor-pointer font-sans-ui"
                 >
-                  5-Mark Quiz
+                  Quiz
                 </button>
               </div>
             </div>
@@ -310,7 +266,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
         {isLoading && (
           <div className="flex items-center gap-2.5 text-xs text-slate-400 p-3 rounded-md bg-slate-900/40 border border-slate-800/60 font-sans-ui">
             <Sparkles className="w-4 h-4 text-neutral-300 animate-spin" />
-            <span>Consulting syllabus knowledge base & formulating academic explanation...</span>
+            <span>Formulating explanation...</span>
           </div>
         )}
       </div>
@@ -328,17 +284,16 @@ export const AITutorView: React.FC<AITutorViewProps> = ({ subjects, initialPromp
             type="text"
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
-            placeholder={`Inquire any concept or question about ${selectedSubject}...`}
-            className="flex-1 bg-slate-900/80 border border-slate-800 focus:border-slate-600 rounded-md px-3.5 py-2.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition font-sans-ui shadow-2xs"
+            placeholder={`Ask anything about ${selectedSubject}...`}
+            className="flex-1 bg-slate-900/80 border border-slate-800 focus:border-slate-600 rounded-md px-3.5 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition font-sans-ui"
           />
           <button
             type="submit"
             disabled={isLoading || !inputQuery.trim()}
-            className="px-3.5 py-2.5 rounded-md bg-slate-800 hover:bg-slate-750 disabled:opacity-40 text-slate-200 hover:text-white border border-slate-700 transition cursor-pointer font-sans-ui text-xs font-medium flex items-center gap-1.5"
-            title="Submit academic query"
+            className="px-3 py-2 rounded-md bg-slate-100 hover:bg-white disabled:opacity-40 text-slate-950 transition cursor-pointer flex items-center justify-center shrink-0"
+            title="Send query"
           >
-            <span>Inquire</span>
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-4 h-4" />
           </button>
         </form>
       </div>

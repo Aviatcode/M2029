@@ -76,7 +76,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Curriculum structure, enrolled subjects, and Class Representative authentication.
+              Curriculum structure and enrolled subjects.
             </p>
           </div>
         </div>

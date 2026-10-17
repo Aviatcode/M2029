@@ -37,7 +37,7 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
           Previous Year Questions
         </h1>
         <p className="text-xs text-slate-400 font-sans-ui">
-          University past questions and 10-marker model rubrics.
+          Past exam questions.
         </p>
       </div>
 
@@ -77,7 +77,6 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
       {/* 3. Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 font-sans-ui">Archive Filter:</span>
           <select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
@@ -96,7 +95,7 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
             onChange={(e) => setSelectedYear(e.target.value)}
             className="bg-slate-900 border border-slate-800/90 rounded px-2.5 py-1 text-slate-200 focus:outline-none cursor-pointer font-sans-ui text-xs"
           >
-            <option value="all">All Examination Sessions</option>
+            <option value="all">All Years</option>
             <option value="2025">2025 End-Term</option>
             <option value="2024">2024 End-Term</option>
             <option value="2023">2023 End-Term</option>
@@ -105,7 +104,7 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
         </div>
 
         <span className="academic-tag text-[10px] text-slate-400">
-          {filteredPYQs.length} Questions Indexed
+          {filteredPYQs.length} Questions
         </span>
       </div>
 
@@ -158,15 +157,10 @@ export const PYQLibraryView: React.FC<PYQLibraryViewProps> = ({
                 </div>
 
                 {isExpanded && (
-                  <div className="border-t border-slate-800/60 p-4 sm:p-5 bg-slate-950/60 space-y-3 text-xs">
-                    <div className="flex items-center justify-between">
-                      <span className="academic-tag text-[10px] text-slate-300">
-                        Standard Scoring Scheme & Model Answer:
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        Faculty Evaluator Standard
-                      </span>
-                    </div>
+                  <div className="border-t border-slate-800/60 p-4 sm:p-5 bg-slate-950/60 space-y-2 text-xs">
+                    <span className="academic-tag text-[10px] text-slate-300 block">
+                      Model Answer:
+                    </span>
                     <div className="p-4 rounded bg-slate-900/60 border border-slate-800/80 text-slate-200 leading-relaxed whitespace-pre-wrap font-sans-ui text-xs sm:text-sm marginalia">
                       {pyq.modelAnswer}
                     </div>

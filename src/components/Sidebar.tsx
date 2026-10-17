@@ -119,11 +119,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <nav className={`flex-1 overflow-y-auto space-y-4 ${isCollapsed ? 'p-2' : 'p-3'}`}>
         {/* Primary Items */}
         <div className="space-y-0.5">
-          {!isCollapsed && (
-            <span className="academic-tag text-[9px] text-slate-500 px-2.5 block mb-1.5">
-              Curriculum & Study
-            </span>
-          )}
           {primaryItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -161,15 +156,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Secondary Items */}
         <div
-          className={`space-y-0.5 pt-3 border-t border-slate-800/60 ${
+          className={`space-y-0.5 pt-2.5 border-t border-slate-800/60 ${
             isCollapsed ? 'text-center' : ''
           }`}
         >
-          {!isCollapsed && (
-            <span className="academic-tag text-[9px] text-slate-500 px-2.5 block mb-1.5">
-              Schedule & Tasks
-            </span>
-          )}
           {secondaryItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;

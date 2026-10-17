@@ -424,7 +424,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             Assignments & Presentations
           </h1>
           <p className="text-xs text-slate-400 font-sans-ui">
-            Classwork deadlines and seminar presentation roster.
+            Deadlines and presentation roster.
           </p>
         </div>
 
@@ -481,7 +481,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Search assignments or topics..."
+            placeholder="Search assignments..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/50 rounded-xl pl-8 pr-8 py-2 text-xs text-slate-200 outline-none transition"
@@ -1210,31 +1210,27 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               </div>
             ) : (
               <div className="space-y-4 text-xs">
-                <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-indigo-200 leading-relaxed space-y-1">
-                  <strong>How it works:</strong> As the CR, paste or load the teacher's official PPT order and assignment deadlines below. In <strong>one single click</strong>, it will sync with every student in the class and post a cohort notice.
-                </div>
-
                 <div>
                   <label className="block text-slate-300 font-medium mb-1">
                     Paste Presentation Order / Classwork Lines:
                   </label>
                   <textarea
                     rows={6}
-                    placeholder="Format: [Roll & Name] - [Presentation Topic] - [Due Date YYYY-MM-DD]&#10;Example:&#10;Roll 101-105 - Banker Algorithm Simulation - 2026-10-22&#10;Roll 106-110 - 3NF and BCNF Normalization - 2026-10-25"
+                    placeholder="Format: [Roll & Name] - [Topic] - [Due Date YYYY-MM-DD]&#10;Example:&#10;Roll 101-105 - Banker Algorithm Simulation - 2026-10-22&#10;Roll 106-110 - 3NF and BCNF Normalization - 2026-10-25"
                     value={crRosterText}
                     onChange={(e) => setCrRosterText(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500 resize-none leading-relaxed"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-slate-700 resize-none leading-relaxed"
                   />
                   <span className="text-[11px] text-slate-400 block mt-1">
-                    Enter one presentation slot per line following the format above.
+                    Enter one presentation slot per line.
                   </span>
                 </div>
 
-                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
                   <button
                     type="button"
                     onClick={() => setIsCRPortalOpen(false)}
-                    className="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 cursor-pointer text-xs"
                   >
                     Cancel
                   </button>
@@ -1242,10 +1238,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                     type="button"
                     onClick={handleCRSync}
                     disabled={isSyncingCR}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition cursor-pointer shadow-md shadow-indigo-600/30"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer"
                   >
                     <ShieldCheck className="w-4 h-4" />
-                    <span>{isSyncingCR ? 'Broadcasting to Class...' : 'Sync with Whole Class (1-Click)'}</span>
+                    <span>{isSyncingCR ? 'Syncing...' : 'Sync with Class'}</span>
                   </button>
                 </div>
               </div>

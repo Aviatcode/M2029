@@ -37,10 +37,10 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
       {/* 1. Header */}
       <div className="space-y-1 border-b border-slate-800/60 pb-4">
         <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-          Exam Datesheet & Revision
+          Exam Datesheet
         </h1>
         <p className="text-xs text-slate-400 font-sans-ui">
-          Upcoming examinations and active recall revision roadmap.
+          Upcoming examinations.
         </p>
       </div>
 
@@ -102,9 +102,6 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
         <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/60">
             <div className="space-y-0.5">
-              <span className="academic-tag text-[10px] text-neutral-400">
-                Milestone Roadmap
-              </span>
               <h2 className="font-editorial text-xl sm:text-2xl font-medium text-slate-100">
                 {activeExam.subjectName}
               </h2>
@@ -115,9 +112,9 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
 
             <button
               onClick={() => onOpenStudySession(activeExam.subjectName)}
-              className="px-3.5 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
+              className="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5 font-sans-ui"
             >
-              <span>Review Topics in AI Study Hall</span>
+              <span>Open in AI Tutor</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -125,7 +122,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
           {/* Revision Days Checklist */}
           <div className="space-y-3">
             <h3 className="academic-tag text-[10px] text-slate-400">
-              Daily Syllabus Targets & Active Recall Milestones
+              Daily Targets
             </h3>
 
             <div className="space-y-2">
