@@ -21,6 +21,7 @@ export interface ModelPreset {
   developerPortalUrl: string;
   keyPrefix: string;
   keyPlaceholder: string;
+  baseUrl?: string;
 }
 
 export interface StoredAiSettings {

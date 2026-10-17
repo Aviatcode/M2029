@@ -180,14 +180,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Search className="w-4 h-4" />
         </button>
 
-        {/* AI Model Hub Trigger */}
+        {/* AI Key / Model Configuration Trigger */}
         <button
           onClick={onOpenAIKeyConfig}
-          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-neutral-900/70 hover:bg-neutral-800 border border-neutral-800 hover:border-indigo-500/40 text-neutral-300 hover:text-white transition cursor-pointer"
-          title="Switch AI Models or Configure Keys"
-          aria-label="AI Model Settings"
+          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-neutral-900/70 hover:bg-neutral-850 border border-neutral-800 hover:border-neutral-700 text-neutral-300 hover:text-white transition cursor-pointer"
+          title="Configure API Key & Models"
+          aria-label="API Key Settings"
         >
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <KeyRound className="w-3.5 h-3.5 text-neutral-400" />
           <span className="text-[11px] max-w-[130px] truncate">{currentAiModel}</span>
         </button>
 
@@ -308,7 +308,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-neutral-300 hover:text-white hover:bg-neutral-900 transition text-left cursor-pointer"
                 >
                   <KeyRound className="w-3.5 h-3.5 text-neutral-400" />
-                  <span>AI Models & API Keys</span>
+                  <span>Model & API Settings</span>
                 </button>
 
                 {/* Settings */}

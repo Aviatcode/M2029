@@ -101,11 +101,11 @@ export class UniversalAIProvider implements AIProvider {
       openrouter: `OpenRouter (${this.modelName})`,
       gemini: `Google Gemini (${this.modelName})`,
       custom: `Custom / Local (${this.baseUrl || 'Local'})`,
-      sandbox: `Universal AI Testing Sandbox Engine`,
-      basic: `Built-in Academic Model (Free)`,
+      sandbox: `Testing Sandbox (Simulated)`,
+      basic: `Default Academic Engine (Offline)`,
     };
 
-    this.name = providerDisplayNames[this.provider] || `AI Engine (${this.modelName})`;
+    this.name = providerDisplayNames[this.provider] || `Model Engine (${this.modelName})`;
 
     // Initialize Gemini SDK if Gemini is chosen and key is not placeholder
     if (this.provider === 'gemini' && this.apiKey && !this.apiKey.includes('MY_GEMINI_API_KEY')) {
@@ -130,7 +130,7 @@ export class UniversalAIProvider implements AIProvider {
 
     if (this.provider === 'sandbox') {
       const mockRes = await new MockAIProvider().generateText(prompt, systemInstruction);
-      return `[🧪 TEST MODE ACTIVE - Universal AI Sandbox]\n\n${mockRes}`;
+      return `[🧪 TEST MODE - Simulated Academic Engine]\n\n${mockRes}`;
     }
 
     try {

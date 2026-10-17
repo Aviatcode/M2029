@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
   X,
-  Sparkles,
   KeyRound,
   ExternalLink,
-  ShieldCheck,
   CheckCircle2,
   AlertCircle,
   Eye,
   EyeOff,
-  Cpu,
-  Layers,
   Database,
-  ArrowRight,
-  Server,
   User,
   Users,
-  Zap,
-  Activity,
   Check,
   RotateCcw,
+  SlidersHorizontal,
 } from 'lucide-react';
 import {
   ModelProviderType,
@@ -63,7 +56,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
   }>({
     hasCustomKey: false,
     modelType: 'basic',
-    providerName: 'Loading class status...',
+    providerName: 'Checking server status...',
     provider: 'gemini',
     modelName: 'gemini-2.5-flash',
   });
@@ -98,54 +91,65 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
       setTestingStatus({ isLoading: false });
       setClassSaveMessage(null);
 
-      // Fetch server class status
-      fetch('/api/ai/config')
+      // Fetch live class server status
+      fetch('/api/ai/status')
         .then((r) => r.json())
         .then((data) => {
-          if (data) {
-            setClassStatus({
-              hasCustomKey: Boolean(data.hasCustomKey),
-              modelType: data.modelType || 'basic',
-              providerName: data.providerName || 'Built-in Academic Model (Free)',
-              provider: data.provider || 'gemini',
-              modelName: data.modelName || 'gemini-2.5-flash',
-            });
-            setClassProvider(data.provider || 'gemini');
-            setClassModelName(data.modelName || 'gemini-2.5-flash');
-          }
-        })
-        .catch(() => {});
-
-      // Fetch Supabase status
-      try {
-        setSupabaseUrl(localStorage.getItem('syllabus_supabase_url') || '');
-        setSupabaseKey(localStorage.getItem('syllabus_supabase_key') || '');
-      } catch {}
-
-      fetch('/api/supabase/status')
-        .then((r) => r.json())
-        .then((data) => {
-          if (data) setSupabaseStatus(data);
+          setClassStatus({
+            hasCustomKey: Boolean(data.hasCustomKey),
+            modelType: data.modelType || 'basic',
+            providerName: data.providerName || 'Default Class Model',
+            provider: data.provider || 'gemini',
+            modelName: data.modelName || 'gemini-2.5-flash',
+          });
+          setClassProvider(data.provider || 'gemini');
+          setClassModelName(data.modelName || 'gemini-2.5-flash');
         })
         .catch(() => {
-          setSupabaseStatus({ configured: false, ok: false, message: 'Offline mode active.' });
+          setClassStatus((prev) => ({
+            ...prev,
+            providerName: 'Class Server (Offline or Basic Model)',
+          }));
+        });
+
+      // Fetch Supabase status
+      const savedUrl = localStorage.getItem('syllabus_supabase_url') || '';
+      const savedKey = localStorage.getItem('syllabus_supabase_key') || '';
+      setSupabaseUrl(savedUrl);
+      setSupabaseKey(savedKey);
+
+      fetch('/api/db/test-supabase')
+        .then((r) => r.json())
+        .then((d) => {
+          setSupabaseStatus({
+            configured: d.configured,
+            ok: d.ok,
+            message: d.message,
+          });
+        })
+        .catch(() => {
+          setSupabaseStatus({
+            configured: Boolean(savedUrl && savedKey),
+            ok: false,
+            message: 'Database check failed.',
+          });
         });
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
+  const currentPreset =
+    MODEL_PRESETS.find((p) => p.id === selectedPresetId) || MODEL_PRESETS[0];
   const currentPortal = PROVIDER_PORTALS[settings.personalProvider] || PROVIDER_PORTALS.gemini;
-  const currentPreset = MODEL_PRESETS.find((p) => p.id === selectedPresetId) || MODEL_PRESETS[0];
 
   const handleSelectPreset = (preset: (typeof MODEL_PRESETS)[0]) => {
     setSelectedPresetId(preset.id);
     const updated: StoredAiSettings = {
       ...settings,
-      mode: 'personal',
       personalProvider: preset.provider,
       personalModel: preset.id,
-      personalBaseUrl: preset.provider === 'custom' ? 'http://localhost:11434/v1' : settings.personalBaseUrl,
+      personalBaseUrl: preset.baseUrl || settings.personalBaseUrl,
     };
     setSettings(updated);
     saveStoredAiSettings(updated);
@@ -199,8 +203,8 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
       result: {
         ok: res.ok,
         message: res.ok
-          ? `✓ Operational! Latency: ${res.latencyMs}ms (${res.providerName})`
-          : `✗ Test failed: ${res.error}`,
+          ? `✓ Connected (${res.latencyMs}ms latency) - ${res.providerName}`
+          : `✗ Connection failed: ${res.error}`,
         latencyMs: res.latencyMs,
       },
     });
@@ -230,7 +234,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
         });
         setClassSaveMessage({
           type: 'success',
-          text: `✓ Class default model updated to ${data.providerName}. All students without a personal key will now use this!`,
+          text: `✓ Class default model updated to ${data.providerName}. Shared across all students.`,
         });
         setClassApiKey('');
       } else {
@@ -247,109 +251,106 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     try {
       localStorage.setItem('syllabus_supabase_url', supabaseUrl.trim());
       localStorage.setItem('syllabus_supabase_key', supabaseKey.trim());
-      alert('✓ Supabase credentials saved locally. Ensure you also add them to Render Environment variables.');
+      alert('✓ Database credentials saved locally.');
     } catch {}
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto animate-fade-in">
-      <div className="w-full max-w-2xl rounded-2xl bg-neutral-900 border border-neutral-800 p-6 shadow-2xl text-neutral-100 my-8 space-y-5">
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
+      <div className="w-full max-w-xl rounded-2xl bg-slate-950 border border-slate-800 p-6 shadow-2xl text-slate-100 my-8 space-y-5">
+        {/* Header: Clean, quiet academic style */}
+        <div className="flex items-center justify-between pb-3.5 border-b border-slate-800/80">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white shadow-md">
-              <Cpu className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-200 shadow-sm shrink-0">
+              <KeyRound className="w-4 h-4 text-slate-300" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base text-white">AI Model Hub & Key Center</h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                  Multi-Model
-                </span>
-              </div>
-              <p className="text-xs text-neutral-400">
-                Choose models for personal study or configure shared access for your whole class.
+              <h3 className="font-semibold text-sm text-slate-100 font-serif-heading">
+                Model & API Key Settings
+              </h3>
+              <p className="text-xs text-slate-400">
+                Configure your key to power pre-lecture primers, mindmaps, and classroom cache.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer shrink-0"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="grid grid-cols-3 rounded-xl bg-neutral-950 p-1 border border-neutral-800 text-xs">
+        {/* Tab Switcher: Segmented Control */}
+        <div className="grid grid-cols-3 rounded-xl bg-slate-900/60 p-1 border border-slate-800/80 text-xs">
           <button
             type="button"
             onClick={() => setActiveTab('personal')}
-            className={`py-2 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-1.5 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'personal'
-                ? 'bg-neutral-850 text-white border border-neutral-700 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
+                ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <User className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Personal Model</span>
+            <User className="w-3.5 h-3.5" />
+            <span>Personal Key</span>
             {settings.mode === 'personal' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('class_server')}
-            className={`py-2 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-1.5 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'class_server'
-                ? 'bg-neutral-850 text-white border border-neutral-700 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
+                ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Users className="w-3.5 h-3.5 text-purple-400" />
-            <span>Class Shared Key</span>
+            <Users className="w-3.5 h-3.5" />
+            <span>Class Shared</span>
             {settings.mode === 'class' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('supabase')}
-            className={`py-2 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`py-1.5 px-3 rounded-lg font-medium transition cursor-pointer flex items-center justify-center gap-1.5 ${
               activeTab === 'supabase'
-                ? 'bg-neutral-850 text-white border border-neutral-700 shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200'
+                ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Database className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Cloud DB</span>
+            <Database className="w-3.5 h-3.5" />
+            <span>Database</span>
           </button>
         </div>
 
-        {/* TAB 1: PERSONAL MODEL */}
+        {/* TAB 1: PERSONAL STUDY KEY */}
         {activeTab === 'personal' && (
-          <div className="space-y-4 animate-fade-in">
-            {/* Mode Toggle Banner */}
-            <div className="p-3.5 rounded-xl bg-neutral-950/70 border border-neutral-800 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold text-white">Current Active Engine for this Browser</p>
-                <p className="text-[11px] text-neutral-400 mt-0.5">
+          <div className="space-y-4">
+            {/* Active Mode Banner */}
+            <div className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/80 flex items-center justify-between text-xs">
+              <div className="space-y-0.5">
+                <span className="text-slate-400 text-[11px] block">Current Browser Mode:</span>
+                <span className="font-medium text-slate-200 block">
                   {settings.mode === 'personal'
-                    ? `Using Personal Key: ${currentPreset.name} (${currentPreset.badge})`
-                    : `Using Class Shared Key: ${classStatus.providerName}`}
-                </p>
+                    ? `Personal Key (${currentPreset.name})`
+                    : `Class Shared Key (${classStatus.providerName})`}
+                </span>
               </div>
-              <div className="flex items-center gap-1 bg-neutral-900 p-1 rounded-lg border border-neutral-800">
+              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
                 <button
                   type="button"
                   onClick={() => handleToggleMode('class')}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
+                  className={`px-2 py-1 rounded text-[11px] font-medium transition cursor-pointer ${
                     settings.mode === 'class'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-neutral-400 hover:text-white'
+                      ? 'bg-slate-800 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   Class Key
@@ -357,10 +358,10 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                 <button
                   type="button"
                   onClick={() => handleToggleMode('personal')}
-                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
+                  className={`px-2 py-1 rounded text-[11px] font-medium transition cursor-pointer ${
                     settings.mode === 'personal'
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-neutral-400 hover:text-white'
+                      ? 'bg-slate-800 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   My Key
@@ -368,60 +369,35 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
               </div>
             </div>
 
-            {/* Model Presets Grid */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-semibold text-neutral-300">Choose Your AI Model</label>
-                <span className="text-[11px] text-neutral-500">Pick from top providers</span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-56 overflow-y-auto pr-1">
-                {MODEL_PRESETS.map((preset) => {
-                  const isSelected = selectedPresetId === preset.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => handleSelectPreset(preset)}
-                      className={`text-left p-2.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? 'bg-indigo-950/40 border-indigo-500/60 ring-1 ring-indigo-500/30'
-                          : 'bg-neutral-950/40 border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900/60'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-1 w-full mb-1">
-                        <span className="text-xs font-bold text-white truncate">{preset.name}</span>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-indigo-400 shrink-0" />}
-                      </div>
-                      <div className="flex items-center gap-1.5 mt-auto">
-                        <span
-                          className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${
-                            preset.freeTierAvailable
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                              : 'bg-neutral-800 text-neutral-400'
-                          }`}
-                        >
-                          {preset.badge}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            {/* Provider Selector: Clean Native Select */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300 block">Model Provider</label>
+              <select
+                value={selectedPresetId}
+                onChange={(e) => {
+                  const preset = MODEL_PRESETS.find((p) => p.id === e.target.value);
+                  if (preset) handleSelectPreset(preset);
+                }}
+                className="w-full px-3 py-2 text-xs rounded-xl bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-slate-600 transition"
+              >
+                {MODEL_PRESETS.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} — {p.badge} {p.freeTierAvailable ? '(Free Tier Available)' : ''}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* API Key Input */}
-            <div className="space-y-1.5 bg-neutral-950/50 p-3.5 rounded-xl border border-neutral-800">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
-                  <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>{currentPortal.name} API Key</span>
-                </label>
+            <div className="space-y-2 bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/80">
+              <div className="flex items-center justify-between text-xs">
+                <label className="font-medium text-slate-300">{currentPortal.name} API Key</label>
                 {currentPortal.url && (
                   <a
                     href={currentPortal.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition"
+                    className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 transition underline"
                   >
                     <span>Get Free Key</span>
                     <ExternalLink className="w-3 h-3" />
@@ -435,21 +411,21 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                   value={settings.personalApiKey}
                   onChange={(e) => handleSavePersonalKey(e.target.value)}
                   placeholder={currentPortal.placeholder}
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-indigo-500 pr-10"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none focus:border-slate-600 pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPersonalKey(!showPersonalKey)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition cursor-pointer"
-                  aria-label="Toggle visibility"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                  aria-label="Toggle key visibility"
                 >
                   {showPersonalKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               </div>
 
               {settings.personalProvider === 'custom' && (
-                <div className="mt-2 space-y-1">
-                  <label className="text-[11px] text-neutral-400">Local Endpoint Base URL</label>
+                <div className="pt-2 space-y-1 text-xs">
+                  <label className="text-[11px] text-slate-400">Endpoint Base URL</label>
                   <input
                     type="text"
                     value={settings.personalBaseUrl}
@@ -459,235 +435,210 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                       saveStoredAiSettings(updated);
                     }}
                     placeholder="http://localhost:11434/v1"
-                    className="w-full px-3 py-1.5 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none focus:border-slate-600"
                   />
                 </div>
               )}
 
-              <p className="text-[11px] text-neutral-500 leading-relaxed mt-1">
-                🔒 Your personal key is stored only inside your browser (never saved on the server). It is transmitted
-                securely over HTTPS to answer your syllabus and assignment questions.
+              <p className="text-[11px] text-slate-500 pt-0.5">
+                Saved locally in your browser. Never uploaded or shared with classmates.
               </p>
             </div>
 
-            {/* Test Connection Result */}
-            {testingStatus.result && (
-              <div
-                className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 ${
-                  testingStatus.result.ok
-                    ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
-                    : 'bg-rose-950/30 border-rose-500/30 text-rose-300'
-                }`}
-              >
-                {testingStatus.result.ok ? (
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                )}
-                <div className="flex-1">
-                  <p className="font-medium">{testingStatus.result.message}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-1">
+            {/* Test Connection & Status */}
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
               <button
                 type="button"
-                onClick={() => {
-                  handleSavePersonalKey('');
-                  handleToggleMode('class');
-                }}
-                className="px-3 py-1.5 rounded-lg text-xs text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800 transition cursor-pointer flex items-center gap-1.5"
+                onClick={handleTestConnection}
+                disabled={testingStatus.isLoading || (!settings.personalApiKey && settings.personalProvider !== 'custom')}
+                className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition cursor-pointer disabled:opacity-40"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Class Default</span>
+                {testingStatus.isLoading ? 'Testing...' : 'Test Connection'}
               </button>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleTestConnection}
-                  disabled={testingStatus.isLoading || (!settings.personalApiKey && settings.personalProvider !== 'custom')}
-                  className="px-3.5 py-2 rounded-lg text-xs font-medium bg-neutral-800 hover:bg-neutral-750 text-neutral-200 border border-neutral-700 transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              {testingStatus.result && (
+                <span
+                  className={`text-xs font-medium ${
+                    testingStatus.result.ok ? 'text-emerald-400' : 'text-rose-400'
+                  }`}
                 >
-                  <Activity className={`w-3.5 h-3.5 ${testingStatus.isLoading ? 'animate-spin' : 'text-indigo-400'}`} />
-                  <span>{testingStatus.isLoading ? 'Testing...' : 'Test Connection'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer"
-                >
-                  Done
-                </button>
-              </div>
+                  {testingStatus.result.message}
+                </span>
+              )}
             </div>
           </div>
         )}
 
-        {/* TAB 2: CLASS SHARED KEY (SERVER-WIDE) */}
+        {/* TAB 2: CLASS SHARED KEY (SERVER-HOSTED) */}
         {activeTab === 'class_server' && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-500/30 space-y-2">
+          <div className="space-y-4">
+            <div className="p-3.5 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-1 text-xs">
+              <span className="text-slate-400 text-[11px] block">Server Model Status:</span>
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-purple-400" />
-                <span className="text-xs font-bold text-purple-200">Shared Class Key Architecture</span>
-              </div>
-              <p className="text-xs text-neutral-300 leading-relaxed">
-                When you configure a shared key here, it is saved on the Render server. Any classmate or student who
-                opens the website <strong>without</strong> their own API key automatically uses this model for free!
-              </p>
-              <div className="pt-2 flex items-center gap-2">
-                <span className="text-[11px] text-neutral-400">Current Server Status:</span>
+                <span className="font-semibold text-slate-200">{classStatus.providerName}</span>
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono-code ${
                     classStatus.hasCustomKey
                       ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                      : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                      : 'bg-slate-800 text-slate-400'
                   }`}
                 >
-                  {classStatus.providerName}
+                  {classStatus.hasCustomKey ? 'Active Key' : 'Default / Fallback'}
                 </span>
               </div>
+              <p className="text-[11px] text-slate-400 pt-1">
+                Keys configured here are saved on the server so every classmate gets instant access with 0 setup.
+              </p>
             </div>
 
-            <div className="space-y-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800">
-              <label className="text-xs font-semibold text-neutral-300">Set New Shared Server Key</label>
+            {/* Admin Key Update Form */}
+            <div className="space-y-3 bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/80 text-xs">
+              <label className="font-medium text-slate-300 block">
+                Update Shared Class Key (CR / Admin)
+              </label>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[11px] text-neutral-400 mb-1 block">Provider</label>
+                  <label className="text-[11px] text-slate-400 block mb-1">Provider</label>
                   <select
                     value={classProvider}
                     onChange={(e) => setClassProvider(e.target.value as ModelProviderType)}
-                    className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white focus:outline-none focus:border-purple-500 cursor-pointer"
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none"
                   >
-                    <option value="gemini">Google Gemini (Recommended for Class)</option>
-                    <option value="groq">Groq Cloud (Fast Free Llama 3.3)</option>
-                    <option value="deepseek">DeepSeek AI</option>
-                    <option value="openai">OpenAI (GPT-4o Mini)</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="groq">Groq Cloud</option>
+                    <option value="openai">OpenAI</option>
                     <option value="claude">Anthropic Claude</option>
-                    <option value="openrouter">OpenRouter</option>
+                    <option value="deepseek">DeepSeek AI</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="text-[11px] text-neutral-400 mb-1 block">Model Name</label>
+                  <label className="text-[11px] text-slate-400 block mb-1">Model Name</label>
                   <input
                     type="text"
                     value={classModelName}
                     onChange={(e) => setClassModelName(e.target.value)}
                     placeholder="gemini-2.5-flash"
-                    className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-purple-500"
+                    className="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-200 font-mono focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[11px] text-neutral-400 mb-1 block">API Key</label>
+                <label className="text-[11px] text-slate-400 block mb-1">Shared Server API Key</label>
                 <input
                   type="password"
                   value={classApiKey}
                   onChange={(e) => setClassApiKey(e.target.value)}
-                  placeholder="Paste class API key (e.g. AIzaSy... or gsk_...)"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-purple-500"
+                  placeholder="Paste API key to configure server default"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none"
                 />
               </div>
 
-              {classSaveMessage && (
-                <p
-                  className={`text-xs p-2.5 rounded-lg border ${
-                    classSaveMessage.type === 'success'
-                      ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
-                      : 'bg-rose-950/40 border-rose-500/30 text-rose-300'
-                  }`}
-                >
-                  {classSaveMessage.text}
-                </p>
-              )}
-
-              <div className="flex items-center justify-end gap-2 pt-1">
+              <div className="flex items-center justify-between pt-1">
                 <button
                   type="button"
                   onClick={handleSaveClassServerConfig}
                   disabled={isSavingClass || !classApiKey.trim()}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white shadow-sm transition cursor-pointer disabled:opacity-50"
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition cursor-pointer disabled:opacity-40"
                 >
-                  {isSavingClass ? 'Saving to Server...' : 'Save Class Server Key'}
+                  {isSavingClass ? 'Saving...' : 'Save to Class Server'}
                 </button>
+
+                {classSaveMessage && (
+                  <span
+                    className={`text-xs ${
+                      classSaveMessage.type === 'success' ? 'text-emerald-400' : 'text-rose-400'
+                    }`}
+                  >
+                    {classSaveMessage.text}
+                  </span>
+                )}
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 3: CLOUD DATABASE */}
+        {/* TAB 3: DATABASE CONFIGURATION */}
         {activeTab === 'supabase' && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="p-3.5 rounded-xl bg-neutral-950/70 border border-neutral-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Database className="w-4 h-4 text-cyan-400" />
-                  <span>PostgreSQL Cloud Database</span>
+          <div className="space-y-4">
+            <div className="p-3.5 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-1 text-xs">
+              <span className="text-slate-400 text-[11px] block">Database Status:</span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-slate-200">
+                  {supabaseStatus.configured ? 'Connected' : 'Offline / Local Cache Active'}
                 </span>
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    supabaseStatus.configured
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono-code ${
+                    supabaseStatus.ok
                       ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                      : 'bg-neutral-800 text-neutral-400'
+                      : 'bg-slate-800 text-slate-400'
                   }`}
                 >
-                  {supabaseStatus.configured ? 'Configured' : 'In-Memory / Static Mode'}
+                  {supabaseStatus.ok ? 'Synced' : 'Local'}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400 leading-relaxed">
-                Connect Neon or Supabase to persist your syllabus units, past question papers, and assignments forever.
+              <p className="text-[11px] text-slate-400 pt-1">
+                All study materials are persistently stored on the server disk cache and optionally mirrored to PostgreSQL.
               </p>
             </div>
 
-            <div className="space-y-3 bg-neutral-950/50 p-4 rounded-xl border border-neutral-800">
+            <div className="space-y-3 bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/80 text-xs">
               <div>
-                <label className="text-[11px] text-neutral-400 mb-1 block">Supabase Project URL</label>
+                <label className="text-[11px] text-slate-400 block mb-1">Postgres / Supabase Project URL</label>
                 <input
                   type="text"
                   value={supabaseUrl}
                   onChange={(e) => setSupabaseUrl(e.target.value)}
-                  placeholder="https://xyzcompany.supabase.co"
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-cyan-500"
+                  placeholder="https://your-project-id.supabase.co"
+                  className="w-full px-3 py-2 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] text-neutral-400 mb-1 block">Supabase Anon Key</label>
+                <label className="text-[11px] text-slate-400 block mb-1">Anon Public Key</label>
                 <div className="relative">
                   <input
                     type={showSupabaseKey ? 'text' : 'password'}
                     value={supabaseKey}
                     onChange={(e) => setSupabaseKey(e.target.value)}
-                    placeholder="eyJhbGciOi..."
-                    className="w-full px-3 py-2 text-xs rounded-lg bg-neutral-900 border border-neutral-750 text-white font-mono focus:outline-none focus:border-cyan-500 pr-10"
+                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                    className="w-full px-3 py-2 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowSupabaseKey(!showSupabaseKey)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-300 transition cursor-pointer"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition"
                   >
                     {showSupabaseKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end pt-1">
+              <div className="pt-1">
                 <button
                   type="button"
                   onClick={handleSaveSupabase}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white shadow-sm transition cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-semibold text-xs transition cursor-pointer"
                 >
-                  Save DB Settings
+                  Save Database Settings
                 </button>
               </div>
             </div>
           </div>
         )}
+
+        {/* Footer */}
+        <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+          <span>SyllabusOS</span>
+          <button
+            onClick={onClose}
+            className="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer"
+          >
+            Done
+          </button>
+        </div>
       </div>
     </div>
   );

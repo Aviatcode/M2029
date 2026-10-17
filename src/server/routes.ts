@@ -733,7 +733,7 @@ Provide a clean, high-yield 3-sentence summary of the core concepts for universi
   });
 });
 
-// 8.1 Universal AI Knowledge Drop & Auto-Sort Pipeline (Zero Prompting Required)
+// 8.1 Study Material Drop & Auto-Classification Pipeline (Classroom Cache)
 apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
   const {
     classId = 'class-bca-2028',

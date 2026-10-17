@@ -12,7 +12,7 @@ import {
   ChevronRight,
   SlidersHorizontal,
   Compass,
-  Sparkles,
+  UploadCloud,
 } from 'lucide-react';
 
 export type ActiveNavTab =
@@ -53,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const primaryItems = [
     { id: 'dashboard' as const, label: 'Today', icon: LayoutDashboard },
-    { id: 'dump' as const, label: 'AI Drop Hub', icon: Sparkles },
+    { id: 'dump' as const, label: 'Study Drop', icon: UploadCloud },
     { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot },
     { id: 'syllabus' as const, label: 'Syllabus', icon: Map },
     { id: 'materials' as const, label: 'Notes', icon: FolderOpen },

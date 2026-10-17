@@ -282,59 +282,50 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
   return (
     <div className="space-y-6 pb-12">
       {/* 1. HERO SECTION */}
-      <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/40 p-6 md:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-6 -mr-6 w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 -mb-6 w-80 h-80 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold tracking-wide uppercase">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              <span>AI Autonomous Ingestion & Zero-Prompting Sort</span>
+      <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-6 md:p-7 shadow-lg space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-[11px] font-medium tracking-wide">
+              <span>Automatic Syllabus Ingestion</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight font-serif-heading">
-              Universal Academic Drop & Auto-Sort
+            <h1 className="text-xl md:text-2xl font-semibold text-white tracking-tight font-serif-heading">
+              Universal Study Drop & Organization
             </h1>
-            <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-              Dump any study material here: handwritten notes, PDFs, DOCX, images, PYQs, assignments, or pasted text.
-              The AI automatically analyzes, maps to your syllabus, files into folders, and extracts{' '}
-              <strong className="text-cyan-200">notes, mnemonics, visual mindmaps, 10-markers & self-quizzes</strong>.
+            <p className="text-xs md:text-sm text-slate-400 leading-relaxed font-sans-ui">
+              Drop any study material: lecture slides, handwritten notes, PDFs, past papers, or raw text.
+              Everything is automatically classified into subject folders and organized with{' '}
+              <span className="text-slate-200">notes, memory mnemonics, visual mindmaps, 10-marker outlines, and practice quizzes</span>.
             </p>
           </div>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 shrink-0 bg-slate-900/80 p-3 rounded-xl border border-slate-800 backdrop-blur-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 shrink-0 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80">
             <div className="text-center px-2 py-1">
-              <div className="text-lg font-bold text-cyan-400 font-mono-code">{totalMaterials}</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">Vault Files</div>
+              <div className="text-base font-bold text-slate-100 font-mono-code">{totalMaterials}</div>
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider">Documents</div>
             </div>
             <div className="text-center px-2 py-1">
-              <div className="text-lg font-bold text-amber-400 font-mono-code">{totalMnemonics}</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">Mnemonics</div>
+              <div className="text-base font-bold text-slate-100 font-mono-code">{totalMnemonics}</div>
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider">Mnemonics</div>
             </div>
             <div className="text-center px-2 py-1">
-              <div className="text-lg font-bold text-emerald-400 font-mono-code">{total10Markers}</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">10-Markers</div>
+              <div className="text-base font-bold text-slate-100 font-mono-code">{total10Markers}</div>
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider">10-Markers</div>
             </div>
             <div className="text-center px-2 py-1">
-              <div className="text-lg font-bold text-indigo-400 font-mono-code">{totalQuizzes}</div>
-              <div className="text-[10px] text-slate-400 uppercase tracking-wider">Quiz MCQs</div>
+              <div className="text-base font-bold text-slate-100 font-mono-code">{totalQuizzes}</div>
+              <div className="text-[10px] text-slate-500 uppercase tracking-wider">Quizzes</div>
             </div>
           </div>
         </div>
 
         {/* Centralized Classroom Sync Banner */}
-        <div className="relative z-10 mt-5 pt-4 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-emerald-400">
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-            <span className="font-medium">
-              Shared Classroom Repository Active: Any dump here is immediately common & available to every student in{' '}
-              <span className="font-bold underline">{classCode}</span> with 0 token overhead!
+        <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-slate-300">
+            <CheckCircle2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <span>
+              Shared Classroom Cache Active: Synced for all students in <strong className="text-white">{classCode}</strong> (0 tokens for classmates).
             </span>
-          </div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-slate-800/70 border border-slate-700/60 text-slate-300 text-[11px] font-mono-code">
-            <Zap className="w-3 h-3 text-amber-400" />
-            <span>Compounding Intelligence Engine</span>
           </div>
         </div>
       </div>
@@ -346,71 +337,71 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
           <div className="flex items-center gap-2">
             <button
               onClick={() => setDumpMode('files')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-2 ${
                 dumpMode === 'files'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+                  ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <UploadCloud className="w-4 h-4" />
-              <span>Dump Files (PDF, DOCX, Images, Slides)</span>
+              <UploadCloud className="w-4 h-4 text-slate-300" />
+              <span>Study Files (PDF, DOCX, Slides, Images)</span>
             </button>
             <button
               onClick={() => setDumpMode('text')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-2 ${
                 dumpMode === 'text'
-                  ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm'
+                  ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <FileText className="w-4 h-4" />
-              <span>Dump Text Notes / Syllabus / Past Questions</span>
+              <FileText className="w-4 h-4 text-slate-300" />
+              <span>Paste Notes / PYQs / Text</span>
             </button>
           </div>
 
           {/* Quick Demo Pre-sets */}
           <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-slate-400 text-[11px] mr-1 hidden sm:inline">1-Click Test Dumps:</span>
+            <span className="text-slate-500 text-[11px] mr-1 hidden sm:inline">Sample Files:</span>
             <button
               onClick={() => handleSampleDump('os_deadlocks')}
               disabled={isProcessing}
-              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
+              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
               title="Test ingestion with OS Deadlocks notes"
             >
-              ⚡ OS Deadlocks
+              OS Deadlocks
             </button>
             <button
               onClick={() => handleSampleDump('dbms_norm')}
               disabled={isProcessing}
-              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
+              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
               title="Test ingestion with DBMS Normalization PYQ"
             >
-              ⚡ DBMS Normalization
+              DBMS Normalization
             </button>
             <button
               onClick={() => handleSampleDump('cn_osi')}
               disabled={isProcessing}
-              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
+              className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-[11px] transition cursor-pointer disabled:opacity-50"
               title="Test ingestion with OSI Model Cheatsheet"
             >
-              ⚡ OSI 7 Layers
+              OSI 7 Layers
             </button>
           </div>
         </div>
 
         {/* Live Processing Indicator */}
         {isProcessing && (
-          <div className="p-4 rounded-xl border border-cyan-500/40 bg-gradient-to-r from-cyan-950/60 to-indigo-950/60 space-y-3 animate-pulse">
-            <div className="flex items-center justify-between text-xs font-medium text-cyan-200">
+          <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 space-y-2.5">
+            <div className="flex items-center justify-between text-xs font-medium text-slate-200">
               <span className="flex items-center gap-2">
-                <RefreshCw className="w-4 h-4 animate-spin text-cyan-400" />
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-slate-400" />
                 <span>{processingStage}</span>
               </span>
-              <span className="font-mono-code">{processingProgress}%</span>
+              <span className="font-mono-code text-slate-400">{processingProgress}%</span>
             </div>
             <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-cyan-400 via-indigo-400 to-emerald-400 transition-all duration-300"
+                className="h-full bg-slate-200 transition-all duration-300"
                 style={{ width: `${processingProgress}%` }}
               />
             </div>
@@ -431,10 +422,10 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               handleFiles(e.dataTransfer.files);
             }}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 md:p-10 text-center transition cursor-pointer flex flex-col items-center justify-center gap-3 ${
+            className={`border border-dashed rounded-xl p-8 md:p-10 text-center transition cursor-pointer flex flex-col items-center justify-center gap-3 ${
               isDragging
-                ? 'border-cyan-400 bg-cyan-950/30'
-                : 'border-slate-800 hover:border-slate-700 bg-slate-900/30 hover:bg-slate-900/60'
+                ? 'border-slate-600 bg-slate-900/80'
+                : 'border-slate-800 hover:border-slate-700 bg-slate-900/20 hover:bg-slate-900/50'
             }`}
           >
             <input
@@ -445,23 +436,23 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               className="hidden"
               onChange={(e) => handleFiles(e.target.files)}
             />
-            <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-inner">
-              <UploadCloud className="w-7 h-7" />
+            <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-300 shadow-xs">
+              <UploadCloud className="w-6 h-6" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-white">
-                Drag & Drop multiple files here, or <span className="text-cyan-400 underline">browse your device</span>
+              <p className="text-sm font-medium text-slate-200">
+                Drag & Drop study files here, or <span className="text-slate-100 underline underline-offset-2">browse files</span>
               </p>
               <p className="text-xs text-slate-400">
-                PDFs, Word DOCX, PowerPoint slides, Lecture PNG/JPGs, or Markdown notes.
+                PDFs, DOCX, PowerPoint slides, Lecture Scans, or Text notes.
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 text-[10px] text-slate-400">
-              <span className="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Auto-Detects Subject</span>
-              <span className="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Auto-Extracts Mindmaps</span>
-              <span className="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Auto-Generates Mnemonics</span>
-              <span className="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Auto-Solves 10-Markers</span>
-              <span className="px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">Creates Practice Quizzes</span>
+              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Auto-Detects Subject</span>
+              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Visual Mindmaps</span>
+              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Memory Mnemonics</span>
+              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">10-Marker Outlines</span>
+              <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Practice Quizzes</span>
             </div>
           </div>
         )}
@@ -471,29 +462,29 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
           <div className="space-y-3">
             <input
               type="text"
-              placeholder="Optional Title (e.g. Operating Systems Deadlock Conditions or Leave Blank to Auto-Detect)"
+              placeholder="Title (e.g. Operating Systems Deadlock Conditions or Leave Blank to Auto-Detect)"
               value={textTitle}
               onChange={(e) => setTextTitle(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 font-sans-ui"
             />
             <textarea
               rows={6}
-              placeholder="Paste raw lecture notes, syllabus snippet, textbook paragraphs, or university exam questions here..."
+              placeholder="Paste raw lecture notes, syllabus snippet, textbook paragraphs, or exam questions here..."
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono-code"
+              className="w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-600 font-mono-code"
             />
             <div className="flex items-center justify-between">
               <span className="text-[11px] text-slate-400">
-                Zero Prompting Required: The AI understands the curriculum context automatically.
+                Content is automatically organized into syllabus folders.
               </span>
               <button
                 onClick={handleRawTextDump}
                 disabled={!rawText.trim() || isProcessing}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold text-xs shadow-md transition cursor-pointer flex items-center gap-2"
+                className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-white disabled:opacity-40 text-slate-950 font-medium text-xs transition cursor-pointer flex items-center gap-2"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Auto-Sort & Extract Pack</span>
+                <UploadCloud className="w-3.5 h-3.5" />
+                <span>Organize & Index Material</span>
               </button>
             </div>
           </div>
@@ -506,8 +497,8 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
         <div className="lg:col-span-5 rounded-2xl border border-slate-800 bg-slate-950 p-4 md:p-5 shadow-xl space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <FolderOpen className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-white font-serif-heading">Auto-Sorted Folders</h2>
+              <FolderOpen className="w-4 h-4 text-slate-300" />
+              <h2 className="text-sm font-semibold text-white font-serif-heading">Course Folders</h2>
             </div>
             <span className="text-[11px] font-mono-code text-slate-400">{filteredMaterials.length} Items</span>
           </div>
@@ -518,8 +509,8 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               onClick={() => setSelectedCategory('all')}
               className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
                 selectedCategory === 'all'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-semibold'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
               }`}
             >
               All Types
@@ -528,8 +519,8 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               onClick={() => setSelectedCategory('notes')}
               className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
                 selectedCategory === 'notes'
-                  ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40 font-semibold'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
               }`}
             >
               Notes
@@ -538,8 +529,8 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               onClick={() => setSelectedCategory('pyq')}
               className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
                 selectedCategory === 'pyq'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
               }`}
             >
               PYQs
@@ -548,8 +539,8 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               onClick={() => setSelectedCategory('assignment')}
               className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
                 selectedCategory === 'assignment'
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold'
-                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
               }`}
             >
               Assignments
@@ -586,14 +577,14 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                   >
                     <div className="flex items-center gap-2">
                       {isSubExpanded ? (
-                        <ChevronDown className="w-3.5 h-3.5 text-cyan-400" />
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                       ) : (
                         <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                       )}
-                      <Folder className="w-4 h-4 text-cyan-400" />
-                      <span className="text-xs font-bold text-white truncate max-w-[210px]">{subjectName}</span>
+                      <Folder className="w-4 h-4 text-slate-400" />
+                      <span className="text-xs font-semibold text-white truncate max-w-[210px]">{subjectName}</span>
                     </div>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-mono-code">
+                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-850 text-slate-300 font-mono-code border border-slate-750">
                       {subItemCount}
                     </span>
                   </div>
@@ -617,7 +608,7 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                                 ) : (
                                   <ChevronRight className="w-3 h-3 text-slate-400" />
                                 )}
-                                <span className="text-[11px] font-semibold text-slate-300 truncate max-w-[200px]">
+                                <span className="text-[11px] font-medium text-slate-300 truncate max-w-[200px]">
                                   {unitTitle}
                                 </span>
                               </div>
@@ -638,17 +629,17 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                                       onClick={() => setActiveItem(item)}
                                       className={`flex items-center justify-between p-2 rounded-lg text-xs transition cursor-pointer ${
                                         isSelected
-                                          ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-500/40 font-medium'
-                                          : 'hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 border border-transparent'
+                                          ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                                          : 'hover:bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-transparent'
                                       }`}
                                     >
                                       <div className="flex items-center gap-2 truncate">
                                         {isPYQ ? (
-                                          <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                          <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                         ) : isAssign ? (
-                                          <FileCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                          <FileCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                         ) : (
-                                          <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                          <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                         )}
                                         <span className="truncate">{item.title}</span>
                                       </div>
@@ -685,20 +676,20 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               <div className="border-b border-slate-800 pb-4 space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-500/10 border border-cyan-500/30 text-cyan-300">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-slate-900 border border-slate-800 text-slate-300">
                       {activeItem.subjectName}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono-code bg-slate-800 text-slate-300">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono-code bg-slate-900 border border-slate-800 text-slate-400">
                       {activeItem.unitTitle || (activeItem.unitNumber ? `Unit ${activeItem.unitNumber}` : 'General')}
                     </span>
                   </div>
-                  <span className="text-[11px] text-emerald-400 flex items-center gap-1 font-medium">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Common Class Cache (0 Tokens)</span>
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Classroom Shared Cache</span>
                   </span>
                 </div>
 
-                <h2 className="text-xl font-bold text-white font-serif-heading">{activeItem.title}</h2>
+                <h2 className="text-xl font-semibold text-white font-serif-heading">{activeItem.title}</h2>
                 <div className="text-xs text-slate-400 flex flex-wrap items-center gap-3">
                   <span>File: <strong className="text-slate-300 font-mono-code">{activeItem.fileName}</strong></span>
                   <span>•</span>
@@ -712,10 +703,10 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800/80 pb-2">
                 <button
                   onClick={() => setActiveDetailTab('notes')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                     activeDetailTab === 'notes'
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
                   }`}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
@@ -723,10 +714,10 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('mnemonics')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                     activeDetailTab === 'mnemonics'
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
                   }`}
                 >
                   <Lightbulb className="w-3.5 h-3.5" />
@@ -734,10 +725,10 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('mindmap')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                     activeDetailTab === 'mindmap'
-                      ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
                   }`}
                 >
                   <Network className="w-3.5 h-3.5" />
@@ -745,21 +736,21 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('10marker')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                     activeDetailTab === '10marker'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
                   }`}
                 >
                   <Award className="w-3.5 h-3.5" />
-                  <span>10-Marker Model Answer</span>
+                  <span>10-Marker Outline</span>
                 </button>
                 <button
                   onClick={() => setActiveDetailTab('quiz')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                     activeDetailTab === 'quiz'
-                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
                   }`}
                 >
                   <FileQuestion className="w-3.5 h-3.5" />
@@ -770,12 +761,12 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               {/* TAB 1: NOTES & SUMMARY */}
               {activeDetailTab === 'notes' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
-                    <h3 className="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Executive Student Primer</span>
+                  <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+                    <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5 text-slate-400" />
+                      <span>Executive Lecture Notes</span>
                     </h3>
-                    <p className="text-xs text-slate-200 leading-relaxed">
+                    <p className="text-xs text-slate-200 leading-relaxed font-sans-ui">
                       {activeItem.resources?.summary || 'Synthesized high-yield lecture overview for semester exam preparation.'}
                     </p>
                     {activeItem.resources?.hinglishSummary && (
@@ -788,11 +779,11 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                   {/* Key Concepts */}
                   {activeItem.resources?.keyConcepts && activeItem.resources.keyConcepts.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className="text-xs font-bold text-white uppercase tracking-wider">Key Concepts</h4>
+                      <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Key Concepts</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         {activeItem.resources.keyConcepts.map((c, i) => (
-                          <div key={i} className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 space-y-1">
-                            <span className="text-xs font-bold text-cyan-200 block">{c.concept}</span>
+                          <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 space-y-1">
+                            <span className="text-xs font-semibold text-slate-200 block">{c.concept}</span>
                             <span className="text-xs text-slate-400 block leading-normal">{c.explanation}</span>
                           </div>
                         ))}
@@ -803,11 +794,11 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                   {/* Important Definitions */}
                   {activeItem.resources?.importantDefinitions && activeItem.resources.importantDefinitions.length > 0 && (
                     <div className="space-y-2">
-                      <h4 className="text-xs font-bold text-white uppercase tracking-wider">Standard Definitions</h4>
+                      <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Standard Definitions</h4>
                       <div className="space-y-2">
                         {activeItem.resources.importantDefinitions.map((d, i) => (
-                          <div key={i} className="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-xs">
-                            <strong className="text-amber-300">{d.term}:</strong>{' '}
+                          <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 text-xs">
+                            <strong className="text-slate-200 font-semibold">{d.term}:</strong>{' '}
                             <span className="text-slate-300">{d.definition}</span>
                           </div>
                         ))}
@@ -817,9 +808,9 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
 
                   {/* Exam Points */}
                   {activeItem.resources?.examPoints && (
-                    <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-xs">
-                      <h4 className="font-bold text-amber-300 flex items-center gap-1.5">
-                        <AlertCircle className="w-3.5 h-3.5" />
+                    <div className="p-3.5 rounded-xl bg-slate-900/40 border border-slate-800 space-y-1.5 text-xs">
+                      <h4 className="font-semibold text-slate-300 flex items-center gap-1.5">
+                        <AlertCircle className="w-3.5 h-3.5 text-slate-400" />
                         <span>University Evaluator Advice</span>
                       </h4>
                       <ul className="list-disc list-inside space-y-1 text-slate-300">
@@ -835,8 +826,8 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               {/* TAB 2: MNEMONICS & MEMORY HACKS */}
               {activeDetailTab === 'mnemonics' && (
                 <div className="space-y-4">
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
-                    💡 <strong>Memory Retention Engine:</strong> Mnemonics convert hard-to-memorize technical conditions and lists into sticky hooks for university exams.
+                  <div className="p-3 rounded-xl bg-slate-900/40 border border-slate-800 text-xs text-slate-400">
+                    Memory Retention: Mnemonics convert complex conditions and lists into memorable structures for exams.
                   </div>
 
                   <div className="space-y-3">
@@ -844,35 +835,35 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                       activeItem.resources.mnemonics.map((mn, idx) => (
                         <div
                           key={idx}
-                          className="p-4 rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-950 space-y-2.5 shadow-lg"
+                          className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2.5 shadow-xs"
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-white font-serif-heading">{mn.term}</span>
+                            <span className="text-xs font-semibold text-white font-serif-heading">{mn.term}</span>
                             {mn.acronym && (
-                              <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs font-mono-code tracking-wider shadow">
+                              <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
                                 {mn.acronym}
                               </span>
                             )}
                           </div>
-                          <div className="text-sm font-bold text-amber-200 bg-amber-950/40 p-3 rounded-lg border border-amber-500/20">
+                          <div className="text-sm font-medium text-slate-100 bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono-code">
                             "{mn.mnemonic}"
                           </div>
-                          <p className="text-xs text-slate-300 leading-relaxed">{mn.explanation}</p>
+                          <p className="text-xs text-slate-400 leading-relaxed">{mn.explanation}</p>
                         </div>
                       ))
                     ) : (
-                      <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-950/30 space-y-2">
+                      <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-white">{activeItem.title} Mnemonic</span>
-                          <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-xs font-mono-code">
+                          <span className="text-xs font-semibold text-white">{activeItem.title} Mnemonic</span>
+                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
                             CORE
                           </span>
                         </div>
-                        <div className="text-sm font-bold text-amber-200">
+                        <div className="text-sm font-medium text-slate-100 bg-slate-950 p-3 rounded-lg border border-slate-800">
                           "Understand the Core Mechanism, Rule Out Anomalies, Apply Invariants"
                         </div>
-                        <p className="text-xs text-slate-300">
-                          Auto-generated memory hook for {activeItem.title}. Remember definitions first, then draw standard flow diagrams.
+                        <p className="text-xs text-slate-400">
+                          Memory hook for {activeItem.title}. Learn core conditions first, then draw standard flow diagrams.
                         </p>
                       </div>
                     )}
@@ -884,7 +875,7 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
               {activeDetailTab === 'mindmap' && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>Rendered Architecture Breakdown for {activeItem.title}</span>
+                    <span>Architecture Breakdown for {activeItem.title}</span>
                     {activeItem.resources?.mindmapMermaid && (
                       <button
                         onClick={() => {
@@ -892,7 +883,7 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                           setCopiedMermaid(true);
                           setTimeout(() => setCopiedMermaid(false), 2000);
                         }}
-                        className="flex items-center gap-1 text-cyan-400 hover:text-cyan-300 transition cursor-pointer"
+                        className="flex items-center gap-1 text-slate-400 hover:text-slate-200 transition cursor-pointer"
                       >
                         {copiedMermaid ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedMermaid ? 'Copied' : 'Copy Mermaid'}</span>
@@ -930,32 +921,32 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                 <div className="space-y-4">
                   {activeItem.resources?.exam10Marker ? (
                     <div className="space-y-4">
-                      <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+                      <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                            University Prescribed 10-Marker Question
+                          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                            University 10-Marker Question
                           </span>
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs">
+                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
                             10 MARKS
                           </span>
                         </div>
-                        <h3 className="text-sm font-bold text-white">
+                        <h3 className="text-sm font-semibold text-white">
                           {activeItem.resources.exam10Marker.question}
                         </h3>
                       </div>
 
                       {/* Answer Structure Outline */}
-                      <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5 text-xs">
-                        <span className="font-bold text-cyan-300">Marking Structure Breakdown:</span>
+                      <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5 text-xs">
+                        <span className="font-semibold text-slate-200">Marking Structure Breakdown:</span>
                         <pre className="text-slate-300 font-sans-ui whitespace-pre-line text-xs">
                           {activeItem.resources.exam10Marker.answerStructure}
                         </pre>
                       </div>
 
                       {/* Full Model Answer */}
-                      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
-                        <span className="text-xs font-bold text-white uppercase tracking-wider block">
-                          Evaluator-Grade Complete Solution
+                      <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                        <span className="text-xs font-semibold text-white uppercase tracking-wider block">
+                          Model Answer Solution
                         </span>
                         <div className="text-xs text-slate-300 space-y-2 leading-relaxed whitespace-pre-line font-sans-ui">
                           {activeItem.resources.exam10Marker.modelAnswerMarkdown}
@@ -963,7 +954,7 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                       </div>
 
                       {activeItem.resources.exam10Marker.keyDiagramText && (
-                        <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono-code text-[11px] text-cyan-300">
+                        <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono-code text-[11px] text-slate-300">
                           <strong>Required Diagram:</strong> {activeItem.resources.exam10Marker.keyDiagramText}
                         </div>
                       )}
@@ -971,10 +962,10 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                   ) : activeItem.resources?.possibleQuestions && activeItem.resources.possibleQuestions.length > 0 ? (
                     <div className="space-y-3">
                       {activeItem.resources.possibleQuestions.map((q, idx) => (
-                        <div key={idx} className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2 text-xs">
+                        <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2 text-xs">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-white">{q.question}</span>
-                            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                            <span className="font-semibold text-white">{q.question}</span>
+                            <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
                               {q.marks} MARKS
                             </span>
                           </div>
@@ -1005,7 +996,7 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                               setQuizAnswers({});
                               setQuizSubmitted(false);
                             }}
-                            className="flex items-center gap-1 text-cyan-400 hover:text-cyan-300 cursor-pointer"
+                            className="flex items-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer"
                           >
                             <RefreshCw className="w-3.5 h-3.5" />
                             <span>Retry Quiz</span>
@@ -1045,12 +1036,12 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                                   'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-850';
                                 if (quizSubmitted) {
                                   if (isThisCorrectOption) {
-                                    btnStyle = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-200 font-semibold';
+                                    btnStyle = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-200 font-medium';
                                   } else if (isThisSelected) {
                                     btnStyle = 'bg-rose-500/20 border-rose-500/60 text-rose-200';
                                   }
                                 } else if (isThisSelected) {
-                                  btnStyle = 'bg-cyan-500/20 border-cyan-500/60 text-cyan-200 font-semibold';
+                                  btnStyle = 'bg-slate-800 border-slate-700 text-white font-medium';
                                 }
 
                                 return (
@@ -1086,16 +1077,16 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                         <button
                           onClick={() => {
                             setQuizSubmitted(true);
-                            confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+                            confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
                           }}
                           disabled={Object.keys(quizAnswers).length === 0}
-                          className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white font-bold text-xs shadow-lg transition cursor-pointer"
+                          className="w-full py-2.5 rounded-lg bg-slate-100 hover:bg-white disabled:opacity-40 text-slate-950 font-medium text-xs transition cursor-pointer"
                         >
                           Submit Quiz & Check Score
                         </button>
                       ) : (
                         <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-2">
-                          <span className="text-xs font-bold text-white block">
+                          <span className="text-xs font-semibold text-white block">
                             Quiz Completed!{' '}
                             {Object.entries(quizAnswers).filter(
                               ([idx, val]) => val === activeItem.resources?.quiz[Number(idx)]?.correctIndex
@@ -1103,7 +1094,7 @@ Mnemonic: "All People Seem To Need Data Processing" (Top to Bottom) or "Please D
                             / {activeItem.resources.quiz.length} Correct
                           </span>
                           <p className="text-[11px] text-slate-400">
-                            Zero tokens were burned during evaluation. All explanations were generated once upon ingestion.
+                            Evaluated locally from curriculum cache.
                           </p>
                         </div>
                       )}
