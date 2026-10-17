@@ -40,8 +40,8 @@ export function sendBrowserNotification(title: string, options?: NotificationOpt
   if (Notification.permission !== 'granted') return;
 
   const notificationOptions: NotificationOptions = {
-    icon: '/icon.svg',
-    badge: '/icon.svg',
+    icon: '/am-logo.png',
+    badge: '/am-logo.png',
     ...options,
   };
 

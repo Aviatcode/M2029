@@ -1,8 +1,9 @@
-const CACHE_NAME = 'm2028-cache-v3';
+const CACHE_NAME = 'm2029-cache-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/am-logo.png',
   '/icon.svg',
   '/pwa-192x192.png',
   '/pwa-512x512.png',

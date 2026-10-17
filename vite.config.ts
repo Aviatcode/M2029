@@ -17,6 +17,8 @@ export default defineConfig(() => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: [
+          'am-logo.png',
+          'am-logo.svg',
           'apple-touch-icon.png',
           'icon.svg',
           'pwa-192x192.png',
@@ -35,6 +37,12 @@ export default defineConfig(() => {
           start_url: '/',
           scope: '/',
           icons: [
+            {
+              src: '/am-logo.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any',
+            },
             {
               src: '/pwa-192x192.png',
               sizes: '192x192',
