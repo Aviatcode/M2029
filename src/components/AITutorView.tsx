@@ -64,6 +64,8 @@ interface ConversationTurn {
   title?: string;
   content: string;
   timestamp: string;
+  cached?: boolean;
+  tokensSaved?: number;
   quickCheck?: {
     question: string;
     options: { key: string; label: string }[];
@@ -84,6 +86,8 @@ interface ConversationTurn {
 interface StudyGuideData {
   topic: string;
   subject: string;
+  cached?: boolean;
+  tokensSaved?: number;
   sections: {
     simple: string;
     eli9: string;
@@ -190,8 +194,27 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     providerName: 'Built-in Academic Model',
   });
 
+  const [cacheStats, setCacheStats] = useState<{
+    totalLearnedItems: number;
+    totalHits: number;
+    estimatedTokensSaved: number;
+  } | null>(null);
+
+  const refreshCacheStats = () => {
+    fetch('/api/ai/cache/stats')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && typeof d.estimatedTokensSaved === 'number') {
+          setCacheStats(d);
+        }
+      })
+      .catch(() => {});
+  };
+
   // Fetch available tracks on mount
   useEffect(() => {
+    refreshCacheStats();
+
     fetch('/api/ai-tutor/tracks')
       .then((r) => r.json())
       .then((data) => {
@@ -436,8 +459,26 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           </div>
         </div>
 
-        {/* View Mode Switcher */}
-        <div className="flex items-center gap-1.5">
+        {/* Token Savings & View Mode Controls */}
+        <div className="flex items-center gap-2">
+          {cacheStats && (
+            <div
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono shadow-xs"
+              title={`${cacheStats.totalLearnedItems} topics learned & stored in repository. Repeating questions fetch instantly with 0 tokens spent.`}
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+              <span>
+                {cacheStats.estimatedTokensSaved >= 1000
+                  ? `${(cacheStats.estimatedTokensSaved / 1000).toFixed(1)}k`
+                  : cacheStats.estimatedTokensSaved}{' '}
+                Tokens Saved
+              </span>
+              <span className="text-emerald-500/60">•</span>
+              <span className="text-emerald-400 font-semibold">0-Tokens Active</span>
+            </div>
+          )}
+
+          {/* View Mode Switcher */}
           <div className="flex items-center rounded-lg bg-slate-900 border border-slate-800 p-0.5 text-xs">
             <button
               onClick={() => setViewMode('guided')}
@@ -626,13 +667,22 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-6 space-y-4 shadow-md backdrop-blur-xs">
                     {/* Topic Headline */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="w-6 h-6 rounded-md bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center font-mono text-xs font-bold text-indigo-400">
                           {tIdx + 1}
                         </span>
                         <h2 className="text-sm sm:text-base font-bold text-slate-100 font-sans-ui tracking-tight">
                           {turn.title || 'Syllabus Topic'}
                         </h2>
+                        {turn.cached && (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px]"
+                            title="Learned once and stored in class repository. 0 AI tokens spent!"
+                          >
+                            <Zap className="w-3 h-3 text-emerald-400" />
+                            <span>0 Tokens • Stored Recall</span>
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-1.5">
                         <button
@@ -856,9 +906,20 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
               <div className="space-y-5">
                 <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-bold text-slate-100 font-sans-ui">
-                      {studyGuide.topic}
-                    </h2>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-base font-bold text-slate-100 font-sans-ui">
+                        {studyGuide.topic}
+                      </h2>
+                      {studyGuide.cached && (
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px]"
+                          title="Fetched from Stored Class Knowledge. 0 AI tokens spent!"
+                        >
+                          <Zap className="w-3 h-3 text-emerald-400" />
+                          <span>0 Tokens • Stored Recall</span>
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-slate-400">{studyGuide.subject}</p>
                   </div>
                   <button

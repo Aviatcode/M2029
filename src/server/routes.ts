@@ -63,6 +63,7 @@ import {
   initializeNeonSchema,
 } from './db/neonClient.js';
 import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeBank.js';
+import { aiKnowledgeCache } from './ai/aiKnowledgeCache.js';
 
 export const apiRouter = Router();
 
@@ -528,11 +529,37 @@ function parseTutorSections(text: string): Record<string, string> {
   return sections;
 }
 
+// 6.0 AI Knowledge Cache Statistics & Inspection Endpoint
+apiRouter.get('/ai/cache/stats', (_req: Request, res: Response) => {
+  res.json(aiKnowledgeCache.getStats());
+});
+
 // 6. AI Tutor with Ordered Pedagogical Breakdown (Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me)
 apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const question = req.body.question || req.body.query || '';
   const { mode, subjectName, topicName } = req.body;
   const tutorMode: TutorResponseMode = mode || 'all';
+  const lookupKey = topicName || question;
+
+  // 1. FAST ZERO-TOKEN PERSISTENT CACHE LOOKUP (Learn Once, Never Spend Tokens Again!)
+  const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
+  if (cached) {
+    const sections = cached.sections || parseTutorSections(cached.answer);
+    return res.json({
+      answer: cached.answer,
+      text: cached.answer,
+      sections,
+      modeUsed: tutorMode,
+      modelUsed: cached.modelUsed || '⚡ Stored Knowledge Base (0 Tokens Spent)',
+      cached: true,
+      tokensSaved: cached.tokensEstimated || 1500,
+      hitCount: cached.hitCount,
+      sourcesUsed: [
+        { title: `${subjectName || 'Class'} Permanent Knowledge Base`, type: 'Zero-Cost Stored Cache' },
+        { title: 'Classroom Learned Topics (0 Tokens)', type: 'Instant Recall' },
+      ],
+    });
+  }
 
   const userAiConfig = extractAiConfig(req);
   const ai = AIProviderFactory.getProvider(userAiConfig);
@@ -607,12 +634,24 @@ Ground your response in authoritative university curricula and standard textbook
       }
     }
 
+    // LEARN ONCE & STORE FOREVER: Persist to disk so repeating questions NEVER spend tokens again!
+    aiKnowledgeCache.set(
+      lookupKey,
+      subjectName || 'Computer Science',
+      tutorMode,
+      responseText,
+      sections,
+      ai.name
+    );
+
     res.json({
       answer: responseText,
       text: responseText,
       sections,
       modeUsed: tutorMode,
       modelUsed: ai.name,
+      cached: false,
+      tokensSaved: 0,
       sourcesUsed: [
         { title: `${subjectName || 'Class'} Syllabus & Verified PPTs`, type: 'Class Knowledge Base' },
         { title: 'Past University Question Paper Bank (2020-2025)', type: 'PYQ Database' },
@@ -755,6 +794,26 @@ College exams mein examiner yehi dekhna chahta hai ki tumko formula aur conceptu
     }
 
     if (action === 'custom_question' && customQuery) {
+      // 1. FAST ZERO-TOKEN PERSISTENT CACHE LOOKUP (Learn Once, Stored Forever!)
+      const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
+      if (cachedDoubt) {
+        return res.json({
+          evaluation: null,
+          trackId: track.id,
+          trackName: track.name,
+          topicIndex: targetIndex,
+          totalTopics,
+          isCompleted: false,
+          cached: true,
+          tokensSaved: cachedDoubt.tokensEstimated || 1200,
+          topic: {
+            ...targetTopic,
+            title: `Doubt Resolved: ${customQuery.slice(0, 40)}...`,
+            content: `${cachedDoubt.answer}\n\n*(⚡ Stored in Cohort Knowledge Base • 0 Tokens Spent)*`,
+          },
+        });
+      }
+
       const userAiConfig = extractAiConfig(req);
       const ai = AIProviderFactory.getProvider(userAiConfig);
       const prompt = `Student asked a doubt during the study of "${targetTopic.title}" in course "${track.name}":
@@ -767,6 +826,9 @@ Respond as the gold-standard academic tutor:
 4. Keep it focused and conversational.`;
 
       const responseText = await ai.generateText(prompt);
+      // Learn once and store forever so repeating questions use 0 tokens!
+      aiKnowledgeCache.set(customQuery, track.name, 'doubt', responseText, undefined, ai.name);
+
       return res.json({
         evaluation: null,
         trackId: track.id,
@@ -774,6 +836,7 @@ Respond as the gold-standard academic tutor:
         topicIndex: targetIndex,
         totalTopics,
         isCompleted: false,
+        cached: false,
         topic: {
           ...targetTopic,
           title: `Doubt Resolved: ${customQuery.slice(0, 40)}...`,

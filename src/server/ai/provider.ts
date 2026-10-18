@@ -1,4 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
+import { aiKnowledgeCache } from './aiKnowledgeCache.js';
 
 export type ModelProviderType =
   | 'auto'
@@ -135,8 +136,16 @@ export class UniversalAIProvider implements AIProvider {
   }
 
   async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
+    // 0. ZERO-TOKEN PERSISTENT CACHE: Return stored result if question was previously learned
+    const cached = aiKnowledgeCache.get(prompt, '', 'general');
+    if (cached && cached.answer) {
+      return cached.answer;
+    }
+
     if (!this.isAvailable()) {
-      return new MockAIProvider().generateText(prompt, systemInstruction);
+      const fallbackRes = await new MockAIProvider().generateText(prompt, systemInstruction);
+      aiKnowledgeCache.set(prompt, '', 'general', fallbackRes, undefined, 'Academic Engine');
+      return fallbackRes;
     }
 
     if (this.provider === 'sandbox') {
@@ -175,7 +184,10 @@ export class UniversalAIProvider implements AIProvider {
                   .map((p: any) => p.text)
                   .join('\n')
                   .trim() || parts[0]?.text;
-              if (text && text.trim().length > 10) return text;
+              if (text && text.trim().length > 10) {
+                aiKnowledgeCache.set(prompt, '', 'general', text, undefined, this.name);
+                return text;
+              }
             } else {
               const errData: any = await res.json().catch(() => ({}));
               console.warn(`Gemini REST returned ${res.status}:`, errData?.error?.message || res.statusText);
@@ -251,7 +263,10 @@ export class UniversalAIProvider implements AIProvider {
         const data: any = await res.json();
         const msg = data.choices?.[0]?.message;
         const resultText = msg?.content || msg?.reasoning_content || '';
-        if (resultText) return resultText;
+        if (resultText) {
+          aiKnowledgeCache.set(prompt, '', 'general', resultText, undefined, this.name);
+          return resultText;
+        }
       }
 
       // 3. Anthropic Claude via Messages API
