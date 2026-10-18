@@ -4,6 +4,7 @@ import {
   UserRole,
   ClassWorkspace,
   Subject,
+  Unit,
   TimetableClass,
   AcademicMaterial,
   HistoricalPYQ,
@@ -518,12 +519,26 @@ export default function App() {
     const unsub = initClassroomAutoSync(classCode, (syncData) => {
       if (syncData.materials && syncData.materials.length > 0) {
         setMaterials((prev) => {
-          const serverIds = new Set(syncData.materials.map((m) => m.id));
-          const serverTitles = new Set(syncData.materials.map((m) => (m.title || m.fileName || '').toLowerCase()));
-          const localOnly = prev.filter(
-            (m) => !serverIds.has(m.id) && !serverTitles.has((m.title || m.fileName || '').toLowerCase())
-          );
-          const merged = [...localOnly, ...syncData.materials];
+          const map = new Map<string, AcademicMaterial>();
+          const titleMap = new Map<string, string>();
+          prev.forEach((m) => {
+            if (m.id) {
+              map.set(m.id, m);
+              const tKey = (m.title || m.fileName || '').trim().toLowerCase();
+              if (tKey) titleMap.set(tKey, m.id);
+            }
+          });
+          syncData.materials.forEach((sm) => {
+            const tKey = (sm.title || sm.fileName || '').trim().toLowerCase();
+            const existingId = sm.id && map.has(sm.id) ? sm.id : (tKey ? titleMap.get(tKey) : undefined);
+            if (existingId && map.has(existingId)) {
+              map.set(existingId, { ...map.get(existingId)!, ...sm });
+            } else if (sm.id) {
+              map.set(sm.id, sm);
+              if (tKey) titleMap.set(tKey, sm.id);
+            }
+          });
+          const merged = Array.from(map.values());
           try {
             localStorage.setItem('syllabus_materials', JSON.stringify(merged));
           } catch {}
@@ -532,37 +547,160 @@ export default function App() {
       }
       if (syncData.assignments && syncData.assignments.length > 0) {
         setAssignments((prev) => {
+          const localMap = new Map<string, AcademicAssignment>();
+          prev.forEach((a) => localMap.set(a.id, a));
+
+          const merged = syncData.assignments.map((serverA) => {
+            const localA = localMap.get(serverA.id);
+            if (localA) {
+              return {
+                ...serverA,
+                // Preserve local student state: completed flag, notes, solutions
+                completed: localA.completed ?? serverA.completed,
+                sampleDraftGuidance: localA.sampleDraftGuidance || serverA.sampleDraftGuidance,
+                solution: serverA.solution || localA.solution,
+                aiSolvedAnswer: serverA.aiSolvedAnswer || localA.aiSolvedAnswer,
+                solvedBy: serverA.solvedBy || localA.solvedBy,
+                solvedAt: serverA.solvedAt || localA.solvedAt,
+              };
+            }
+            return serverA;
+          });
+
+          // Retain any pending locally created assignments not yet synced to server
           const serverIds = new Set(syncData.assignments.map((a) => a.id));
           const localOnly = prev.filter((a) => !serverIds.has(a.id));
-          return [...localOnly, ...syncData.assignments];
+          const finalAssignments = [...merged, ...localOnly];
+          try {
+            localStorage.setItem('syllabus_assignments', JSON.stringify(finalAssignments));
+          } catch {}
+          return finalAssignments;
         });
       }
-      if (syncData.units) {
-        setUnitsBySubject(syncData.units);
+      if (syncData.units && typeof syncData.units === 'object' && !Array.isArray(syncData.units)) {
+        setUnitsBySubject((prev) => {
+          const merged: Record<string, any> = { ...prev };
+          for (const [subjId, serverUnits] of Object.entries(syncData.units)) {
+            if (Array.isArray(serverUnits) && serverUnits.length > 0) {
+              const localUnits = (prev[subjId] || []) as Unit[];
+              const unitMap = new Map<string, Unit>();
+              localUnits.forEach((u) => unitMap.set(u.id || `u-${u.number}`, u));
+              (serverUnits as Unit[]).forEach((su) => {
+                const key = su.id || `u-${su.number}`;
+                const existing = unitMap.get(key);
+                if (existing) {
+                  unitMap.set(key, { ...existing, ...su });
+                } else {
+                  unitMap.set(key, su);
+                }
+              });
+              merged[subjId] = Array.from(unitMap.values());
+            }
+          }
+          try {
+            localStorage.setItem('syllabus_units', JSON.stringify(merged));
+          } catch {}
+          return merged;
+        });
       }
       if (syncData.exams && syncData.exams.length > 0) {
         setExams((prev) => {
+          const localMap = new Map<string, ExamDateSheetItem>();
+          prev.forEach((e) => localMap.set(e.id, e));
+
+          const merged = syncData.exams.map((serverE) => {
+            const localE = localMap.get(serverE.id);
+            if (localE) {
+              let mergedPlan = serverE.revisionDaysPlan;
+              if (localE.revisionDaysPlan && serverE.revisionDaysPlan) {
+                const localPlanMap = new Map(localE.revisionDaysPlan.map((p) => [p.dayNumber, p.completed]));
+                mergedPlan = serverE.revisionDaysPlan.map((sp) => ({
+                  ...sp,
+                  completed: localPlanMap.get(sp.dayNumber) ?? sp.completed,
+                }));
+              }
+              return {
+                ...serverE,
+                revisionDaysPlan: mergedPlan,
+                priority: localE.priority ?? serverE.priority,
+              };
+            }
+            return serverE;
+          });
+
           const serverIds = new Set(syncData.exams.map((e) => e.id));
           const localOnly = prev.filter((e) => !serverIds.has(e.id));
-          return [...localOnly, ...syncData.exams];
+          const finalExams = [...merged, ...localOnly];
+          try {
+            localStorage.setItem('syllabus_exams', JSON.stringify(finalExams));
+          } catch {}
+          return finalExams;
         });
       }
       if (syncData.announcements && syncData.announcements.length > 0) {
         setAnnouncements((prev) => {
-          const serverIds = new Set(syncData.announcements.map((a) => a.id));
-          const localOnly = prev.filter((a) => !serverIds.has(a.id));
-          return [...localOnly, ...syncData.announcements];
+          const map = new Map<string, ClassAnnouncement>();
+          prev.forEach((a) => map.set(a.id, a));
+          syncData.announcements.forEach((a) => {
+            const existing = map.get(a.id);
+            if (existing) {
+              map.set(a.id, { ...existing, ...a });
+            } else {
+              map.set(a.id, a);
+            }
+          });
+          const merged = Array.from(map.values());
+          try {
+            localStorage.setItem('syllabus_announcements', JSON.stringify(merged));
+          } catch {}
+          return merged;
         });
       }
       if (syncData.notifications && syncData.notifications.length > 0) {
         setNotifications((prev) => {
-          const existingIds = new Set(prev.map((n) => n.id));
-          const newItems = syncData.notifications.filter((n) => !existingIds.has(n.id));
-          return [...newItems, ...prev];
+          const localMap = new Map<string, AppNotification>();
+          prev.forEach((n) => localMap.set(n.id, n));
+
+          const merged = syncData.notifications.map((sn) => {
+            const localN = localMap.get(sn.id);
+            if (localN) {
+              return { ...sn, read: localN.read ?? sn.read };
+            }
+            return sn;
+          });
+
+          const serverIds = new Set(syncData.notifications.map((n) => n.id));
+          const localOnly = prev.filter((n) => !serverIds.has(n.id));
+          const finalNotifs = [...merged, ...localOnly];
+          try {
+            localStorage.setItem('syllabus_notifications', JSON.stringify(finalNotifs));
+          } catch {}
+          return finalNotifs;
         });
       }
       if (syncData.timetable && syncData.timetable.length > 0) {
-        setTimetable(syncData.timetable);
+        const serverTimetable = syncData.timetable;
+        setTimetable((prev) => {
+          const map = new Map<string, TimetableClass>();
+          prev.forEach((t) => {
+            const key = t.id || `${t.day}-${t.time}-${t.subjectId || t.subjectName}`;
+            map.set(key, t);
+          });
+          serverTimetable.forEach((t) => {
+            const key = t.id || `${t.day}-${t.time}-${t.subjectId || t.subjectName}`;
+            const existing = map.get(key);
+            if (existing) {
+              map.set(key, { ...existing, ...t });
+            } else {
+              map.set(key, t);
+            }
+          });
+          const merged = Array.from(map.values());
+          try {
+            localStorage.setItem('syllabus_timetable', JSON.stringify(merged));
+          } catch {}
+          return merged;
+        });
       }
     });
 

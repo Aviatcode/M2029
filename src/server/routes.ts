@@ -92,11 +92,161 @@ class MemoryStore {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
+
+      // Merge with any existing records on disk to prevent overwriting prior saves
+      let diskData: any = {};
+      if (fs.existsSync(CACHE_FILE)) {
+        try {
+          const raw = fs.readFileSync(CACHE_FILE, 'utf-8');
+          diskData = JSON.parse(raw);
+        } catch {
+          diskData = {};
+        }
+      }
+
+      const mergedClasses = { ...(diskData.classes || {}), ...this.classes };
+
+      const mergedSubjects: Record<string, Subject[]> = { ...(diskData.subjects || {}) };
+      for (const [classId, subs] of Object.entries(this.subjects)) {
+        const existing = mergedSubjects[classId] || [];
+        const map = new Map<string, Subject>();
+        existing.forEach((s) => { if (s.id) map.set(s.id, s); });
+        subs.forEach((s) => { if (s.id) map.set(s.id, { ...map.get(s.id), ...s }); });
+        mergedSubjects[classId] = Array.from(map.values());
+      }
+
+      const mergedUnits: Record<string, Unit[]> = { ...(diskData.units || {}) };
+      for (const [subId, units] of Object.entries(this.units)) {
+        const existing = mergedUnits[subId] || [];
+        const map = new Map<string, Unit>();
+        existing.forEach((u) => {
+          const key = u.id || `u-${u.number}`;
+          map.set(key, u);
+        });
+        units.forEach((u) => {
+          const key = u.id || `u-${u.number}`;
+          map.set(key, { ...map.get(key), ...u });
+        });
+        mergedUnits[subId] = Array.from(map.values());
+      }
+
+      const mergedMaterials: Record<string, AcademicMaterial[]> = { ...(diskData.materials || {}) };
+      for (const [classId, mats] of Object.entries(this.materials)) {
+        const existing = mergedMaterials[classId] || [];
+        const map = new Map<string, AcademicMaterial>();
+        existing.forEach((m) => {
+          if (m.id) map.set(m.id, m);
+        });
+        mats.forEach((m) => {
+          if (m.id) {
+            map.set(m.id, { ...map.get(m.id), ...m });
+          }
+        });
+        mergedMaterials[classId] = Array.from(map.values());
+      }
+
+      const assignMap = new Map<string, AcademicAssignment>();
+      if (Array.isArray(diskData.assignments)) {
+        diskData.assignments.forEach((a: AcademicAssignment) => {
+          if (a.id) assignMap.set(a.id, a);
+        });
+      }
+      this.assignments.forEach((a) => {
+        if (a.id) {
+          assignMap.set(a.id, { ...assignMap.get(a.id), ...a });
+        }
+      });
+      const mergedAssignments = Array.from(assignMap.values());
+
+      const mergedExams: Record<string, ExamDateSheetItem[]> = { ...(diskData.exams || {}) };
+      for (const [classId, examList] of Object.entries(this.exams)) {
+        const existing = mergedExams[classId] || [];
+        const map = new Map<string, ExamDateSheetItem>();
+        existing.forEach((e) => {
+          if (e.id) map.set(e.id, e);
+        });
+        examList.forEach((e) => {
+          if (e.id) {
+            map.set(e.id, { ...map.get(e.id), ...e });
+          }
+        });
+        mergedExams[classId] = Array.from(map.values());
+      }
+
+      const annMap = new Map<string, ClassAnnouncement>();
+      if (Array.isArray(diskData.announcements)) {
+        diskData.announcements.forEach((an: ClassAnnouncement) => {
+          if (an.id) annMap.set(an.id, an);
+        });
+      }
+      this.announcements.forEach((an) => {
+        if (an.id) {
+          annMap.set(an.id, { ...annMap.get(an.id), ...an });
+        }
+      });
+      const mergedAnnouncements = Array.from(annMap.values());
+
+      const notifMap = new Map<string, AppNotification>();
+      if (Array.isArray(diskData.notifications)) {
+        diskData.notifications.forEach((n: AppNotification) => {
+          if (n.id) notifMap.set(n.id, n);
+        });
+      }
+      this.notifications.forEach((n) => {
+        if (n.id) {
+          notifMap.set(n.id, { ...notifMap.get(n.id), ...n });
+        }
+      });
+      const mergedNotifications = Array.from(notifMap.values());
+
+      const mergedTimetable: Record<string, any[]> = { ...(diskData.timetable || {}) };
+      for (const [classId, slots] of Object.entries(this.timetable)) {
+        const existing = mergedTimetable[classId] || [];
+        const map = new Map<string, any>();
+        existing.forEach((t) => {
+          const key = t.id || `${t.day}-${t.startTime}-${t.subjectId || t.subjectName}`;
+          map.set(key, t);
+        });
+        slots.forEach((t) => {
+          const key = t.id || `${t.day}-${t.startTime}-${t.subjectId || t.subjectName}`;
+          map.set(key, { ...map.get(key), ...t });
+        });
+        mergedTimetable[classId] = Array.from(map.values());
+      }
+
+      const mergedPyqs: Record<string, HistoricalPYQ[]> = { ...(diskData.pyqs || {}) };
+      for (const [subId, pyqList] of Object.entries(this.pyqs)) {
+        const existing = mergedPyqs[subId] || [];
+        const map = new Map<string, HistoricalPYQ>();
+        existing.forEach((p) => {
+          if (p.id) map.set(p.id, p);
+        });
+        pyqList.forEach((p) => {
+          if (p.id) {
+            map.set(p.id, { ...map.get(p.id), ...p });
+          }
+        });
+        mergedPyqs[subId] = Array.from(map.values());
+      }
+
+      this.classes = mergedClasses;
+      this.subjects = mergedSubjects;
+      this.units = mergedUnits;
+      this.materials = mergedMaterials;
+      this.assignments = mergedAssignments;
+      this.exams = mergedExams;
+      this.announcements = mergedAnnouncements;
+      this.notifications = mergedNotifications;
+      this.timetable = mergedTimetable;
+      this.pyqs = mergedPyqs;
+
       const data = {
         classes: this.classes,
         subjects: this.subjects,
         units: this.units,
+        timetable: this.timetable,
         materials: this.materials,
+        pyqs: this.pyqs,
         assignments: this.assignments,
         exams: this.exams,
         announcements: this.announcements,
@@ -114,20 +264,125 @@ class MemoryStore {
       if (fs.existsSync(CACHE_FILE)) {
         const raw = fs.readFileSync(CACHE_FILE, 'utf-8');
         const data = JSON.parse(raw);
-        if (data.classes) this.classes = data.classes;
-        if (data.subjects) this.subjects = data.subjects;
-        if (data.units) this.units = data.units;
-        if (data.materials) this.materials = data.materials;
+
+        if (data.classes && typeof data.classes === 'object') {
+          this.classes = { ...data.classes, ...this.classes };
+        }
+
+        if (data.subjects && typeof data.subjects === 'object') {
+          for (const [classId, subs] of Object.entries(data.subjects as Record<string, Subject[]>)) {
+            if (!Array.isArray(subs)) continue;
+            const existing = this.subjects[classId] || [];
+            const map = new Map<string, Subject>();
+            subs.forEach((s) => { if (s.id) map.set(s.id, s); });
+            existing.forEach((s) => {
+              if (s.id) map.set(s.id, { ...map.get(s.id), ...s });
+            });
+            this.subjects[classId] = Array.from(map.values());
+          }
+        }
+
+        if (data.units && typeof data.units === 'object') {
+          for (const [subId, units] of Object.entries(data.units as Record<string, Unit[]>)) {
+            if (!Array.isArray(units)) continue;
+            const existing = this.units[subId] || [];
+            const map = new Map<string, Unit>();
+            units.forEach((u) => {
+              const key = u.id || `u-${u.number}`;
+              map.set(key, u);
+            });
+            existing.forEach((u) => {
+              const key = u.id || `u-${u.number}`;
+              map.set(key, { ...map.get(key), ...u });
+            });
+            this.units[subId] = Array.from(map.values());
+          }
+        }
+
+        if (data.materials && typeof data.materials === 'object') {
+          for (const [classId, mats] of Object.entries(data.materials as Record<string, AcademicMaterial[]>)) {
+            if (!Array.isArray(mats)) continue;
+            const existing = this.materials[classId] || [];
+            const map = new Map<string, AcademicMaterial>();
+            mats.forEach((m) => { if (m.id) map.set(m.id, m); });
+            existing.forEach((m) => {
+              if (m.id) map.set(m.id, { ...map.get(m.id), ...m });
+            });
+            this.materials[classId] = Array.from(map.values());
+          }
+        }
+
         if (data.assignments && Array.isArray(data.assignments)) {
           const map = new Map<string, AcademicAssignment>();
-          this.assignments.forEach((a) => map.set(a.id, a));
-          data.assignments.forEach((a: AcademicAssignment) => map.set(a.id, { ...map.get(a.id), ...a }));
+          data.assignments.forEach((a: AcademicAssignment) => { if (a.id) map.set(a.id, a); });
+          this.assignments.forEach((a) => {
+            if (a.id) map.set(a.id, { ...map.get(a.id), ...a });
+          });
           this.assignments = Array.from(map.values());
         }
-        if (data.exams) this.exams = data.exams;
-        if (data.announcements) this.announcements = data.announcements;
-        if (data.notifications) this.notifications = data.notifications;
-        console.log(`[Classroom Cache] Restored shared cache from disk (Materials: ${Object.values(this.materials).flat().length}, Assignments: ${this.assignments.length})`);
+
+        if (data.exams && typeof data.exams === 'object') {
+          for (const [classId, examList] of Object.entries(data.exams as Record<string, ExamDateSheetItem[]>)) {
+            if (!Array.isArray(examList)) continue;
+            const existing = this.exams[classId] || [];
+            const map = new Map<string, ExamDateSheetItem>();
+            examList.forEach((e) => { if (e.id) map.set(e.id, e); });
+            existing.forEach((e) => {
+              if (e.id) map.set(e.id, { ...map.get(e.id), ...e });
+            });
+            this.exams[classId] = Array.from(map.values());
+          }
+        }
+
+        if (data.announcements && Array.isArray(data.announcements)) {
+          const map = new Map<string, ClassAnnouncement>();
+          data.announcements.forEach((an: ClassAnnouncement) => { if (an.id) map.set(an.id, an); });
+          this.announcements.forEach((an) => {
+            if (an.id) map.set(an.id, { ...map.get(an.id), ...an });
+          });
+          this.announcements = Array.from(map.values());
+        }
+
+        if (data.notifications && Array.isArray(data.notifications)) {
+          const map = new Map<string, AppNotification>();
+          data.notifications.forEach((n: AppNotification) => { if (n.id) map.set(n.id, n); });
+          this.notifications.forEach((n) => {
+            if (n.id) map.set(n.id, { ...map.get(n.id), ...n });
+          });
+          this.notifications = Array.from(map.values());
+        }
+
+        if (data.timetable && typeof data.timetable === 'object') {
+          for (const [classId, slots] of Object.entries(data.timetable as Record<string, any[]>)) {
+            if (!Array.isArray(slots)) continue;
+            const existing = this.timetable[classId] || [];
+            const map = new Map<string, any>();
+            slots.forEach((t) => {
+              const key = t.id || `${t.day}-${t.startTime}-${t.subjectId || t.subjectName}`;
+              map.set(key, t);
+            });
+            existing.forEach((t) => {
+              const key = t.id || `${t.day}-${t.startTime}-${t.subjectId || t.subjectName}`;
+              map.set(key, { ...map.get(key), ...t });
+            });
+            this.timetable[classId] = Array.from(map.values());
+          }
+        }
+
+        if (data.pyqs && typeof data.pyqs === 'object') {
+          for (const [subId, pyqList] of Object.entries(data.pyqs as Record<string, HistoricalPYQ[]>)) {
+            if (!Array.isArray(pyqList)) continue;
+            const existing = this.pyqs[subId] || [];
+            const map = new Map<string, HistoricalPYQ>();
+            pyqList.forEach((p) => { if (p.id) map.set(p.id, p); });
+            existing.forEach((p) => {
+              if (p.id) map.set(p.id, { ...map.get(p.id), ...p });
+            });
+            this.pyqs[subId] = Array.from(map.values());
+          }
+        }
+
+        console.log(`[Classroom Cache] Restored and merged shared cache from disk (Materials: ${Object.values(this.materials).flat().length}, Assignments: ${this.assignments.length})`);
       }
     } catch (e) {
       console.warn('[Classroom Cache] Disk read fallback to seeds:', e);
@@ -277,6 +532,7 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
   db.materials[newClass.id] = [];
   db.timetable[newClass.id] = [];
   db.exams[newClass.id] = [];
+  db.saveToDisk();
 
   res.json({
     status: 'success',
@@ -1481,17 +1737,31 @@ apiRouter.get('/materials/:classId', (req: Request, res: Response) => {
 // 8.5 Unified Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
 apiRouter.get('/sync/classroom/:classCode', (req: Request, res: Response) => {
   const code = (req.params.classCode || 'BCA-2028').toUpperCase();
-  const classId = 'class-bca-2028';
+  const foundClass = db.classes[code] || Object.values(db.classes).find((c) => c.code?.toUpperCase() === code);
+  const classId = foundClass?.id || 'class-bca-2028';
+
+  const materials = (db.materials[classId] && db.materials[classId].length > 0)
+    ? db.materials[classId]
+    : (db.materials['class-bca-2028'] || Object.values(db.materials).flat() || []);
+
+  const exams = (db.exams[classId] && db.exams[classId].length > 0)
+    ? db.exams[classId]
+    : (db.exams['class-bca-2028'] || Object.values(db.exams).flat() || []);
+
+  const timetable = (db.timetable[classId] && db.timetable[classId].length > 0)
+    ? db.timetable[classId]
+    : (db.timetable['class-bca-2028'] || Object.values(db.timetable).flat() || []);
+
   res.json({
     classCode: code,
     classId,
-    materials: db.materials[classId] || [],
+    materials,
     assignments: db.assignments || [],
-    units: db.units[classId] || db.units || [],
-    exams: db.exams[classId] || [],
+    units: db.units || {},
+    exams,
     announcements: db.announcements || [],
     notifications: db.notifications || [],
-    timetable: db.timetable[classId] || [],
+    timetable,
     lastSyncedAt: new Date().toISOString(),
   });
 });
@@ -1574,6 +1844,7 @@ apiRouter.post('/exams/toggle-plan', (req: Request, res: Response) => {
     const day = found.revisionDaysPlan.find((d) => d.dayNumber === dayNumber);
     if (day) {
       day.completed = !day.completed;
+      db.saveToDisk();
       return res.json({ status: 'ok', exam: found });
     }
   }
@@ -2081,21 +2352,6 @@ apiRouter.post('/sync/now', async (_req: Request, res: Response) => {
   }
 });
 
-
-// 19. Get Daily Auto-Sync Status
-apiRouter.get('/sync/status', (_req: Request, res: Response) => {
-  res.json(getAutoSyncStatus());
-});
-
-// 20. Trigger Immediate Auto-Sync
-apiRouter.post('/sync/now', async (_req: Request, res: Response) => {
-  try {
-    const result = await executeAutoSync(true);
-    res.json({ ...result, status: getAutoSyncStatus() });
-  } catch (err: any) {
-    res.status(500).json({ error: 'Sync failed', details: err.message });
-  }
-});
 
 
 // 18. Download Repository as a ZIP File (GET with query param or default)
