@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   ArrowRight,
@@ -7,17 +7,28 @@ import {
   Hash,
   LogIn,
   UserPlus,
-  Eye,
-  EyeOff,
+  Users,
+  CheckCircle2,
+  RefreshCw,
+  BookOpen,
 } from 'lucide-react';
 import { UserProfile } from './LoginModal';
-import { UserRole } from '../types';
+import { UserRole, ClassWorkspace, Subject } from '../types';
+import {
+  getDefaultSubjectsForClass,
+  saveClassLocally,
+  getSavedClass,
+} from '../utils/classManager';
 
 interface LandingPageViewProps {
   currentUser: UserProfile;
   classCode: string;
-  onEnterWorkspace: (profile: UserProfile) => void;
+  onEnterWorkspace: (
+    profile: UserProfile,
+    classData?: { workspace: ClassWorkspace; subjects: Subject[] }
+  ) => void;
   onGoToDashboard: () => void;
+  onShowInvite?: (classCode: string, className: string) => void;
 }
 
 export const LandingPageView: React.FC<LandingPageViewProps> = ({
@@ -25,11 +36,16 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
   classCode,
   onEnterWorkspace,
   onGoToDashboard,
+  onShowInvite,
 }) => {
-  const [authMode, setAuthMode] = useState<'signup' | 'signin'>('signup');
+  // Google Classroom-style Modes: 'join' (default) or 'create' (1st person setup)
+  const [mode, setMode] = useState<'join' | 'create'>('join');
+
   const [name, setName] = useState(currentUser.isLoggedIn ? currentUser.name : '');
   const [email, setEmail] = useState(currentUser.isLoggedIn ? currentUser.email : '');
-  const [selectedClassId, setSelectedClassId] = useState(() => {
+
+  // Detect URL class code
+  const [urlDetectedCode, setUrlDetectedCode] = useState<string>(() => {
     try {
       const searchParams = new URLSearchParams(window.location.search);
       const qCode = searchParams.get('class') || searchParams.get('code');
@@ -37,59 +53,134 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       const hash = window.location.hash;
       const hashMatch = hash.match(/class=([a-zA-Z0-9_-]+)/i) || hash.match(/code=([a-zA-Z0-9_-]+)/i);
       if (hashMatch) return hashMatch[1].trim().toUpperCase();
-    } catch {
-      // ignore
-    }
-    return classCode || '';
+    } catch {}
+    return '';
   });
-  const [selectedRole, setSelectedRole] = useState<UserRole>(
-    currentUser.isLoggedIn ? (currentUser.role as UserRole) : 'student'
-  );
-  const [showClassCode, setShowClassCode] = useState(false);
+
+  const [joinCodeInput, setJoinCodeInput] = useState<string>(() => {
+    return urlDetectedCode || classCode || 'BCA-2028';
+  });
+
+  // Create Mode States
+  const [newClassName, setNewClassName] = useState('BCA 2028');
+  const [newSemester, setNewSemester] = useState(1);
+  const [generatedCode, setGeneratedCode] = useState('BCA-2028');
   const [formError, setFormError] = useState('');
+
+  // Auto-generate code when class name changes
+  useEffect(() => {
+    if (mode === 'create') {
+      const prefix = newClassName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() || 'BCA';
+      setGeneratedCode(`${prefix}-${newSemester}01`);
+    }
+  }, [newClassName, newSemester, mode]);
+
+  const handleRegenerateCode = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let rand = '';
+    for (let i = 0; i < 4; i++) {
+      rand += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const prefix = newClassName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 3).toUpperCase() || 'BCA';
+    setGeneratedCode(`${prefix}-${rand}`);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
 
+    const cleanName = name.trim();
     const cleanEmail = email.trim();
-    const cleanClassId = selectedClassId.trim().toUpperCase();
-    const cleanName = authMode === 'signup' ? name.trim() : (name.trim() || cleanEmail.split('@')[0]);
 
-    if (authMode === 'signup' && !cleanName) {
-      setFormError('Please enter your name.');
+    if (!cleanName) {
+      setFormError('Please enter your full name.');
       return;
     }
 
     if (!cleanEmail || !cleanEmail.includes('@')) {
-      setFormError('Please enter a valid email.');
+      setFormError('Please enter a valid student email.');
       return;
     }
 
-    if (!cleanClassId) {
-      setFormError('Please enter your Class ID (e.g. CS-2026).');
-      return;
+    if (mode === 'join') {
+      const targetCode = joinCodeInput.trim().toUpperCase();
+      if (!targetCode) {
+        setFormError('Please enter the Class Code (e.g. BCA-2028).');
+        return;
+      }
+
+      // Check if existing class data exists or initialize for this code
+      const existing = getSavedClass(targetCode);
+      const workspace: ClassWorkspace = existing?.workspace || {
+        id: `class-${targetCode.toLowerCase()}`,
+        code: targetCode,
+        name: `${targetCode} Class Workspace`,
+        university: 'Affiliated University',
+        semester: 1,
+        academicYear: '2026-2027',
+        memberCount: 2,
+        adminId: 'user-admin',
+      };
+      const subjects: Subject[] = existing?.subjects && existing.subjects.length > 0
+        ? existing.subjects
+        : getDefaultSubjectsForClass(targetCode, 1);
+
+      saveClassLocally(workspace, subjects);
+
+      const profile: UserProfile = {
+        id: `user-${Date.now()}`,
+        name: cleanName,
+        email: cleanEmail,
+        rollNumber: `${targetCode}-${Math.floor(100 + Math.random() * 900)}`,
+        role: 'student',
+        classCode: targetCode,
+        isLoggedIn: true,
+      };
+
+      onEnterWorkspace(profile, { workspace, subjects });
+    } else {
+      // CREATE MODE (1st Person / Admin Setup)
+      const finalCode = (generatedCode || 'BCA-2028').trim().toUpperCase();
+      const finalName = newClassName.trim() || `${finalCode} Batch`;
+      const subjects = getDefaultSubjectsForClass(finalCode, newSemester);
+
+      const workspace: ClassWorkspace = {
+        id: `class-${Date.now()}`,
+        code: finalCode,
+        name: finalName,
+        university: 'Affiliated University',
+        semester: newSemester,
+        academicYear: '2026-2027',
+        memberCount: 1,
+        adminId: 'user-admin-self',
+        verifiedByCR: true,
+        crName: cleanName,
+        crRollNo: `${finalCode}-CR-01`,
+        crVerifiedAt: new Date().toISOString(),
+      };
+
+      saveClassLocally(workspace, subjects);
+
+      const profile: UserProfile = {
+        id: `user-${Date.now()}`,
+        name: cleanName,
+        email: cleanEmail,
+        rollNumber: `${finalCode}-CR-01`,
+        role: 'cr',
+        classCode: finalCode,
+        isLoggedIn: true,
+      };
+
+      onEnterWorkspace(profile, { workspace, subjects });
+      if (onShowInvite) {
+        setTimeout(() => onShowInvite(finalCode, finalName), 300);
+      }
     }
-
-    const generatedRollNo = `${cleanClassId}-${Math.floor(100 + Math.random() * 900)}`;
-
-    const newProfile: UserProfile = {
-      id: `user-${Date.now()}`,
-      name: cleanName,
-      email: cleanEmail,
-      rollNumber: currentUser.rollNumber && currentUser.classCode === cleanClassId ? currentUser.rollNumber : generatedRollNo,
-      role: selectedRole as 'student' | 'cr' | 'teacher',
-      classCode: cleanClassId,
-      isLoggedIn: true,
-      avatarUrl: currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    };
-
-    onEnterWorkspace(newProfile);
   };
 
   return (
     <div className="relative min-h-screen w-full bg-neutral-950 text-neutral-100 font-sans selection:bg-neutral-800 selection:text-white flex flex-col justify-between overflow-x-hidden">
-      {/* 1. College Doodles Background Backdrop */}
+      {/* Background Graphic */}
       <div
         className="fixed inset-0 pointer-events-none z-0 opacity-15 bg-repeat"
         style={{
@@ -98,14 +189,12 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         }}
         aria-hidden="true"
       />
-
-      {/* Subtle Vignette Overlay */}
       <div
         className="fixed inset-0 pointer-events-none z-0 bg-gradient-to-b from-neutral-950/80 via-neutral-950/90 to-neutral-950"
         aria-hidden="true"
       />
 
-      {/* 2. Top Header */}
+      {/* Top Header */}
       <header className="relative z-20 border-b border-neutral-850/60 bg-neutral-950/70 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <img
@@ -117,7 +206,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         </div>
 
         <div>
-          {currentUser.isLoggedIn ? (
+          {currentUser.isLoggedIn && (
             <button
               onClick={onGoToDashboard}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-100 hover:bg-white text-neutral-950 font-medium text-xs transition cursor-pointer"
@@ -125,96 +214,94 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               <span>Workspace</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
-          ) : (
-            <button
-              onClick={() => setAuthMode((m) => (m === 'signup' ? 'signin' : 'signup'))}
-              className="text-xs text-neutral-400 hover:text-white transition cursor-pointer"
-            >
-              {authMode === 'signup' ? 'Sign In →' : 'Sign Up →'}
-            </button>
           )}
         </div>
       </header>
 
-      {/* 3. Hero & Minimal Form Section */}
+      {/* Hero & Form Section */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 max-w-xl mx-auto w-full">
-        {/* Short, Punchy Title */}
-        <div className="text-center space-y-2 mb-7 flex flex-col items-center">
+        <div className="text-center space-y-2 mb-6 flex flex-col items-center">
           <img
             src="./am-logo.png"
             alt="AM Logo"
-            className="w-14 h-14 rounded-2xl object-contain shadow-lg mb-1 border border-neutral-800"
+            className="w-12 h-12 rounded-2xl object-contain shadow-lg mb-1 border border-neutral-800"
           />
-          <h1 className="font-editorial text-3xl sm:text-4xl font-normal tracking-tight text-white mt-1">
-            Your syllabus, lecture-ready.
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            Classroom Study Workspace
           </h1>
-
           <p className="text-xs text-neutral-400 max-w-sm mx-auto">
-            Enter your student mail and class ID to join.
+            {mode === 'join'
+              ? 'Enter your class code to join notes, timetable & mindmaps.'
+              : 'Configure your semester once, get a code, and invite your batch.'}
           </p>
         </div>
 
-        {/* Clean Login / Sign Up Card */}
-        <div className="w-full rounded-2xl bg-neutral-900/85 backdrop-blur-xl border border-neutral-800/80 p-5 sm:p-6 shadow-xl relative">
-          {/* Mode Switch Tabs */}
-          <div className="flex p-0.5 rounded-lg bg-neutral-950 border border-neutral-850 text-xs mb-5">
+        {/* Clean Google Classroom Card */}
+        <div className="w-full rounded-2xl bg-neutral-900/90 backdrop-blur-xl border border-neutral-800/80 p-5 sm:p-6 shadow-2xl relative space-y-4">
+          {/* Mode Switcher Tabs */}
+          <div className="flex p-1 rounded-xl bg-neutral-950 border border-neutral-800 text-xs">
             <button
               type="button"
-              onClick={() => setAuthMode('signup')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md font-medium transition cursor-pointer ${
-                authMode === 'signup'
-                  ? 'bg-neutral-850 text-white shadow-xs'
+              onClick={() => setMode('join')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg font-medium transition cursor-pointer ${
+                mode === 'join'
+                  ? 'bg-neutral-800 text-white shadow-xs'
                   : 'text-neutral-400 hover:text-neutral-200'
               }`}
             >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>Sign Up</span>
+              <Users className="w-3.5 h-3.5" />
+              <span>Join with Code</span>
             </button>
             <button
               type="button"
-              onClick={() => setAuthMode('signin')}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md font-medium transition cursor-pointer ${
-                authMode === 'signin'
-                  ? 'bg-neutral-850 text-white shadow-xs'
+              onClick={() => setMode('create')}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg font-medium transition cursor-pointer ${
+                mode === 'create'
+                  ? 'bg-neutral-800 text-white shadow-xs'
                   : 'text-neutral-400 hover:text-neutral-200'
               }`}
             >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In</span>
+              <Sparkles className="w-3.5 h-3.5 text-neutral-300" />
+              <span>Create Class (1st Person)</span>
             </button>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
-            {formError && (
-              <div className="p-2 rounded-lg bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs">
-                {formError}
-              </div>
-            )}
+          {/* URL Invite Detected Alert */}
+          {urlDetectedCode && mode === 'join' && (
+            <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+              <span>Class invite link detected: <strong>{urlDetectedCode}</strong></span>
+            </div>
+          )}
 
-            {/* Name (in signup mode) */}
-            {authMode === 'signup' && (
-              <div className="space-y-1">
-                <label className="text-[11px] font-medium text-neutral-400 flex items-center gap-1">
-                  <UserIcon className="w-3 h-3 text-neutral-500" />
-                  <span>Name</span>
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
-                  required={authMode === 'signup'}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-sans"
-                />
-              </div>
-            )}
+          {formError && (
+            <div className="p-2.5 rounded-xl bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs">
+              {formError}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
+            {/* Name */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-medium text-neutral-400 flex items-center gap-1">
+                <UserIcon className="w-3 h-3 text-neutral-500" />
+                <span>Your Name</span>
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Full name (e.g. Rahul Sharma)"
+                required
+                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs"
+              />
+            </div>
 
             {/* Email */}
             <div className="space-y-1">
               <label className="text-[11px] font-medium text-neutral-400 flex items-center gap-1">
                 <Mail className="w-3 h-3 text-neutral-500" />
-                <span>Student Mail</span>
+                <span>Student Email</span>
               </label>
               <input
                 type="email"
@@ -222,72 +309,97 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="student@university.edu"
                 required
-                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-mono"
+                className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-mono"
               />
             </div>
 
-            {/* Common Class ID */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-medium text-neutral-400 flex items-center gap-1">
-                <Hash className="w-3 h-3 text-neutral-500" />
-                <span>Class ID</span>
-              </label>
-
-              <div className="relative">
+            {/* JOIN MODE FIELDS */}
+            {mode === 'join' && (
+              <div className="space-y-1">
+                <label className="text-[11px] font-medium text-neutral-400 flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <Hash className="w-3 h-3 text-neutral-500" />
+                    <span>Class Code</span>
+                  </span>
+                  <span className="text-[10px] text-neutral-500 font-mono">From invite message</span>
+                </label>
                 <input
-                  type={showClassCode ? 'text' : 'password'}
-                  value={selectedClassId}
-                  onChange={(e) => setSelectedClassId(e.target.value.toUpperCase())}
-                  placeholder="e.g. CS-2026 or BCA-B"
+                  type="text"
+                  value={joinCodeInput}
+                  onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. BCA-2028"
                   required
-                  className="w-full pl-3 pr-9 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs font-mono uppercase tracking-wider"
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-sm font-mono uppercase tracking-widest font-bold"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowClassCode(!showClassCode)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-200 transition cursor-pointer p-0.5"
-                  title={showClassCode ? 'Hide class ID' : 'Reveal class ID'}
-                  aria-label={showClassCode ? 'Hide class ID' : 'Reveal class ID'}
-                >
-                  {showClassCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
               </div>
-            </div>
+            )}
 
-            {/* Role (signup mode only) */}
-            {authMode === 'signup' && (
-              <div className="space-y-1 pt-1">
-                <label className="text-[11px] font-medium text-neutral-400 block">Role</label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {[
-                    { id: 'student', label: 'Student' },
-                    { id: 'cr', label: 'CR' },
-                    { id: 'teacher', label: 'Faculty' },
-                  ].map((r) => (
-                    <button
-                      key={r.id}
-                      type="button"
-                      onClick={() => setSelectedRole(r.id as UserRole)}
-                      className={`py-1.5 px-2 rounded-lg text-xs font-medium border text-center transition cursor-pointer ${
-                        selectedRole === r.id
-                          ? 'bg-neutral-100 text-neutral-950 border-neutral-100'
-                          : 'bg-neutral-950 text-neutral-400 border-neutral-800 hover:border-neutral-700'
-                      }`}
+            {/* CREATE MODE FIELDS (1st Person) */}
+            {mode === 'create' && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-medium text-neutral-400 block">
+                      Class / Batch Name
+                    </label>
+                    <input
+                      type="text"
+                      value={newClassName}
+                      onChange={(e) => setNewClassName(e.target.value)}
+                      placeholder="e.g. BCA 2028"
+                      required
+                      className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-medium text-neutral-400 block">
+                      Semester
+                    </label>
+                    <select
+                      value={newSemester}
+                      onChange={(e) => setNewSemester(Number(e.target.value))}
+                      className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-100 focus:outline-none focus:border-neutral-500 transition text-xs"
                     >
-                      {r.label}
-                    </button>
-                  ))}
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                        <option key={s} value={s}>Semester {s}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
+
+                {/* Generated Code Preview */}
+                <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] text-neutral-400 font-mono uppercase block">
+                      Generated Class Code
+                    </span>
+                    <span className="text-base font-bold font-mono text-white tracking-widest block mt-0.5">
+                      {generatedCode}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRegenerateCode}
+                    className="p-1.5 rounded-lg bg-neutral-850 hover:bg-neutral-800 text-neutral-300 text-xs flex items-center gap-1 cursor-pointer transition"
+                    title="Generate different code"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Change</span>
+                  </button>
+                </div>
+              </>
             )}
 
             {/* Submit Button */}
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 rounded-xl bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-200 text-neutral-950 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-sm"
               >
-                <span>{authMode === 'signup' ? 'Enter Workspace' : 'Sign In'}</span>
+                <span>
+                  {mode === 'join' ? 'Join Class Workspace' : 'Create Class & Get Invite Code'}
+                </span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -295,14 +407,14 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         </div>
       </main>
 
-      {/* 4. Minimal Footer */}
+      {/* Footer */}
       <footer className="relative z-10 border-t border-neutral-850/60 bg-neutral-950/70 py-3.5 px-4 sm:px-8 text-center text-[11px] text-neutral-500 font-mono flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="./am-logo.png" alt="AM" className="w-3.5 h-3.5 rounded object-contain border border-neutral-800" />
           <span>M2029</span>
         </div>
         <div>
-          <span>{selectedClassId ? `Class ${selectedClassId}` : 'Academic Workspace'}</span>
+          <span>Google Classroom Model · Free & Offline Ready</span>
         </div>
       </footer>
     </div>

@@ -50,6 +50,12 @@ import { AIKeyConfigModal } from './components/AIKeyConfigModal';
 import { SettingsView } from './components/SettingsView';
 import { LoginModal, UserProfile } from './components/LoginModal';
 import { LandingPageView } from './components/LandingPageView';
+import { ShareInviteModal } from './components/ShareInviteModal';
+import {
+  getDefaultSubjectsForClass,
+  saveClassLocally,
+  getSavedClass,
+} from './utils/classManager';
 import { initTheme } from './utils/themeService';
 import {
   BackgroundConfig,
@@ -60,6 +66,18 @@ import {
   checkAndRetrieveSharedFiles,
   registerLaunchQueueHandler,
 } from './utils/shareTargetService';
+
+const getUrlClassCode = (): string => {
+  try {
+    const searchParams = new URLSearchParams(window.location.search);
+    const qCode = searchParams.get('class') || searchParams.get('code');
+    if (qCode) return qCode.trim().toUpperCase();
+    const hash = window.location.hash;
+    const hashMatch = hash.match(/class=([a-zA-Z0-9_-]+)/i) || hash.match(/code=([a-zA-Z0-9_-]+)/i);
+    if (hashMatch) return hashMatch[1].trim().toUpperCase();
+  } catch {}
+  return '';
+};
 
 const DEFAULT_USER: UserProfile = {
   id: '',
@@ -141,6 +159,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveNavTab>(getInitialTab);
   const [currentRole, setCurrentRole] = useState<UserRole>('student');
   const [classCode, setClassCode] = useState<string>(() => {
+    const fromUrl = getUrlClassCode();
+    if (fromUrl) return fromUrl;
     try {
       const saved = localStorage.getItem('syllabus_user_profile');
       if (saved) {
@@ -155,21 +175,44 @@ export default function App() {
     } catch {
       // ignore
     }
-    return '';
+    return 'BCA-2028';
   });
   const [bgConfig, setBgConfig] = useState<BackgroundConfig>(getStoredBackgroundConfig);
 
-  // Sync tab with URL hash
+  // Sync tab with URL hash and listen for #class= invite links
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '') as ActiveNavTab;
+      const rawHash = window.location.hash.replace('#', '');
+      const classMatch = rawHash.match(/class=([a-zA-Z0-9_-]+)/i) || rawHash.match(/code=([a-zA-Z0-9_-]+)/i);
+      if (classMatch) {
+        const newCode = classMatch[1].trim().toUpperCase();
+        if (newCode && newCode !== classCode) {
+          setClassCode(newCode);
+          const saved = getSavedClass(newCode);
+          if (saved) {
+            setWorkspace(saved.workspace);
+            setSubjects(saved.subjects);
+          } else {
+            setWorkspace((prev) => ({
+              ...prev,
+              code: newCode,
+              name: `${newCode} Workspace`,
+            }));
+          }
+          setShareToast(`🎓 Switched to class: ${newCode}`);
+          setTimeout(() => setShareToast(''), 4000);
+        }
+        return;
+      }
+
+      const hash = rawHash as ActiveNavTab;
       if (hash && hash !== activeTab) {
         setActiveTab(hash);
       }
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [activeTab]);
+  }, [activeTab, classCode]);
 
   const handleSelectTab = (tab: ActiveNavTab) => {
     setActiveTab(tab);
@@ -282,19 +325,71 @@ export default function App() {
 
   // Core Academic State (Clean slate with localStorage persistence for real student use)
   const [workspace, setWorkspace] = useState<ClassWorkspace>(() => {
+    const fromUrl = getUrlClassCode();
+    if (fromUrl) {
+      const savedClass = getSavedClass(fromUrl);
+      if (savedClass) return savedClass.workspace;
+      return {
+        id: `class-${fromUrl.toLowerCase()}`,
+        code: fromUrl,
+        name: `${fromUrl} Workspace`,
+        university: 'Affiliated University',
+        semester: 1,
+        academicYear: '2026-2027',
+        memberCount: 1,
+        adminId: 'user-admin',
+      };
+    }
     try {
       const saved = localStorage.getItem('syllabus_workspace');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.code) return parsed;
+      }
     } catch {}
-    return SEED_CLASS;
+    return {
+      id: 'class-bca-2028',
+      code: 'BCA-2028',
+      name: 'BCA 2028 Batch',
+      university: 'Affiliated University',
+      semester: 1,
+      academicYear: '2026-2027',
+      memberCount: 1,
+      adminId: 'user-admin',
+    };
   });
+
   const [subjects, setSubjects] = useState<Subject[]>(() => {
+    const fromUrl = getUrlClassCode();
+    if (fromUrl) {
+      const savedClass = getSavedClass(fromUrl);
+      if (savedClass && savedClass.subjects && savedClass.subjects.length > 0) {
+        return savedClass.subjects;
+      }
+    }
     try {
       const saved = localStorage.getItem('syllabus_subjects');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
     } catch {}
-    return SEED_SUBJECTS;
+    return getDefaultSubjectsForClass('BCA-2028', 1);
   });
+
+  // Google Classroom Style Share Modal
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareModalData, setShareModalData] = useState<{ code: string; name: string }>({
+    code: 'BCA-2028',
+    name: 'BCA 2028',
+  });
+
+  const handleOpenShareModal = (code?: string, name?: string) => {
+    const c = code || classCode || workspace.code || 'BCA-2028';
+    const n = name || workspace.name || `${c} Workspace`;
+    setShareModalData({ code: c, name: n });
+    setIsShareModalOpen(true);
+  };
   const [unitsBySubject, setUnitsBySubject] = useState<Record<string, any>>(() => {
     try {
       const saved = localStorage.getItem('syllabus_units');
@@ -808,6 +903,11 @@ export default function App() {
       ]);
     }
     handleSelectTab('setup');
+    if (classData.workspace?.code) {
+      setTimeout(() => {
+        handleOpenShareModal(classData.workspace.code, classData.workspace.name);
+      }, 400);
+    }
   };
 
   const handleSearchResultClick = (type: string, title: string) => {
@@ -867,9 +967,20 @@ export default function App() {
           <LandingPageView
             currentUser={currentUser}
             classCode={classCode}
-            onEnterWorkspace={(profile) => {
+            onEnterWorkspace={(profile, classData) => {
               handleLogin(profile);
               setClassCode(profile.classCode);
+              if (classData) {
+                setWorkspace(classData.workspace);
+                setSubjects(classData.subjects);
+                setIsSemesterSetupDone(true);
+              } else {
+                setWorkspace((prev) => ({
+                  ...prev,
+                  code: profile.classCode,
+                  name: prev.name || `${profile.classCode} Workspace`,
+                }));
+              }
               setActiveTab('dashboard');
               try {
                 window.location.hash = 'dashboard';
@@ -885,6 +996,7 @@ export default function App() {
                 // ignore
               }
             }}
+            onShowInvite={(code, name) => handleOpenShareModal(code, name)}
           />
         </div>
       ) : (
@@ -1146,6 +1258,14 @@ export default function App() {
               subjects={subjects}
               onOpenClassSetup={() => setIsSetupModalOpen(true)}
               onNavigateTab={(tab) => handleSelectTab(tab)}
+              onOpenInvite={() => handleOpenShareModal()}
+              onAddRecommendedSubjects={() => {
+                const rec = getDefaultSubjectsForClass(workspace.code || 'BCA-2028', workspace.semester || 1);
+                setSubjects(rec);
+                saveClassLocally(workspace, rec);
+                setShareToast('✓ Loaded BCA Semester 1 subjects!');
+                setTimeout(() => setShareToast(''), 3000);
+              }}
             />
           )}
 
@@ -1175,6 +1295,13 @@ export default function App() {
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
         onSetupComplete={handleSetupComplete}
+      />
+
+      <ShareInviteModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        classCode={shareModalData.code}
+        className={shareModalData.name}
       />
 
       <ThemeSelectorModal

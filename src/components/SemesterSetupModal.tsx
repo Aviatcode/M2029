@@ -20,6 +20,12 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
+import {
+  RECOMMENDED_BCA_SEM1_SUBJECTS,
+  saveClassLocally,
+  getDefaultSubjectsForClass,
+} from '../utils/classManager';
+import { ClassWorkspace, Subject } from '../types';
 
 interface SemesterSetupModalProps {
   isOpen: boolean;
@@ -33,9 +39,9 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   onSetupComplete,
 }) => {
   const [step, setStep] = useState<number>(1);
-  const [className, setClassName] = useState<string>('');
-  const [classCode, setClassCode] = useState<string>('');
-  const [showClassCode, setShowClassCode] = useState<boolean>(false);
+  const [className, setClassName] = useState<string>('BCA 2028');
+  const [classCode, setClassCode] = useState<string>('BCA-2028');
+  const [showClassCode, setShowClassCode] = useState<boolean>(true);
   const [university, setUniversity] = useState<string>('');
   const [semester, setSemester] = useState<number>(1);
 
@@ -134,16 +140,58 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   const handleFinishSetup = async () => {
     setIsSubmitting(true);
 
+    const finalCode = (classCode.trim() || 'BCA-2028').toUpperCase();
+    const finalName = className.trim() || `${finalCode} Semester ${semester}`;
+    const subjectNames = subjects.length > 0 ? subjects : RECOMMENDED_BCA_SEM1_SUBJECTS;
+
+    const defaultColors = [
+      'from-blue-500 to-indigo-600',
+      'from-slate-700 to-zinc-700',
+      'from-amber-500 to-orange-600',
+      'from-purple-500 to-pink-600',
+      'from-emerald-500 to-teal-600',
+    ];
+
+    const localSubjects: Subject[] = subjectNames.map((subName: string, idx: number) => ({
+      id: `sub-${finalCode.toLowerCase()}-${idx + 1}`,
+      classId: `class-${Date.now()}`,
+      name: typeof subName === 'string' ? subName : 'Subject',
+      code: `SUB-${101 + idx}`,
+      teacherName: 'Faculty In-Charge',
+      credits: 4,
+      color: defaultColors[idx % defaultColors.length],
+      totalUnits: 4,
+      completedTopicsCount: 0,
+      totalTopicsCount: 10,
+    }));
+
+    const localWorkspace: ClassWorkspace = {
+      id: `class-${Date.now()}`,
+      code: finalCode,
+      name: finalName,
+      university: university.trim() || 'Affiliated University',
+      semester,
+      academicYear: '2026-2027',
+      memberCount: 1,
+      adminId: 'user-admin-self',
+      verifiedByCR: isCrAuthenticated,
+      crName: crName.trim() || 'Class Representative (CR)',
+      crRollNo: crRollNo.trim() || 'CR-VERIFIED',
+      crVerifiedAt: new Date().toISOString(),
+    };
+
+    saveClassLocally(localWorkspace, localSubjects);
+
     try {
       const res = await fetch('/api/class/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          code: classCode.trim().toUpperCase(),
-          name: className.trim(),
+          code: finalCode,
+          name: finalName,
           university: university.trim(),
           semester,
-          subjectsList: subjects,
+          subjectsList: subjectNames,
           crVerification: {
             verifiedByCR: isCrAuthenticated,
             crName: crName.trim(),
@@ -162,10 +210,11 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
         }).catch(console.error);
       }
 
-      onSetupComplete(data);
+      onSetupComplete(data.workspace ? data : { workspace: localWorkspace, subjects: localSubjects });
       onClose();
-    } catch (err) {
-      console.error('Setup failed:', err);
+    } catch {
+      onSetupComplete({ workspace: localWorkspace, subjects: localSubjects });
+      onClose();
     } finally {
       setIsSubmitting(false);
     }
@@ -407,8 +456,16 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   Configured Semester Subjects:
                 </span>
                 {subjects.length === 0 ? (
-                  <div className="p-4 rounded-xl border border-dashed border-slate-700 text-center text-xs text-slate-500">
-                    No subjects added yet. Type a subject name above and click <strong>Add Subject</strong>.
+                  <div className="p-4 rounded-xl border border-dashed border-slate-700 text-center text-xs text-slate-400 space-y-2.5">
+                    <p>No subjects added yet. Type a subject name above or load recommended subjects.</p>
+                    <button
+                      type="button"
+                      onClick={() => setSubjects(RECOMMENDED_BCA_SEM1_SUBJECTS)}
+                      className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>+ Load Recommended BCA Semester 1 Subjects</span>
+                    </button>
                   </div>
                 ) : (
                   <div className="max-h-48 overflow-y-auto space-y-2 pr-1">

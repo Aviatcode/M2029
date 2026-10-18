@@ -20,12 +20,19 @@ import {
 } from 'lucide-react';
 import { ClassWorkspace, Subject } from '../types/index';
 import { ActiveNavTab } from './Sidebar';
+import {
+  getTwoLineInviteMessage,
+  shareClassInvite,
+  openWhatsAppInvite,
+} from '../utils/classManager';
 
 interface SemesterSetupViewProps {
   workspace: ClassWorkspace;
   subjects: Subject[];
   onOpenClassSetup: () => void;
   onNavigateTab: (tab: ActiveNavTab) => void;
+  onOpenInvite?: () => void;
+  onAddRecommendedSubjects?: () => void;
 }
 
 export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
@@ -33,32 +40,56 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
   subjects,
   onOpenClassSetup,
   onNavigateTab,
+  onOpenInvite,
+  onAddRecommendedSubjects,
 }) => {
-  const [showClassCode, setShowClassCode] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedMessage, setCopiedMessage] = useState(false);
+  const [toastText, setToastText] = useState('');
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText(workspace.code);
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
+  const displayCode = (workspace.code || 'BCA-2028').trim().toUpperCase();
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(displayCode);
+      setCopiedCode(true);
+      setToastText('✓ Class code copied!');
+      setTimeout(() => {
+        setCopiedCode(false);
+        setToastText('');
+      }, 2500);
+    } catch {}
   };
 
-  const handleCopyLink = () => {
-    const inviteUrl = `${window.location.origin}${window.location.pathname}#class=${workspace.code}`;
-    navigator.clipboard.writeText(inviteUrl);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+  const handleShareInvite = async () => {
+    if (onOpenInvite) {
+      onOpenInvite();
+      return;
+    }
+    const res = await shareClassInvite(workspace.name, displayCode);
+    if (res.method === 'clipboard') {
+      setCopiedMessage(true);
+      setToastText('✓ 2-liner invite copied to clipboard!');
+      setTimeout(() => {
+        setCopiedMessage(false);
+        setToastText('');
+      }, 2500);
+    }
   };
 
   const handleShareWhatsApp = () => {
-    const inviteUrl = `${window.location.origin}${window.location.pathname}#class=${workspace.code}`;
-    const text = `Join our ${workspace.name} on SyllabusOS!\nClass Code: ${workspace.code}\nDirect Join Link: ${inviteUrl}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+    openWhatsAppInvite(workspace.name, displayCode);
   };
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
+      {/* Toast Notification */}
+      {toastText && (
+        <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs text-center font-medium shadow-md">
+          {toastText}
+        </div>
+      )}
+
       {/* Header Banner */}
       <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 md:p-6 backdrop-blur-sm shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
@@ -81,62 +112,61 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={onOpenClassSetup}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700/90 text-slate-100 border border-slate-700 text-xs font-medium transition cursor-pointer shrink-0 shadow-2xs"
-        >
-          <Sliders className="w-3.5 h-3.5 text-slate-300" />
-          <span>Edit Semester Setup</span>
-        </button>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <button
+            onClick={handleShareInvite}
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-slate-200 text-slate-950 text-xs font-semibold transition cursor-pointer shadow-xs"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Invite Classmates</span>
+          </button>
+          <button
+            onClick={onOpenClassSetup}
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700/90 text-slate-100 border border-slate-700 text-xs font-medium transition cursor-pointer shadow-2xs"
+          >
+            <Sliders className="w-3.5 h-3.5 text-slate-300" />
+            <span>Edit Setup</span>
+          </button>
+        </div>
       </div>
 
       {/* Cohort Overview Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3.5 rounded-lg border border-slate-800/80 bg-slate-900/30">
+        {/* Class Code Card - Bold, unmasked, Google Classroom style */}
+        <div className="p-3.5 rounded-lg border border-slate-800/80 bg-slate-900/30 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <div className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-slate-400" />
               Class Code
             </div>
-            <div className="flex items-center gap-0.5">
-              <button
-                type="button"
-                onClick={() => setShowClassCode(!showClassCode)}
-                className="p-1 rounded text-slate-400 hover:text-slate-200 transition cursor-pointer"
-                title={showClassCode ? 'Hide class code' : 'Reveal class code'}
-                aria-label={showClassCode ? 'Hide class code' : 'Reveal class code'}
-              >
-                {showClassCode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-              </button>
-              <button
-                type="button"
-                onClick={handleCopyCode}
-                className="p-1 rounded text-slate-400 hover:text-slate-200 transition cursor-pointer"
-                title="Copy class code"
-                aria-label="Copy class code"
-              >
-                {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={handleCopyCode}
+              className="p-1 rounded text-slate-400 hover:text-slate-200 transition cursor-pointer"
+              title="Copy class code"
+              aria-label="Copy class code"
+            >
+              {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
           </div>
-          <div className="text-base font-semibold text-slate-100 mt-1 font-mono tracking-wider truncate select-all">
-            {showClassCode ? workspace.code : '••••••••'}
+          <div className="text-lg font-bold text-white mt-1 font-mono tracking-wider truncate select-all">
+            {displayCode}
           </div>
-          <div className="text-[11px] text-slate-400 truncate mt-0.5 flex items-center justify-between">
-            <span className="truncate">{workspace.name}</span>
+          <div className="text-[11px] text-slate-400 truncate mt-1 flex items-center justify-between pt-1 border-t border-slate-800/60">
+            <span className="truncate">{workspace.name || 'BCA Batch'}</span>
             <div className="flex items-center gap-1.5 shrink-0 ml-1">
               <button
-                onClick={handleCopyLink}
-                className="text-[10px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
-                title="Copy direct invite link"
+                onClick={handleShareInvite}
+                className="text-[10px] text-slate-300 hover:text-white underline cursor-pointer font-medium"
+                title="Copy direct 2-liner invite"
               >
-                {copiedLink ? 'Link Copied' : 'Invite'}
+                {copiedMessage ? 'Copied' : 'Invite'}
               </button>
               <span className="text-slate-600">•</span>
               <button
                 onClick={handleShareWhatsApp}
-                className="text-[10px] text-slate-400 hover:text-slate-200 underline cursor-pointer"
-                title="Share to WhatsApp"
+                className="text-[10px] text-emerald-400 hover:text-emerald-300 underline cursor-pointer font-medium"
+                title="Share 2-liner to WhatsApp"
               >
                 WA
               </button>
@@ -212,13 +242,24 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
                 Configure your semester subjects to unlock syllabus mind maps, notes segregation, and exam prep.
               </p>
-              <button
-                onClick={onOpenClassSetup}
-                className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5 shadow-2xs"
-              >
-                <Sliders className="w-3.5 h-3.5" />
-                <span>Configure Semester Subjects</span>
-              </button>
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                {onAddRecommendedSubjects && (
+                  <button
+                    onClick={onAddRecommendedSubjects}
+                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Load BCA Semester 1 Subjects</span>
+                  </button>
+                )}
+                <button
+                  onClick={onOpenClassSetup}
+                  className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5 border border-slate-700 shadow-2xs"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Configure Semester Subjects</span>
+                </button>
+              </div>
             </div>
           ) : (
             subjects.map((subj) => (
