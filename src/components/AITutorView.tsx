@@ -81,12 +81,12 @@ function parseSectionsFromText(text: string): {
   };
 
   const regexes: { key: keyof typeof sections; pattern: RegExp }[] = [
-    { key: 'simple', pattern: /###\s*(?:1[.)]?\s*)?Simple[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
-    { key: 'eli9', pattern: /###\s*(?:2[.)]?\s*)?ELI9[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
-    { key: 'hinglish', pattern: /###\s*(?:3[.)]?\s*)?Hinglish[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
-    { key: 'exam_10marker', pattern: /###\s*(?:4[.)]?\s*)?10-Marker[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
-    { key: 'detailed', pattern: /###\s*(?:5[.)]?\s*)?Deep Dive[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
-    { key: 'socratic', pattern: /###\s*(?:6[.)]?\s*)?Quiz Me[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+    { key: 'simple', pattern: /###\s*(?:1[.)]?\s*)?Simple[^\n]*\n([\s\S]*?)(?=(?:###\s*(?:2[.)]?\s*)?ELI9|\Z))/i },
+    { key: 'eli9', pattern: /###\s*(?:2[.)]?\s*)?ELI9[^\n]*\n([\s\S]*?)(?=(?:###\s*(?:3[.)]?\s*)?Hinglish|\Z))/i },
+    { key: 'hinglish', pattern: /###\s*(?:3[.)]?\s*)?Hinglish[^\n]*\n([\s\S]*?)(?=(?:###\s*(?:4[.)]?\s*)?10-Marker|\Z))/i },
+    { key: 'exam_10marker', pattern: /###\s*(?:4[.)]?\s*)?10-Marker[^\n]*\n([\s\S]*?)(?=(?:###\s*(?:5[.)]?\s*)?Deep Dive|\Z))/i },
+    { key: 'detailed', pattern: /###\s*(?:5[.)]?\s*)?Deep Dive[^\n]*\n([\s\S]*?)(?=(?:###\s*(?:6[.)]?\s*)?Quiz Me|\Z))/i },
+    { key: 'socratic', pattern: /###\s*(?:6[.)]?\s*)?Quiz Me[^\n]*\n([\s\S]*?)$/i },
   ];
 
   for (const { key, pattern } of regexes) {

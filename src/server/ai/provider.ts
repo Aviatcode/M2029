@@ -43,7 +43,11 @@ export class UniversalAIProvider implements AIProvider {
     if (this.provider === 'auto') {
       if (this.apiKey.startsWith('sk-ant-')) {
         this.provider = 'claude';
-      } else if (this.apiKey.startsWith('AIzaSy')) {
+      } else if (
+        this.apiKey.startsWith('AIzaSy') ||
+        this.apiKey.startsWith('AQ.') ||
+        (!this.apiKey.startsWith('sk-') && !this.apiKey.startsWith('gsk_') && this.apiKey.length > 20)
+      ) {
         this.provider = 'gemini';
       } else if (this.apiKey.startsWith('gsk_')) {
         this.provider = 'groq';
@@ -83,13 +87,20 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'deepseek/deepseek-r1';
           break;
         case 'gemini':
-          this.modelName = 'gemini-2.5-flash';
+          this.modelName = 'gemini-3.8-flash';
           break;
         case 'custom':
           this.modelName = 'llama3:latest';
           break;
         default:
           this.modelName = 'built-in-academic';
+      }
+    }
+
+    // Normalize deprecated Gemini models to gemini-3.8-flash
+    if (this.provider === 'gemini') {
+      if (!this.modelName || this.modelName.includes('2.5') || this.modelName.includes('2.0') || this.modelName.includes('1.5')) {
+        this.modelName = 'gemini-3.8-flash';
       }
     }
 
@@ -134,9 +145,41 @@ export class UniversalAIProvider implements AIProvider {
     }
 
     try {
-      // 1. Google Gemini via SDK or direct REST fallback
+      // 1. Google Gemini via direct REST API (fastest, most reliable) or SDK
       if (this.provider === 'gemini') {
-        const model = this.modelName || 'gemini-2.5-flash';
+        const model = this.modelName || 'gemini-3.8-flash';
+
+        // Direct REST API for Gemini
+        if (this.apiKey) {
+          try {
+            const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+            const body: any = {
+              contents: [{ parts: [{ text: prompt }] }],
+            };
+            if (systemInstruction) {
+              body.system_instruction = { parts: [{ text: systemInstruction }] };
+            }
+
+            const res = await fetch(geminiEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body),
+            });
+
+            if (res.ok) {
+              const data: any = await res.json();
+              const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (text && text.trim().length > 10) return text;
+            } else {
+              const errData: any = await res.json().catch(() => ({}));
+              console.warn(`Gemini REST returned ${res.status}:`, errData?.error?.message || res.statusText);
+            }
+          } catch (restErr: any) {
+            console.warn(`Gemini REST fetch error:`, restErr.message);
+          }
+        }
+
+        // SDK fallback if REST had issue
         if (this.geminiClient) {
           try {
             const resp = await this.geminiClient.models.generateContent({
@@ -147,28 +190,6 @@ export class UniversalAIProvider implements AIProvider {
             if (resp.text) return resp.text;
           } catch (sdkErr: any) {
             console.warn(`Gemini SDK fallback trigger: ${sdkErr.message}`);
-          }
-        }
-
-        // Direct REST API fallback for Gemini if SDK encounters environment issues
-        if (this.apiKey) {
-          const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
-          const contents: any[] = [];
-          if (systemInstruction) {
-            contents.push({ role: 'user', parts: [{ text: `[System Instruction: ${systemInstruction}]` }] });
-          }
-          contents.push({ role: 'user', parts: [{ text: prompt }] });
-
-          const res = await fetch(geminiEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents }),
-          });
-
-          if (res.ok) {
-            const data: any = await res.json();
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text) return text;
           }
         }
       }
@@ -679,10 +700,11 @@ export class AIProviderFactory {
     if (!this.classInstance) {
       const envKey = (process.env.AI_API_KEY || process.env.GEMINI_API_KEY || '').trim();
       if (this.classConfig.apiKey || (envKey && !envKey.includes('MY_GEMINI_API_KEY') && !envKey.startsWith('your_'))) {
+        const isGeminiKey = envKey.startsWith('AIzaSy') || envKey.startsWith('AQ.') || (!envKey.startsWith('sk-') && !envKey.startsWith('gsk_') && envKey.length > 20);
         this.classInstance = new UniversalAIProvider({
           apiKey: this.classConfig.apiKey || envKey,
-          provider: this.classConfig.provider || (envKey.startsWith('AIzaSy') ? 'gemini' : 'auto'),
-          modelName: this.classConfig.modelName || 'gemini-2.5-flash',
+          provider: this.classConfig.provider || (isGeminiKey ? 'gemini' : 'auto'),
+          modelName: this.classConfig.modelName || 'gemini-3.8-flash',
           baseUrl: this.classConfig.baseUrl,
         });
       } else {

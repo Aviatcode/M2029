@@ -113,15 +113,15 @@ export const PROVIDER_PORTALS: Record<
 export const MODEL_PRESETS: ModelPreset[] = [
   // Gemini
   {
-    id: 'gemini-2.5-flash',
-    name: 'Gemini 2.5 Flash',
+    id: 'gemini-3.8-flash',
+    name: 'Gemini 3.8 Flash',
     provider: 'gemini',
     badge: 'Recommended',
-    tagline: 'Google latest ultra-fast model with top academic comprehension.',
+    tagline: 'Google latest flagship ultra-fast model with top academic comprehension.',
     freeTierAvailable: true,
     developerPortalUrl: 'https://aistudio.google.com/app/apikey',
-    keyPrefix: 'AIzaSy',
-    keyPlaceholder: 'AIzaSy...',
+    keyPrefix: 'AQ. or AIzaSy',
+    keyPlaceholder: 'AQ... or AIzaSy...',
   },
   {
     id: 'gemini-2.0-flash',
