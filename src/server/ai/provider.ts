@@ -168,7 +168,13 @@ export class UniversalAIProvider implements AIProvider {
 
             if (res.ok) {
               const data: any = await res.json();
-              const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+              const parts = data.candidates?.[0]?.content?.parts || [];
+              const text =
+                parts
+                  .filter((p: any) => !p.thought)
+                  .map((p: any) => p.text)
+                  .join('\n')
+                  .trim() || parts[0]?.text;
               if (text && text.trim().length > 10) return text;
             } else {
               const errData: any = await res.json().catch(() => ({}));

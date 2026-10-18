@@ -1,1 +1,76 @@
-if(!self.define){let e,s={};const i=(i,r)=>(i=new URL(i+".js",r).href,s[i]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=i,e.onload=s,document.head.appendChild(e)}else e=i,importScripts(i),s()}).then(()=>{let e=s[i];if(!e)throw new Error(`Module ${i} didn’t register its module`);return e}));self.define=(r,a)=>{const n=e||("document"in self?document.currentScript.src:"")||location.href;if(s[n])return;let c={};const o=e=>i(e,n),f={module:{uri:n},exports:c,require:o};s[n]=Promise.all(r.map(e=>f[e]||o(e))).then(e=>(a(...e),c))}}define(["./workbox-9c191d2f"],function(e){"use strict";importScripts("./sw-share-target.js"),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"sw-share-target.js",revision:"0a6a365713006c3cbcec9d83c26dcbd1"},{url:"registerSW.js",revision:"402b66900e731ca748771b6fc5e7a068"},{url:"index.html",revision:"57a9fbe19836fed385ec744a83135c2e"},{url:"assets/index-BCLXQ4mK.js",revision:null},{url:"assets/index-8JgsIBpH.css",revision:null},{url:"am-logo.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"am-logo.svg",revision:"c84405a31d5240ef09fe73f3bdcb66ec"},{url:"apple-touch-icon.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"icon.svg",revision:"c84405a31d5240ef09fe73f3bdcb66ec"},{url:"pwa-192x192.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"pwa-512x512.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"pwa-maskable-512x512.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"sw-share-target.js",revision:"0a6a365713006c3cbcec9d83c26dcbd1"},{url:"manifest.webmanifest",revision:"1ec21819a9577e0e8c0cc474a81d0105"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))});
+try {
+  importScripts('/sw-share-target.js');
+} catch {
+  // Offline or relative fallback
+}
+
+const CACHE_NAME = 'm2029-cache-v4';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/sw-share-target.js',
+  '/am-logo.png',
+  '/icon.svg',
+  '/pwa-192x192.png',
+  '/pwa-512x512.png',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
+        console.warn('Pre-caching assets warning:', err);
+      });
+    })
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  // Network-first for API requests, Cache-first fallback for static assets
+  if (event.request.url.includes('/api/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          return new Response(JSON.stringify({ error: 'Offline mode active' }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          return cached || caches.match('/');
+        });
+      })
+  );
+});

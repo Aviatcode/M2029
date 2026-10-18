@@ -431,8 +431,48 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
           });
         };
         reader.readAsText(file);
+      } else if (fileExt === 'docx') {
+        // DOCX Document: Unpack XML archive and extract real text
+        file
+          .arrayBuffer()
+          .then(async (buffer) => {
+            try {
+              const JSZip = (await import('jszip')).default;
+              const zip = await JSZip.loadAsync(buffer);
+              const docXml = await zip.file('word/document.xml')?.async('text');
+              const extractedText = docXml
+                ? docXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+                : '';
+
+              processAndIngest({
+                fileName: file.name,
+                fileType: fileExt,
+                fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+                rawTextContent:
+                  extractedText.length > 20
+                    ? extractedText.slice(0, 12000)
+                    : `${file.name.replace(/\.[^/.]+$/, '')} study notes`,
+              });
+            } catch (docxErr) {
+              console.warn('DOCX unzip fallback:', docxErr);
+              processAndIngest({
+                fileName: file.name,
+                fileType: fileExt,
+                fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+                rawTextContent: `${file.name.replace(/\.[^/.]+$/, '')} university syllabus notes`,
+              });
+            }
+          })
+          .catch(() => {
+            processAndIngest({
+              fileName: file.name,
+              fileType: fileExt,
+              fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+              rawTextContent: `${file.name.replace(/\.[^/.]+$/, '')} university syllabus notes`,
+            });
+          });
       } else {
-        // PDF, DOC, DOCX, PPT, PPTX or other binary document
+        // PDF, DOC, PPT, PPTX or other binary document
         processAndIngest({
           fileName: file.name,
           fileType: fileExt,

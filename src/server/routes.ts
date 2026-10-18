@@ -817,7 +817,25 @@ apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
 
   const rawFileName = file.fileName || 'lecture_notes.txt';
   const fileExt = file.fileType || rawFileName.split('.').pop()?.toLowerCase() || 'pdf';
-  const rawText = (file.rawTextContent || rawFileName).trim();
+  let rawText = (file.rawTextContent || rawFileName).trim();
+
+  // If DOCX was passed with base64 dataUrl but without extracted raw text
+  if (fileExt === 'docx' && file.fileDataUrl && (!file.rawTextContent || file.rawTextContent.length < 50)) {
+    try {
+      const base64Data = file.fileDataUrl.split(',')[1];
+      if (base64Data) {
+        const buffer = Buffer.from(base64Data, 'base64');
+        const JSZip = (await import('jszip')).default;
+        const zip = await JSZip.loadAsync(buffer);
+        const docXml = await zip.file('word/document.xml')?.async('text');
+        if (docXml) {
+          rawText = docXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+      }
+    } catch (docxErr) {
+      console.warn('[Smart-Dump] Server docx extraction fallback notice:', docxErr);
+    }
+  }
 
   // 1. Zero-Token Classroom Cache & Deduplication Check
   const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
