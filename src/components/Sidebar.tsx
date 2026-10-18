@@ -74,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
     ...(isSetupDone !== false
-      ? [{ id: 'setup' as const, label: 'Semester Setup', icon: GraduationCap }]
+      ? [{ id: 'setup' as const, label: 'My Class', icon: GraduationCap }]
       : []),
     { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
   ];
