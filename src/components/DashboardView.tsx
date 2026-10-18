@@ -43,6 +43,7 @@ interface DashboardViewProps {
   onTriggerQuickAIAction: (actionType: string) => void;
   calmMode?: boolean;
   onOpenAIKeyConfig?: () => void;
+  onOpenMaterial?: (mat: AcademicMaterial) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -61,6 +62,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onTriggerQuickAIAction,
   calmMode = false,
   onOpenAIKeyConfig,
+  onOpenMaterial,
 }) => {
   const [activeTab, setActiveTab] = useState<'schedule' | 'exams' | 'notes'>('schedule');
   const [notifPermission, setNotifPermission] = useState<NotificationPermissionState>(getNotificationPermission());
@@ -351,6 +353,62 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
+      {/* 4.5 Recent Uploaded Materials Quick-Access Shelf */}
+      {recentMaterials.length > 0 && (
+        <div className="rounded-md bg-slate-900/40 border border-slate-800/80 p-4 sm:p-5 space-y-3">
+          <div className="flex items-center justify-between text-xs border-b border-slate-800/50 pb-2">
+            <div className="flex items-center gap-1.5">
+              <FileText className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="text-xs font-medium text-slate-200">
+                Recent Study Materials ({recentMaterials.length})
+              </span>
+            </div>
+            <button
+              onClick={() => onNavigateTab('dump')}
+              className="text-xs text-slate-400 hover:text-white transition font-sans-ui cursor-pointer"
+            >
+              Study Drop →
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {recentMaterials.slice(0, 4).map((mat) => (
+              <div
+                key={mat.id}
+                onClick={() => (onOpenMaterial ? onOpenMaterial(mat) : onNavigateTab('dump'))}
+                className="p-3 rounded-lg bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/60 transition cursor-pointer space-y-2 group"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-0.5 truncate">
+                    <h3 className="text-xs font-semibold text-slate-200 group-hover:text-white truncate font-sans-ui">
+                      {mat.title}
+                    </h3>
+                    <p className="text-[11px] text-slate-400 font-sans-ui truncate">
+                      {mat.subjectName} · {mat.unitTitle || (mat.unitNumber ? `Unit ${mat.unitNumber}` : 'General')}
+                    </p>
+                  </div>
+                  <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 shrink-0">
+                    {mat.fileType || 'pdf'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 pt-1 text-[10px] text-slate-400 border-t border-slate-850">
+                  <span className="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-slate-300 border border-slate-750 font-sans-ui">
+                    📖 Notes
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-slate-300 border border-slate-750 font-sans-ui">
+                    🧠 Mindmap
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-slate-850 hover:bg-slate-800 text-slate-300 border border-slate-750 font-sans-ui">
+                    🎯 10-Marker
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* 5. Lectures, Exams, Notes */}
       <div className="space-y-3 pt-2">
         <div className="flex items-center gap-5 border-b border-slate-800/80 text-xs">
@@ -514,23 +572,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {recentMaterials.map((mat) => (
                 <div
                   key={mat.id}
-                  className="py-3 flex items-center justify-between gap-4 first:pt-0 group"
+                  onClick={() => (onOpenMaterial ? onOpenMaterial(mat) : onNavigateTab('dump'))}
+                  className="py-3 flex items-center justify-between gap-4 first:pt-0 group cursor-pointer hover:bg-slate-900/30 px-1.5 rounded transition"
                 >
                   <div className="space-y-0.5 truncate pr-2">
                     <h3 className="text-sm font-medium text-slate-200 font-sans-ui group-hover:text-white transition truncate">
                       {mat.title}
                     </h3>
                     <p className="text-xs text-slate-400 font-sans-ui truncate">
-                      {mat.subjectName} · Shared by {mat.uploaderName}
+                      {mat.subjectName} · {mat.unitTitle || (mat.unitNumber ? `Unit ${mat.unitNumber}` : 'General')} · Shared by {mat.uploaderName}
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => onNavigateTab('materials')}
-                    className="text-xs text-slate-400 hover:text-white transition cursor-pointer font-sans-ui shrink-0"
-                  >
-                    Open →
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                      {mat.fileType || 'pdf'}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onOpenMaterial) onOpenMaterial(mat);
+                        else onNavigateTab('dump');
+                      }}
+                      className="text-xs text-cyan-400 hover:text-cyan-300 transition cursor-pointer font-sans-ui font-medium"
+                    >
+                      View Output →
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

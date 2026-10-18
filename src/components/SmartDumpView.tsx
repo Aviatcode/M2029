@@ -45,6 +45,8 @@ interface SmartDumpViewProps {
   unitsBySubject?: Record<string, Unit[]>;
   currentRole: UserRole;
   classCode: string;
+  activeMaterialId?: string | null;
+  onSelectActiveMaterialId?: (id: string) => void;
   onMaterialUploaded?: (mat: AcademicMaterial) => void;
   onNavigateToTab?: (tab: string) => void;
   pendingFiles?: File[];
@@ -57,6 +59,8 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
   unitsBySubject = {},
   currentRole,
   classCode,
+  activeMaterialId,
+  onSelectActiveMaterialId,
   onMaterialUploaded,
   onNavigateToTab,
   pendingFiles,
@@ -69,6 +73,8 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
   const [textTitle, setTextTitle] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const outputSectionRef = useRef<HTMLDivElement>(null);
+  const archiveSectionRef = useRef<HTMLDivElement>(null);
 
   // Ingestion Processing Pipeline State
   const [isProcessing, setIsProcessing] = useState(false);
@@ -82,8 +88,32 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
     all: true,
   });
-  const [activeItem, setActiveItem] = useState<AcademicMaterial | null>(materials[0] || null);
+  const [activeItem, setActiveItem] = useState<AcademicMaterial | null>(() => {
+    if (activeMaterialId) {
+      const match = materials.find((m) => m.id === activeMaterialId);
+      if (match) return match;
+    }
+    return materials[0] || null;
+  });
   const [activeDetailTab, setActiveDetailTab] = useState<'notes' | 'mnemonics' | 'mindmap' | '10marker' | 'quiz'>('notes');
+
+  // Synchronize activeItem when activeMaterialId or materials updates
+  useEffect(() => {
+    if (activeMaterialId) {
+      const match = materials.find((m) => m.id === activeMaterialId);
+      if (match) {
+        setActiveItem(match);
+        setExpandedFolders((prev) => ({
+          ...prev,
+          all: true,
+          [`sub-${match.subjectName}`]: true,
+          [`unit-${match.subjectName}-${match.unitTitle || (match.unitNumber ? 'Unit ' + match.unitNumber : 'General')}`]: true,
+        }));
+      }
+    } else if (!activeItem && materials.length > 0) {
+      setActiveItem(materials[0]);
+    }
+  }, [activeMaterialId, materials]);
 
   // Quiz Player State for active material
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
@@ -98,6 +128,12 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
 
   const toggleFolder = (key: string) => {
     setExpandedFolders((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSelectItem = (item: AcademicMaterial) => {
+    setActiveItem(item);
+    if (onSelectActiveMaterialId) onSelectActiveMaterialId(item.id);
+    outputSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 
   // High-reliability local auto-categorization & synthesis
@@ -322,6 +358,15 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     onMaterialUploaded?.(finalMaterial);
     setLastUploadedMaterial(finalMaterial);
     setActiveItem(finalMaterial);
+    if (onSelectActiveMaterialId) onSelectActiveMaterialId(finalMaterial.id);
+    setSelectedSubjectId('all');
+    setSelectedCategory('all');
+    setExpandedFolders((prev) => ({
+      ...prev,
+      all: true,
+      [`sub-${finalMaterial.subjectName}`]: true,
+      [`unit-${finalMaterial.subjectName}-${finalMaterial.unitTitle || (finalMaterial.unitNumber ? 'Unit ' + finalMaterial.unitNumber : 'General')}`]: true,
+    }));
 
     confetti({
       particleCount: 50,
@@ -333,7 +378,8 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
       setIsProcessing(false);
       setProcessingProgress(0);
       setProcessingStage('');
-    }, 1500);
+      outputSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 1200);
   };
 
   // 2. Handle File Drop / Select (Supports Single or Multi-File Drops from PC or Phone)
@@ -608,626 +654,683 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
         )}
       </div>
 
-      {/* 3. ORGANIZED FOLDERS & VAULT EXPLORER */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Folders & File Navigator */}
-        <div className="lg:col-span-5 rounded-2xl border border-slate-800 bg-slate-950 p-4 md:p-5 shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      {/* 3. RECENTLY UPLOADED STUDY DOCUMENTS SHELF */}
+      {materials.length > 0 && (
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-2.5 shadow-xl">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
             <div className="flex items-center gap-2">
-              <FolderOpen className="w-4 h-4 text-slate-300" />
-              <h2 className="text-sm font-semibold text-white font-serif-heading">Course Folders</h2>
+              <FileText className="w-4 h-4 text-cyan-400" />
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+                Uploaded Materials Vault ({materials.length})
+              </h2>
             </div>
-            <span className="text-[11px] font-mono-code text-slate-400">{filteredMaterials.length} Items</span>
+            <span className="text-[11px] text-slate-400 font-mono hidden sm:inline">
+              Click any file to load notes, mindmap & 10-marker
+            </span>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
-                selectedCategory === 'all'
-                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
-                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              All Types
-            </button>
-            <button
-              onClick={() => setSelectedCategory('notes')}
-              className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
-                selectedCategory === 'notes'
-                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
-                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              Notes
-            </button>
-            <button
-              onClick={() => setSelectedCategory('pyq')}
-              className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
-                selectedCategory === 'pyq'
-                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
-                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              PYQs
-            </button>
-            <button
-              onClick={() => setSelectedCategory('assignment')}
-              className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
-                selectedCategory === 'assignment'
-                  ? 'bg-slate-800 text-white border border-slate-700 font-medium'
-                  : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              Assignments
-            </button>
-          </div>
-
-          {/* Subject Filter Dropdown */}
-          <select
-            value={selectedSubjectId}
-            onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none"
-          >
-            <option value="all">📂 All Curriculum Subjects</option>
-            {subjects.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name} ({s.code})
-              </option>
-            ))}
-          </select>
-
-          {/* Folder Tree */}
-          <div className="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-            {Object.entries(folderTree).map(([subjectName, { units }]) => {
-              const subKey = `sub-${subjectName}`;
-              const isSubExpanded = expandedFolders[subKey] !== false;
-              const subItemCount = Object.values(units).flat().length;
-
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+            {materials.map((mat) => {
+              const isSelected = activeItem?.id === mat.id;
+              const isJustAdded = lastUploadedMaterial?.id === mat.id;
               return (
-                <div key={subjectName} className="rounded-xl border border-slate-800/80 bg-slate-900/40 overflow-hidden">
-                  {/* Subject Folder Header */}
-                  <div
-                    onClick={() => toggleFolder(subKey)}
-                    className="p-3 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition"
-                  >
-                    <div className="flex items-center gap-2">
-                      {isSubExpanded ? (
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                      ) : (
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-                      )}
-                      <Folder className="w-4 h-4 text-slate-400" />
-                      <span className="text-xs font-semibold text-white truncate max-w-[210px]">{subjectName}</span>
-                    </div>
-                    <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-850 text-slate-300 font-mono-code border border-slate-750">
-                      {subItemCount}
-                    </span>
+                <button
+                  key={mat.id}
+                  onClick={() => handleSelectItem(mat)}
+                  className={`px-3 py-2 rounded-xl border text-left shrink-0 transition cursor-pointer flex items-center gap-2.5 ${
+                    isSelected
+                      ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md ring-1 ring-cyan-500/30'
+                      : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
+                  }`}
+                >
+                  <div className="w-7 h-7 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0">
+                    <FileText className={`w-3.5 h-3.5 ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`} />
                   </div>
-
-                  {/* Units Sub-folders */}
-                  {isSubExpanded && (
-                    <div className="pl-4 pr-2 pb-2 space-y-2 border-t border-slate-800/50 pt-2">
-                      {Object.entries(units).map(([unitTitle, items]) => {
-                        const unitKey = `unit-${subjectName}-${unitTitle}`;
-                        const isUnitExpanded = expandedFolders[unitKey] !== false;
-
-                        return (
-                          <div key={unitTitle} className="space-y-1">
-                            <div
-                              onClick={() => toggleFolder(unitKey)}
-                              className="flex items-center justify-between py-1 px-2 rounded-md hover:bg-slate-800/40 cursor-pointer text-xs"
-                            >
-                              <div className="flex items-center gap-1.5 text-slate-300">
-                                {isUnitExpanded ? (
-                                  <ChevronDown className="w-3 h-3 text-slate-400" />
-                                ) : (
-                                  <ChevronRight className="w-3 h-3 text-slate-400" />
-                                )}
-                                <span className="text-[11px] font-medium text-slate-300 truncate max-w-[200px]">
-                                  {unitTitle}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-slate-500 font-mono-code">{items.length}</span>
-                            </div>
-
-                            {/* Individual Files inside Unit */}
-                            {isUnitExpanded && (
-                              <div className="pl-4 space-y-1">
-                                {items.map((item) => {
-                                  const isSelected = activeItem?.id === item.id;
-                                  const isPYQ = item.fileName.toLowerCase().includes('pyq') || item.detectedCategory === 'pyq';
-                                  const isAssign = item.detectedCategory === 'assignment';
-
-                                  return (
-                                    <div
-                                      key={item.id}
-                                      onClick={() => setActiveItem(item)}
-                                      className={`flex items-center justify-between p-2 rounded-lg text-xs transition cursor-pointer ${
-                                        isSelected
-                                          ? 'bg-slate-800 text-white border border-slate-700 font-medium'
-                                          : 'hover:bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-transparent'
-                                      }`}
-                                    >
-                                      <div className="flex items-center gap-2 truncate">
-                                        {isPYQ ? (
-                                          <Award className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                        ) : isAssign ? (
-                                          <FileCheck className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                        ) : (
-                                          <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                        )}
-                                        <span className="truncate">{item.title}</span>
-                                      </div>
-                                      <span className="text-[10px] font-mono-code text-slate-500 uppercase shrink-0 ml-1">
-                                        {item.fileType}
-                                      </span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                  <div className="space-y-0.5 max-w-[180px] sm:max-w-[220px]">
+                    <div className="text-xs font-medium truncate leading-tight flex items-center gap-1.5">
+                      <span className="truncate">{mat.title}</span>
+                      {isJustAdded && (
+                        <span className="px-1 py-0.2 rounded text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
+                          New
+                        </span>
+                      )}
                     </div>
-                  )}
-                </div>
+                    <div className="text-[10px] text-slate-400 truncate">
+                      {mat.subjectName} · {mat.unitTitle || (mat.unitNumber ? `Unit ${mat.unitNumber}` : 'General')}
+                    </div>
+                  </div>
+                </button>
               );
             })}
-
-            {materials.length === 0 && (
-              <div className="py-8 text-center text-xs text-slate-500">
-                No materials dumped yet. Drop a PDF or paste notes above!
-              </div>
-            )}
           </div>
         </div>
+      )}
 
-        {/* Right Column: Active Ingested Pack Inspector (Notes, Mnemonics, Mindmap, 10-Marker, Quiz) */}
-        <div className="lg:col-span-7 rounded-2xl border border-slate-800 bg-slate-950 p-5 md:p-6 shadow-xl space-y-5">
-          {activeItem ? (
-            <>
-              {/* Material Header */}
-              <div className="border-b border-slate-800 pb-4 space-y-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-slate-900 border border-slate-800 text-slate-300">
-                      {activeItem.subjectName}
-                    </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono-code bg-slate-900 border border-slate-800 text-slate-400">
-                      {activeItem.unitTitle || (activeItem.unitNumber ? `Unit ${activeItem.unitNumber}` : 'General')}
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-slate-500 font-mono">
-                    Synced
+      {/* 4. ACTIVE INGESTED PACK & AI OUTPUT SHOWCASE */}
+      <div ref={outputSectionRef} className="rounded-2xl border border-slate-800 bg-slate-950 p-5 md:p-6 shadow-xl space-y-5">
+        {activeItem ? (
+          <>
+            {/* Material Header */}
+            <div className="border-b border-slate-800 pb-4 space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-slate-900 border border-slate-800 text-slate-300">
+                    {activeItem.subjectName}
+                  </span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono-code bg-slate-900 border border-slate-800 text-slate-400">
+                    {activeItem.unitTitle || (activeItem.unitNumber ? `Unit ${activeItem.unitNumber}` : 'General')}
+                  </span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase bg-slate-900 border border-slate-800 text-cyan-400">
+                    {activeItem.detectedCategory || 'Notes'}
                   </span>
                 </div>
+                <button
+                  onClick={() => archiveSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="text-xs text-slate-400 hover:text-white transition font-sans-ui cursor-pointer flex items-center gap-1"
+                >
+                  <span>View in Folder Tree</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
 
-                <h2 className="text-xl font-semibold text-white font-serif-heading">{activeItem.title}</h2>
-                <div className="text-[11px] text-slate-400 font-mono">
-                  {activeItem.fileName} · {activeItem.fileSize}
+              <div>
+                <h2 className="text-xl sm:text-2xl font-semibold text-white font-serif-heading">
+                  {activeItem.title}
+                </h2>
+                <div className="text-xs text-slate-400 font-mono mt-1 flex flex-wrap items-center gap-2">
+                  <span>📂 {activeItem.folderPath || `${activeItem.subjectName} / Unit ${activeItem.unitNumber || 1} / ${(activeItem.detectedCategory || 'notes').toUpperCase()}`}</span>
+                  <span>·</span>
+                  <span>{activeItem.fileName}</span>
+                  <span>({activeItem.fileSize})</span>
+                  <span>·</span>
+                  <span className="text-emerald-400 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Auto-Filed & Synced
+                  </span>
                 </div>
               </div>
+            </div>
 
-              {/* Inspector Navigation Tabs */}
-              <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800/80 pb-2">
-                <button
-                  onClick={() => setActiveDetailTab('notes')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                    activeDetailTab === 'notes'
-                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
-                  }`}
-                >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>Notes</span>
-                </button>
-                <button
-                  onClick={() => setActiveDetailTab('mnemonics')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                    activeDetailTab === 'mnemonics'
-                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
-                  }`}
-                >
-                  <Lightbulb className="w-3.5 h-3.5" />
-                  <span>Mnemonics</span>
-                </button>
-                <button
-                  onClick={() => setActiveDetailTab('mindmap')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                    activeDetailTab === 'mindmap'
-                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
-                  }`}
-                >
-                  <Network className="w-3.5 h-3.5" />
-                  <span>Mindmap</span>
-                </button>
-                <button
-                  onClick={() => setActiveDetailTab('10marker')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                    activeDetailTab === '10marker'
-                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
-                  }`}
-                >
-                  <Award className="w-3.5 h-3.5" />
-                  <span>10-Marker</span>
-                </button>
-                <button
-                  onClick={() => setActiveDetailTab('quiz')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                    activeDetailTab === 'quiz'
-                      ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200 border border-transparent'
-                  }`}
-                >
-                  <FileQuestion className="w-3.5 h-3.5" />
-                  <span>Quiz</span>
-                </button>
-              </div>
+            {/* Inspector Navigation Tabs */}
+            <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-800/80 pb-2">
+              <button
+                onClick={() => setActiveDetailTab('notes')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                  activeDetailTab === 'notes'
+                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Notes & Summary</span>
+              </button>
+              <button
+                onClick={() => setActiveDetailTab('mindmap')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                  activeDetailTab === 'mindmap'
+                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                }`}
+              >
+                <Network className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Visual Mindmap</span>
+              </button>
+              <button
+                onClick={() => setActiveDetailTab('mnemonics')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                  activeDetailTab === 'mnemonics'
+                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                }`}
+              >
+                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                <span>Mnemonics</span>
+              </button>
+              <button
+                onClick={() => setActiveDetailTab('10marker')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                  activeDetailTab === '10marker'
+                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-rose-400" />
+                <span>10-Marker Answer</span>
+              </button>
+              <button
+                onClick={() => setActiveDetailTab('quiz')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                  activeDetailTab === 'quiz'
+                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                }`}
+              >
+                <FileQuestion className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Quiz & Check</span>
+              </button>
+            </div>
 
-              {/* TAB 1: NOTES & SUMMARY */}
-              {activeDetailTab === 'notes' && (
-                <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-                    <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Summary</span>
-                    </h3>
-                    <p className="text-xs text-slate-200 leading-relaxed font-sans-ui">
-                      {activeItem.resources?.summary || 'Synthesized high-yield lecture overview for semester exam preparation.'}
+            {/* TAB 1: NOTES & SUMMARY */}
+            {activeDetailTab === 'notes' && (
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+                  <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Executive Summary</span>
+                  </h3>
+                  <p className="text-xs text-slate-200 leading-relaxed font-sans-ui">
+                    {activeItem.resources?.summary || 'Synthesized high-yield lecture overview for semester exam preparation.'}
+                  </p>
+                  {activeItem.resources?.hinglishSummary && (
+                    <p className="text-xs text-slate-400 italic bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
+                      💬 <strong>Quick Recap:</strong> {activeItem.resources.hinglishSummary}
                     </p>
-                    {activeItem.resources?.hinglishSummary && (
-                      <p className="text-xs text-slate-400 italic bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
-                        💬 <strong>Quick Recap:</strong> {activeItem.resources.hinglishSummary}
+                  )}
+                </div>
+
+                {/* Key Concepts */}
+                {activeItem.resources?.keyConcepts && activeItem.resources.keyConcepts.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Key Concepts</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                      {activeItem.resources.keyConcepts.map((c, i) => (
+                        <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 space-y-1">
+                          <span className="text-xs font-semibold text-slate-200 block">{c.concept}</span>
+                          <span className="text-xs text-slate-400 block leading-normal">{c.explanation}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Important Definitions */}
+                {activeItem.resources?.importantDefinitions && activeItem.resources.importantDefinitions.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Standard Definitions</h4>
+                    <div className="space-y-2">
+                      {activeItem.resources.importantDefinitions.map((d, i) => (
+                        <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 text-xs">
+                          <strong className="text-slate-200 font-semibold">{d.term}:</strong>{' '}
+                          <span className="text-slate-300">{d.definition}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Exam Points */}
+                {activeItem.resources?.examPoints && (
+                  <div className="p-3.5 rounded-xl bg-slate-900/40 border border-slate-800 space-y-1.5 text-xs">
+                    <h4 className="font-semibold text-slate-300 flex items-center gap-1.5">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+                      <span>University Evaluator Advice</span>
+                    </h4>
+                    <ul className="list-disc list-inside space-y-1 text-slate-300">
+                      {activeItem.resources.examPoints.map((pt, i) => (
+                        <li key={i}>{pt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: MNEMONICS & MEMORY HACKS */}
+            {activeDetailTab === 'mnemonics' && (
+              <div className="space-y-4">
+                <div className="space-y-3">
+                  {activeItem.resources?.mnemonics && activeItem.resources.mnemonics.length > 0 ? (
+                    activeItem.resources.mnemonics.map((mn, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2.5 shadow-xs"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-white font-serif-heading">{mn.term}</span>
+                          {mn.acronym && (
+                            <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
+                              {mn.acronym}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm font-medium text-slate-100 bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono-code">
+                          "{mn.mnemonic}"
+                        </div>
+                        <p className="text-xs text-slate-400 leading-relaxed">{mn.explanation}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-white">{activeItem.title} Mnemonic</span>
+                        <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
+                          CORE
+                        </span>
+                      </div>
+                      <div className="text-sm font-medium text-slate-100 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        "Understand the Core Mechanism, Rule Out Anomalies, Apply Invariants"
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        Memory hook for {activeItem.title}. Learn core conditions first, then draw standard flow diagrams.
                       </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: VISUAL MINDMAP */}
+            {activeDetailTab === 'mindmap' && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between text-xs text-slate-400">
+                  <span>Architecture Breakdown for {activeItem.title}</span>
+                  {activeItem.resources?.mindmapMermaid && (
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(activeItem.resources?.mindmapMermaid || '');
+                        setCopiedMermaid(true);
+                        setTimeout(() => setCopiedMermaid(false), 2000);
+                      }}
+                      className="flex items-center gap-1 text-slate-400 hover:text-slate-200 transition cursor-pointer"
+                    >
+                      {copiedMermaid ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                      <span>{copiedMermaid ? 'Copied' : 'Copy Mermaid'}</span>
+                    </button>
+                  )}
+                </div>
+
+                <MindmapViewer
+                  topicTitle={activeItem.title}
+                  mermaidSyntax={
+                    activeItem.resources?.mindmapMermaid ||
+                    `graph TD\n  A[${activeItem.title}] --> B[Foundational Concepts]\n  A --> C[Algorithms & Schema]\n  A --> D[University 10-Marker Structure]`
+                  }
+                  nodes={activeItem.resources?.mindmapNodes}
+                />
+              </div>
+            )}
+
+            {/* TAB 4: 10-MARKER MODEL ANSWER */}
+            {activeDetailTab === '10marker' && (
+              <div className="space-y-4">
+                {activeItem.resources?.exam10Marker ? (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                          University 10-Marker Question
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
+                          10 MARKS
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-semibold text-white">
+                        {activeItem.resources.exam10Marker.question}
+                      </h3>
+                    </div>
+
+                    {/* Answer Structure Outline */}
+                    <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5 text-xs">
+                      <span className="font-semibold text-slate-200">Marking Structure Breakdown:</span>
+                      <pre className="text-slate-300 font-sans-ui whitespace-pre-line text-xs">
+                        {activeItem.resources.exam10Marker.answerStructure}
+                      </pre>
+                    </div>
+
+                    {/* Full Model Answer */}
+                    <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                      <span className="text-xs font-semibold text-white uppercase tracking-wider block">
+                        Model Answer Solution
+                      </span>
+                      <div className="text-xs text-slate-300 space-y-2 leading-relaxed whitespace-pre-line font-sans-ui">
+                        {activeItem.resources.exam10Marker.modelAnswerMarkdown}
+                      </div>
+                    </div>
+
+                    {activeItem.resources.exam10Marker.keyDiagramText && (
+                      <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono-code text-[11px] text-slate-300">
+                        <strong>Required Diagram:</strong> {activeItem.resources.exam10Marker.keyDiagramText}
+                      </div>
                     )}
                   </div>
-
-                  {/* Key Concepts */}
-                  {activeItem.resources?.keyConcepts && activeItem.resources.keyConcepts.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Key Concepts</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                        {activeItem.resources.keyConcepts.map((c, i) => (
-                          <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 space-y-1">
-                            <span className="text-xs font-semibold text-slate-200 block">{c.concept}</span>
-                            <span className="text-xs text-slate-400 block leading-normal">{c.explanation}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Important Definitions */}
-                  {activeItem.resources?.importantDefinitions && activeItem.resources.importantDefinitions.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Standard Definitions</h4>
-                      <div className="space-y-2">
-                        {activeItem.resources.importantDefinitions.map((d, i) => (
-                          <div key={i} className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 text-xs">
-                            <strong className="text-slate-200 font-semibold">{d.term}:</strong>{' '}
-                            <span className="text-slate-300">{d.definition}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Exam Points */}
-                  {activeItem.resources?.examPoints && (
-                    <div className="p-3.5 rounded-xl bg-slate-900/40 border border-slate-800 space-y-1.5 text-xs">
-                      <h4 className="font-semibold text-slate-300 flex items-center gap-1.5">
-                        <AlertCircle className="w-3.5 h-3.5 text-slate-400" />
-                        <span>University Evaluator Advice</span>
-                      </h4>
-                      <ul className="list-disc list-inside space-y-1 text-slate-300">
-                        {activeItem.resources.examPoints.map((pt, i) => (
-                          <li key={i}>{pt}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* TAB 2: MNEMONICS & MEMORY HACKS */}
-              {activeDetailTab === 'mnemonics' && (
-                <div className="space-y-4">
+                ) : activeItem.resources?.possibleQuestions && activeItem.resources.possibleQuestions.length > 0 ? (
                   <div className="space-y-3">
-                    {activeItem.resources?.mnemonics && activeItem.resources.mnemonics.length > 0 ? (
-                      activeItem.resources.mnemonics.map((mn, idx) => (
-                        <div
-                          key={idx}
-                          className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2.5 shadow-xs"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-white font-serif-heading">{mn.term}</span>
-                            {mn.acronym && (
-                              <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
-                                {mn.acronym}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-sm font-medium text-slate-100 bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono-code">
-                            "{mn.mnemonic}"
-                          </div>
-                          <p className="text-xs text-slate-400 leading-relaxed">{mn.explanation}</p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/40 space-y-2">
+                    {activeItem.resources.possibleQuestions.map((q, idx) => (
+                      <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2 text-xs">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-white">{activeItem.title} Mnemonic</span>
+                          <span className="font-semibold text-white">{q.question}</span>
                           <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
-                            CORE
+                            {q.marks} MARKS
                           </span>
                         </div>
-                        <div className="text-sm font-medium text-slate-100 bg-slate-950 p-3 rounded-lg border border-slate-800">
-                          "Understand the Core Mechanism, Rule Out Anomalies, Apply Invariants"
+                        <div className="text-slate-400">
+                          <strong className="text-slate-300">Answer Outline:</strong> {q.answerOutline}
                         </div>
-                        <p className="text-xs text-slate-400">
-                          Memory hook for {activeItem.title}. Learn core conditions first, then draw standard flow diagrams.
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-xs text-slate-400">
+                    No 10-marker model answer recorded for this document yet.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 5: SELF-ASSESSMENT QUIZ */}
+            {activeDetailTab === 'quiz' && (
+              <div className="space-y-4">
+                {activeItem.resources?.quiz && activeItem.resources.quiz.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Answer the questions to test your mastery of {activeItem.title}</span>
+                      {quizSubmitted && (
+                        <button
+                          onClick={() => {
+                            setQuizAnswers({});
+                            setQuizSubmitted(false);
+                          }}
+                          className="flex items-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          <span>Retry Quiz</span>
+                        </button>
+                      )}
+                    </div>
+
+                    {activeItem.resources.quiz.map((q, qIdx) => {
+                      const selected = quizAnswers[qIdx];
+                      const isCorrect = selected === q.correctIndex;
+
+                      let containerStyle = 'border-slate-800 bg-slate-900/60';
+                      if (quizSubmitted) {
+                        containerStyle = isCorrect ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-rose-500/40 bg-rose-950/20';
+                      }
+
+                      return (
+                        <div
+                          key={q.id || qIdx}
+                          className={`p-4 rounded-xl border transition ${containerStyle} space-y-3`}
+                        >
+                          <div className="flex items-start gap-2">
+                            <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+                              {qIdx + 1}
+                            </span>
+                            <h4 className="text-xs font-semibold text-white leading-normal">{q.question}</h4>
+                          </div>
+
+                          <div className="space-y-1.5 pl-7">
+                            {q.options.map((opt, optIdx) => {
+                              const isThisSelected = selected === optIdx;
+                              const isThisCorrectOption = optIdx === q.correctIndex;
+
+                              let btnStyle =
+                                'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-850';
+                              if (quizSubmitted) {
+                                if (isThisCorrectOption) {
+                                  btnStyle = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-200 font-medium';
+                                } else if (isThisSelected) {
+                                  btnStyle = 'bg-rose-500/20 border-rose-500/60 text-rose-200';
+                                }
+                              } else if (isThisSelected) {
+                                btnStyle = 'bg-slate-800 border-slate-700 text-white font-medium';
+                              }
+
+                              return (
+                                <button
+                                  key={optIdx}
+                                  onClick={() => {
+                                    if (!quizSubmitted) {
+                                      setQuizAnswers((prev) => ({ ...prev, [qIdx]: optIdx }));
+                                    }
+                                  }}
+                                  disabled={quizSubmitted}
+                                  className={`w-full text-left p-2.5 rounded-lg border text-xs transition cursor-pointer flex items-center justify-between ${btnStyle}`}
+                                >
+                                  <span>{opt}</span>
+                                  {quizSubmitted && isThisCorrectOption && (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          {quizSubmitted && q.explanation && (
+                            <div className="pl-7 pt-1 text-[11px] text-slate-400 italic">
+                              <strong>Explanation:</strong> {q.explanation}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {!quizSubmitted ? (
+                      <button
+                        onClick={() => {
+                          setQuizSubmitted(true);
+                          confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+                        }}
+                        disabled={Object.keys(quizAnswers).length === 0}
+                        className="w-full py-2.5 rounded-lg bg-slate-100 hover:bg-white disabled:opacity-40 text-slate-950 font-medium text-xs transition cursor-pointer"
+                      >
+                        Submit Quiz & Check Score
+                      </button>
+                    ) : (
+                      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-2">
+                        <span className="text-xs font-semibold text-white block">
+                          Quiz Completed!{' '}
+                          {Object.entries(quizAnswers).filter(
+                            ([idx, val]) => val === activeItem.resources?.quiz[Number(idx)]?.correctIndex
+                          ).length}{' '}
+                          / {activeItem.resources.quiz.length} Correct
+                        </span>
+                        <p className="text-[11px] text-slate-400">
+                          Evaluated locally from curriculum cache.
                         </p>
                       </div>
                     )}
                   </div>
-                </div>
-              )}
-
-              {/* TAB 3: VISUAL MINDMAP */}
-              {activeDetailTab === 'mindmap' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>Architecture Breakdown for {activeItem.title}</span>
-                    {activeItem.resources?.mindmapMermaid && (
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(activeItem.resources?.mindmapMermaid || '');
-                          setCopiedMermaid(true);
-                          setTimeout(() => setCopiedMermaid(false), 2000);
-                        }}
-                        className="flex items-center gap-1 text-slate-400 hover:text-slate-200 transition cursor-pointer"
-                      >
-                        {copiedMermaid ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                        <span>{copiedMermaid ? 'Copied' : 'Copy Mermaid'}</span>
-                      </button>
-                    )}
+                ) : (
+                  <div className="py-8 text-center text-xs text-slate-400">
+                    No quiz attached to this document.
                   </div>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="py-16 text-center space-y-3">
+            <FolderOpen className="w-12 h-12 text-slate-600 mx-auto" />
+            <div className="text-sm font-semibold text-slate-300">
+              {materials.length === 0 ? 'Your Vault is Clean & Ready' : 'Select a material from above or the folder tree'}
+            </div>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              {materials.length === 0
+                ? 'Drop any lecture PDF, slides, or paste notes above. The system will auto-classify them into syllabus folders and generate mindmaps & 10-markers.'
+                : 'Click any document in the shelf or the folder archive below to inspect its notes, mnemonics, visual mindmap, and quiz.'}
+            </p>
+          </div>
+        )}
+      </div>
 
-                  <MindmapViewer
-                    topicTitle={activeItem.title}
-                    mermaidSyntax={
-                      activeItem.resources?.mindmapMermaid ||
-                      `graph TD\n  A[${activeItem.title}] --> B[Foundational Concepts]\n  A --> C[Algorithms & Schema]\n  A --> D[University 10-Marker Structure]`
-                    }
-                    nodes={
-                      activeItem.resources?.mindmapNodes || [
-                        {
-                          id: 'root',
-                          label: activeItem.title,
-                          description: 'Central concept',
-                          type: 'root',
-                          children: [
-                            { id: 'c1', label: 'Core Mechanism', description: 'Theoretical basis', type: 'category' },
-                            { id: 'c2', label: 'Exam Pattern', description: '10-Marker scoring structure', type: 'category' },
-                            { id: 'c3', label: 'Implementation', description: 'Pseudocode and schema', type: 'category' },
-                          ],
-                        },
-                      ]
-                    }
-                  />
+      {/* 5. COURSE FOLDERS & VAULT ARCHIVE */}
+      <div ref={archiveSectionRef} className="rounded-2xl border border-slate-800 bg-slate-950 p-4 md:p-5 shadow-xl space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            <FolderOpen className="w-4 h-4 text-slate-300" />
+            <h2 className="text-sm font-semibold text-white font-serif-heading">Course Folders & Archive</h2>
+          </div>
+          <span className="text-[11px] font-mono-code text-slate-400">{filteredMaterials.length} Items</span>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
+              selectedCategory === 'all'
+                ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            All Types
+          </button>
+          <button
+            onClick={() => setSelectedCategory('notes')}
+            className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
+              selectedCategory === 'notes'
+                ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            Notes
+          </button>
+          <button
+            onClick={() => setSelectedCategory('pyq')}
+            className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
+              selectedCategory === 'pyq'
+                ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            PYQs
+          </button>
+          <button
+            onClick={() => setSelectedCategory('assignment')}
+            className={`px-2.5 py-1 rounded-md transition cursor-pointer ${
+              selectedCategory === 'assignment'
+                ? 'bg-slate-800 text-white border border-slate-700 font-medium'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            Assignments
+          </button>
+        </div>
+
+        {/* Subject Filter Dropdown */}
+        <select
+          value={selectedSubjectId}
+          onChange={(e) => setSelectedSubjectId(e.target.value)}
+          className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none"
+        >
+          <option value="all">📂 All Curriculum Subjects</option>
+          {subjects.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name} ({s.code})
+            </option>
+          ))}
+        </select>
+
+        {/* Folder Tree */}
+        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
+          {Object.entries(folderTree).map(([subjectName, { units }]) => {
+            const subKey = `sub-${subjectName}`;
+            const isSubExpanded = expandedFolders[subKey] !== false;
+            const subItemCount = Object.values(units).flat().length;
+
+            return (
+              <div key={subjectName} className="rounded-xl border border-slate-800/80 bg-slate-900/40 overflow-hidden">
+                {/* Subject Folder Header */}
+                <div
+                  onClick={() => toggleFolder(subKey)}
+                  className="p-3 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition"
+                >
+                  <div className="flex items-center gap-2">
+                    {isSubExpanded ? (
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                    ) : (
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                    )}
+                    <Folder className="w-4 h-4 text-slate-400" />
+                    <span className="text-xs font-semibold text-white truncate max-w-[280px]">{subjectName}</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-850 text-slate-300 font-mono-code border border-slate-750">
+                    {subItemCount}
+                  </span>
                 </div>
-              )}
 
-              {/* TAB 4: 10-MARKER MODEL ANSWER */}
-              {activeDetailTab === '10marker' && (
-                <div className="space-y-4">
-                  {activeItem.resources?.exam10Marker ? (
-                    <div className="space-y-4">
-                      <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                            University 10-Marker Question
-                          </span>
-                          <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
-                            10 MARKS
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-semibold text-white">
-                          {activeItem.resources.exam10Marker.question}
-                        </h3>
-                      </div>
+                {/* Units Sub-folders */}
+                {isSubExpanded && (
+                  <div className="pl-4 pr-2 pb-2 space-y-2 border-t border-slate-800/50 pt-2">
+                    {Object.entries(units).map(([unitTitle, items]) => {
+                      const unitKey = `unit-${subjectName}-${unitTitle}`;
+                      const isUnitExpanded = expandedFolders[unitKey] !== false;
 
-                      {/* Answer Structure Outline */}
-                      <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5 text-xs">
-                        <span className="font-semibold text-slate-200">Marking Structure Breakdown:</span>
-                        <pre className="text-slate-300 font-sans-ui whitespace-pre-line text-xs">
-                          {activeItem.resources.exam10Marker.answerStructure}
-                        </pre>
-                      </div>
-
-                      {/* Full Model Answer */}
-                      <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
-                        <span className="text-xs font-semibold text-white uppercase tracking-wider block">
-                          Model Answer Solution
-                        </span>
-                        <div className="text-xs text-slate-300 space-y-2 leading-relaxed whitespace-pre-line font-sans-ui">
-                          {activeItem.resources.exam10Marker.modelAnswerMarkdown}
-                        </div>
-                      </div>
-
-                      {activeItem.resources.exam10Marker.keyDiagramText && (
-                        <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 font-mono-code text-[11px] text-slate-300">
-                          <strong>Required Diagram:</strong> {activeItem.resources.exam10Marker.keyDiagramText}
-                        </div>
-                      )}
-                    </div>
-                  ) : activeItem.resources?.possibleQuestions && activeItem.resources.possibleQuestions.length > 0 ? (
-                    <div className="space-y-3">
-                      {activeItem.resources.possibleQuestions.map((q, idx) => (
-                        <div key={idx} className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-semibold text-white">{q.question}</span>
-                            <span className="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs font-semibold">
-                              {q.marks} MARKS
-                            </span>
-                          </div>
-                          <div className="text-slate-400">
-                            <strong className="text-slate-300">Answer Outline:</strong> {q.answerOutline}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="py-8 text-center text-xs text-slate-400">
-                      No 10-marker model answer recorded for this document yet.
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* TAB 5: SELF-ASSESSMENT QUIZ */}
-              {activeDetailTab === 'quiz' && (
-                <div className="space-y-4">
-                  {activeItem.resources?.quiz && activeItem.resources.quiz.length > 0 ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-xs text-slate-400">
-                        <span>Answer the questions to test your mastery of {activeItem.title}</span>
-                        {quizSubmitted && (
-                          <button
-                            onClick={() => {
-                              setQuizAnswers({});
-                              setQuizSubmitted(false);
-                            }}
-                            className="flex items-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer"
-                          >
-                            <RefreshCw className="w-3.5 h-3.5" />
-                            <span>Retry Quiz</span>
-                          </button>
-                        )}
-                      </div>
-
-                      {activeItem.resources.quiz.map((q, qIdx) => {
-                        const selected = quizAnswers[qIdx];
-                        const isAnswered = selected !== undefined;
-                        const isCorrect = selected === q.correctIndex;
-
-                        return (
+                      return (
+                        <div key={unitTitle} className="space-y-1">
                           <div
-                            key={q.id || qIdx}
-                            className={`p-4 rounded-xl border transition ${
-                              quizSubmitted
-                                ? isCorrect
-                                  ? 'border-emerald-500/40 bg-emerald-950/20'
-                                  : 'border-rose-500/40 bg-rose-950/20'
-                                : 'border-slate-800 bg-slate-900/60'
-                            } space-y-3`}
+                            onClick={() => toggleFolder(unitKey)}
+                            className="flex items-center justify-between py-1 px-2 rounded-md hover:bg-slate-800/40 cursor-pointer text-xs"
                           >
-                            <div className="flex items-start gap-2">
-                              <span className="w-5 h-5 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
-                                {qIdx + 1}
+                            <div className="flex items-center gap-1.5 text-slate-300">
+                              {isUnitExpanded ? (
+                                <ChevronDown className="w-3 h-3 text-slate-400" />
+                              ) : (
+                                <ChevronRight className="w-3 h-3 text-slate-400" />
+                              )}
+                              <span className="text-[11px] font-medium text-slate-300 truncate max-w-[260px]">
+                                {unitTitle}
                               </span>
-                              <h4 className="text-xs font-semibold text-white leading-normal">{q.question}</h4>
                             </div>
+                            <span className="text-[10px] text-slate-500 font-mono-code">{items.length}</span>
+                          </div>
 
-                            <div className="space-y-1.5 pl-7">
-                              {q.options.map((opt, optIdx) => {
-                                const isThisSelected = selected === optIdx;
-                                const isThisCorrectOption = optIdx === q.correctIndex;
-
-                                let btnStyle =
-                                  'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-850';
-                                if (quizSubmitted) {
-                                  if (isThisCorrectOption) {
-                                    btnStyle = 'bg-emerald-500/20 border-emerald-500/60 text-emerald-200 font-medium';
-                                  } else if (isThisSelected) {
-                                    btnStyle = 'bg-rose-500/20 border-rose-500/60 text-rose-200';
-                                  }
-                                } else if (isThisSelected) {
-                                  btnStyle = 'bg-slate-800 border-slate-700 text-white font-medium';
-                                }
+                          {/* Individual Files inside Unit */}
+                          {isUnitExpanded && (
+                            <div className="pl-4 space-y-1">
+                              {items.map((item) => {
+                                const isSelected = activeItem?.id === item.id;
+                                const isJustAdded = lastUploadedMaterial?.id === item.id;
+                                const isPYQ = item.fileName.toLowerCase().includes('pyq') || item.detectedCategory === 'pyq';
+                                const isAssign = item.detectedCategory === 'assignment';
 
                                 return (
-                                  <button
-                                    key={optIdx}
-                                    onClick={() => {
-                                      if (!quizSubmitted) {
-                                        setQuizAnswers((prev) => ({ ...prev, [qIdx]: optIdx }));
-                                      }
-                                    }}
-                                    disabled={quizSubmitted}
-                                    className={`w-full text-left p-2.5 rounded-lg border text-xs transition cursor-pointer flex items-center justify-between ${btnStyle}`}
+                                  <div
+                                    key={item.id}
+                                    onClick={() => handleSelectItem(item)}
+                                    className={`flex items-center justify-between p-2.5 rounded-lg text-xs transition cursor-pointer ${
+                                      isSelected
+                                        ? 'bg-slate-800 text-white border border-cyan-500/60 font-medium shadow-xs'
+                                        : 'hover:bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-transparent'
+                                    }`}
                                   >
-                                    <span>{opt}</span>
-                                    {quizSubmitted && isThisCorrectOption && (
-                                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 ml-2" />
-                                    )}
-                                  </button>
+                                    <div className="flex items-center gap-2 truncate">
+                                      {isPYQ ? (
+                                        <Award className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                      ) : isAssign ? (
+                                        <FileCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                      ) : (
+                                        <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                      )}
+                                      <span className="truncate">{item.title}</span>
+                                      {isJustAdded && (
+                                        <span className="px-1 py-0.2 rounded text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
+                                          New
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-center gap-2 shrink-0 ml-1">
+                                      {isSelected && (
+                                        <span className="text-[10px] text-cyan-400 font-medium">Viewing Output</span>
+                                      )}
+                                      <span className="text-[10px] font-mono-code text-slate-500 uppercase">
+                                        {item.fileType}
+                                      </span>
+                                    </div>
+                                  </div>
                                 );
                               })}
                             </div>
-
-                            {quizSubmitted && q.explanation && (
-                              <div className="pl-7 pt-1 text-[11px] text-slate-400 italic">
-                                <strong>Explanation:</strong> {q.explanation}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-
-                      {!quizSubmitted ? (
-                        <button
-                          onClick={() => {
-                            setQuizSubmitted(true);
-                            confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
-                          }}
-                          disabled={Object.keys(quizAnswers).length === 0}
-                          className="w-full py-2.5 rounded-lg bg-slate-100 hover:bg-white disabled:opacity-40 text-slate-950 font-medium text-xs transition cursor-pointer"
-                        >
-                          Submit Quiz & Check Score
-                        </button>
-                      ) : (
-                        <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-2">
-                          <span className="text-xs font-semibold text-white block">
-                            Quiz Completed!{' '}
-                            {Object.entries(quizAnswers).filter(
-                              ([idx, val]) => val === activeItem.resources?.quiz[Number(idx)]?.correctIndex
-                            ).length}{' '}
-                            / {activeItem.resources.quiz.length} Correct
-                          </span>
-                          <p className="text-[11px] text-slate-400">
-                            Evaluated locally from curriculum cache.
-                          </p>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="py-8 text-center text-xs text-slate-400">
-                      No quiz attached to this document.
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="py-16 text-center space-y-3">
-              <FolderOpen className="w-12 h-12 text-slate-600 mx-auto" />
-              <div className="text-sm font-semibold text-slate-300">
-                {materials.length === 0 ? 'Your Vault is Clean & Ready' : 'Select a material from the folder tree'}
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                {materials.length === 0
-                  ? 'Drop any lecture PDF, slides, or paste notes above. The system will auto-classify them into syllabus folders and generate mindmaps & 10-markers.'
-                  : 'Click any note, PYQ, or assignment on the left to inspect its executive notes, mnemonics, visual mindmap, and quiz.'}
-              </p>
-            </div>
-          )}
+            );
+          })}
+
         </div>
       </div>
     </div>

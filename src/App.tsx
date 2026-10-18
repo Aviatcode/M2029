@@ -422,19 +422,42 @@ export default function App() {
   useEffect(() => {
     const unsub = initClassroomAutoSync(classCode, (syncData) => {
       if (syncData.materials && syncData.materials.length > 0) {
-        setMaterials(syncData.materials);
+        setMaterials((prev) => {
+          const serverIds = new Set(syncData.materials.map((m) => m.id));
+          const serverTitles = new Set(syncData.materials.map((m) => (m.title || m.fileName || '').toLowerCase()));
+          const localOnly = prev.filter(
+            (m) => !serverIds.has(m.id) && !serverTitles.has((m.title || m.fileName || '').toLowerCase())
+          );
+          const merged = [...localOnly, ...syncData.materials];
+          try {
+            localStorage.setItem('syllabus_materials', JSON.stringify(merged));
+          } catch {}
+          return merged;
+        });
       }
       if (syncData.assignments && syncData.assignments.length > 0) {
-        setAssignments(syncData.assignments);
+        setAssignments((prev) => {
+          const serverIds = new Set(syncData.assignments.map((a) => a.id));
+          const localOnly = prev.filter((a) => !serverIds.has(a.id));
+          return [...localOnly, ...syncData.assignments];
+        });
       }
       if (syncData.units) {
         setUnitsBySubject(syncData.units);
       }
       if (syncData.exams && syncData.exams.length > 0) {
-        setExams(syncData.exams);
+        setExams((prev) => {
+          const serverIds = new Set(syncData.exams.map((e) => e.id));
+          const localOnly = prev.filter((e) => !serverIds.has(e.id));
+          return [...localOnly, ...syncData.exams];
+        });
       }
       if (syncData.announcements && syncData.announcements.length > 0) {
-        setAnnouncements(syncData.announcements);
+        setAnnouncements((prev) => {
+          const serverIds = new Set(syncData.announcements.map((a) => a.id));
+          const localOnly = prev.filter((a) => !serverIds.has(a.id));
+          return [...localOnly, ...syncData.announcements];
+        });
       }
       if (syncData.notifications && syncData.notifications.length > 0) {
         setNotifications((prev) => {
@@ -496,6 +519,7 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [initialTutorPrompt, setInitialTutorPrompt] = useState('');
+  const [activeMaterialId, setActiveMaterialId] = useState<string | null>(null);
 
   // Close mobile drawer on Escape key
   useEffect(() => {
@@ -723,6 +747,7 @@ export default function App() {
   };
 
   const handleMaterialUploaded = (newMat: AcademicMaterial) => {
+    setActiveMaterialId(newMat.id);
     setMaterials((prev) => {
       const filtered = prev.filter((m) => m.id !== newMat.id && m.fileName !== newMat.fileName);
       const updated = [newMat, ...filtered];
@@ -733,6 +758,26 @@ export default function App() {
       }
       return updated;
     });
+
+    try {
+      const SYNC_CACHE_KEY = 'm2029_class_sync_cache_v1';
+      const cached = localStorage.getItem(SYNC_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.materials)) {
+          parsed.materials = [newMat, ...parsed.materials.filter((m: any) => m.id !== newMat.id)];
+          localStorage.setItem(SYNC_CACHE_KEY, JSON.stringify(parsed));
+        }
+      }
+    } catch {}
+
+    setShareToast(`✓ "${newMat.title}" saved to ${newMat.subjectName}! AI Notes, Mindmap & 10-Marker ready.`);
+    setTimeout(() => setShareToast(''), 4500);
+  };
+
+  const handleOpenMaterial = (mat: AcademicMaterial) => {
+    setActiveMaterialId(mat.id);
+    handleSelectTab('dump');
   };
 
   const handleSetupComplete = (classData: any) => {
@@ -982,7 +1027,7 @@ export default function App() {
               todayClasses={timetable.filter((t) => t.day === 'Wednesday')}
               tomorrowClasses={timetable.filter((t) => t.day === 'Thursday')}
               upcomingExams={exams}
-              recentMaterials={materials.slice(0, 4)}
+              recentMaterials={materials}
               announcements={announcements}
               subjects={subjects}
               assignments={assignments}
@@ -990,6 +1035,7 @@ export default function App() {
               onNavigateTab={handleSelectTab}
               onTriggerQuickAIAction={handleQuickAIAction}
               onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+              onOpenMaterial={handleOpenMaterial}
               calmMode={calmMode}
             />
           )}
@@ -1028,6 +1074,8 @@ export default function App() {
               unitsBySubject={unitsBySubject}
               currentRole={currentRole}
               classCode={classCode}
+              activeMaterialId={activeMaterialId}
+              onSelectActiveMaterialId={setActiveMaterialId}
               onMaterialUploaded={handleMaterialUploaded}
               onNavigateToTab={(tab) => setActiveTab(tab as any)}
               pendingFiles={pendingIngestFiles}
