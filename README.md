@@ -1,217 +1,207 @@
-> 🌐 **Live Web Application & Autonomous AI Portal:**
-> **[🚀 Open SyllabusOS Live Web Application](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)** | **[🛠️ Interactive Dev Workspace](https://ais-dev-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)**
->
-> 📦 **Download Ready-to-Upload ZIP Bundles:**
-> **[⬇️ Download Backend & App Source (`backend-source.zip`)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/backend-source.zip)** | **[⬇️ Download Curriculum Knowledge Base (`syllabus-repo.zip`)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/syllabus-repo.zip)**
+# 🎓 M2029 — Academic Operating System & Autonomous AI Companion
+
+[![Live Web Application](https://img.shields.io/badge/Live_App-M2029_PWA-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://aviatcode.github.io/M2029/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Aviatcode%2FM2029-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Aviatcode/M2029)
+[![React 19](https://img.shields.io/badge/React-19.0-61dafb?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite 8](https://img.shields.io/badge/Vite-8.x-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TailwindCSS v4](https://img.shields.io/badge/TailwindCSS-4.x-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Neon Database](https://img.shields.io/badge/Database-Neon_Serverless_PostgreSQL-00e599?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=flat-square)](LICENSE)
+
+> 🌐 **Live Application:** [https://aviatcode.github.io/M2029/](https://aviatcode.github.io/M2029/)  
+> 📦 **GitHub Repository:** [https://github.com/Aviatcode/M2029](https://github.com/Aviatcode/M2029)
+
+**M2029** is a high-performance academic operating system and intelligent AI study companion built specifically for computer engineering and computer science university students. It bridges the gap between chaotic college curricula and top exam performance by delivering one-by-one syllabus topic mastery, intuitive Hinglish mental models, university 10-marker answer sheet schemes, interactive Gantt charts, and persistent zero-token classroom knowledge recall.
 
 ---
 
-# 🎓 SyllabusOS — Autonomous AI Curriculum & Class Knowledge Base
+## 🌟 Key Features
 
-[![Live Web Application](https://img.shields.io/badge/Live_App-SyllabusOS-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![University](https://img.shields.io/badge/University-USITE-0284c7.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![Semester](https://img.shields.io/badge/Semester-Semester%20III-0d9488.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![Instructor](https://img.shields.io/badge/Faculty-Dr.%20Rajesh%20Sharma-7c3aed.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![Credits](https://img.shields.io/badge/Credits-4.0%20Credits-16a34a.svg)](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app)
-[![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b.svg)](LICENSE)
+### 🧠 1. Academic AI Companion (Guided Syllabus & 6-Stage Reference)
+- **1-by-1 Guided Syllabus Progression**: Follows official university syllabi sequentially. Topic-by-topic guidance eliminates cognitive overwhelm.
+- **💡 Hinglish Intuition (Exam Mental Models)**: Complex engineering concepts explained in authentic student Hinglish (*"Dekho bhai, seedhi baat hai..."*) with zero jargon.
+- **👶 Real-World ELI9 Analogies**: Abstract operating systems, concurrency, and database concepts explained using relatable everyday analogies (cafeteria lines, traffic signals, hospital ER triage).
+- **📝 10-Marker University Answer Blueprint**: Strict Section-C layout formatted for examiners: Definition, ASCII architectural schematics, step-by-step working mechanisms, code implementations, and gotchas.
+- **📊 Interactive CPU Scheduling Gantt Charts**: Dynamic visual timelines for FCFS, SJF, SRTF, and Round Robin algorithms with animated process execution and completion calculations.
+- **⚡ Quick Check Concept Evaluations**: Embedded interactive multiple-choice checkpoints with instant feedback and automatic advancement.
 
-An intelligent, autonomous curriculum management platform and academic class repository. SyllabusOS transforms raw university syllabus handouts and teacher timetables into an interactive, distraction-free study operating system:
-* **7-Minute Pre-Lecture Primers:** High-yield conceptual prep delivered ahead of every class.
-* **Autonomous Mindmaps & Knowledge Trees:** Interactive visual graphs of all core database units.
-* **Past Year Exam (PYQ) Vault:** Solved university 10-marker model answers with schema diagrams.
-* **One-Click GitHub Publishing:** Exports clean, structured Git markdown repositories (`README.md`, `SYLLABUS.md`, `TIMETABLE.md`).
-* **Offline WebAPK PWA:** Progressive Web App with service-worker offline caching and mobile installation.
+### 🔌 2. Universal Multi-Model Engine (Bring Your Own Key)
+Switch models on the fly with live visual confirmation in the desk header:
+- **Google Gemini**: `gemini-2.0-flash` (recommended), `gemini-1.5-flash`, `gemini-1.5-pro`.
+- **OpenAI**: `gpt-4o`, `gpt-4o-mini`, `o3-mini`.
+- **Anthropic Claude**: `claude-3-5-sonnet`, `claude-3-7-sonnet`.
+- **DeepSeek AI**: `deepseek-chat` (V3), `deepseek-reasoner` (R1).
+- **Groq Cloud**: `llama-3.3-70b-versatile`, `deepseek-r1-distill-llama-70b` (300+ tokens/sec).
+- **OpenRouter**: Unified access to 100+ open-source and proprietary foundation models.
+- **Local Ollama / LM Studio**: 100% private, free local inference (`http://localhost:11434`).
+- **Simulated Sandbox**: Offline test mode with academic curriculum simulation.
+- **Live Regeneration**: One-click `Regenerate Live` button to instantly re-synthesize any syllabus topic or study guide with your currently active model.
+
+### ⚡ 3. Zero-Token Classroom Knowledge Base (Persistent Disk Recall)
+- **Learn Once, Store Forever**: When any student asks a doubt or explores a syllabus topic, the response is semantically indexed and persisted to disk.
+- **Repeating Query Bypass**: Subsequent queries for the same concept are fetched instantly with **0 tokens consumed** and **0 latency**.
+- **Real-Time Token Savings**: Header badge tracks total classroom queries served and estimated tokens saved.
+
+### 📋 4. Smart Syllabus & Notes Dump
+- **Multi-Format Ingestion**: Upload or paste raw teacher PPT slides, syllabus PDFs, handwritten notes, or messy unformatted text.
+- **Intelligent Entity Extraction**: Automatically extracts course codes, instructor information, weekly schedules, credit hours, and exam dates.
+- **Unit & Topic Breakdown**: Assigns exam weightage, difficulty ratings, and recommended study durations.
+
+### ⏰ 5. Timetable & Pre-Lecture Primers
+- **7-Minute Pre-Lecture Primers**: High-yield conceptual briefings generated automatically for tomorrow's scheduled classes.
+- **Attendance & Classroom Schedule**: Weekly lecture and lab timetable with venue mapping, faculty details, and attendance tracking.
+
+### 📱 6. Offline-First PWA & Web Share Target
+- **Installable PWA**: Installable on Windows, macOS, Android, and iOS via browser prompts.
+- **Offline Resilience**: Service worker precaches application assets and study materials via Workbox.
+- **Native Web Share Target**: Share lecture PDFs or study notes directly into M2029 from WhatsApp, Telegram, or file managers.
+
+### ☁️ 7. Neon Serverless PostgreSQL Database
+- **Enterprise Relational Storage**: Powered by Neon Serverless PostgreSQL (12 relational tables with foreign keys, indexes, and constraints).
+- **Automated Midnight Sync**: Scheduled automated background sync verifies and persists local academic workspace updates to the cloud database.
 
 ---
 
-## 🔗 Quick Access Links
-
-| Asset / Endpoint | Direct Link |
-| :--- | :--- |
-| **🚀 Production Web App** | [https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app) |
-| **🛠️ Interactive Dev Environment** | [https://ais-dev-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app](https://ais-dev-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app) |
-| **📦 Backend Source ZIP** | [Download `backend-source.zip`](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/backend-source.zip) |
-| **📦 Curriculum Repo ZIP** | [Download `syllabus-repo.zip`](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/syllabus-repo.zip) |
-
----
-
-## 🏛️ System Architecture & Backend Files
-
-The full-stack application is organized into a modular, production-ready structure:
+## 🏛️ Project Architecture
 
 ```
-├── server.ts                       # Express + Vite backend entry point (Port 3000)
+M2029/
+├── server.ts                       # Express + TSX full-stack server (Port 3000)
+├── index.html                      # HTML5 entry point with PWA manifest links
+├── package.json                    # Project dependencies & build scripts
+├── vite.config.ts                  # Vite 8 config with PWA & React plugins
+├── dist/                           # Production client bundle
+├── docs/                           # GitHub Pages deployment build (Live PWA)
+├── curriculum-repo/                # Shared classroom repository & persistent cache
+│   ├── .ai_knowledge_cache.json    # Persistent learned topic cache (0-tokens)
+│   ├── README.md                   # Class knowledge base documentation
+│   └── SYLLABUS.md                 # Full unit syllabus checklist
 ├── src/
 │   ├── server/
-│   │   ├── routes.ts               # Complete REST API router (/api/*)
-│   │   ├── aiProvider.ts           # Gemini SDK & Heuristic parsing engine
-│   │   └── githubExporter.ts       # Markdown generation & ZIP packaging
-│   ├── types/
-│   │   └── index.ts                # TypeScript data interfaces & models
-│   ├── components/                 # React frontend views & interactive widgets
-│   ├── defaultCurriculum.ts        # Seed academic syllabus & timetables
-│   └── App.tsx                     # Main application layout & state coordinator
-├── supabase/
-│   └── schema.sql                  # PostgreSQL database migration & seed script
-├── curriculum-repo/                # Ready-to-push academic GitHub repository scaffold
-│   ├── README.md                   # Class knowledge base overview
-│   ├── SYLLABUS.md                 # Complete unit breakdown
-│   ├── TIMETABLE.md                # Weekly schedule & faculty office hours
-│   ├── CONTRIBUTING.md             # Student contribution guidelines
-│   └── LICENSE                     # MIT License
-└── package.json                    # Project dependencies and npm scripts
+│   │   ├── routes.ts               # Core REST API router (/api/ai-tutor/*, /api/db/*)
+│   │   ├── autoSyncService.ts      # Automated daily curriculum sync daemon
+│   │   ├── ai/
+│   │   │   ├── provider.ts         # UniversalAIProvider & AIProviderFactory
+│   │   │   ├── aiKnowledgeCache.ts # Semantic normalization & persistent disk cache
+│   │   │   └── academicKnowledgeBank.ts # Gold-standard 170-turn curriculum bank
+│   │   └── db/
+│   │       ├── neonClient.ts       # Neon Serverless PostgreSQL connection manager
+│   │       └── seedData.ts         # Initial academic workspace seed dataset
+│   ├── utils/
+│   │   ├── aiModelService.ts       # Client model presets, API key storage & helpers
+│   │   ├── dbSyncService.ts        # Client database sync coordination
+│   │   └── shareTargetService.ts   # PWA Web Share Target handler
+│   ├── components/
+│   │   ├── AITutorView.tsx         # Guided syllabus chat & 6-stage reference desk
+│   │   ├── AIKeyConfigModal.tsx    # Multi-provider model configuration modal
+│   │   ├── SmartDumpView.tsx       # Syllabus & raw notes extractor
+│   │   ├── ConceptCheckQuiz.tsx    # Diagnostic interactive quizzes
+│   │   ├── AssignmentsView.tsx     # Student task tracker & rubrics
+│   │   └── tutor/
+│   │       ├── GanttChartWidget.tsx# CPU scheduling animated Gantt chart
+│   │       └── QuickCheckCard.tsx  # Concept check MCQ interactive widget
+│   ├── defaultCurriculum.ts        # Fallback curriculum and timetable data
+│   ├── App.tsx                     # Main application view coordinator & navigation
+│   └── main.tsx                    # React 19 root entry point
+└── public/
+    ├── manifest.json               # Web App Manifest
+    └── sw-share-target.js          # Service worker share target listener
 ```
-
-### Backend Files Overview:
-1. **`server.ts`**: Express server that binds to port `3000`, parses JSON request bodies, attaches API routes under `/api`, connects Vite middleware in development, and serves static production builds.
-2. **`src/server/routes.ts`**: Implements 18+ endpoints for syllabus progress, AI parsing, PYQ search, mindmaps, timetable schedule, and GitHub ZIP generation.
-3. **`src/server/aiProvider.ts`**: Connects to the `@google/genai` TypeScript SDK using `gemini-2.5-flash` with built-in heuristic fallback when offline.
-4. **`src/server/githubExporter.ts`**: Converts structured academic metadata into production-grade Markdown files and in-memory zip buffers.
-5. **`supabase/schema.sql`**: Production PostgreSQL script containing 6 relational tables, foreign key constraints, indexes, RLS policies, and starter seeds.
 
 ---
 
-## 🚀 Step-by-Step Instructions: Run Backend & Connect Supabase
+## 🚀 Getting Started Locally
 
 ### 1. Prerequisites
-Ensure you have installed:
-* **Node.js** (v18.0.0 or higher)
-* **npm** (v9.0.0 or higher)
-* A free account on [Supabase](https://supabase.com) (if using Cloud PostgreSQL)
+- **Node.js**: `v18.0.0` or higher (v20+ recommended)
+- **npm**: `v9.0.0` or higher
+- **Git**
 
-### 2. Download and Extract the Source
-Download [`backend-source.zip`](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/backend-source.zip) or clone this repository, then enter the project folder:
+### 2. Clone the Repository
 ```bash
-cd syllabus-os
+git clone https://github.com/Aviatcode/M2029.git
+cd M2029
+```
+
+### 3. Install Dependencies
+```bash
 npm install
 ```
 
-### 3. Set Up Supabase Database (Step-by-Step)
-1. Go to [https://supabase.com/dashboard](https://supabase.com/dashboard) and sign in.
-2. Click **"New Project"**, name it (e.g., `syllabus-os-db`), and set a secure database password.
-3. Once the database is provisioned (~2 minutes), click on **"SQL Editor"** in the left sidebar.
-4. Click **"+ New Query"**.
-5. Open the `supabase/schema.sql` file from this project, copy the entire SQL script, paste it into the editor, and click **"Run"**.
-6. The query will create:
-   * `class_workspaces`
-   * `subjects`
-   * `units`
-   * `topics`
-   * `study_materials`
-   * `weekly_timetable`
-   * Automatic triggers, indexes, and initial seeds for BCA-302.
-
-### 4. Configure Environment Variables
-Create a `.env` file in the project root (note: `.env` is deliberately excluded from GitHub uploads to protect secrets):
-```bash
+### 4. Configure Environment Variables (Optional)
+Create a `.env` file in the root directory:
+```env
 PORT=3000
 NODE_ENV=development
 
-# Optional: Google Gemini API Key for dynamic syllabus extraction
+# Optional: Server-wide class shared AI key (Gemini, OpenAI, Groq, or Claude)
+AI_API_KEY=your_shared_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 
-# Optional: Supabase Credentials (if using direct client integration)
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+# Optional: Neon Serverless PostgreSQL Connection String
+DATABASE_URL=postgresql://neondb_owner:YOUR_PASSWORD@ep-YOUR-PROJECT.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
 ```
-*(Note: If no API key is provided, the backend seamlessly falls back to the embedded heuristic AI parsing engine).*
 
-### 5. Start the Server
-Start the unified full-stack server:
+*(Note: Personal API keys can be entered directly in the frontend UI via the Model & API Key modal without modifying `.env`).*
+
+### 5. Run Development Server
 ```bash
 npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 6. Verify Running Endpoints
-* Open your browser: `http://localhost:3000`
-* Test the backend health endpoint:
+### 6. Build Production Bundle
 ```bash
-curl http://localhost:3000/api/health
+npm run build
 ```
-Expected output:
-```json
-{
-  "status": "ok",
-  "service": "Classroom Syllabus to GitHub Exporter API"
-}
-```
+The compiled assets will be created in `dist/`.
 
 ---
 
-## 📤 How to Upload & Publish to GitHub
+## 📡 REST API Reference
 
-### Option A: Upload Pre-packaged Curriculum Repository (`syllabus-repo.zip`)
-1. Download [`syllabus-repo.zip`](https://ais-pre-3lebyttfd3xonbimbkspwq-101135134574.asia-southeast1.run.app/syllabus-repo.zip) and extract it on your computer.
-2. Go to [GitHub New Repository](https://github.com/new) and create a repository (e.g. `bca-302-dbms-curriculum`).
-3. Click **"uploading an existing file"**, drag all extracted files into GitHub, and click **Commit changes**.
-
-### Option B: Publish using Git CLI
-```bash
-# In the repository directory:
-git init
-git add .
-git commit -m "feat: initial syllabus, teacher profile, and lecture notes"
-git branch -M main
-git remote add origin https://github.com/<YOUR_USERNAME>/<YOUR_REPO_NAME>.git
-git push -u origin main
-```
-
-*(Note: Sensitive environment files like `.env` and local caches are ignored to keep secrets safe and repository size small).*
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Service health check |
+| `POST` | `/api/ai-tutor/step` | Progress through guided syllabus topics, evaluate quick checks, or request live remediation (ELI9, Hinglish) |
+| `POST` | `/api/ai-tutor/ask` | 6-stage reference guide generator (Simple, ELI9, Hinglish, 10-Marker, Deep Dive, Quiz Me) |
+| `GET` | `/api/ai-tutor/tracks` | Returns available syllabus tracks (e.g. CPU Scheduling, Process Sync, Deadlocks) |
+| `POST` | `/api/ai/test` | Live connection & latency test for any user-provided API key or custom endpoint |
+| `GET` | `/api/ai/config` | Returns active server class model status and provider name |
+| `POST` | `/api/ai/config` | Updates default class model configuration (for course admins / CRs) |
+| `GET` | `/api/ai/cache/stats` | Returns zero-token cache metrics (total learned lessons, total hits, estimated tokens saved) |
+| `GET` | `/api/curriculum` | Fetches active semester curriculum, subjects, units, and timetable |
+| `POST` | `/api/curriculum/sync` | Pushes client curriculum modifications to Neon PostgreSQL |
+| `POST` | `/api/curriculum/extract` | AI extraction pipeline for raw notes and syllabus text dumps |
 
 ---
 
-## 👨‍🏫 Extracted Faculty & Course Metadata
+## 🛠️ Technology Stack
 
-| Field | Value |
+| Layer | Technologies |
 | :--- | :--- |
-| **Course Name** | Database Management Systems & Relational Architectures |
-| **Course Code** | BCA-302 |
-| **Lead Faculty** | **Dr. Rajesh Sharma** (Associate Professor & Head of Database Systems Lab) |
-| **Official Email** | [`rajesh.sharma@cs.university.edu`](mailto:rajesh.sharma@cs.university.edu) |
-| **Office Location** | Room 402, Block B, Technology Wing |
-| **Academic Term** | Semester III (2026-2027) |
-| **Credits** | 4.0 Credits (3L + 1T) |
+| **Frontend Core** | React 19, TypeScript, Vite 8, TailwindCSS v4 |
+| **Icons & Animation** | Lucide React, Motion, Canvas Confetti |
+| **Backend & Routing** | Node.js, Express, TSX, REST API |
+| **AI Providers** | Google GenAI SDK (`gemini-2.0-flash`), OpenAI API, Anthropic Messages API, Groq Cloud, DeepSeek, OpenRouter, Ollama |
+| **Caching Engine** | File-backed Persistent JSON Cache with semantic stop-word query normalization |
+| **Database** | Neon Serverless PostgreSQL (`@neondatabase/serverless`), Supabase client support |
+| **PWA & Offline** | Vite Plugin PWA, Workbox, Web App Manifest, Web Share Target API |
 
 ---
 
-## 📅 Lecture & Lab Timetable
+## 🤝 Contributing
 
-| Day | Timings | Room / Venue | Session Type |
-| :--- | :--- | :--- | :--- |
-| **Monday** | 10:00 AM - 11:30 AM | `Lecture Hall 204` | Theory Lecture |
-| **Wednesday** | 11:30 AM - 01:00 PM | `Lecture Hall 204` | Theory Lecture |
-| **Friday** | 02:00 PM - 04:00 PM | `Database Systems Lab 3` | Practical / Hands-on Lab |
-
----
-
-## 📚 Curriculum Units Checklist
-
-### 📌 Unit 1: Data Modeling & Conceptual Database Architecture
-- [ ] Three-Schema Database Architecture and Data Independence
-- [ ] ER Modeling: Entity Sets, Weak Entities, Multiplicity, Recursive Relationships
-- [ ] Enhanced ER (EER): Specialization, Generalization, and Union Types
-
-### 📌 Unit 2: Relational Model, Constraints & Relational Algebra
-- [ ] Relational Data Model, Tuple Relational Calculus, Domain Relational Calculus
-- [ ] Integrity Constraints: Domain, Key, Entity Integrity, Referential Integrity (Foreign Keys)
-- [ ] Relational Algebra Operators: Select, Project, Join, Cartesian Product, Division
-
-### 📌 Unit 3: SQL Mastery & Stored Procedures
-- [ ] Complex Subqueries, Correlated Subqueries, Analytical Window Functions
-- [ ] Views, Triggers, Assertions, and Transactional Procedures in PL/SQL
-- [ ] Indexing Mechanisms: B-Trees, B+ Trees, and Hash Indices
-
-### 📌 Unit 4: Normalization & Schema Refinement
-- [ ] Functional Dependencies, Armstrong's Axioms, Attribute Closure Algorithms
-- [ ] Normal Forms: 1NF, 2NF, 3NF, Boyce-Codd Normal Form (BCNF)
-- [ ] Lossless-Join Decomposition and Dependency Preservation
-
-### 📌 Unit 5: Transactions, Concurrency Control & Recovery
-- [ ] ACID Properties and Serializability (Conflict & View Serializability)
-- [ ] Concurrency Protocols: Two-Phase Locking (2PL), Strict 2PL, Timestamp Ordering
-- [ ] Recovery Subsystems: Write-Ahead Logging (WAL), Checkpoints, ARIES Recovery
+Contributions to improve M2029 for college students are welcome!
+1. Fork the Project (`https://github.com/Aviatcode/M2029/fork`)
+2. Create your Feature Branch (`git checkout -b feat/amazing-feature`)
+3. Commit your Changes (`git commit -m "feat: add amazing feature"`)
+4. Push to the Branch (`git push origin feat/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
 ## ⚖️ License
-Distributed under the [MIT License](LICENSE).
+
+Distributed under the **MIT License**. See `LICENSE` for details.
