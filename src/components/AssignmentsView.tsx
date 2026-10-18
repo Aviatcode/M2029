@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { AcademicAssignment, Subject, ClassworkType } from '../types';
 import { getAiRequestPayload } from '../utils/aiModelService';
+import { getDefaultSubjectsForClass } from '../utils/classManager';
 
 interface AssignmentsViewProps {
   assignments: AcademicAssignment[];
@@ -54,15 +55,34 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
   const [assistantTab, setAssistantTab] = useState<'ai_solver' | 'draft_critique' | 'structure'>('ai_solver');
 
+  // Available Subjects fallback for semester
+  const availableSubjects = useMemo(() => {
+    if (subjects && subjects.length > 0) return subjects;
+    return getDefaultSubjectsForClass('BCA-2028', 1);
+  }, [subjects]);
+
   // New Assignment Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
-  const [newSubject, setNewSubject] = useState(subjects[0]?.name || '');
+  const [newSubject, setNewSubject] = useState('');
   const [newDueDate, setNewDueDate] = useState('');
   const [newType, setNewType] = useState<ClassworkType>('assignment');
   const [newInstructions, setNewInstructions] = useState('');
   const [newPresenter, setNewPresenter] = useState('');
   const [newRollNo, setNewRollNo] = useState('');
+
+  // Auto-set default subject & due date when add modal opens
+  useEffect(() => {
+    if (isAddModalOpen) {
+      if (!newDueDate) {
+        const nextWeek = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+        setNewDueDate(nextWeek);
+      }
+      if (!newSubject) {
+        setNewSubject(selectedFolder !== 'all' ? selectedFolder : (availableSubjects[0]?.name || 'General'));
+      }
+    }
+  }, [isAddModalOpen, newDueDate, newSubject, selectedFolder, availableSubjects]);
 
   // CR Portal Modal
   const [isCRPortalOpen, setIsCRPortalOpen] = useState(false);
@@ -129,43 +149,50 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
   // Add new assignment
   const handleCreateAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newDueDate) {
-      alert('Please provide title and due date.');
-      return;
-    }
+    const effectiveTitle = newTitle.trim();
+    if (!effectiveTitle) return;
 
-    const payload = {
-      title: newTitle.trim(),
-      subjectName: newSubject,
-      subjectId: subjects.find((s) => s.name === newSubject)?.id || 'sub-dbms',
-      dueDate: newDueDate,
+    const effectiveDate = newDueDate || new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+    const effectiveSubject = newSubject || availableSubjects[0]?.name || 'General';
+    const targetSub = availableSubjects.find((s) => s.name === effectiveSubject);
+
+    const localItem: AcademicAssignment = {
+      id: `asgn-${Date.now()}`,
+      classId: 'class-bca',
+      title: effectiveTitle,
+      subjectName: effectiveSubject,
+      subjectId: targetSub?.id || 'sub-general',
+      dueDate: effectiveDate,
       type: newType,
-      instructions: newInstructions.trim() || 'Complete according to university guidelines.',
-      assignedBy: 'Faculty / Class Representative',
+      instructions: newInstructions.trim() || 'Complete according to course guidelines.',
+      integrityMode: 'teach_me',
+      outlineSteps: ['Review requirements', 'Draft responses with key definitions', 'Finalize submission'],
+      keyReferences: ['Prescribed Syllabus & Course Notes'],
+      assignedBy: 'Faculty / Class Cohort',
       presenterName: newPresenter.trim() || undefined,
       rollNumber: newRollNo.trim() || undefined,
+      completed: false,
     };
 
+    const updated = [localItem, ...assignments];
+    setAssignments(updated);
+    if (onUpdateAssignments) onUpdateAssignments(updated);
+
+    setIsAddModalOpen(false);
+    setNewTitle('');
+    setNewInstructions('');
+    setNewDueDate('');
+    setNewPresenter('');
+    setNewRollNo('');
+
     try {
-      const res = await fetch('/api/assignments/add', {
+      fetch('/api/assignments/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setAssignments(data.assignments);
-        if (onUpdateAssignments) onUpdateAssignments(data.assignments);
-        setIsAddModalOpen(false);
-        setNewTitle('');
-        setNewInstructions('');
-        setNewDueDate('');
-        setNewPresenter('');
-        setNewRollNo('');
-      }
-    } catch (err: any) {
-      alert('Failed to add assignment: ' + err.message);
+        body: JSON.stringify(localItem),
+      }).catch(() => {});
+    } catch {
+      // offline safe
     }
   };
 
@@ -1022,145 +1049,187 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       {/* 6. ADD WORK MODAL */}
       {isAddModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in cursor-pointer"
-          onClick={() => setIsAddModalOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4 animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsAddModalOpen(false);
+          }}
           role="dialog"
           aria-modal="true"
-          aria-label="Add Assignment Modal"
+          aria-label="Add Assignment or Presentation Modal"
         >
           <div
-            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl text-slate-100 space-y-4 cursor-default"
+            className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-700 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[92vh] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <Plus className="w-4 h-4 text-cyan-400" />
-                <h3 className="font-semibold text-base">Add New Assignment or PPT</h3>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
+                  <Plus className="w-4 h-4 text-slate-200" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm sm:text-base text-white">
+                    {newType === 'assignment' ? 'Add Written Assignment' : 'Add PPT Presentation'}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Track submission deadline for your semester
+                  </p>
+                </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateAssignment} className="space-y-3.5 text-xs">
+            <form onSubmit={handleCreateAssignment} className="flex-1 overflow-y-auto space-y-3.5 text-xs pr-0.5">
+              {/* Work Type Segmented Switcher */}
               <div>
-                <label className="block text-slate-400 mb-1">Work Type</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="block text-slate-300 font-medium text-[11px] mb-1.5">
+                  Coursework Type
+                </label>
+                <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-slate-950 border border-slate-800">
                   <button
                     type="button"
                     onClick={() => setNewType('assignment')}
-                    className={`py-2 rounded-lg border text-xs font-medium cursor-pointer ${
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5 ${
                       newType === 'assignment'
-                        ? 'bg-cyan-950 text-cyan-300 border-cyan-500/40'
-                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                        ? 'bg-slate-800 text-white shadow-xs border border-slate-700'
+                        : 'text-slate-400 hover:text-slate-200 border border-transparent'
                     }`}
                   >
-                    📝 Written Assignment
+                    <span>📝 Written Assignment</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setNewType('ppt_presentation')}
-                    className={`py-2 rounded-lg border text-xs font-medium cursor-pointer ${
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5 ${
                       newType === 'ppt_presentation'
-                        ? 'bg-indigo-950 text-indigo-300 border-indigo-500/40'
-                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                        ? 'bg-slate-800 text-white shadow-xs border border-slate-700'
+                        : 'text-slate-400 hover:text-slate-200 border border-transparent'
                     }`}
                   >
-                    🎤 PPT Presentation
+                    <span>🎤 PPT Presentation</span>
                   </button>
                 </div>
               </div>
 
+              {/* Target Subject Folder */}
               <div>
-                <label className="block text-slate-400 mb-1">Target Subject Folder *</label>
+                <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                  Subject *
+                </label>
                 <select
-                  value={newSubject}
+                  value={newSubject || availableSubjects[0]?.name || ''}
                   onChange={(e) => setNewSubject(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/40 cursor-pointer"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition cursor-pointer"
                 >
-                  {subjects.map((sub) => (
+                  {availableSubjects.map((sub) => (
                     <option key={sub.id} value={sub.name}>
-                      📁 {sub.name} ({sub.code})
+                      {sub.name} ({sub.code})
                     </option>
                   ))}
                 </select>
               </div>
 
+              {/* Title */}
               <div>
-                <label className="block text-slate-400 mb-1">Title *</label>
+                <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                  Title *
+                </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Normalization to 3NF & BCNF or Deadlock Avoidance"
+                  placeholder={
+                    newType === 'assignment'
+                      ? 'e.g. Unit 2: Pointers and Memory Allocation in C'
+                      : 'e.g. Seminar on Cloud Virtualization & Containers'
+                  }
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder:text-slate-500 outline-none transition"
                 />
               </div>
 
+              {/* Due Date */}
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Submission Due Date *</label>
+                <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                  Submission Due Date *
+                </label>
                 <input
                   type="date"
                   required
                   value={newDueDate}
                   onChange={(e) => setNewDueDate(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 focus:outline-none focus:border-cyan-400 font-mono"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 font-mono outline-none transition [color-scheme:dark]"
                 />
               </div>
 
+              {/* Presenter Name & Roll Number (for PPT) */}
               {newType === 'ppt_presentation' && (
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 animate-fade-in">
                   <div>
-                    <label className="block text-slate-400 mb-1">Presenter Name</label>
+                    <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                      Presenter / Student Name
+                    </label>
                     <input
                       type="text"
-                      placeholder="e.g. Student Name or Team"
+                      placeholder="e.g. Rahul Sharma"
                       value={newPresenter}
                       onChange={(e) => setNewPresenter(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-200"
+                      className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder:text-slate-500 outline-none transition"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-400 mb-1">Roll Numbers</label>
+                    <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                      University Roll No.
+                    </label>
                     <input
                       type="text"
-                      placeholder="e.g. Roll 101-105"
+                      placeholder="e.g. BCA-28-042"
                       value={newRollNo}
                       onChange={(e) => setNewRollNo(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-200"
+                      className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 font-mono placeholder:text-slate-500 outline-none transition"
                     />
                   </div>
                 </div>
               )}
 
+              {/* Instructions */}
               <div>
-                <label className="block text-slate-400 mb-1">Instructions</label>
+                <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                  Instructions / Notes (Optional)
+                </label>
                 <textarea
                   rows={3}
-                  placeholder="Teacher instructions, requirements, number of slides..."
+                  placeholder="Teacher instructions, requirements, slide count..."
                   value={newInstructions}
                   onChange={(e) => setNewInstructions(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-200 focus:outline-none resize-none"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl p-3 text-xs text-slate-100 placeholder:text-slate-500 outline-none resize-none transition"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+              {/* Footer Actions */}
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-medium transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-medium cursor-pointer shadow-sm"
+                  className="px-4 py-2 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-xs shadow-sm transition cursor-pointer flex items-center gap-1.5"
                 >
-                  Save & Broadcast to Class
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>
+                    {newType === 'assignment' ? 'Save Assignment' : 'Save Presentation'}
+                  </span>
                 </button>
               </div>
             </form>
