@@ -16,7 +16,13 @@ try {
   // Ignore in environments where MutationObserver or title is not available
 }
 
-createRoot(document.getElementById('root')!).render(<App />);
+import { ErrorBoundary } from './components/ErrorBoundary';
+
+createRoot(document.getElementById('root')!).render(
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
 
 // Register Service Worker for PWA Web Share Target & Offline Resilience
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {

@@ -29,7 +29,7 @@ export interface MindmapNode {
   id: string;
   label: string;
   description?: string;
-  type?: 'root' | 'category' | 'detail' | 'example';
+  type?: 'root' | 'category' | 'detail' | 'example' | 'concept' | 'mechanism' | 'exam' | string;
   children?: MindmapNode[];
 }
 

@@ -1295,6 +1295,8 @@ export default function App() {
         isOpen={isSetupModalOpen}
         onClose={() => setIsSetupModalOpen(false)}
         onSetupComplete={handleSetupComplete}
+        initialWorkspace={workspace}
+        initialSubjects={subjects}
       />
 
       <ShareInviteModal

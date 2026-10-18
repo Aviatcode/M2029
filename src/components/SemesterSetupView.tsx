@@ -242,19 +242,19 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
                 Configure your semester subjects to unlock syllabus mind maps, notes segregation, and exam prep.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                {onAddRecommendedSubjects && (
-                  <button
-                    onClick={onAddRecommendedSubjects}
-                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Load BCA Semester 1 Subjects</span>
-                  </button>
-                )}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2">
                 <button
+                  type="button"
+                  onClick={onAddRecommendedSubjects}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5 shadow-sm transition"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Load BCA Semester 1 Subjects</span>
+                </button>
+                <button
+                  type="button"
                   onClick={onOpenClassSetup}
-                  className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5 border border-slate-700 shadow-2xs"
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5 border border-slate-700 shadow-sm transition"
                 >
                   <Sliders className="w-3.5 h-3.5" />
                   <span>Configure Semester Subjects</span>
