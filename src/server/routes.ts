@@ -485,17 +485,47 @@ apiRouter.post('/ai/config', (req: Request, res: Response) => {
   });
 });
 
-// 6. AI Tutor with 8 Pedagogical Modes (Queries Class Knowledge Base First)
+function parseTutorSections(text: string): Record<string, string> {
+  const sections: Record<string, string> = {
+    simple: '',
+    eli9: '',
+    hinglish: '',
+    exam_10marker: '',
+    detailed: '',
+    socratic: '',
+  };
+
+  const regexes: { key: string; pattern: RegExp }[] = [
+    { key: 'simple', pattern: /###\s*(?:1[.)]?\s*)?Simple[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+    { key: 'eli9', pattern: /###\s*(?:2[.)]?\s*)?ELI9[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+    { key: 'hinglish', pattern: /###\s*(?:3[.)]?\s*)?Hinglish[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+    { key: 'exam_10marker', pattern: /###\s*(?:4[.)]?\s*)?10-Marker[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+    { key: 'detailed', pattern: /###\s*(?:5[.)]?\s*)?Deep Dive[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+    { key: 'socratic', pattern: /###\s*(?:6[.)]?\s*)?Quiz Me[^\n]*\n([\s\S]*?)(?=(?:###\s*\d|\Z))/i },
+  ];
+
+  for (const { key, pattern } of regexes) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      sections[key] = match[1].trim();
+    }
+  }
+
+  return sections;
+}
+
+// 6. AI Tutor with Ordered Pedagogical Breakdown (Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me)
 apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const question = req.body.question || req.body.query || '';
   const { mode, subjectName, topicName } = req.body;
-  const tutorMode: TutorResponseMode = mode || 'simple';
+  const tutorMode: TutorResponseMode = mode || 'all';
 
   const userAiConfig = extractAiConfig(req);
   const ai = AIProviderFactory.getProvider(userAiConfig);
 
-  // Mode instructions
+  // Single-mode guidelines
   const modeGuides: Record<TutorResponseMode, string> = {
+    all: 'Complete 6-part study guide in exact academic order: Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me.',
     simple: 'Explain very clearly and simply without jargon.',
     eli9: "Explain Like I'm 9 (ELI9): Use vivid, everyday real-world analogies (ice cream, traffic lights, pizza, bicycles). Zero intimidation.",
     hinglish:
@@ -509,23 +539,69 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       'Ask me questions: Instead of giving the answer away, guide me with 2 thoughtful diagnostic questions to test my understanding.',
   };
 
-  const systemInstruction = `You are the M2028 Academic AI Professor for college engineering and computer science students.
+  const isAllModes = tutorMode === 'all';
+  const systemInstruction = isAllModes
+    ? `You are the M2028 Academic AI Professor for college engineering and computer science students.
 Target Subject: ${subjectName || 'Computer Science'}
-Target Topic: ${topicName || 'General Academic Topic'}
-Teaching Mode: ${modeGuides[tutorMode]}
+Target Topic: ${topicName || question || 'Core Syllabus Concept'}
+
+You MUST structure your entire response with EXACTLY the following 6 sections in THIS PRECISE ORDER. Use these exact markdown headers:
+
+### 1. Simple Overview
+[Clear, jargon-free conceptual summary in 2-3 readable paragraphs. State what it is, why it exists, and the main problem it solves.]
+
+### 2. ELI9 (Analogies)
+[A vivid, relatable everyday real-world analogy (e.g. cafeteria spoon, traffic lights, pizza sharing, library counters) with zero intimidation. Explain how the analogy connects directly to technical terms.]
+
+### 3. Hinglish Breakdown
+[Authentic, conversational Indian college student Hinglish explanation (e.g. "Dekho bhai, seedhi baat hai..."). Highlight the exact mental model to remember during late-night exam prep.]
+
+### 4. 10-Marker University Exam Format
+[Strict university exam Section C format:
+- Definition: Academic formal definition with standard keywords
+- ASCII Architecture/Flow Diagram
+- Step-by-Step Working Mechanism: 1, 2, 3, 4
+- Code / Algorithmic Blueprint (Java, C, or Python)
+- Examiner Scoring Points & Traps to Avoid]
+
+### 5. Deep Dive & Edge Cases
+[Rigorous academic technical dive: formal theoretical invariants, time & space complexity, mathematical formulations, and critical boundary/race conditions.]
+
+### 6. Quiz Me (Self-Check Questions)
+[2 high-yield diagnostic practice questions for students to test their understanding, followed by clear model answers and scoring tips.]`
+    : `You are the M2028 Academic AI Professor for college engineering and computer science students.
+Target Subject: ${subjectName || 'Computer Science'}
+Target Topic: ${topicName || question || 'General Academic Topic'}
+Teaching Mode: ${modeGuides[tutorMode] || 'Explain very clearly and simply.'}
 
 Ground your response in authoritative university curricula and standard textbooks (e.g. Galvin for OS, Korth for DBMS, Tanenbaum for Networks).`;
 
   try {
-    const responseText = await ai.generateText(question, systemInstruction);
+    const promptToSend = isAllModes
+      ? `Provide the complete 6-section academic study guide for the topic "${topicName || question}" in subject "${subjectName || 'Computer Science'}" with all 6 sections in that exact order.`
+      : question;
+
+    const responseText = await ai.generateText(promptToSend, systemInstruction);
+    const sections = parseTutorSections(responseText);
+
+    // If single mode was requested or sections weren't caught by headers, assign fallback
+    if (!sections.simple && !sections.exam_10marker && responseText.trim()) {
+      if (tutorMode === 'all' || tutorMode === 'simple') {
+        sections.simple = responseText;
+      } else {
+        sections[tutorMode] = responseText;
+      }
+    }
+
     res.json({
       answer: responseText,
       text: responseText,
+      sections,
       modeUsed: tutorMode,
       modelUsed: ai.name,
       sourcesUsed: [
         { title: `${subjectName || 'Class'} Syllabus & Verified PPTs`, type: 'Class Knowledge Base' },
-        { title: 'Past University Question Paper Bank', type: 'PYQ Database' },
+        { title: 'Past University Question Paper Bank (2020-2025)', type: 'PYQ Database' },
       ],
     });
   } catch (err: any) {

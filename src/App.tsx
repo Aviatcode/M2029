@@ -781,8 +781,8 @@ export default function App() {
     }).catch(console.error);
   };
 
-  const handleStudyTopic = (topicTitle: string, subjectName: string) => {
-    setInitialTutorPrompt(`Explain the core principles and university exam gotchas of "${topicTitle}" in ${subjectName}.`);
+  const handleStudyTopic = (topicTitle: string, _subjectName: string) => {
+    setInitialTutorPrompt(topicTitle);
     setActiveTab('ai-tutor');
   };
 
@@ -1205,7 +1205,11 @@ export default function App() {
           )}
 
           {activeTab === 'ai-tutor' && (
-            <AITutorView subjects={subjects} initialPrompt={initialTutorPrompt} />
+            <AITutorView
+              subjects={subjects}
+              initialPrompt={initialTutorPrompt}
+              unitsBySubject={unitsBySubject}
+            />
           )}
 
           {activeTab === 'materials' && (

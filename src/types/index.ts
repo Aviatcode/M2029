@@ -246,7 +246,8 @@ export type TutorResponseMode =
   | 'detailed'
   | 'revision'
   | 'example'
-  | 'socratic';
+  | 'socratic'
+  | 'all';
 
 export interface ChatMessage {
   id: string;

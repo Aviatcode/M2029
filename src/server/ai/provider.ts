@@ -289,6 +289,113 @@ export class MockAIProvider implements AIProvider {
 
   async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
     const p = (prompt || '').toLowerCase();
+    // Comprehensive 6-order academic study breakdown
+    if (
+      p.includes('6 sections') ||
+      p.includes('in that order') ||
+      p.includes('teaching mode: all') ||
+      (systemInstruction && (systemInstruction.includes('6 sections') || systemInstruction.includes('Simple Overview')))
+    ) {
+      const topicMatch = prompt.match(/"([^"]+)"/) || prompt.match(/of\s+([A-Za-z0-9\s]+?)(?:\s+in|\.|$)/i);
+      const cleanTopic = (topicMatch ? topicMatch[1] : prompt.replace(/explain.*?(?:of|about|for)/i, '').replace(/\..*$/, ''))
+        .replace(/["']/g, '')
+        .trim() || 'Core Engineering Concept';
+
+      return `### 1. Simple Overview
+${cleanTopic} is an essential academic concept designed to ensure reliable, coordinated, and predictable operations across modern computing systems.
+- **Core Definition:** It defines a set of foundational protocols and structural invariants that govern state transitions and resource access.
+- **Primary Objective:** Eliminates race conditions, structural anomalies, and uncoordinated state corruptions.
+- **University Syllabus Context:** Consistently tested across mid-terms and end-terms due to its widespread practical importance in software engineering.
+
+### 2. ELI9 (Analogies)
+Imagine a busy school cafeteria where fifty students want ice cream, but there is only ONE golden ice cream spoon!
+If all fifty students rush the counter at the same time and grab the spoon, the spoon breaks, ice cream spills everywhere, and nobody gets dessert.
+Instead, the teacher puts a numbered token box on the counter. Student #1 takes token #1, uses the spoon for thirty seconds, and returns it for Student #2.
+In this analogy:
+- **The Ice Cream Spoon:** The critical resource / data memory.
+- **The Students:** Concurrent processes, threads, or transactions.
+- **The Token Rule:** **${cleanTopic}**, guaranteeing everyone gets served fairly without chaos or collisions!
+
+### 3. Hinglish Breakdown
+Dekho bhai, seedhi aur simple baat hai! Exam point of view se ${cleanTopic} bohot hi scoring aur high-yield topic hai.
+Real life situation socho: jab do gaadiyan ek hi narrow one-way bridge par dono side se ghus jaayengi, toh bina signal ke dono phas jaayengi aur deadlock ho jaayega. ${cleanTopic} wahi intelligent traffic signal ka kaam karta hai.
+- **Exam Memory Hook:** Examiner hamesha 3 cheezein check karega: Mutual Exclusion, Progress, aur Bounded Waiting.
+- **Topper's Shortcut:** Definition mein keywords underline karo, ASCII flowchart banao, aur boundary conditions mention karo — pure 10 marks pakke!
+
+### 4. 10-Marker University Exam Format
+#### Section A: Standard Academic Definition (2 Marks)
+**${cleanTopic}** is formally defined as an architectural invariant and algorithmic synchronization protocol that enforces mutual exclusion, bounded waiting, and safe state transitions across concurrent execution contexts.
+
+#### Section B: Architecture & Schematic Diagram (2 Marks)
+\`\`\`
+  ┌────────────────────────────────────────────────────────┐
+  │              Application / Client Tier                 │
+  └───────────────────────────┬────────────────────────────┘
+                              │ Standard Invocation / Invariant Check
+                              ▼
+  ┌────────────────────────────────────────────────────────┐
+  │         Entry Protocol (Token & Lock Verification)     │
+  └───────────────────────────┬────────────────────────────┘
+                              │ Condition Verified (Safe State)
+                              ▼
+  ┌────────────────────────────────────────────────────────┐
+  │             [CRITICAL SECTION EXECUTION]               │
+  │          Controlled Read / Write Operations            │
+  └───────────────────────────┬────────────────────────────┘
+                              │ Release Lock / Notify Blocked Entities
+                              ▼
+  ┌────────────────────────────────────────────────────────┐
+  │         Exit Protocol & State Synchronization          │
+  └───────────────────────────┬────────────────────────────┘
+\`\`\`
+
+#### Section C: Step-by-Step Working Mechanism (3 Marks)
+1. **Entry Protocol:** The thread evaluates entry flags. If the critical region is occupied, the entity yields CPU or waits on a condition queue.
+2. **Atomic Execution:** Invariant guarantees hold throughout data mutation, backed by write-ahead persistence logs.
+3. **Exit Protocol:** Shared flags are released atomically, triggering a wakeup broadcast to eligible waiting threads.
+4. **Fault Recovery:** In case of an unexpected crash, transactional rollback restores the system to the last known consistent checkpoint.
+
+#### Section D: Algorithmic Implementation (Java / C) (2 Marks)
+\`\`\`java
+public class ${cleanTopic.replace(/[^a-zA-Z]/g, '') || 'Topic'}Manager {
+    private boolean isBusy = false;
+
+    public synchronized void acquireAccess() throws InterruptedException {
+        while (isBusy) {
+            wait(); // Bounded wait condition
+        }
+        isBusy = true;
+    }
+
+    public synchronized void releaseAccess() {
+        isBusy = false;
+        notifyAll(); // Wake up queued candidates
+    }
+}
+\`\`\`
+
+#### Section E: Examiner Scoring Points & Traps (1 Mark)
+- **Common Trap:** Omitting the Bounded Waiting condition or deadlock scenario.
+- **Examiner's Favorite:** Mentioning standard textbook citations (Galvin for OS, Korth for DBMS, Tanenbaum for Networks).
+
+### 5. Deep Dive & Edge Cases
+- **Theoretical Formalism:** Let S represent the valid state space. The protocol ensures that for all t >= 0, State(t) is in S.
+- **Time Complexity:** Constant time O(1) amortized overhead for entry and release protocols.
+- **Space Complexity:** O(n) where n is the maximum queue depth of waiting threads.
+- **Critical Edge Cases:**
+  1. Priority Inversion: When high-priority tasks are starved by lower-priority lock holders. Solved via Priority Ceiling / Inheritance.
+  2. Deadlock (Coffman Conditions): Prevented by enforcing strict resource ordering or timeout detection.
+
+### 6. Quiz Me (Self-Check Questions)
+**Question 1 (Conceptual Diagnostic - 2 Marks):**
+Why is a busy-waiting spinlock inefficient on a single-processor core, and what alternative avoids CPU starvation?
+*Model Answer:* On a single core, a spinlock monopolizes 100% of the CPU cycle time while waiting for a condition that only another thread could produce. A sleep/wake condition queue allows the operating system scheduler to dispatch ready threads instead.
+
+**Question 2 (University Exam Scenario - 5 Marks):**
+Can a system guarantee Mutual Exclusion without satisfying the Bounded Waiting condition? Give a concrete scenario.
+*Model Answer:* Yes. If resource arbitration is purely unranked or random, a waiting process might continually be bypassed by newly arriving threads. Mutual exclusion is maintained (only one enters at a time), but the bypassed process suffers starvation due to the lack of bounded waiting.`;
+    }
+
     // Intelligent heuristic pedagogical fallback
     if (p.includes('hinglish')) {
       return `Dekho bhai, seedhi baat hai! Yeh concept exam ke liye bohot zaroori hai. Simple shabdon mein samjho: jab system mein data ya resources organize karne hote hain, toh hum structured rules follow karte hain taaki koi deadlock ya confusion na ho. Professor ke lecture mein bas inke steps aur boundary conditions dhyan se note karna. 10-marker answer mein definition + flowchart + code zaroor likhna!`;
