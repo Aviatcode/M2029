@@ -537,31 +537,35 @@ apiRouter.get('/ai/cache/stats', (_req: Request, res: Response) => {
 // 6. AI Tutor with Ordered Pedagogical Breakdown (Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me)
 apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const question = req.body.question || req.body.query || '';
-  const { mode, subjectName, topicName } = req.body;
+  const { mode, subjectName, topicName, forceLive } = req.body;
   const tutorMode: TutorResponseMode = mode || 'all';
   const lookupKey = topicName || question;
+  const userAiConfig = extractAiConfig(req);
+  const hasPersonalKey = Boolean(userAiConfig && (userAiConfig.apiKey?.trim() || userAiConfig.baseUrl?.trim()));
 
   // 1. FAST ZERO-TOKEN PERSISTENT CACHE LOOKUP (Learn Once, Never Spend Tokens Again!)
-  const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
-  if (cached) {
-    const sections = cached.sections || parseTutorSections(cached.answer);
-    return res.json({
-      answer: cached.answer,
-      text: cached.answer,
-      sections,
-      modeUsed: tutorMode,
-      modelUsed: cached.modelUsed || '⚡ Stored Knowledge Base (0 Tokens Spent)',
-      cached: true,
-      tokensSaved: cached.tokensEstimated || 1500,
-      hitCount: cached.hitCount,
-      sourcesUsed: [
-        { title: `${subjectName || 'Class'} Permanent Knowledge Base`, type: 'Zero-Cost Stored Cache' },
-        { title: 'Classroom Learned Topics (0 Tokens)', type: 'Instant Recall' },
-      ],
-    });
+  // If user configured a personal API key or explicitly requested forceLive, bypass cache and query the model!
+  if (!forceLive && !hasPersonalKey) {
+    const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
+    if (cached) {
+      const sections = cached.sections || parseTutorSections(cached.answer);
+      return res.json({
+        answer: cached.answer,
+        text: cached.answer,
+        sections,
+        modeUsed: tutorMode,
+        modelUsed: cached.modelUsed || '⚡ Stored Knowledge Base (0 Tokens Spent)',
+        cached: true,
+        tokensSaved: cached.tokensEstimated || 1500,
+        hitCount: cached.hitCount,
+        sourcesUsed: [
+          { title: `${subjectName || 'Class'} Permanent Knowledge Base`, type: 'Zero-Cost Stored Cache' },
+          { title: 'Classroom Learned Topics (0 Tokens)', type: 'Instant Recall' },
+        ],
+      });
+    }
   }
 
-  const userAiConfig = extractAiConfig(req);
   const ai = AIProviderFactory.getProvider(userAiConfig);
 
   // Single-mode guidelines
@@ -634,15 +638,17 @@ Ground your response in authoritative university curricula and standard textbook
       }
     }
 
-    // LEARN ONCE & STORE FOREVER: Persist to disk so repeating questions NEVER spend tokens again!
-    aiKnowledgeCache.set(
-      lookupKey,
-      subjectName || 'Computer Science',
-      tutorMode,
-      responseText,
-      sections,
-      ai.name
-    );
+    // LEARN ONCE & STORE FOREVER: Persist to shared disk so repeating questions NEVER spend tokens again!
+    if (!hasPersonalKey) {
+      aiKnowledgeCache.set(
+        lookupKey,
+        subjectName || 'Computer Science',
+        tutorMode,
+        responseText,
+        sections,
+        ai.name
+      );
+    }
 
     res.json({
       answer: responseText,
@@ -652,6 +658,7 @@ Ground your response in authoritative university curricula and standard textbook
       modelUsed: ai.name,
       cached: false,
       tokensSaved: 0,
+      isPersonalKey: hasPersonalKey,
       sourcesUsed: [
         { title: `${subjectName || 'Class'} Syllabus & Verified PPTs`, type: 'Class Knowledge Base' },
         { title: 'Past University Question Paper Bank (2020-2025)', type: 'PYQ Database' },
@@ -695,7 +702,13 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
       action = 'start', // 'start' | 'answer' | 'next' | 'did_not_understand' | 'hinglish' | 'exam_notes' | 'custom_question'
       userAnswer = '',
       customQuery = '',
+      forceLive = false,
+      regenerateLive = false,
     } = req.body;
+
+    const userAiConfig = extractAiConfig(req);
+    const hasPersonalKey = Boolean(userAiConfig && (userAiConfig.apiKey?.trim() || userAiConfig.baseUrl?.trim()));
+    const ai = AIProviderFactory.getProvider(userAiConfig);
 
     const track = SYLLABUS_TRACKS.find((t) => t.id === trackId) || SYLLABUS_TRACKS[0];
     const totalTopics = track.topics.length;
@@ -722,7 +735,7 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
           : `❌ **Incorrect. The correct answer is Option ${expectedKey}: ${chosenLabel}**\n\n${qc?.explanation || 'Remember this core distinction for university examinations.'}`,
       };
 
-      // Auto-advance to next topic if answer was checked (or advance anyway per student's flow!)
+      // Auto-advance to next topic if answer was checked
       nextIndex = currentIndex + 1;
     } else if (action === 'next') {
       nextIndex = currentIndex + 1;
@@ -733,20 +746,9 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
     const targetIndex = isCompleted ? totalTopics - 1 : nextIndex;
     const targetTopic = track.topics[targetIndex];
 
-    // If student asked for a specific remediation on current topic
+    // If student asked for ELI9 remediation
     if (action === 'did_not_understand' || action === 'eli9') {
-      return res.json({
-        evaluation,
-        trackId: track.id,
-        trackName: track.name,
-        topicIndex: currentIndex,
-        totalTopics,
-        isCompleted: false,
-        remediationType: 'eli9',
-        topic: {
-          ...targetTopic,
-          title: `ELI9 Analogy: ${targetTopic.title}`,
-          content: `### 💡 Real-World ELI9 Analogy (Zero Intimidation)
+      let content = `### 💡 Real-World ELI9 Analogy (Zero Intimidation)
 
 Imagine a hospital emergency room with 1 doctor. 
 - In **Non-Preemptive Scheduling**, once a patient enters the doctor's room with a minor cold, nobody can interrupt them until they are completely done — even if a critical ICU patient arrives!
@@ -761,12 +763,16 @@ Imagine a hospital emergency room with 1 doctor.
 | Overhead | Zero context switch overhead | High context switching overhead |
 | Examples | FCFS, Non-Preemptive SJF, Priority | Round Robin, SRTF, Preemptive Priority |
 
-*Now that you see the difference, let's keep moving forward!*`,
-        },
-      });
-    }
+*Now that you see the difference, let's keep moving forward!*`;
 
-    if (action === 'hinglish') {
+      if (hasPersonalKey || forceLive || regenerateLive) {
+        const eli9Prompt = `The student requested an ELI9 real-world analogy for the topic "${targetTopic.title}" in course "${track.name}".
+Explain this concept using a vivid, intuitive real-world analogy (e.g. cafeteria food, traffic lights, hospital triage, or library queues) with zero intimidation.
+Include a clean Markdown comparison table showing key contrasts.
+End with an encouraging takeaway for university exam scoring.`;
+        content = await ai.generateText(eli9Prompt);
+      }
+
       return res.json({
         evaluation,
         trackId: track.id,
@@ -774,11 +780,19 @@ Imagine a hospital emergency room with 1 doctor.
         topicIndex: currentIndex,
         totalTopics,
         isCompleted: false,
-        remediationType: 'hinglish',
+        remediationType: 'eli9',
+        modelUsed: ai.name,
         topic: {
           ...targetTopic,
-          title: `Hinglish Breakdown: ${targetTopic.title}`,
-          content: `### 🇮🇳 Hinglish Mental Model
+          title: `ELI9 Analogy: ${targetTopic.title}`,
+          content,
+        },
+      });
+    }
+
+    // If student asked for Hinglish explanation
+    if (action === 'hinglish') {
+      let content = `### 🇮🇳 Hinglish Mental Model
 
 *Dekho bhai, seedhi aur simple baat hai:*
 College exams mein examiner yehi dekhna chahta hai ki tumko formula aur conceptual logic clear hai ya nahi.
@@ -788,34 +802,55 @@ College exams mein examiner yehi dekhna chahta hai ki tumko formula aur conceptu
 - **Turnaround Time (TAT = CT - AT):** Process ne system ke andar total kitna waqt bitaya (Waiting + Running).
 - **Waiting Time (WT = TAT - BT):** Process bechari kitni der tak line mein khadi hokar wait karti rahi!
 
-*Exam tip:* Pehle Gantt chart banana, phir table mein CT fill karna, aur last mein TAT aur WT nikalna. Full marks pakke!`,
+*Exam tip:* Pehle Gantt chart banana, phir table mein CT fill karna, aur last mein TAT aur WT nikalna. Full marks pakke!`;
+
+      if (hasPersonalKey || forceLive || regenerateLive) {
+        const hinglishPrompt = `Explain the topic "${targetTopic.title}" in course "${track.name}" in natural, authentic Indian college student Hinglish (e.g. "Dekho bhai, seedhi baat hai...").
+Highlight the exact mental model, the formulas, and the examiner traps for university examinations.`;
+        content = await ai.generateText(hinglishPrompt);
+      }
+
+      return res.json({
+        evaluation,
+        trackId: track.id,
+        trackName: track.name,
+        topicIndex: currentIndex,
+        totalTopics,
+        isCompleted: false,
+        remediationType: 'hinglish',
+        modelUsed: ai.name,
+        topic: {
+          ...targetTopic,
+          title: `Hinglish Breakdown: ${targetTopic.title}`,
+          content,
         },
       });
     }
 
+    // If student asked a custom doubt
     if (action === 'custom_question' && customQuery) {
-      // 1. FAST ZERO-TOKEN PERSISTENT CACHE LOOKUP (Learn Once, Stored Forever!)
-      const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
-      if (cachedDoubt) {
-        return res.json({
-          evaluation: null,
-          trackId: track.id,
-          trackName: track.name,
-          topicIndex: targetIndex,
-          totalTopics,
-          isCompleted: false,
-          cached: true,
-          tokensSaved: cachedDoubt.tokensEstimated || 1200,
-          topic: {
-            ...targetTopic,
-            title: `Doubt Resolved: ${customQuery.slice(0, 40)}...`,
-            content: `${cachedDoubt.answer}\n\n*(⚡ Stored in Cohort Knowledge Base • 0 Tokens Spent)*`,
-          },
-        });
+      if (!hasPersonalKey && !forceLive) {
+        const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
+        if (cachedDoubt) {
+          return res.json({
+            evaluation: null,
+            trackId: track.id,
+            trackName: track.name,
+            topicIndex: targetIndex,
+            totalTopics,
+            isCompleted: false,
+            cached: true,
+            modelUsed: cachedDoubt.modelUsed || '⚡ Stored Knowledge Base (0 Tokens Spent)',
+            tokensSaved: cachedDoubt.tokensEstimated || 1200,
+            topic: {
+              ...targetTopic,
+              title: `Doubt Resolved: ${customQuery.slice(0, 40)}...`,
+              content: `${cachedDoubt.answer}\n\n*(⚡ Stored in Cohort Knowledge Base • 0 Tokens Spent)*`,
+            },
+          });
+        }
       }
 
-      const userAiConfig = extractAiConfig(req);
-      const ai = AIProviderFactory.getProvider(userAiConfig);
       const prompt = `Student asked a doubt during the study of "${targetTopic.title}" in course "${track.name}":
 Question: "${customQuery}"
 
@@ -826,8 +861,9 @@ Respond as the gold-standard academic tutor:
 4. Keep it focused and conversational.`;
 
       const responseText = await ai.generateText(prompt);
-      // Learn once and store forever so repeating questions use 0 tokens!
-      aiKnowledgeCache.set(customQuery, track.name, 'doubt', responseText, undefined, ai.name);
+      if (!hasPersonalKey) {
+        aiKnowledgeCache.set(customQuery, track.name, 'doubt', responseText, undefined, ai.name);
+      }
 
       return res.json({
         evaluation: null,
@@ -837,12 +873,30 @@ Respond as the gold-standard academic tutor:
         totalTopics,
         isCompleted: false,
         cached: false,
+        modelUsed: ai.name,
         topic: {
           ...targetTopic,
           title: `Doubt Resolved: ${customQuery.slice(0, 40)}...`,
           content: responseText,
         },
       });
+    }
+
+    // Standard syllabus topic progression
+    let topicToReturn = targetTopic;
+    if (regenerateLive || forceLive) {
+      const topicPrompt = `Teach the topic "${targetTopic.title}" from university course "${track.name}".
+Provide:
+1. Clear conceptual explanation with standard academic terminology.
+2. 💡 Hinglish Intuition (Mental model in friendly Indian student Hinglish starting with "Dekho bhai").
+3. 📝 Exam Point: Key scoring keywords, diagram notes, and university examiner traps.
+4. If applicable, an ASCII architectural schematic or comparison table.`;
+
+      const liveContent = await ai.generateText(topicPrompt);
+      topicToReturn = {
+        ...targetTopic,
+        content: liveContent,
+      };
     }
 
     res.json({
@@ -852,7 +906,8 @@ Respond as the gold-standard academic tutor:
       topicIndex: targetIndex,
       totalTopics,
       isCompleted,
-      topic: targetTopic,
+      modelUsed: ai.name,
+      topic: topicToReturn,
       nextPrompt: targetTopic.quickCheck
         ? `My answer is ${targetTopic.quickCheck.correctKey || 'B'}. Check it and continue to next topic.`
         : 'Next topic in syllabus',

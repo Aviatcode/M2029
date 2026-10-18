@@ -29,6 +29,7 @@ import { AIKeyConfigModal } from './AIKeyConfigModal';
 import {
   getAiRequestPayload,
   getStoredAiSettings,
+  getActiveModelInfo,
   subscribeToAiSettings,
   StoredAiSettings,
 } from '../utils/aiModelService';
@@ -65,6 +66,7 @@ interface ConversationTurn {
   content: string;
   timestamp: string;
   cached?: boolean;
+  modelUsed?: string;
   tokensSaved?: number;
   quickCheck?: {
     question: string;
@@ -87,6 +89,7 @@ interface StudyGuideData {
   topic: string;
   subject: string;
   cached?: boolean;
+  modelUsed?: string;
   tokensSaved?: number;
   sections: {
     simple: string;
@@ -186,6 +189,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
   const [, setAiSettings] = useState<StoredAiSettings>(getStoredAiSettings());
+  const [activeModel, setActiveModel] = useState(getActiveModelInfo());
   const [classModelInfo, setClassModelInfo] = useState<{
     hasCustomKey: boolean;
     providerName: string;
@@ -241,6 +245,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
     return subscribeToAiSettings((s) => {
       setAiSettings(s);
+      setActiveModel(getActiveModelInfo());
     });
   }, []);
 
@@ -264,7 +269,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     topicIndex: number,
     action: 'start' | 'answer' | 'next' | 'did_not_understand' | 'hinglish' | 'exam_notes' | 'custom_question',
     userAnswer = '',
-    customQuery = ''
+    customQuery = '',
+    regenerateLive = false
   ) => {
     if (isStepLoading) return;
     setIsStepLoading(true);
@@ -279,6 +285,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           action,
           userAnswer,
           customQuery,
+          regenerateLive,
+          forceLive: regenerateLive,
           ...getAiRequestPayload(),
         }),
       });
@@ -332,6 +340,9 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           quickCheck: data.topic.quickCheck,
           gantt: data.topic.gantt,
           evaluation: data.evaluation,
+          modelUsed: data.modelUsed,
+          cached: data.cached,
+          tokensSaved: data.tokensSaved,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         });
       }
@@ -364,7 +375,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   };
 
   // Study Guide Reference Mode Loader
-  const loadTopicGuide = async (topicTitle: string, subjectName = selectedSubject) => {
+  const loadTopicGuide = async (topicTitle: string, subjectName = selectedSubject, forceLive = false) => {
     const cleanTopic = extractCleanTopic(topicTitle);
     if (!cleanTopic || isLoading) return;
 
@@ -380,6 +391,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           topicName: cleanTopic,
           subjectName,
           mode: 'all',
+          forceLive,
           ...getAiRequestPayload(),
         }),
       });
@@ -391,6 +403,9 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       setStudyGuide({
         topic: cleanTopic,
         subject: subjectName,
+        cached: data.cached,
+        modelUsed: data.modelUsed,
+        tokensSaved: data.tokensSaved,
         sections: {
           simple: parsed.simple || rawText,
           eli9: parsed.eli9 || '',
@@ -506,10 +521,23 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-slate-200 transition cursor-pointer"
-            title="Configure Academic AI Model"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-mono transition cursor-pointer text-slate-300 hover:text-white"
+            title="Configure Academic AI Model or Change API Key"
           >
-            <KeyRound className="w-3.5 h-3.5" />
+            <Cpu className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+            <span className="hidden sm:inline text-slate-400 font-sans-ui text-[11px]">Model:</span>
+            <span className="font-semibold text-slate-200 text-[11px] truncate max-w-[110px] sm:max-w-[150px]">
+              {activeModel.displayName}
+            </span>
+            <span
+              className={`text-[9px] px-1.5 py-0.2 rounded border shrink-0 ${
+                activeModel.isPersonal
+                  ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-semibold'
+                  : 'bg-slate-800 text-slate-400 border-slate-700/60'
+              }`}
+            >
+              {activeModel.badge}
+            </span>
           </button>
         </div>
       </div>
@@ -674,6 +702,15 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                         <h2 className="text-sm sm:text-base font-bold text-slate-100 font-sans-ui tracking-tight">
                           {turn.title || 'Syllabus Topic'}
                         </h2>
+                        {turn.modelUsed && (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 font-mono text-[10px]"
+                            title={`Generated via ${turn.modelUsed}`}
+                          >
+                            <Cpu className="w-3 h-3 text-indigo-400" />
+                            <span>{turn.modelUsed}</span>
+                          </span>
+                        )}
                         {turn.cached && (
                           <span
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px]"
@@ -685,6 +722,15 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                         )}
                       </div>
                       <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => loadGuidedTopic(selectedTrackId, currentTopicIndex, 'start', '', '', true)}
+                          disabled={isStepLoading}
+                          className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 font-mono"
+                          title={`Regenerate topic with active model (${activeModel.displayName})`}
+                        >
+                          <RefreshCw className={`w-3 h-3 text-indigo-400 ${isStepLoading ? 'animate-spin' : ''}`} />
+                          <span className="hidden sm:inline">Regenerate Live</span>
+                        </button>
                         <button
                           onClick={() => handleCopy(turn.content, `turn-${tIdx}`)}
                           className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 font-mono"
@@ -904,12 +950,21 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
             {studyGuide && !isLoading && (
               <div className="space-y-5">
-                <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+                <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-base font-bold text-slate-100 font-sans-ui">
                         {studyGuide.topic}
                       </h2>
+                      {studyGuide.modelUsed && (
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 font-mono text-[10px]"
+                          title={`Generated using ${studyGuide.modelUsed}`}
+                        >
+                          <Cpu className="w-3 h-3 text-indigo-400" />
+                          <span>{studyGuide.modelUsed}</span>
+                        </span>
+                      )}
                       {studyGuide.cached && (
                         <span
                           className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px]"
@@ -922,13 +977,24 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                     </div>
                     <p className="text-xs text-slate-400">{studyGuide.subject}</p>
                   </div>
-                  <button
-                    onClick={() => handleCopy(JSON.stringify(studyGuide.sections, null, 2), 'all-ref')}
-                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Full Guide</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => loadTopicGuide(studyGuide.topic, studyGuide.subject, true)}
+                      disabled={isLoading}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 disabled:opacity-50 text-slate-300 hover:text-white text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
+                      title={`Regenerate full 6-stage guide using active model (${activeModel.displayName})`}
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 text-indigo-400 ${isLoading ? 'animate-spin' : ''}`} />
+                      <span>Regenerate Live</span>
+                    </button>
+                    <button
+                      onClick={() => handleCopy(JSON.stringify(studyGuide.sections, null, 2), 'all-ref')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy Full Guide</span>
+                    </button>
+                  </div>
                 </div>
 
                 {primaryModes.map((m) => {
@@ -1056,6 +1122,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             providerName: updated.providerName,
           });
           setAiSettings(getStoredAiSettings());
+          setActiveModel(getActiveModelInfo());
         }}
       />
     </div>

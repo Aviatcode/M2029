@@ -88,7 +88,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'deepseek/deepseek-r1';
           break;
         case 'gemini':
-          this.modelName = 'gemini-3.8-flash';
+          this.modelName = 'gemini-2.0-flash';
           break;
         case 'custom':
           this.modelName = 'llama3:latest';
@@ -98,10 +98,10 @@ export class UniversalAIProvider implements AIProvider {
       }
     }
 
-    // Normalize deprecated Gemini models to gemini-3.8-flash
+    // Clean up Gemini model names
     if (this.provider === 'gemini') {
-      if (!this.modelName || this.modelName.includes('2.5') || this.modelName.includes('2.0') || this.modelName.includes('1.5')) {
-        this.modelName = 'gemini-3.8-flash';
+      if (!this.modelName || this.modelName === 'gemini-3.8-flash') {
+        this.modelName = 'gemini-2.0-flash';
       }
     }
 
@@ -136,21 +136,26 @@ export class UniversalAIProvider implements AIProvider {
   }
 
   async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
-    // 0. ZERO-TOKEN PERSISTENT CACHE: Return stored result if question was previously learned
-    const cached = aiKnowledgeCache.get(prompt, '', 'general');
-    if (cached && cached.answer) {
-      return cached.answer;
-    }
+    const isTestPrompt = prompt.includes('operational for M2029') || prompt.includes('confirming connection');
 
+    // If not available (no personal key/custom endpoint), fall back to cached/mock academic engine
     if (!this.isAvailable()) {
+      if (!isTestPrompt) {
+        const cached = aiKnowledgeCache.get(prompt, '', 'general');
+        if (cached && cached.answer) {
+          return cached.answer;
+        }
+      }
       const fallbackRes = await new MockAIProvider().generateText(prompt, systemInstruction);
-      aiKnowledgeCache.set(prompt, '', 'general', fallbackRes, undefined, 'Academic Engine');
+      if (!isTestPrompt) {
+        aiKnowledgeCache.set(prompt, '', 'general', fallbackRes, undefined, 'Academic Engine');
+      }
       return fallbackRes;
     }
 
     if (this.provider === 'sandbox') {
       const mockRes = await new MockAIProvider().generateText(prompt, systemInstruction);
-      return `[🧪 TEST MODE - Simulated Academic Engine]\n\n${mockRes}`;
+      return `[🧪 Testing Sandbox (${this.modelName})]\n\n${mockRes}`;
     }
 
     try {
@@ -297,7 +302,7 @@ export class UniversalAIProvider implements AIProvider {
       }
     } catch (err: any) {
       console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, err.message);
-      return new MockAIProvider().generateText(prompt, systemInstruction);
+      return `[⚠️ Notice: ${this.name} connection notice (${err.message}). Showing Academic Curriculum Fallback:]\n\n${await new MockAIProvider().generateText(prompt, systemInstruction)}`;
     }
 
     return new MockAIProvider().generateText(prompt, systemInstruction);
@@ -725,7 +730,7 @@ export class AIProviderFactory {
         this.classInstance = new UniversalAIProvider({
           apiKey: this.classConfig.apiKey || envKey,
           provider: this.classConfig.provider || (isGeminiKey ? 'gemini' : 'auto'),
-          modelName: this.classConfig.modelName || 'gemini-3.8-flash',
+          modelName: this.classConfig.modelName || 'gemini-2.0-flash',
           baseUrl: this.classConfig.baseUrl,
         });
       } else {

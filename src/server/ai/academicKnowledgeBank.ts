@@ -6,6 +6,7 @@ export interface GoldQuickCheck {
   options: { key: string; label: string }[];
   correctKey?: string;
   continuePrompt: string;
+  explanation?: string;
 }
 
 export interface GoldGantt {

@@ -157,12 +157,20 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     setSelectedPresetId(preset.id);
     const updated: StoredAiSettings = {
       ...settings,
+      mode: 'personal',
       personalProvider: preset.provider,
       personalModel: preset.id,
       personalBaseUrl: preset.baseUrl || settings.personalBaseUrl,
     };
     setSettings(updated);
     saveStoredAiSettings(updated);
+    if (onConfigUpdated) {
+      onConfigUpdated({
+        hasCustomKey: Boolean(updated.personalApiKey),
+        modelType: 'personal_ai',
+        providerName: preset.name,
+      });
+    }
   };
 
   const handleSavePersonalKey = (newKey: string) => {
@@ -173,6 +181,13 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     };
     setSettings(updated);
     saveStoredAiSettings(updated);
+    if (onConfigUpdated) {
+      onConfigUpdated({
+        hasCustomKey: Boolean(newKey.trim()),
+        modelType: 'personal_ai',
+        providerName: currentPreset.name,
+      });
+    }
   };
 
   const handleToggleMode = (mode: 'class' | 'personal') => {

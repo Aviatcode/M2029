@@ -1,8 +1,8 @@
 {
   "totalLearnedItems": 65,
-  "totalHits": 254,
-  "totalTokensSaved": 304600,
-  "lastUpdated": "2026-10-18T14:09:30.515Z",
+  "totalHits": 257,
+  "totalTokensSaved": 308800,
+  "lastUpdated": "2026-10-18T15:47:49.936Z",
   "entries": [
     {
       "id": "learned-topic-3",
@@ -840,8 +840,8 @@
       },
       "modelUsed": "Google Gemini (gemini-3.8-flash)",
       "createdAt": "2026-10-18T13:46:01.389Z",
-      "lastAccessedAt": "2026-10-18T13:46:25.859Z",
-      "hitCount": 2,
+      "lastAccessedAt": "2026-10-18T15:47:49.822Z",
+      "hitCount": 5,
       "tokensEstimated": 1400
     },
     {

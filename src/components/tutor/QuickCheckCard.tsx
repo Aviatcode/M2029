@@ -72,7 +72,7 @@ export const QuickCheckCard: React.FC<QuickCheckCardProps> = ({
           } else if (isEvaluated) {
             if (isCorrectKey) {
               borderClass = 'border-emerald-500/80 bg-emerald-950/30 ring-1 ring-emerald-500/50';
-            } else if (isUserChoice && !evaluation.passed) {
+            } else if (isUserChoice && !evaluation?.passed) {
               borderClass = 'border-rose-500/80 bg-rose-950/30';
             }
           }
@@ -104,7 +104,7 @@ export const QuickCheckCard: React.FC<QuickCheckCardProps> = ({
               {isEvaluated && isCorrectKey && (
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
               )}
-              {isEvaluated && isUserChoice && !evaluation.passed && (
+              {isEvaluated && isUserChoice && !evaluation?.passed && (
                 <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
               )}
             </button>

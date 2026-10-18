@@ -113,22 +113,22 @@ export const PROVIDER_PORTALS: Record<
 export const MODEL_PRESETS: ModelPreset[] = [
   // Gemini
   {
-    id: 'gemini-3.8-flash',
-    name: 'Gemini 3.8 Flash',
-    provider: 'gemini',
-    badge: 'Recommended',
-    tagline: 'Google latest flagship ultra-fast model with top academic comprehension.',
-    freeTierAvailable: true,
-    developerPortalUrl: 'https://aistudio.google.com/app/apikey',
-    keyPrefix: 'AQ. or AIzaSy',
-    keyPlaceholder: 'AQ... or AIzaSy...',
-  },
-  {
     id: 'gemini-2.0-flash',
     name: 'Gemini 2.0 Flash',
     provider: 'gemini',
+    badge: 'Recommended',
+    tagline: 'Google latest ultra-fast model with top academic comprehension & low latency.',
+    freeTierAvailable: true,
+    developerPortalUrl: 'https://aistudio.google.com/app/apikey',
+    keyPrefix: 'AIzaSy',
+    keyPlaceholder: 'AIzaSy...',
+  },
+  {
+    id: 'gemini-1.5-flash',
+    name: 'Gemini 1.5 Flash',
+    provider: 'gemini',
     badge: 'Fast',
-    tagline: 'Modern low-latency Google Flash model.',
+    tagline: 'Stable low-latency Google Flash model for rapid student queries.',
     freeTierAvailable: true,
     developerPortalUrl: 'https://aistudio.google.com/app/apikey',
     keyPrefix: 'AIzaSy',
@@ -364,8 +364,8 @@ export function subscribeToAiSettings(callback: (settings: StoredAiSettings) => 
 
 /**
  * Returns payload object to merge into fetch requests for AI endpoints.
- * If in Personal Mode with key or URL, passes userAiConfig.
- * If in Class Mode, returns empty object (server uses class shared key).
+ * If user configured a personal API key or endpoint, passes userAiConfig to invoke that exact model.
+ * If in Class Mode with no personal key, returns empty object (server uses class shared key).
  */
 export function getAiRequestPayload(): {
   userAiConfig?: {
@@ -376,18 +376,60 @@ export function getAiRequestPayload(): {
   };
 } {
   const settings = getStoredAiSettings();
-  if (settings.mode === 'personal' && (settings.personalApiKey.trim() || settings.personalBaseUrl.trim())) {
+  const hasKey = Boolean(settings.personalApiKey && settings.personalApiKey.trim());
+  const hasBaseUrl = Boolean(settings.personalBaseUrl && settings.personalBaseUrl.trim());
+
+  // If user entered a key or URL, or mode is personal, pass userAiConfig
+  if ((settings.mode === 'personal' || hasKey || hasBaseUrl) && (hasKey || hasBaseUrl)) {
     return {
       userAiConfig: {
-        apiKey: settings.personalApiKey.trim(),
-        provider: settings.personalProvider,
-        modelName: settings.personalModel,
-        baseUrl: settings.personalBaseUrl.trim(),
+        apiKey: (settings.personalApiKey || '').trim(),
+        provider: settings.personalProvider || 'auto',
+        modelName: settings.personalModel || 'gemini-2.0-flash',
+        baseUrl: (settings.personalBaseUrl || '').trim(),
       },
     };
   }
   return {};
 }
+
+export function getActiveModelInfo(): {
+  isPersonal: boolean;
+  provider: ModelProviderType;
+  modelName: string;
+  displayName: string;
+  badge: string;
+} {
+  const settings = getStoredAiSettings();
+  const hasKey = Boolean(settings.personalApiKey && settings.personalApiKey.trim());
+  const hasBaseUrl = Boolean(settings.personalBaseUrl && settings.personalBaseUrl.trim());
+  const isPersonal = (settings.mode === 'personal' || hasKey || hasBaseUrl) && (hasKey || hasBaseUrl);
+
+  if (isPersonal) {
+    const preset = MODEL_PRESETS.find(
+      (p) => p.id === settings.personalModel || (p.provider === settings.personalProvider && p.id.includes(settings.personalModel))
+    );
+    const portal = PROVIDER_PORTALS[settings.personalProvider];
+    const providerName = portal ? portal.name : settings.personalProvider;
+    const modelName = settings.personalModel || 'Custom';
+    return {
+      isPersonal: true,
+      provider: settings.personalProvider,
+      modelName,
+      displayName: preset ? preset.name : `${providerName} (${modelName})`,
+      badge: 'Personal Key',
+    };
+  }
+
+  return {
+    isPersonal: false,
+    provider: 'gemini',
+    modelName: 'gemini-2.0-flash',
+    displayName: 'Academic Engine',
+    badge: 'Class Shared',
+  };
+}
+
 
 /**
  * Test an AI configuration directly against the backend test endpoint
