@@ -62,6 +62,7 @@ import {
   getNeonSql,
   initializeNeonSchema,
 } from './db/neonClient.js';
+import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeBank.js';
 
 export const apiRouter = Router();
 
@@ -184,18 +185,31 @@ apiRouter.post('/neon/init', async (req: Request, res: Response) => {
 // 1. Get Class Workspace & Overview
 apiRouter.get('/class/:code', (req: Request, res: Response) => {
   const code = (req.params.code || 'BCA-2028').toUpperCase().trim();
-  const cls = db.classes[code] || db.classes['BCA-2028'];
-  const subjects = db.subjects[cls.id] || [];
-  const timetable = db.timetable[cls.id] || [];
-  const materials = db.materials[cls.id] || [];
-  const exams = db.exams[cls.id] || [];
+  let cls = db.classes[code] || db.classes['BCA-2028'];
+  if (!cls) {
+    cls = {
+      id: `class-${code.toLowerCase()}`,
+      code,
+      name: `${code} Workspace`,
+      university: 'State University',
+      semester: 1,
+      academicYear: '2026-2027',
+      memberCount: 1,
+      adminId: 'user-admin',
+    };
+    db.classes[code] = cls;
+  }
+  const subjects = (cls.id && db.subjects[cls.id]) || [];
+  const timetable = (cls.id && db.timetable[cls.id]) || [];
+  const materials = (cls.id && db.materials[cls.id]) || [];
+  const exams = (cls.id && db.exams[cls.id]) || [];
 
   res.json({
     workspace: cls,
     subjects,
     timetable,
     recentMaterials: materials.slice(0, 5),
-    announcements: db.announcements,
+    announcements: db.announcements || [],
     upcomingExams: exams,
   });
 });
@@ -606,6 +620,182 @@ Ground your response in authoritative university curricula and standard textbook
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'AI tutor service error' });
+  }
+});
+
+// 6.1 Gold Standard Syllabus Tracks (Exact Academic Sequence from 170-Turn Student Chat)
+apiRouter.get('/ai-tutor/tracks', (_req: Request, res: Response) => {
+  const tracks = SYLLABUS_TRACKS.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    icon: t.icon,
+    topicCount: t.topics.length,
+    topics: t.topics.map((tp, idx) => ({
+      index: idx,
+      id: tp.id,
+      title: tp.title,
+      hasQuickCheck: Boolean(tp.quickCheck),
+      hasGantt: Boolean(tp.gantt),
+    })),
+  }));
+
+  res.json({
+    tracks,
+    defaultTrackId: tracks[0]?.id || 'os-unit2-cpu',
+    totalGoldTopics: GOLD_TOPICS.length,
+  });
+});
+
+// 6.2 Gold Standard Step-by-Step Syllabus Engine (Interactive Quick Checks & Gantt Charts)
+apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
+  try {
+    const {
+      trackId = 'os-unit2-cpu',
+      topicIndex = 0,
+      action = 'start', // 'start' | 'answer' | 'next' | 'did_not_understand' | 'hinglish' | 'exam_notes' | 'custom_question'
+      userAnswer = '',
+      customQuery = '',
+    } = req.body;
+
+    const track = SYLLABUS_TRACKS.find((t) => t.id === trackId) || SYLLABUS_TRACKS[0];
+    const totalTopics = track.topics.length;
+    let currentIndex = Math.max(0, Math.min(Number(topicIndex) || 0, totalTopics - 1));
+
+    // Handle Quick Check evaluation if action === 'answer'
+    let evaluation: { passed: boolean; feedback: string; correctOption: string } | null = null;
+    let nextIndex = currentIndex;
+
+    if (action === 'answer') {
+      const currentTopic = track.topics[currentIndex];
+      const qc = currentTopic?.quickCheck;
+      const expectedKey = (qc?.correctKey || 'B').toUpperCase().trim();
+      const studentCleanKey = (userAnswer || '').toUpperCase().trim();
+
+      const isCorrect = studentCleanKey === expectedKey || studentCleanKey.startsWith(expectedKey);
+      const chosenLabel = qc?.options.find((o) => o.key === expectedKey)?.label || userAnswer;
+
+      evaluation = {
+        passed: isCorrect,
+        correctOption: expectedKey,
+        feedback: isCorrect
+          ? `✅ **Correct! Option ${expectedKey}: ${chosenLabel}**\n\n${qc?.explanation || 'Spot on! You nailed the core exam keyword.'}`
+          : `❌ **Incorrect. The correct answer is Option ${expectedKey}: ${chosenLabel}**\n\n${qc?.explanation || 'Remember this core distinction for university examinations.'}`,
+      };
+
+      // Auto-advance to next topic if answer was checked (or advance anyway per student's flow!)
+      nextIndex = currentIndex + 1;
+    } else if (action === 'next') {
+      nextIndex = currentIndex + 1;
+    }
+
+    // Check if syllabus track completed
+    const isCompleted = nextIndex >= totalTopics;
+    const targetIndex = isCompleted ? totalTopics - 1 : nextIndex;
+    const targetTopic = track.topics[targetIndex];
+
+    // If student asked for a specific remediation on current topic
+    if (action === 'did_not_understand' || action === 'eli9') {
+      return res.json({
+        evaluation,
+        trackId: track.id,
+        trackName: track.name,
+        topicIndex: currentIndex,
+        totalTopics,
+        isCompleted: false,
+        remediationType: 'eli9',
+        topic: {
+          ...targetTopic,
+          title: `ELI9 Analogy: ${targetTopic.title}`,
+          content: `### 💡 Real-World ELI9 Analogy (Zero Intimidation)
+
+Imagine a hospital emergency room with 1 doctor. 
+- In **Non-Preemptive Scheduling**, once a patient enters the doctor's room with a minor cold, nobody can interrupt them until they are completely done — even if a critical ICU patient arrives!
+- In **Preemptive Scheduling**, if a higher-priority emergency arrives, the doctor immediately pauses the first patient's checkup (saves their progress in the chart), treats the emergency patient, and resumes the first patient later!
+
+#### Quick Comparison Table
+
+| Feature | Non-Preemptive | Preemptive |
+|---|---|---|
+| CPU Interruption | Never (runs till completion) | Yes (can be preempted by scheduler) |
+| Response Time | Higher (starvation risk for short jobs) | Fast & interactive |
+| Overhead | Zero context switch overhead | High context switching overhead |
+| Examples | FCFS, Non-Preemptive SJF, Priority | Round Robin, SRTF, Preemptive Priority |
+
+*Now that you see the difference, let's keep moving forward!*`,
+        },
+      });
+    }
+
+    if (action === 'hinglish') {
+      return res.json({
+        evaluation,
+        trackId: track.id,
+        trackName: track.name,
+        topicIndex: currentIndex,
+        totalTopics,
+        isCompleted: false,
+        remediationType: 'hinglish',
+        topic: {
+          ...targetTopic,
+          title: `Hinglish Breakdown: ${targetTopic.title}`,
+          content: `### 🇮🇳 Hinglish Mental Model
+
+*Dekho bhai, seedhi aur simple baat hai:*
+College exams mein examiner yehi dekhna chahta hai ki tumko formula aur conceptual logic clear hai ya nahi.
+- **Arrival Time (AT):** Process ready queue mein kis time par aakar khadi hui.
+- **Burst Time (BT):** Usko CPU par kitna time chahiye apna kaam khatam karne ke liye.
+- **Completion Time (CT):** Process CPU par poori tarah kab execute hokar nikli.
+- **Turnaround Time (TAT = CT - AT):** Process ne system ke andar total kitna waqt bitaya (Waiting + Running).
+- **Waiting Time (WT = TAT - BT):** Process bechari kitni der tak line mein khadi hokar wait karti rahi!
+
+*Exam tip:* Pehle Gantt chart banana, phir table mein CT fill karna, aur last mein TAT aur WT nikalna. Full marks pakke!`,
+        },
+      });
+    }
+
+    if (action === 'custom_question' && customQuery) {
+      const userAiConfig = extractAiConfig(req);
+      const ai = AIProviderFactory.getProvider(userAiConfig);
+      const prompt = `Student asked a doubt during the study of "${targetTopic.title}" in course "${track.name}":
+Question: "${customQuery}"
+
+Respond as the gold-standard academic tutor:
+1. Direct, clear answer in easy English with natural Hinglish intuition.
+2. Real-life analogy or concrete example.
+3. Exam scoring point or trap to avoid.
+4. Keep it focused and conversational.`;
+
+      const responseText = await ai.generateText(prompt);
+      return res.json({
+        evaluation: null,
+        trackId: track.id,
+        trackName: track.name,
+        topicIndex: targetIndex,
+        totalTopics,
+        isCompleted: false,
+        topic: {
+          ...targetTopic,
+          title: `Doubt Resolved: ${customQuery.slice(0, 40)}...`,
+          content: responseText,
+        },
+      });
+    }
+
+    res.json({
+      evaluation,
+      trackId: track.id,
+      trackName: track.name,
+      topicIndex: targetIndex,
+      totalTopics,
+      isCompleted,
+      topic: targetTopic,
+      nextPrompt: targetTopic.quickCheck
+        ? `My answer is ${targetTopic.quickCheck.correctKey || 'B'}. Check it and continue to next topic.`
+        : 'Next topic in syllabus',
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Syllabus step service error' });
   }
 });
 

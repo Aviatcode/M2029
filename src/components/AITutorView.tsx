@@ -7,7 +7,6 @@ import {
   BookOpen,
   KeyRound,
   Zap,
-  ShieldCheck,
   Cpu,
   Lightbulb,
   Copy,
@@ -17,9 +16,14 @@ import {
   RefreshCw,
   GraduationCap,
   HelpCircle,
-  Layers,
   ArrowRight,
-  ExternalLink,
+  Terminal,
+  FileCode,
+  CheckCircle2,
+  ListOrdered,
+  BookMarked,
+  RotateCcw,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { AIKeyConfigModal } from './AIKeyConfigModal';
 import {
@@ -28,6 +32,8 @@ import {
   subscribeToAiSettings,
   StoredAiSettings,
 } from '../utils/aiModelService';
+import { GanttChartWidget } from './tutor/GanttChartWidget';
+import { QuickCheckCard } from './tutor/QuickCheckCard';
 
 interface AITutorViewProps {
   subjects: Subject[];
@@ -35,6 +41,44 @@ interface AITutorViewProps {
   initialTopic?: string;
   initialSubject?: string;
   unitsBySubject?: Record<string, Unit[]>;
+}
+
+interface SyllabusTrackMeta {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  topicCount: number;
+  topics: {
+    index: number;
+    id: string;
+    title: string;
+    hasQuickCheck: boolean;
+    hasGantt: boolean;
+  }[];
+}
+
+interface ConversationTurn {
+  id: string;
+  role: 'assistant' | 'user' | 'system';
+  title?: string;
+  content: string;
+  timestamp: string;
+  quickCheck?: {
+    question: string;
+    options: { key: string; label: string }[];
+    correctKey?: string;
+    continuePrompt: string;
+  };
+  gantt?: {
+    processes: { id: string; duration: number; color?: string; start?: number; end?: number }[];
+    timestamps: number[];
+  };
+  evaluation?: {
+    passed: boolean;
+    feedback: string;
+    correctOption?: string;
+  } | null;
 }
 
 interface StudyGuideData {
@@ -96,7 +140,6 @@ function parseSectionsFromText(text: string): {
     }
   }
 
-  // Fallback if headers were not present
   if (!sections.simple && !sections.exam_10marker && text.trim()) {
     sections.simple = text.trim();
   }
@@ -111,26 +154,22 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   initialSubject,
   unitsBySubject,
 }) => {
+  // Mode Selection: 'guided' (ChatGPT one-by-one experience) vs 'reference' (6-mode all-in-one guide)
+  const [viewMode, setViewMode] = useState<'guided' | 'reference'>('guided');
+
+  // Guided Syllabus Track State
+  const [tracks, setTracks] = useState<SyllabusTrackMeta[]>([]);
+  const [selectedTrackId, setSelectedTrackId] = useState<string>('os-unit2-cpu');
+  const [currentTopicIndex, setCurrentTopicIndex] = useState<number>(0);
+  const [completedTopicIndices, setCompletedTopicIndices] = useState<Set<number>>(new Set());
+  const [conversationTurns, setConversationTurns] = useState<ConversationTurn[]>([]);
+  const [isRoadmapOpen, setIsRoadmapOpen] = useState<boolean>(false);
+  const [isStepLoading, setIsStepLoading] = useState<boolean>(false);
+
+  // Reference Study Guide State
   const [selectedSubject, setSelectedSubject] = useState<string>(
-    initialSubject || subjects[0]?.name || 'Course Subject'
+    initialSubject || subjects[0]?.name || 'Operating Systems'
   );
-
-  useEffect(() => {
-    if ((selectedSubject === 'Course Subject' || !selectedSubject) && subjects[0]?.name) {
-      setSelectedSubject(subjects[0].name);
-    }
-  }, [subjects, selectedSubject]);
-
-  // Exact 6-stage pedagogy mode order
-  const primaryModes: { mode: TutorResponseMode; label: string; icon: React.FC<{ className?: string }> }[] = [
-    { mode: 'simple', label: 'Simple', icon: BookOpen },
-    { mode: 'eli9', label: 'ELI9 (Analogies)', icon: Lightbulb },
-    { mode: 'hinglish', label: 'Hinglish', icon: Sparkles },
-    { mode: 'exam_10marker', label: '10-Marker Format', icon: GraduationCap },
-    { mode: 'detailed', label: 'Deep Dive', icon: Cpu },
-    { mode: 'socratic', label: 'Quiz Me', icon: HelpCircle },
-  ];
-
   const [activeTabMode, setActiveTabMode] = useState<'all' | TutorResponseMode>('all');
   const [inputQuery, setInputQuery] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -140,6 +179,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const chatBottomRef = useRef<HTMLDivElement>(null);
 
   const [, setAiSettings] = useState<StoredAiSettings>(getStoredAiSettings());
   const [classModelInfo, setClassModelInfo] = useState<{
@@ -150,7 +190,20 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     providerName: 'Built-in Academic Model',
   });
 
+  // Fetch available tracks on mount
   useEffect(() => {
+    fetch('/api/ai-tutor/tracks')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.tracks && data.tracks.length > 0) {
+          setTracks(data.tracks);
+          if (!selectedTrackId) {
+            setSelectedTrackId(data.defaultTrackId || data.tracks[0].id);
+          }
+        }
+      })
+      .catch((err) => console.warn('Could not load tracks:', err));
+
     fetch('/api/ai/config')
       .then((r) => r.json())
       .then((data) => {
@@ -168,7 +221,126 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     });
   }, []);
 
-  // Handle loading a topic directly in the ordered format
+  // Initialize first topic of selected track
+  useEffect(() => {
+    if (tracks.length > 0 && selectedTrackId && conversationTurns.length === 0) {
+      loadGuidedTopic(selectedTrackId, 0, 'start');
+    }
+  }, [tracks, selectedTrackId]);
+
+  // Scroll to bottom of chat when new turn arrives
+  useEffect(() => {
+    if (viewMode === 'guided' && chatBottomRef.current) {
+      chatBottomRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [conversationTurns, isStepLoading, viewMode]);
+
+  // Load a step in the guided syllabus track
+  const loadGuidedTopic = async (
+    trackId: string,
+    topicIndex: number,
+    action: 'start' | 'answer' | 'next' | 'did_not_understand' | 'hinglish' | 'exam_notes' | 'custom_question',
+    userAnswer = '',
+    customQuery = ''
+  ) => {
+    if (isStepLoading) return;
+    setIsStepLoading(true);
+
+    try {
+      const res = await fetch('/api/ai-tutor/step', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          trackId,
+          topicIndex,
+          action,
+          userAnswer,
+          customQuery,
+          ...getAiRequestPayload(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to step topic');
+
+      const newTurns: ConversationTurn[] = [...conversationTurns];
+
+      // If answering, record student's choice
+      if (action === 'answer' && userAnswer) {
+        newTurns.push({
+          id: `user-${Date.now()}`,
+          role: 'user',
+          content: `My answer is ${userAnswer}. Check it and immediately continue to the next topic in my syllabus.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+
+        // Mark current as completed
+        setCompletedTopicIndices((prev) => new Set([...prev, topicIndex]));
+      } else if (action === 'did_not_understand') {
+        newTurns.push({
+          id: `user-${Date.now()}`,
+          role: 'user',
+          content: 'Did not understand this concept. Give me an everyday ELI9 analogy and contrast table!',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+      } else if (action === 'hinglish') {
+        newTurns.push({
+          id: `user-${Date.now()}`,
+          role: 'user',
+          content: 'Can you explain the important terms and exam formulas in Hinglish?',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+      } else if (action === 'custom_question' && customQuery) {
+        newTurns.push({
+          id: `user-${Date.now()}`,
+          role: 'user',
+          content: customQuery,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+      }
+
+      // Add assistant response
+      if (data.topic) {
+        newTurns.push({
+          id: `asst-${Date.now()}`,
+          role: 'assistant',
+          title: data.topic.title,
+          content: data.topic.content,
+          quickCheck: data.topic.quickCheck,
+          gantt: data.topic.gantt,
+          evaluation: data.evaluation,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+      }
+
+      setConversationTurns(newTurns);
+      setCurrentTopicIndex(data.topicIndex ?? topicIndex);
+    } catch (err: any) {
+      console.error('Error stepping topic:', err);
+    } finally {
+      setIsStepLoading(false);
+    }
+  };
+
+  // Reset conversation to start over
+  const handleRestartTrack = (trackId = selectedTrackId) => {
+    setSelectedTrackId(trackId);
+    setConversationTurns([]);
+    setCompletedTopicIndices(new Set());
+    setCurrentTopicIndex(0);
+    loadGuidedTopic(trackId, 0, 'start');
+  };
+
+  // Switch Track
+  const handleSelectTrack = (trackId: string) => {
+    setSelectedTrackId(trackId);
+    setConversationTurns([]);
+    setCompletedTopicIndices(new Set());
+    setCurrentTopicIndex(0);
+    loadGuidedTopic(trackId, 0, 'start');
+  };
+
+  // Study Guide Reference Mode Loader
   const loadTopicGuide = async (topicTitle: string, subjectName = selectedSubject) => {
     const cleanTopic = extractCleanTopic(topicTitle);
     if (!cleanTopic || isLoading) return;
@@ -210,7 +382,6 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         ],
       });
 
-      // Smooth scroll back to top of container
       if (containerRef.current) {
         containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
       }
@@ -221,494 +392,572 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     }
   };
 
-  // Auto-load if initialTopic or initialPrompt is passed
-  useEffect(() => {
-    const candidate = initialTopic || (initialPrompt ? extractCleanTopic(initialPrompt) : '');
-    if (candidate && candidate !== studyGuide?.topic) {
-      loadTopicGuide(candidate, initialSubject || selectedSubject);
-    }
-  }, [initialTopic, initialPrompt]);
-
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const scrollToSection = (sectionId: string) => {
-    const el = document.getElementById(sectionId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const activeTrack = tracks.find((t) => t.id === selectedTrackId) || tracks[0];
+  const progressPercent = activeTrack
+    ? Math.round(((completedTopicIndices.size) / Math.max(1, activeTrack.topicCount)) * 100)
+    : 0;
 
-  // Quick topics for current subject
-  const currentSubjectObj = subjects.find((s) => s.name === selectedSubject);
-  const syllabusUnits = unitsBySubject && currentSubjectObj ? unitsBySubject[currentSubjectObj.id] : undefined;
-  const quickTopics: string[] = [];
-
-  if (syllabusUnits && syllabusUnits.length > 0) {
-    syllabusUnits.forEach((u) => {
-      u.topics?.forEach((t) => {
-        if (quickTopics.length < 8 && !quickTopics.includes(t.title)) {
-          quickTopics.push(t.title);
-        }
-      });
-    });
-  }
-
-  // Fallback defaults if no syllabus units loaded
-  if (quickTopics.length === 0) {
-    if (selectedSubject.toLowerCase().includes('database') || selectedSubject.toLowerCase().includes('dbms')) {
-      quickTopics.push(
-        'Three Schema Architecture',
-        'Entity Relationship (ER) Modeling',
-        'Relational Algebra & Normalization',
-        'ACID Properties & Transactions',
-        'Concurrency Control & 2PL'
-      );
-    } else if (selectedSubject.toLowerCase().includes('operating') || selectedSubject.toLowerCase().includes('os')) {
-      quickTopics.push(
-        'Process Synchronization & Critical Section',
-        'Deadlock Prevention & Banker Algorithm',
-        'Page Replacement Algorithms (FIFO, LRU)',
-        'Virtual Memory & Demand Paging',
-        'CPU Scheduling Algorithms'
-      );
-    } else {
-      quickTopics.push(
-        'Core Architectural Principles',
-        'Algorithmic State Transitions',
-        'University Exam 10-Marker Model',
-        'Theoretical Boundary Conditions'
-      );
-    }
-  }
+  // Primary 6 modes for reference view
+  const primaryModes: { mode: TutorResponseMode; label: string; icon: React.FC<{ className?: string }> }[] = [
+    { mode: 'simple', label: 'Simple', icon: BookOpen },
+    { mode: 'eli9', label: 'ELI9 (Analogies)', icon: Lightbulb },
+    { mode: 'hinglish', label: 'Hinglish', icon: Sparkles },
+    { mode: 'exam_10marker', label: '10-Marker Format', icon: GraduationCap },
+    { mode: 'detailed', label: 'Deep Dive', icon: Cpu },
+    { mode: 'socratic', label: 'Quiz Me', icon: HelpCircle },
+  ];
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-6.5rem)] flex flex-col rounded-md bg-slate-950 border border-slate-800/80 shadow-2xs overflow-hidden animate-fade-in">
-      {/* 1. Academic Desk Header with Subject & Pedagogical Controls */}
-      <div className="px-4 py-3 border-b border-slate-800/80 bg-slate-950 flex flex-wrap items-center justify-between gap-3 shrink-0">
+    <div className="max-w-4xl mx-auto h-[calc(100vh-6.5rem)] flex flex-col rounded-xl bg-slate-950 border border-slate-800/80 shadow-2xl overflow-hidden animate-fade-in">
+      {/* 1. Academic Desk Header with Primary Mode Toggle */}
+      <div className="px-3.5 py-2.5 border-b border-slate-800/90 bg-slate-950 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded bg-slate-900 border border-slate-800 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-neutral-400" />
+          <div className="w-7 h-7 rounded-lg bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
+            <Bot className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="font-sans-ui font-semibold text-xs sm:text-sm text-slate-100 leading-tight">
-              AI Tutor
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-semibold text-xs sm:text-sm text-slate-100 leading-tight">
+                Academic AI Companion
+              </h1>
+              <span className="hidden sm:inline-flex text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
+                Gold Standard
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400">
+              One-by-one syllabus progression, Hinglish intuition & interactive quick checks
+            </p>
           </div>
         </div>
 
-        {/* Clean Subject & Style Controls */}
-        <div className="flex items-center gap-2 text-xs">
-          <select
-            value={selectedSubject}
-            onChange={(e) => {
-              setSelectedSubject(e.target.value);
-            }}
-            className="bg-slate-900 border border-slate-800/90 rounded px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-slate-700 cursor-pointer font-sans-ui"
-          >
-            {subjects.map((sub) => (
-              <option key={sub.id} value={sub.name}>
-                {sub.name}
-              </option>
-            ))}
-          </select>
-
-          {/* Mobile & Tablet Pedagogy Mode Selector */}
-          <select
-            value={activeTabMode}
-            onChange={(e) => {
-              const val = e.target.value as 'all' | TutorResponseMode;
-              setActiveTabMode(val);
-              if (val !== 'all') {
-                scrollToSection(`section-${val}`);
-              }
-            }}
-            className="lg:hidden bg-slate-900 border border-slate-800/90 rounded px-2 py-1 text-xs text-slate-200 focus:outline-none focus:border-slate-700 cursor-pointer font-sans-ui"
-            aria-label="Pedagogy Mode"
-          >
-            <option value="all">All in Order</option>
-            {primaryModes.map((m) => (
-              <option key={m.mode} value={m.mode}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-
-          {/* Desktop Pedagogy Mode Selector (Linear Segmented Control) */}
-          <div className="hidden lg:flex items-center rounded bg-slate-900 border border-slate-800 p-0.5">
+        {/* View Mode Switcher */}
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center rounded-lg bg-slate-900 border border-slate-800 p-0.5 text-xs">
             <button
-              onClick={() => {
-                setActiveTabMode('all');
-                scrollToSection('section-simple');
-              }}
-              className={`px-2 py-0.5 rounded text-[11px] font-medium transition cursor-pointer font-sans-ui ${
-                activeTabMode === 'all'
-                  ? 'bg-slate-800 text-slate-100 font-semibold shadow-2xs'
+              onClick={() => setViewMode('guided')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                viewMode === 'guided'
+                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              All in Order
+              <ListOrdered className="w-3.5 h-3.5" />
+              <span>Guided Syllabus</span>
             </button>
-            {primaryModes.map((m) => (
-              <button
-                key={m.mode}
-                onClick={() => {
-                  setActiveTabMode(m.mode);
-                  scrollToSection(`section-${m.mode}`);
-                }}
-                className={`px-2 py-0.5 rounded text-[11px] font-medium transition cursor-pointer font-sans-ui ${
-                  activeTabMode === m.mode
-                    ? 'bg-slate-800 text-slate-100 font-semibold shadow-2xs'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {m.label}
-              </button>
-            ))}
+            <button
+              onClick={() => setViewMode('reference')}
+              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                viewMode === 'reference'
+                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <BookMarked className="w-3.5 h-3.5" />
+              <span>Reference Guide</span>
+            </button>
           </div>
+
+          <button
+            onClick={() => setIsKeyModalOpen(true)}
+            className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-slate-400 hover:text-slate-200 transition cursor-pointer"
+            title="Configure Academic AI Model"
+          >
+            <KeyRound className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
 
-      {/* 2. Main Study Body (Ordered Sections, No Prompt Bubbles) */}
-      <div ref={containerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scroll-smooth">
-        {/* Loading State with Stage Progress */}
-        {isLoading && (
-          <div className="rounded-md bg-slate-900/40 border border-slate-800/80 p-5 space-y-4 animate-pulse">
-            <div className="flex items-center gap-2.5 text-xs text-slate-300 font-sans-ui">
-              <Sparkles className="w-4 h-4 text-neutral-300 animate-spin" />
-              <span className="font-medium">
-                Formulating 6-Stage Curriculum for &quot;{studyGuide?.topic || inputQuery || 'Selected Topic'}&quot;...
-              </span>
-            </div>
-            {/* Visual stage progress indicator */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-2">
-              {primaryModes.map((m, i) => (
-                <div
-                  key={m.mode}
-                  className="rounded bg-slate-900 border border-slate-800/70 p-2 text-center text-[10px] text-slate-400 font-sans-ui flex flex-col items-center gap-1"
-                >
-                  <span className="w-4 h-4 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-mono text-[9px]">
-                    {i + 1}
-                  </span>
-                  <span className="truncate w-full">{m.label}</span>
-                </div>
+      {/* 2. SUB-HEADER: Syllabus Track & Progress Bar (Guided Mode) */}
+      {viewMode === 'guided' && activeTrack && (
+        <div className="px-4 py-2 bg-slate-900/60 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] text-slate-400 font-medium">Syllabus Track:</span>
+            <select
+              value={selectedTrackId}
+              onChange={(e) => handleSelectTrack(e.target.value)}
+              className="bg-slate-900 border border-slate-700/80 rounded-md px-2 py-1 text-xs text-slate-200 font-medium cursor-pointer focus:outline-none focus:border-indigo-500"
+            >
+              {tracks.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name} ({t.topicCount} Topics)
+                </option>
               ))}
-            </div>
+            </select>
           </div>
-        )}
 
-        {/* Welcome & Topic Selector when no study guide is loaded */}
-        {!studyGuide && !isLoading && (
-          <div className="rounded-md bg-slate-900/30 border border-slate-800/80 p-6 space-y-5 text-center sm:text-left">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-[11px] font-mono mb-2">
-                <BookOpen className="w-3.5 h-3.5 text-neutral-400" />
-                <span>6-STAGE ACADEMIC BLUEPRINT</span>
-              </div>
-              <h2 className="text-base sm:text-lg font-semibold text-slate-100 font-sans-ui">
-                Pick a topic from {selectedSubject} to study
-              </h2>
-              <p className="text-xs text-slate-400 mt-1 max-w-xl font-sans-ui">
-                The AI Tutor generates the complete explanation in standard sequence:
-                <span className="text-slate-300 font-medium"> Simple</span> →
-                <span className="text-slate-300 font-medium"> ELI9</span> →
-                <span className="text-slate-300 font-medium"> Hinglish</span> →
-                <span className="text-slate-300 font-medium"> 10-Marker Exam Format</span> →
-                <span className="text-slate-300 font-medium"> Deep Dive</span> →
-                <span className="text-slate-300 font-medium"> Quiz Me</span>.
-              </p>
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-300 font-mono">
+              <span>
+                Topic {currentTopicIndex + 1}/{activeTrack.topicCount}
+              </span>
+              <span className="text-slate-500">({progressPercent}%)</span>
             </div>
 
-            {/* Quick Topic Chips */}
-            <div>
-              <div className="text-[11px] text-slate-400 font-medium font-sans-ui mb-2.5">
-                Recommended Syllabus Topics:
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {quickTopics.map((topic) => (
-                  <button
-                    key={topic}
-                    onClick={() => loadTopicGuide(topic)}
-                    className="px-3 py-1.5 rounded-md bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5 font-sans-ui"
-                  >
-                    <span>{topic}</span>
-                    <ArrowRight className="w-3 h-3 text-slate-500" />
-                  </button>
-                ))}
-              </div>
+            <div className="w-24 sm:w-32 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 transition-all duration-300"
+                style={{ width: `${Math.max(5, progressPercent)}%` }}
+              />
             </div>
+
+            <button
+              onClick={() => setIsRoadmapOpen(!isRoadmapOpen)}
+              className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1"
+            >
+              <SlidersHorizontal className="w-3 h-3" />
+              <span>Roadmap</span>
+            </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Active Study Guide - Displayed in the exact order requested */}
-        {studyGuide && !isLoading && (
-          <div className="space-y-6">
-            {/* Topic Header Banner (Clean, no prompt text!) */}
-            <div className="rounded-md bg-slate-900/40 border border-slate-800/80 p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 text-xs mb-1">
-                  <span className="academic-tag text-[10px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-2 py-0.5 rounded">
-                    {studyGuide.subject}
-                  </span>
-                  <span className="text-slate-500">·</span>
-                  <span className="text-[11px] text-emerald-400 font-mono">10-Marker University Ready</span>
-                </div>
-                <h2 className="text-base sm:text-xl font-bold text-slate-100 font-sans-ui">
-                  {studyGuide.topic}
-                </h2>
-              </div>
+      {/* 2.1 SYLLABUS ROADMAP MODAL / DRAWER */}
+      {isRoadmapOpen && activeTrack && (
+        <div className="p-3 bg-slate-900 border-b border-slate-800 animate-fade-in text-xs max-h-56 overflow-y-auto">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-semibold text-slate-200 font-mono text-[11px]">
+              {activeTrack.name} — Topic Checklist
+            </span>
+            <button
+              onClick={() => handleRestartTrack()}
+              className="text-slate-400 hover:text-slate-200 flex items-center gap-1 text-[11px] cursor-pointer"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>Reset Track</span>
+            </button>
+          </div>
 
-              {/* Quick Actions */}
-              <div className="flex items-center gap-2">
-                {studyGuide.sections.exam_10marker && (
-                  <button
-                    onClick={() =>
-                      handleCopy(studyGuide.sections.exam_10marker, '10marker-header')
-                    }
-                    className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5 font-sans-ui"
-                    title="Copy 10-Marker Model Answer"
-                  >
-                    {copiedKey === '10marker-header' ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">Copied 10-Marker</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Copy 10-Marker</span>
-                      </>
-                    )}
-                  </button>
-                )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">
+            {activeTrack.topics.map((tp) => {
+              const isCompleted = completedTopicIndices.has(tp.index);
+              const isCurrent = currentTopicIndex === tp.index;
 
+              return (
                 <button
+                  key={tp.id}
                   onClick={() => {
-                    const allContent = `## ${studyGuide.topic} (${studyGuide.subject})\n\n### 1. Simple Overview\n${studyGuide.sections.simple}\n\n### 2. ELI9 (Analogies)\n${studyGuide.sections.eli9}\n\n### 3. Hinglish Breakdown\n${studyGuide.sections.hinglish}\n\n### 4. 10-Marker Format\n${studyGuide.sections.exam_10marker}\n\n### 5. Deep Dive\n${studyGuide.sections.detailed}\n\n### 6. Quiz Me\n${studyGuide.sections.socratic}`;
-                    handleCopy(allContent, 'all-content');
+                    loadGuidedTopic(selectedTrackId, tp.index, 'start');
+                    setIsRoadmapOpen(false);
                   }}
-                  className="px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5 font-sans-ui"
-                  title="Copy Full Study Guide"
+                  className={`text-left p-2 rounded-md border transition flex items-center justify-between gap-2 cursor-pointer ${
+                    isCurrent
+                      ? 'bg-indigo-600/20 border-indigo-500 text-indigo-200'
+                      : isCompleted
+                      ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300'
+                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                  }`}
                 >
-                  {copiedKey === 'all-content' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400">Copied Notes</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Copy All Notes</span>
-                    </>
-                  )}
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="font-mono text-[10px] w-4 text-slate-500">
+                      {tp.index + 1}.
+                    </span>
+                    <span className="truncate text-xs">{tp.title}</span>
+                  </div>
+                  {isCompleted ? (
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  ) : tp.hasGantt ? (
+                    <Cpu className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  ) : null}
                 </button>
-              </div>
-            </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
-            {/* STAGE 1: SIMPLE OVERVIEW */}
-            {(activeTabMode === 'all' || activeTabMode === 'simple') && studyGuide.sections.simple && (
-              <div
-                id="section-simple"
-                className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-3 transition duration-200"
-              >
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono flex items-center justify-center font-bold">
-                      1
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-100 font-sans-ui flex items-center gap-1.5">
-                      <BookOpen className="w-4 h-4 text-neutral-400" />
-                      <span>Simple Overview</span>
-                    </h3>
-                  </div>
-                  <span className="academic-tag text-[9px] text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                    Jargon-Free
-                  </span>
-                </div>
-                <div className="font-sans-ui text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
-                  {studyGuide.sections.simple}
-                </div>
-              </div>
-            )}
-
-            {/* STAGE 2: ELI9 (ANALOGIES) */}
-            {(activeTabMode === 'all' || activeTabMode === 'eli9') && studyGuide.sections.eli9 && (
-              <div
-                id="section-eli9"
-                className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-3 transition duration-200"
-              >
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-amber-950/60 border border-amber-800/70 text-amber-300 text-xs font-mono flex items-center justify-center font-bold">
-                      2
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-100 font-sans-ui flex items-center gap-1.5">
-                      <Lightbulb className="w-4 h-4 text-amber-400" />
-                      <span>ELI9 (Analogies)</span>
-                    </h3>
-                  </div>
-                  <span className="academic-tag text-[9px] text-amber-300/80 bg-amber-950/40 px-2 py-0.5 rounded border border-amber-800/50">
-                    Real-World Intuition
-                  </span>
-                </div>
-                <div className="font-sans-ui text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
-                  {studyGuide.sections.eli9}
-                </div>
-              </div>
-            )}
-
-            {/* STAGE 3: HINGLISH */}
-            {(activeTabMode === 'all' || activeTabMode === 'hinglish') && studyGuide.sections.hinglish && (
-              <div
-                id="section-hinglish"
-                className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-3 transition duration-200"
-              >
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-emerald-950/60 border border-emerald-800/70 text-emerald-300 text-xs font-mono flex items-center justify-center font-bold">
-                      3
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-100 font-sans-ui flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                      <span>Hinglish Breakdown</span>
-                    </h3>
-                  </div>
-                  <span className="academic-tag text-[9px] text-emerald-300/80 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/50">
-                    College Memory Hooks
-                  </span>
-                </div>
-                <div className="font-sans-ui text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
-                  {studyGuide.sections.hinglish}
-                </div>
-              </div>
-            )}
-
-            {/* STAGE 4: 10-MARKER FORMAT */}
-            {(activeTabMode === 'all' || activeTabMode === 'exam_10marker') &&
-              studyGuide.sections.exam_10marker && (
-                <div
-                  id="section-exam_10marker"
-                  className="rounded-md bg-slate-900/30 border border-sky-900/40 p-5 space-y-3 transition duration-200 shadow-2xs"
-                >
-                  <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded bg-sky-950/70 border border-sky-800 text-sky-300 text-xs font-mono flex items-center justify-center font-bold">
-                        4
-                      </span>
-                      <h3 className="text-xs sm:text-sm font-semibold text-slate-100 font-sans-ui flex items-center gap-1.5">
-                        <GraduationCap className="w-4 h-4 text-sky-400" />
-                        <span>10-Marker Format</span>
-                      </h3>
+      {/* 3. MAIN WORKSPACE */}
+      <div ref={containerRef} className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6 scroll-smooth">
+        {/* GUIDED SYLLABUS CONVERSATION STREAM (ChatGPT Style) */}
+        {viewMode === 'guided' && (
+          <div className="space-y-6">
+            {conversationTurns.map((turn, tIdx) => {
+              if (turn.role === 'user') {
+                return (
+                  <div key={turn.id || tIdx} className="flex justify-end animate-fade-in">
+                    <div className="max-w-xl rounded-2xl rounded-tr-xs bg-indigo-600 text-white p-3.5 text-xs sm:text-sm shadow-md font-sans-ui">
+                      <p className="leading-relaxed">{turn.content}</p>
+                      <div className="text-[10px] text-indigo-200/70 text-right mt-1 font-mono">
+                        {turn.timestamp}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() =>
-                          handleCopy(studyGuide.sections.exam_10marker, '10marker-card')
-                        }
-                        className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 text-[11px] text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1 font-sans-ui"
-                      >
-                        {copiedKey === '10marker-card' ? (
+                  </div>
+                );
+              }
+
+              // Assistant gold standard topic card
+              return (
+                <div key={turn.id || tIdx} className="space-y-4 animate-fade-in">
+                  {/* Evaluation Feedback Badge from Previous Quick Check */}
+                  {turn.evaluation && (
+                    <div
+                      className={`p-3.5 rounded-xl border text-xs sm:text-sm leading-relaxed shadow-sm ${
+                        turn.evaluation.passed
+                          ? 'border-emerald-500/40 bg-emerald-950/30 text-emerald-200'
+                          : 'border-rose-500/40 bg-rose-950/30 text-rose-200'
+                      }`}
+                    >
+                      <div className="font-semibold mb-1 flex items-center gap-1.5">
+                        {turn.evaluation.passed ? (
                           <>
-                            <Check className="w-3 h-3 text-emerald-400" />
-                            <span className="text-emerald-400">Copied</span>
+                            <Check className="w-4 h-4 text-emerald-400" />
+                            <span>Quick Check Result: Correct</span>
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3 h-3 text-slate-400" />
-                            <span>Copy Answer</span>
+                            <HelpCircle className="w-4 h-4 text-rose-400" />
+                            <span>Quick Check Review</span>
                           </>
                         )}
-                      </button>
-                      <span className="academic-tag text-[9px] text-sky-300/90 bg-sky-950/60 px-2 py-0.5 rounded border border-sky-800/60">
-                        Section C Model Scheme
-                      </span>
+                      </div>
+                      <p className="whitespace-pre-line text-slate-300 text-xs sm:text-sm">
+                        {turn.evaluation.feedback}
+                      </p>
                     </div>
-                  </div>
-                  <div className="font-sans-ui text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
-                    {studyGuide.sections.exam_10marker}
-                  </div>
-                </div>
-              )}
+                  )}
 
-            {/* STAGE 5: DEEP DIVE */}
-            {(activeTabMode === 'all' || activeTabMode === 'detailed') && studyGuide.sections.detailed && (
-              <div
-                id="section-detailed"
-                className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-3 transition duration-200"
-              >
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-indigo-950/60 border border-indigo-800/70 text-indigo-300 text-xs font-mono flex items-center justify-center font-bold">
-                      5
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-100 font-sans-ui flex items-center gap-1.5">
-                      <Cpu className="w-4 h-4 text-indigo-400" />
-                      <span>Deep Dive & Edge Cases</span>
-                    </h3>
+                  {/* Main Academic Topic Body */}
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-6 space-y-4 shadow-md backdrop-blur-xs">
+                    {/* Topic Headline */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-md bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center font-mono text-xs font-bold text-indigo-400">
+                          {tIdx + 1}
+                        </span>
+                        <h2 className="text-sm sm:text-base font-bold text-slate-100 font-sans-ui tracking-tight">
+                          {turn.title || 'Syllabus Topic'}
+                        </h2>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => handleCopy(turn.content, `turn-${tIdx}`)}
+                          className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 font-mono"
+                        >
+                          {copiedKey === `turn-${tIdx}` ? (
+                            <>
+                              <Check className="w-3 h-3 text-emerald-400" />
+                              <span>Copied Notes</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3" />
+                              <span>Copy Notes</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Markdown Formatted Text with Hinglish Intuition Callouts */}
+                    <div className="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed text-slate-200 font-sans-ui space-y-3">
+                      {turn.content.split('\n\n').map((paragraph, pIdx) => {
+                        // Highlight Hinglish intuition callout
+                        if (
+                          paragraph.toLowerCase().includes('simple words mein') ||
+                          paragraph.toLowerCase().includes('simple hinglish') ||
+                          paragraph.toLowerCase().includes('dekho bhai') ||
+                          paragraph.toLowerCase().includes('bilkul line mein')
+                        ) {
+                          return (
+                            <div
+                              key={pIdx}
+                              className="p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs sm:text-sm font-sans-ui leading-relaxed my-2 shadow-xs"
+                            >
+                              <div className="font-semibold text-amber-300 flex items-center gap-1.5 mb-1 font-mono text-[11px]">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Hinglish Intuition (Exam Mental Model)</span>
+                              </div>
+                              <p className="italic text-slate-200">{paragraph}</p>
+                            </div>
+                          );
+                        }
+
+                        // Highlight Exam Point
+                        if (
+                          paragraph.toLowerCase().includes('exam point:') ||
+                          paragraph.toLowerCase().includes('exam keyword:') ||
+                          paragraph.toLowerCase().includes('exam-ready short notes')
+                        ) {
+                          return (
+                            <div
+                              key={pIdx}
+                              className="p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 text-xs sm:text-sm my-2 shadow-xs"
+                            >
+                              <div className="font-semibold text-emerald-300 flex items-center gap-1.5 mb-1 font-mono text-[11px]">
+                                <GraduationCap className="w-3.5 h-3.5" />
+                                <span>Exam Answer Sheet Blueprint (Copy Directly)</span>
+                              </div>
+                              <p className="text-slate-200">{paragraph}</p>
+                            </div>
+                          );
+                        }
+
+                        // Table block
+                        if (paragraph.includes('|') && paragraph.includes('---')) {
+                          const rows = paragraph.trim().split('\n');
+                          return (
+                            <div key={pIdx} className="overflow-x-auto my-3 rounded-lg border border-slate-800">
+                              <table className="min-w-full text-xs text-left border-collapse">
+                                <thead>
+                                  <tr className="bg-slate-900 border-b border-slate-800">
+                                    {rows[0]
+                                      .split('|')
+                                      .filter((c) => c.trim().length > 0)
+                                      .map((col, cIdx) => (
+                                        <th key={cIdx} className="px-3 py-2 font-semibold text-slate-300 font-mono">
+                                          {col.trim()}
+                                        </th>
+                                      ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {rows.slice(2).map((row, rIdx) => (
+                                    <tr key={rIdx} className="border-b border-slate-850 hover:bg-slate-900/50">
+                                      {row
+                                        .split('|')
+                                        .filter((c) => c.trim().length > 0)
+                                        .map((cell, cIdx) => (
+                                          <td key={cIdx} className="px-3 py-1.5 text-slate-300 font-mono">
+                                            {cell.trim()}
+                                          </td>
+                                        ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          );
+                        }
+
+                        // Code block
+                        if (paragraph.startsWith('```')) {
+                          const lines = paragraph.split('\n');
+                          const lang = lines[0].replace('```', '') || 'bash';
+                          const codeText = lines.slice(1, -1).join('\n');
+                          return (
+                            <div key={pIdx} className="my-2 rounded-lg bg-slate-950 border border-slate-800 overflow-hidden font-mono text-xs">
+                              <div className="px-3 py-1 bg-slate-900 border-b border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+                                <span>{lang.toUpperCase()}</span>
+                                <button
+                                  onClick={() => handleCopy(codeText, `code-${pIdx}`)}
+                                  className="text-slate-400 hover:text-white"
+                                >
+                                  {copiedKey === `code-${pIdx}` ? 'Copied' : 'Copy'}
+                                </button>
+                              </div>
+                              <pre className="p-3 overflow-x-auto text-emerald-400">{codeText}</pre>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <p key={pIdx} className="leading-relaxed">
+                            {paragraph}
+                          </p>
+                        );
+                      })}
+                    </div>
+
+                    {/* Interactive Gantt Chart Widget (for CPU Scheduling Algorithms) */}
+                    {turn.gantt && (
+                      <GanttChartWidget
+                        processes={turn.gantt.processes}
+                        timestamps={turn.gantt.timestamps}
+                        title={`Gantt Chart: ${turn.title}`}
+                      />
+                    )}
+
+                    {/* Interactive Quick Check Card */}
+                    {turn.quickCheck && (
+                      <QuickCheckCard
+                        question={turn.quickCheck.question}
+                        options={turn.quickCheck.options}
+                        isLoading={isStepLoading}
+                        onAnswerSubmit={(selectedKey) => {
+                          loadGuidedTopic(
+                            selectedTrackId,
+                            currentTopicIndex,
+                            'answer',
+                            selectedKey
+                          );
+                        }}
+                      />
+                    )}
                   </div>
-                  <span className="academic-tag text-[9px] text-indigo-300/80 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-800/50">
-                    Theoretical Rigor
-                  </span>
                 </div>
-                <div className="font-sans-ui text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
-                  {studyGuide.sections.detailed}
+              );
+            })}
+
+            {/* Stepping Loading State */}
+            {isStepLoading && (
+              <div className="rounded-xl border border-indigo-500/30 bg-slate-900/50 p-4 space-y-3 animate-pulse">
+                <div className="flex items-center gap-2 text-xs text-indigo-300 font-sans-ui">
+                  <Sparkles className="w-4 h-4 animate-spin text-indigo-400" />
+                  <span>Loading next syllabus topic with interactive quick check...</span>
+                </div>
+                <div className="h-3 bg-slate-800 rounded-full w-3/4" />
+                <div className="h-3 bg-slate-800 rounded-full w-1/2" />
+              </div>
+            )}
+
+            <div ref={chatBottomRef} />
+          </div>
+        )}
+
+        {/* 6-STAGE REFERENCE GUIDE MODE (Cramming & Direct Topic Lookup) */}
+        {viewMode === 'reference' && (
+          <div className="space-y-6">
+            {!studyGuide && !isLoading && (
+              <div className="rounded-xl bg-slate-900/30 border border-slate-800 p-6 space-y-4">
+                <h2 className="text-base font-semibold text-slate-100">
+                  Comprehensive 6-Stage Reference Guide
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Select or enter any topic to view its entire 6-part academic breakdown: Simple, ELI9 Analogies, Hinglish Mental Model, 10-Marker University Exam Format, Deep Dive Edge Cases, and Quiz Me.
+                </p>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {[
+                    'FCFS CPU Scheduling',
+                    'Process States & PCB',
+                    'Preemptive vs Non-Preemptive',
+                    'Semaphores & Critical Section',
+                    'Deadlocks & Coffman Conditions',
+                    'Banker Algorithm',
+                  ].map((tp) => (
+                    <button
+                      key={tp}
+                      onClick={() => loadTopicGuide(tp)}
+                      className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5"
+                    >
+                      <span>{tp}</span>
+                      <ArrowRight className="w-3 h-3 text-slate-500" />
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* STAGE 6: QUIZ ME */}
-            {(activeTabMode === 'all' || activeTabMode === 'socratic') && studyGuide.sections.socratic && (
-              <div
-                id="section-socratic"
-                className="rounded-md bg-slate-900/30 border border-slate-800/80 p-5 space-y-4 transition duration-200"
-              >
-                <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded bg-purple-950/60 border border-purple-800/70 text-purple-300 text-xs font-mono flex items-center justify-center font-bold">
-                      6
-                    </span>
-                    <h3 className="text-xs sm:text-sm font-semibold text-slate-100 font-sans-ui flex items-center gap-1.5">
-                      <HelpCircle className="w-4 h-4 text-purple-400" />
-                      <span>Quiz Me (Diagnostic Check)</span>
-                    </h3>
-                  </div>
-                  <span className="academic-tag text-[9px] text-purple-300/80 bg-purple-950/40 px-2 py-0.5 rounded border border-purple-800/50">
-                    Self-Assessment
-                  </span>
-                </div>
-                <div className="font-sans-ui text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
-                  {studyGuide.sections.socratic}
+            {isLoading && (
+              <div className="rounded-xl bg-slate-900/40 border border-slate-800 p-5 space-y-3 animate-pulse">
+                <div className="flex items-center gap-2 text-xs text-slate-300">
+                  <Sparkles className="w-4 h-4 text-indigo-400 animate-spin" />
+                  <span>Formulating 6-stage curriculum...</span>
                 </div>
               </div>
             )}
 
-            {/* Citations & Syllabus References */}
-            {studyGuide.sourcesUsed && studyGuide.sourcesUsed.length > 0 && (
-              <div className="pt-2 border-t border-slate-800/60 flex flex-wrap items-center gap-1.5 text-xs">
-                {studyGuide.sourcesUsed.map((src, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 text-[11px] font-sans-ui"
+            {studyGuide && !isLoading && (
+              <div className="space-y-5">
+                <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-base font-bold text-slate-100 font-sans-ui">
+                      {studyGuide.topic}
+                    </h2>
+                    <p className="text-xs text-slate-400">{studyGuide.subject}</p>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(JSON.stringify(studyGuide.sections, null, 2), 'all-ref')}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
                   >
-                    § {src.title}
-                  </span>
-                ))}
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy Full Guide</span>
+                  </button>
+                </div>
+
+                {primaryModes.map((m) => {
+                  const content = studyGuide.sections[m.mode as keyof typeof studyGuide.sections];
+                  if (!content) return null;
+                  return (
+                    <div
+                      key={m.mode}
+                      className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 space-y-3"
+                    >
+                      <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs font-mono">
+                        <m.icon className="w-4 h-4" />
+                        <span>{m.label}</span>
+                      </div>
+                      <div className="prose prose-invert max-w-none text-xs sm:text-sm text-slate-300 whitespace-pre-line leading-relaxed">
+                        {content}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* 3. Single-Action Study Bar (Clean, no prompt generation!) */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950 shrink-0">
+      {/* 4. FAST-ACTION PILLS & BOTTOM INPUT BAR */}
+      <div className="p-3 border-t border-slate-800/80 bg-slate-950 shrink-0 space-y-2">
+        {/* Fast Action Suggestion Chips (Matches the ChatGPT user flow!) */}
+        {viewMode === 'guided' && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
+            <button
+              onClick={() => loadGuidedTopic(selectedTrackId, currentTopicIndex + 1, 'next')}
+              disabled={isStepLoading}
+              className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <ArrowRight className="w-3 h-3 text-indigo-400" />
+              <span>Next Topic</span>
+            </button>
+
+            <button
+              onClick={() => loadGuidedTopic(selectedTrackId, currentTopicIndex, 'hinglish')}
+              disabled={isStepLoading}
+              className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <Sparkles className="w-3 h-3 text-amber-400" />
+              <span>Explain in Hinglish</span>
+            </button>
+
+            <button
+              onClick={() => loadGuidedTopic(selectedTrackId, currentTopicIndex, 'did_not_understand')}
+              disabled={isStepLoading}
+              className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <Lightbulb className="w-3 h-3 text-yellow-400" />
+              <span>Did Not Understand (ELI9)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const cur = activeTrack?.topics[currentTopicIndex];
+                if (cur) {
+                  setViewMode('reference');
+                  loadTopicGuide(cur.title);
+                }
+              }}
+              className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-[11px] font-medium transition cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <GraduationCap className="w-3 h-3 text-emerald-400" />
+              <span>10-Marker University Format</span>
+            </button>
+          </div>
+        )}
+
+        {/* Input Bar */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             if (inputQuery.trim()) {
-              loadTopicGuide(inputQuery.trim());
+              if (viewMode === 'guided') {
+                loadGuidedTopic(
+                  selectedTrackId,
+                  currentTopicIndex,
+                  'custom_question',
+                  '',
+                  inputQuery.trim()
+                );
+              } else {
+                loadTopicGuide(inputQuery.trim());
+              }
               setInputQuery('');
             }
           }}
@@ -718,14 +967,18 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             type="text"
             value={inputQuery}
             onChange={(e) => setInputQuery(e.target.value)}
-            placeholder={`Enter any topic from ${selectedSubject} to study in 6-stage order...`}
-            className="flex-1 bg-slate-900/80 border border-slate-800 focus:border-slate-600 rounded-md px-3.5 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition font-sans-ui"
+            placeholder={
+              viewMode === 'guided'
+                ? 'Ask any doubt (e.g. "Did not understand preemptive", "So what is first start time?")...'
+                : `Enter topic to view full 6-stage reference guide...`
+            }
+            className="flex-1 bg-slate-900/80 border border-slate-800 focus:border-indigo-500 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition font-sans-ui"
           />
           <button
             type="submit"
-            disabled={isLoading || !inputQuery.trim()}
-            className="px-3 py-2 rounded-md bg-slate-100 hover:bg-white disabled:opacity-40 text-slate-950 transition cursor-pointer flex items-center justify-center shrink-0"
-            title="Study Topic"
+            disabled={isStepLoading || isLoading || !inputQuery.trim()}
+            className="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white transition cursor-pointer flex items-center justify-center shrink-0 shadow-md shadow-indigo-600/30"
+            title="Ask Academic Companion"
           >
             <Send className="w-4 h-4" />
           </button>

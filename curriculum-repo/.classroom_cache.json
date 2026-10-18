@@ -1,0 +1,300 @@
+{
+  "classes": {},
+  "subjects": {},
+  "units": {},
+  "materials": {
+    "class-bca-2028": [
+      {
+        "id": "mat-dump-1792323445769",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-cn",
+        "subjectName": "Computer Networks",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Computer Networks / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Narrative Arc Analysis and Dramatic Character Dynamics",
+        "fileName": "Character_Arcs_and_Relationships_Story.docx",
+        "fileType": "docx",
+        "fileSize": "83.9 KB",
+        "rawTextContent": "CLASS THE COMPLETE STORY OF EVERY CHARACTER An imagined Season 2 and final season • Full spoilers A fan-made continuation with character arcs, relationships, and a complete ending Important: Class Season 2 was never released. This document is fictional, not an official plot summary. How to read this story This document expands the fan-made continuation into character-by-character arcs. The events described below are imagined and should not be mistaken for episodes that were filmed or released. Character guide Sharan — The secret that destroys him Koel — The truth comes too late Balli — Outsider turned manipulator Dheeraj — Justice and grief Veer — The golden boy falls Yashika — Beyond approval Dhruv — Tired of hiding Faruq — No longer a secret Saba — Privilege cannot decide her future Suhani — The truth she left behind Neeraj — Suspicion and justice The Ahujas — Money cannot control every ending An imagined Season 2 and final season · Full spoilers · Character-by-character endings First, one important thing: Netflix never released Class Season 2, so nobody knows the official continuation. What follows is a fan-made continuation of the Indian series, building on the murder mystery, relationships, betrayals and cliffhanger from Season 1. I'll follow the characters through the aftermath, their relationships, their secrets, and where each of them eventually ends up. This is not a claim about what actually happened in unaired episodes. Think of it as the full story the show could have told. 1. Sharan Gujral — The boy whose secret destroys him Sharan begins the continuation believing that he has escaped the consequences of Suhani's death. He comes from a powerful family, has grown up surrounded by privilege, and is accustomed to people cleaning up his messes. He assumes this situation will be no different. But Suhani's death has changed the atmosphere at Hampton. Students whisper whenever Sharan walks past. The police question people again. Every time someone mentions the night of the murder, he becomes defensive. His biggest mistake is underestimating Koel. Koel knows more about his involvement than she initially admits. She has protected him partly because of their complicated relationship and partly because she fears what will happen if the truth emerges. Sharan interprets her silence as loyalty. Koel, however, is slowly realising that she has tied her future to someone who will sacrifice her without hesitation. Their relationship becomes increasingly controlling. Sharan wants Koel to remain quiet, maintain their public image and behave as though nothing happened. Koel wants him to acknowledge the damage they have caused. Whenever she threatens to reveal the truth, he reminds her that she will be implicated too. Meanwhile, Balli discovers evidence connecting Sharan to the murder. He begins using the information to gain influence over Sharan, expecting money and protection in exchange for silence. Sharan hates being blackmailed by someone he considers beneath him, but he cannot risk exposing Balli without exposing himself. As the investigation progresses, Sharan's carefully constructed life starts collapsing. His family tries to manage the scandal, but the evidence becomes increasingly difficult to explain away. His friendships disappear, and Koel stops believing his promises. The breaking point comes when Koel confronts him privately. She tells him that she cannot keep living with the knowledge of what happened to Suhani. Sharan responds b",
+        "uploaderName": "Student Acer",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "This document examines character arc progression, interpersonal conflict, and thematic resolution within serialized dramatic fiction. It analyzes how systemic privilege, guilt, and mutual complicity drive psychological breakdown and narrative escalation following a catalytic crime. The text breaks down individual trajectories, highlighting the structural mechanics of leverage, exposure, and moral reckoning.",
+          "hinglishSummary": "Yeh document dramatic series ke character arcs aur unke psychological collapse ko analyze karta hai. Story me privilege, guilt, aur blackmail ke through characters ka moral decline aur narrative climax dikhaya gaya hai.",
+          "mindmapMermaid": "graph TD\n    A[Dramatic Character Arc] --> B[Catalyst: Unresolved Murder]\n    A --> C[Internal Conflict: Guilt & Fear]\n    A --> D[External Pressure: Blackmail & Law]\n    B --> E[Social Collapse]\n    C --> E\n    D --> E",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Dramatic Character Dynamics",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "Catalytic Event (Crime)",
+                  "type": "category"
+                },
+                {
+                  "id": "c2",
+                  "label": "Complicity & Leverage",
+                  "type": "category"
+                },
+                {
+                  "id": "c3",
+                  "label": "Psychological Collapse",
+                  "type": "category"
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Stages of Tragic Downfall Arc",
+              "acronym": "PCPR",
+              "mnemonic": "Privilege Conceals, Pressure Reveals",
+              "explanation": "Summarizes the four narrative beats of Sharan's arc: Privilege, Complicity, Pressure (Blackmail), and Ruin (Exposure)."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Examine the role of complicity, socioeconomic privilege, and leverage in structuring character arcs within dramatic screenwriting, using Sharan and Koel's dynamic as a case study.",
+            "answerStructure": "1. Definition of Character Arc and Narrative Complicity\n2. The Anatomy of Privilege as a Shield and Fatal Flaw\n3. External and Internal Destabilizers (Blackmail and Moral Reckoning)\n4. Structural Resolution and Thematic Significance",
+            "modelAnswerMarkdown": "### 1. Definition of Character Arc and Narrative Complicity\nIn serialized dramatic writing, a **character arc** represents the internal and external evolution of a character across escalating plot conflicts. **Narrative complicity** occurs when secondary and primary characters are bound together by shared guilt or knowledge of a crime, creating a mutual-destruction dynamic.\n\n### 2. Privilege as Narrative Shield and Fatal Flaw\n* **The Illusion of Immunity:** Sharan Gujral epitomizes the privileged antagonist who relies on institutional wealth and familial authority to sanitize criminal actions. His fatal flaw (*hamartia*) is the erroneous assumption that past patterns of evasion will shield him indefinitely.\n* **Erosion of Loyalty:** The core relationship with Koel demonstrates how codependency based on shared liability degrades under pressure. Silence initially misidentified as loyalty transforms into a liability once moral dissonance overtakes fear.\n\n### 3. Structural Destabilization: Leverage and Blackmail\n* **Subversion of Class Power:** Balli's discovery of incriminating evidence shifts structural leverage from institutional wealth to possession of truth. This subverts typical class hierarchies and forces the antagonist into unsustainable defensive maneuvers.\n* **Psychological Attrition:** The steady withdrawal of public and private support mirrors the objective collapse of the cover-up, leading to an inevitable confrontation and exposure.\n\n### 4. Conclusion\nThe arc demonstrates classical tragic architecture: unacknowledged transgression leads to reactive control mechanisms, alienating allies, empowering marginalized observers, and precipitating unavoidable structural downfall.",
+            "keyDiagramText": "Tension-Escalation Curve: Graph plotting Time vs. Narrative Tension, showing how initial status quo degrades through blackmail, private confrontation, and ultimate public collapse."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Tragic Downfall Arc",
+              "explanation": "A narrative progression where an antagonist's refusal to accept accountability compounds their guilt, systematically destroying their support network and culminating in public exposure."
+            },
+            {
+              "concept": "Narrative Leverage",
+              "explanation": "The redistribution of narrative power through asymmetrical information, such as evidence of an illicit act held by a socioeconomically disadvantaged character."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Character Arc",
+              "definition": "The structural trajectory of a character's emotional, moral, and psychological development throughout a narrative."
+            },
+            {
+              "term": "Dramatic Complicity",
+              "definition": "A relational dynamic in which two or more characters are bound together by shared responsibility for an unresolved transgression."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Narrative Arc Analysis and Dramatic Character Dynamics principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Socioeconomic privilege serves as an unstable plot catalyst when confronted by material forensic evidence.",
+            "Complicity functions as a ticking clock: relationships founded solely on shared guilt inevitably collapse under external pressure."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792323445769-1",
+              "question": "What is the core role of Narrative Arc Analysis and Dramatic Character Dynamics?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "In narrative structure, what constitutes Sharan Gujral's primary strategic miscalculation?",
+              "options": [
+                "Underestimating Koel's moral threshold and Balli's leverage",
+                "Trusting the local law enforcement excessively",
+                "Refusing financial assistance from the Ahuja family",
+                "Confessing directly to the student council"
+              ],
+              "correctIndex": 0,
+              "explanation": "The narrative notes state that his primary mistake is underestimating Koel's unwillingness to remain indefinitely complicit, alongside Balli leveraging evidence against him."
+            },
+            {
+              "id": "q2",
+              "question": "How is Balli's role structurally positioned in Sharan's character progression?",
+              "options": [
+                "A loyal confidant who protects elite status",
+                "An external catalyst shifting power dynamics through blackmail",
+                "An impartial investigator representing judicial authority",
+                "A comedic foil with no impact on plot stakes"
+              ],
+              "correctIndex": 1,
+              "explanation": "Balli acts as an opportunistic outsider who acquires proof to invert traditional socioeconomic power through blackmail."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Examine the role of complicity, socioeconomic privilege, and leverage in structuring character arcs within dramatic screenwriting, using Sharan and Koel's dynamic as a case study.",
+              "answerOutline": "1. Definition of Character Arc and Narrative Complicity\n2. The Anatomy of Privilege as a Shield and Fatal Flaw\n3. External and Internal Destabilizers (Blackmail and Moral Reckoning)\n4. Structural Resolution and Thematic Significance"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Narrative Arc Analysis and Dramatic Character Dynamics"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792319811157",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-general",
+        "subjectName": "Curriculum Core",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Curriculum Core / Unit 1 - Fundamental Concepts / SYLLABUS",
+        "detectedCategory": "syllabus",
+        "title": "Foundations of Object-Oriented Class Design and Entity Modeling",
+        "fileName": "Class_Complete_Character_Story_with_Pictures.docx",
+        "fileType": "docx",
+        "fileSize": "0.1 MB",
+        "rawTextContent": "Class_Complete_Character_Story_with_Pictures university syllabus curriculum notes",
+        "uploaderName": "Student Rahul",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "This foundational curriculum module formalizes the translation of real-world entities and narrative attributes into structured Object-Oriented class specifications. It emphasizes the clean decoupling of internal state (attributes) from operational execution (methods) while enforcing strict encapsulation boundaries. Mastering this mapping provides the baseline for software domain modeling, entity-relationship diagrams, and modular software architecture in university examinations.",
+          "hinglishSummary": "Real-world character stories aur entities ko code blueprint me convert karna hi Class and Object modeling ka main concept hai. Isme character ke traits attributes ban jate hain aur unke actions methods bankar encapsulation maintain karte hain.",
+          "mindmapMermaid": "graph TD\n  Root[Class Architecture] --> State[State / Attributes]\n  Root --> Behavior[Behavior / Methods]\n  Root --> Modifiers[Access Modifiers]\n  Root --> Relations[Entity Relationships]\n  State --> InstanceVar[Instance Variables]\n  Behavior --> OpLogic[Operational Logic]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Class Architecture",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "State (Attributes/Properties)",
+                  "type": "category"
+                },
+                {
+                  "id": "c2",
+                  "label": "Behavior (Methods/Operations)",
+                  "type": "category"
+                },
+                {
+                  "id": "c3",
+                  "label": "Encapsulation & Modifiers",
+                  "type": "category"
+                },
+                {
+                  "id": "c4",
+                  "label": "Relationships & Inheritance",
+                  "type": "category"
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Pillars of OOP Class Design",
+              "acronym": "APIE",
+              "mnemonic": "A Person Is Entity",
+              "explanation": "Stands for Abstraction, Polymorphism, Inheritance, and Encapsulation; essential for answering foundational 10-mark design questions."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Define a Class and an Object. Explain the methodology of mapping a real-world entity into an abstract software class, detailing the roles of state, behavior, and access specifiers with a complete architectural diagram and code schema.",
+            "answerStructure": "1. Formal Definitions of Class and Object\n2. Anatomical Components of a Class Structure\n3. Entity-to-Class Transformation Methodology\n4. Role of Access Specifiers (Information Hiding)\n5. UML Class Notation and Exemplar Mapping\n6. Summary of Architectural Advantages",
+            "modelAnswerMarkdown": "### 1. Formal Definitions\n- **Class**: A syntactical blueprint or user-defined prototype from which objects are instantiated. It defines a cohesive set of attributes and behaviors shared by all instances.\n- **Object**: A discrete, concrete instance of a class allocated in memory, possessing identity, distinct state, and observable behavior.\n\n### 2. Anatomical Components of a Class\nA class represents a cohesive functional abstraction composed of:\n1. **State (Variables/Attributes)**: Defines the static characteristics and internal data carried by an instance.\n2. **Behavior (Methods/Functions)**: Dictates the dynamic modifications of state and communication protocols between objects.\n3. **Lifecycle Operations (Constructors/Destructors)**: Manages clean resource allocation during instantiation and cleanup during deallocation.\n\n### 3. Entity-to-Class Transformation Methodology\nWhen converting a descriptive domain entity (e.g., a character or persona) into an architectural software specification:\n- Identify descriptive nouns (e.g., `id`, `name`, `healthPoints`) $\\rightarrow$ Map to **Attributes**.\n- Identify active verbs (e.g., `takeDamage()`, `moveTo()`, `interact()`) $\\rightarrow$ Map to **Methods**.\n- Establish invariant protection $\\rightarrow$ Prevent direct public manipulation of state variables.\n\n```cpp\nclass CharacterEntity {\nprivate:\n    int entityId;\n    std::string entityName;\n    float healthPoints;\n\npublic:\n    CharacterEntity(int id, std::string name, float hp)\n        : entityId(id), entityName(name), healthPoints(hp) {}\n\n    void applyDamage(float damageAmount) {\n        if (damageAmount > 0.0f) {\n            healthPoints -= damageAmount;\n            if (healthPoints < 0.0f) healthPoints = 0.0f;\n        }\n    }\n\n    float getHealth() const { return healthPoints; }\n};\n```\n\n### 4. Role of Access Specifiers and Encapsulation\n- **Private (`-`)**: Restricts visibility solely to the declaring class, safeguarding state invariants.\n- **Protected (`#`)**: Restricts visibility to the declaring class and derived subclass hierarchies.\n- **Public (`+`)**: Exposes the formal client interface, defining explicit external interactions.\n\n### 5. Architectural Advantages\nThis abstraction provides modular isolation, minimizes regression side-effects during refactoring, and guarantees data integrity via controlled access interfaces.",
+            "keyDiagramText": "Standard UML Class Diagram: A three-compartment rectangular box containing the Class Name in the top section, Attributes with type signatures and visibility markers (- entityId: int) in the middle section, and Methods with return types (+ applyDamage(float): void) in the bottom section."
+          },
+          "keyConcepts": [
+            {
+              "concept": "State-Behavior Duality",
+              "explanation": "The fundamental paradigm where an entity's current properties (state) govern its operational responses (behavior), and behaviors conversely produce state transitions."
+            },
+            {
+              "concept": "Information Hiding",
+              "explanation": "The deliberate practice of concealing internal implementation specifics to prevent dependent subsystems from coupling to volatile internal structures."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Class",
+              "definition": "An extensible program-code-template for creating objects, providing initial values for state (member variables) and implementations of behavior (member functions or methods)."
+            },
+            {
+              "term": "Encapsulation",
+              "definition": "The mechanism of bundling data with the methods that operate on that data and restricting direct access to some of the object's components to preserve internal invariants."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Foundations of Object-Oriented Class Design and Entity Modeling principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Always draw a standard 3-tiered UML class diagram (Class Name, Attributes, Methods) when asked for class design.",
+            "Explicitly state visibility specifiers (+, -, #) in any class definition to secure full marks on design questions.",
+            "Contrast the memory allocation of a Class (compile-time definition/type metadata) versus an Object (runtime heap/stack instantiation)."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792319811157-1",
+              "question": "What is the core role of Foundations of Object-Oriented Class Design and Entity Modeling?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which software design principle is directly implemented by declaring class attributes as private and exposing public accessor methods?",
+              "options": [
+                "Encapsulation",
+                "Dynamic Polymorphism",
+                "Multiple Inheritance",
+                "Method Overriding"
+              ],
+              "correctIndex": 0,
+              "explanation": "Encapsulation combines data and the methods operating on that data within a single unit while restricting direct external access to internal representations."
+            },
+            {
+              "id": "q2",
+              "question": "In standard UML class notation, which symbol represents 'Protected' member visibility?",
+              "options": [
+                "+",
+                "-",
+                "#",
+                "~"
+              ],
+              "correctIndex": 2,
+              "explanation": "In standard UML, '#' indicates protected visibility, '+' represents public, '-' represents private, and '~' represents package-level visibility."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Define a Class and an Object. Explain the methodology of mapping a real-world entity into an abstract software class, detailing the roles of state, behavior, and access specifiers with a complete architectural diagram and code schema.",
+              "answerOutline": "1. Formal Definitions of Class and Object\n2. Anatomical Components of a Class Structure\n3. Entity-to-Class Transformation Methodology\n4. Role of Access Specifiers (Information Hiding)\n5. UML Class Notation and Exemplar Mapping\n6. Summary of Architectural Advantages"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Foundations of Object-Oriented Class Design and Entity Modeling"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "assignments": [],
+  "exams": {},
+  "announcements": [],
+  "notifications": [],
+  "lastSaved": "2026-10-18T11:37:25.769Z"
+}

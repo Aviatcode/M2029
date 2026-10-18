@@ -1,0 +1,1549 @@
+// Gold-Standard Academic Knowledge Bank
+// Directly extracted from real university student tutoring sessions (170 turns)
+
+export interface GoldQuickCheck {
+  question: string;
+  options: { key: string; label: string }[];
+  correctKey?: string;
+  continuePrompt: string;
+}
+
+export interface GoldGantt {
+  processes: { id: string; duration: number; color?: string }[];
+  timestamps: number[];
+}
+
+export interface GoldTopic {
+  id: string;
+  unit: string;
+  title: string;
+  turnIndex: number;
+  content: string;
+  quickCheck?: GoldQuickCheck;
+  gantt?: GoldGantt;
+}
+
+export interface SyllabusTrack {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  topics: GoldTopic[];
+}
+
+export const GOLD_TOPICS: GoldTopic[] = [
+  {
+    "id": "topic-3",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 3,
+    "content": "Yesss bhai 😭❤️ Let's do it exactly like we've been doing Software Engineering! One topic at a time, in the given syllabus order, **easy English + thodi Hinglish + exam-ready notes.** We'll go fatafat and skip unnecessary details, but cover everything important for your exam.\n\n# UNIT 1: OPERATING SYSTEM\n\n## TOPIC 1: What is an Operating System?\n\n### 1. What is an Operating System (OS)?\n\n**Simple Explanation:**\n\nAn Operating System is system software that acts as an interface between the user and the computer hardware.\n\nBasically, we cannot directly communicate with computer hardware. The OS helps us interact with it.\n\n**Examples:** Windows, Linux, macOS, Android.\n\n**Real-life example:**\nWhen you open Chrome on your laptop, the operating system helps allocate memory, manage the processor, and run the application.\n\nThink of it like this:\n\n```text\n       USER\n         ↕\n   APPLICATIONS\n         ↕\n  OPERATING SYSTEM\n         ↕\n   COMPUTER HARDWARE\n```\n\nThe OS connects the user and applications with the hardware.\n\n### 2. Formal Definition (For Exams)\n\nAn **Operating System (OS)** is system software that acts as an interface between the user and computer hardware and manages system resources while providing services for application programs.\n\n### 3. Why Do We Need an Operating System?\n\nAn OS is required to:\n\n1. **Run programs:** Helps applications execute.\n2. **Manage memory:** Allocates memory to different programs.\n3. **Manage files:** Organises files and folders.\n4. **Control hardware:** Manages devices such as keyboards, printers and disks.\n5. **Provide security:** Protects data and controls access.\n6. **Provide a user interface:** Allows users to interact with the computer.\n\n### 4. Important Keywords\n\n| Keyword | Meaning |\n|---|---|\n| System Software | Software that manages or supports computer operations. |\n| Interface | A medium of communication between two entities. |\n| Hardware | Physical components of a computer. |\n| Resource Management | Efficiently managing CPU, memory and other resources. |\n| Application | A program designed to perform a particular task. |\n| Execution | The process of running a program. |\n\n### 5. Exam-Ready Short Answer (3–4 Marks)\n\nAn Operating System is system software that acts as an interface between the user and computer hardware. It manages various resources of a computer, including the CPU, memory, files and input/output devices.\n\nThe major functions of an operating system include process management, memory management, file management, device management and security.\n\nExamples of operating systems are Windows, Linux, macOS and Android.\n\n---\n\n### Quick Revision 🧠\n\nRemember these three points:\n\n- **OS = Interface** between user and hardware.\n- **OS = Resource Manager** that manages CPU, memory and devices.\n- **Examples = Windows, Linux, macOS, Android.**\n\n**Exam keyword:** An OS provides an environment for the execution of programs.\n\n---\n\nWe'll keep following the syllabus order. The next topic is **Functions of an Operating System**, where we'll cover each function in simple language with examples and exam-ready notes."
+  },
+  {
+    "id": "topic-6",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 6,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 2: Functions of an Operating System\n\nAn Operating System performs several functions to make the computer work smoothly. Think of the OS as a **manager** that handles all the computer's resources.\n\n### 1. Process Management\n\nA **process** is a program that is currently being executed.\n\nThe OS manages processes by:\n- Creating and terminating processes.\n- Allocating CPU time to processes.\n- Scheduling processes for execution.\n- Handling process synchronization and deadlocks.\n\n**Example:** When you run Chrome and Spotify together, the OS manages their execution and CPU usage.\n\n\n\n### 2. Memory Management\n\nMemory management means managing the computer's main memory (RAM).\n\nThe OS:\n- Keeps track of used and free memory.\n- Allocates memory to programs.\n- Deallocates memory when programs finish.\n- Manages virtual memory.\n\n**Example:** When you open a new application, the OS allocates RAM to it.\n\n\n\n### 3. File Management\n\nThe OS manages files and directories stored on storage devices.\n\nIts functions include:\n- Creating and deleting files.\n- Creating and organising directories.\n- Reading and writing files.\n- Managing file permissions.\n\n**Example:** Creating a folder named *College Notes* and saving PDFs inside it.\n\n\n\n### 4. Device Management\n\nThe OS manages input and output devices using device drivers.\n\nIt:\n- Controls devices such as keyboards, printers and disks.\n- Allocates devices to programs when needed.\n- Coordinates input/output operations.\n\n**Example:** When you print an assignment, the OS coordinates communication with the printer.\n\n\n\n### 5. Security and Protection\n\nThe OS protects system resources and data from unauthorised access.\n\nIt:\n- Provides user authentication.\n- Controls access permissions.\n- Protects programs and files.\n- Helps isolate processes.\n\n**Example:** A password-protected user account prevents unauthorised users from accessing your files.\n\n\n\n### 6. User Interface\n\nThe OS provides a way for users to interact with the computer.\n\nTwo common types are:\n\n- **CLI (Command-Line Interface):** Users type commands. Example: Linux terminal.\n- **GUI (Graphical User Interface):** Users interact through windows, icons and menus. Example: Windows desktop.\n\n\n\n### 7. Secondary Storage Management\n\nThe OS manages data stored on devices such as HDDs and SSDs.\n\nIt manages:\n- Free and occupied disk space.\n- Storage allocation.\n- Disk organisation and access.\n\n**Example:** The OS tracks available storage when you save a file.\n\n### 8. Error Detection and Handling\n\nThe OS detects errors in hardware and software and takes appropriate action.\n\n**Example:** If a storage device encounters an error, the OS may display an error message.\n\n### 9. Resource Allocation\n\nThe OS distributes system resources, such as CPU time, memory and devices, among competing programs.\n\n**Example:** When multiple applications run together, the OS decides how CPU time is shared.\n\n### 10. Accounting and Performance Monitoring\n\nThe OS can track resource usage and monitor system performance.\n\n**Example:** Task Manager shows CPU, memory and disk usage in Windows.\n\n---\n\n## Quick revision\n\n\n  \n  <divider color=\"subtle\"/>\n  \n  <divider color=\"subtle\"/>\n  \n  <divider color=\"subtle\"/>\n  \n  <divider color=\"subtle\"/>\n  \n\n\n## Exam-ready answer\n\n**Functions of an Operating System:** The major functions of an OS are process management, memory management, file management, device management, security and protection, user interface provision, secondary storage management, error detection, resource allocation, and accounting and performance monitoring.\n\nThe OS ensures that computer resources are used efficiently and that programs execute properly.\n\n---\n\nNext topic in your syllabus: **Simple Batch Systems**. We'll cover its meaning, working, advantages, disadvantages and diagram."
+  },
+  {
+    "id": "topic-8",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 8,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 3: Simple Batch Systems\n\n### 1. What is a Batch Operating System?\n\nA **Batch Operating System** is an operating system in which similar jobs are collected into groups called *batches* and executed one after another without direct user interaction during execution.\n\nSimple words mein: multiple jobs ko ek group mein collect karte hain, phir computer unhe automatically execute karta hai.\n\n**Example:** Suppose a college needs to process the fee records of 500 students. Instead of processing each record manually, all records can be collected and processed as a batch.\n\n### 2. How Does a Simple Batch System Work?\n\n\n  \n    **1. Users Submit Jobs**\n    \n  \n  <icon name=\"arrow-down\" size=\"lg\" color=\"secondary\"/>\n  \n    **2. Jobs Are Grouped**\n    \n  \n  <icon name=\"arrow-down\" size=\"lg\" color=\"secondary\"/>\n  \n    **3. Jobs Are Executed**\n    \n  \n  <icon name=\"arrow-down\" size=\"lg\" color=\"secondary\"/>\n  \n    **4. Output Is Produced**\n    \n  \n\n\n### 3. Important Characteristics\n\n- **Grouping of jobs:** Similar jobs are collected into batches.\n- **No direct interaction:** Users generally cannot interact with a running job.\n- **Sequential execution:** In a simple batch system, jobs are processed one after another.\n- **Automatic processing:** Once started, jobs execute automatically under the system's control.\n- **Longer turnaround time:** A user may have to wait until their job is processed.\n\n**Turnaround time:** The total time between submitting a job and receiving its completed result.\n\n### 4. Advantages\n\n1. **Less manual intervention:** Jobs run automatically after submission.\n2. **Suitable for repetitive tasks:** Useful for processing large amounts of similar data.\n3. **Reduced setup effort:** Similar jobs can be grouped together.\n4. **Useful for bulk processing:** Many records can be processed in one batch.\n\n### 5. Disadvantages\n\n1. **No immediate response:** Users must wait for results.\n2. **Difficult debugging:** Errors may be discovered only after a job runs.\n3. **Long waiting time:** Jobs may wait in a queue before execution.\n4. **Limited interaction:** Users cannot easily change instructions during execution.\n5. **Possible CPU underutilisation:** In a simple batch system, the CPU may remain idle while waiting for slow input/output operations.\n\n### 6. Real-Life Examples\n\n- Processing electricity bills.\n- Generating monthly salary slips.\n- Processing examination results.\n- Preparing bank statements.\n\nThese are examples of tasks that can be handled through batch processing.\n\n### 7. Quick Comparison\n\n| Feature | Simple Batch System |\n|---|---|\n| User interaction | No direct interaction during execution |\n| Job processing | One job after another |\n| Response | Delayed |\n| Main purpose | Bulk processing |\n| Example | Payroll processing |\n\n### 8. Exam-Ready Answer (3–5 Marks)\n\nA **Simple Batch Operating System** collects similar jobs into batches and executes them sequentially without direct user interaction during execution. Users submit their programs and data, which are grouped and processed automatically by the computer.\n\nIts advantages include reduced manual intervention and efficient processing of repetitive jobs. Its disadvantages include delayed responses, difficult debugging and long turnaround time.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** In a simple batch system, can a user directly interact with a job while it is executing?\n\n  \n  \n  {#if checked}\n    \n      {#if answer===\"b\"}\n        \n        Users generally cannot interact directly with a job during its execution.\n      {:else}\n        \n        The correct answer is **B: No, generally not.** Jobs execute automatically after submission.\n      {/if}\n    \n  {/if}\n\n\n**Next topic:** Multiprogrammed Batch Systems. We'll learn how they improve CPU utilisation compared with simple batch systems.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Yes, continuously"
+        },
+        {
+          "key": "B",
+          "label": "No, generally not"
+        },
+        {
+          "key": "C",
+          "label": "Only through a graphical interface"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-10",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 10,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 4: Multiprogrammed Batch Systems\n\n### 1. What is a Multiprogrammed Batch System?\n\nA **Multiprogrammed Batch System** is an operating system in which multiple jobs are kept in main memory simultaneously so that the CPU can switch to another job whenever the current job waits for an I/O operation.\n\nSimple Hinglish mein: ek job agar input/output ke liye wait kar rahi hai, toh CPU khaali baithne ke bajaye doosri job execute karna start kar deta hai.\n\n**Main aim:** To increase CPU utilisation.\n\n### 2. How Does It Work?\n\nSuppose three jobs are loaded into memory:\n\n- **Job 1:** Needs CPU processing, then waits for disk input.\n- **Job 2:** Ready for execution.\n- **Job 3:** Also ready for execution.\n\nWhen Job 1 waits for I/O, the OS gives the CPU to Job 2.\n\n\n  \n    **Main Memory (RAM)**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **Operating System**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **CPU**\n    \n  \n\n\nThe OS uses **job scheduling** to select a job and **CPU scheduling** to decide which ready job executes next.\n\n### 3. Why Is Multiprogramming Needed?\n\nIn a simple batch system, the CPU may remain idle while a job waits for I/O.\n\nIn a multiprogrammed batch system, another ready job can use the CPU during that waiting time.\n\n\n  \n  \n  \n  \n  \n\n\n### 4. Advantages\n\n1. **High CPU utilisation:** The CPU spends less time idle.\n2. **Increased throughput:** More jobs can be completed in a given period.\n3. **Better resource utilisation:** CPU and I/O devices can work more efficiently.\n4. **Reduced CPU idle time:** Other jobs execute while one job waits for I/O.\n\n**Throughput:** The number of jobs completed per unit of time.\n\n### 5. Disadvantages\n\n1. **Complex operating system:** Managing several jobs requires more sophisticated control.\n2. **Memory management:** Multiple jobs must fit into available memory.\n3. **Scheduling complexity:** The OS must select jobs and allocate CPU time.\n4. **Deadlock possibility:** Processes may wait indefinitely for resources under certain conditions.\n5. **Security and protection requirements:** Jobs must be prevented from improperly accessing one another's memory.\n\n### 6. Simple Batch vs Multiprogrammed Batch\n\n| Feature | Simple Batch | Multiprogrammed Batch |\n|---|---|---|\n| Jobs in memory | Typically one active job | Multiple jobs |\n| CPU utilisation | Lower | Higher |\n| CPU idle time | Can be high | Reduced |\n| Complexity | Less complex | More complex |\n| Main objective | Automatic batch execution | Better CPU utilisation |\n\n### 7. Exam-Ready Answer (3–5 Marks)\n\nA multiprogrammed batch system is an operating system in which several jobs are kept in main memory simultaneously. When one job waits for an I/O operation, the operating system switches the CPU to another ready job.\n\nIts main objective is to increase CPU utilisation and throughput by reducing CPU idle time.\n\n**Advantages:** Better CPU utilisation, increased throughput and efficient resource utilisation.\n\n**Disadvantages:** Complex scheduling, memory management challenges and the possibility of deadlocks.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** What is the main objective of multiprogramming?\n\n  \n  \n  {#if checked}\n    \n      {#if answer===\"a\"}\n        \n        The CPU can execute another ready job while one job waits for I/O.\n      {:else}\n        \n        The correct answer is **A: To increase CPU utilisation.**\n      {/if}\n    \n  {/if}\n\n\n**Next topic: Time-Sharing Systems.** We'll see how multiple users or tasks get CPU time and how time-sharing differs from multiprogramming.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "To increase CPU utilisation"
+        },
+        {
+          "key": "B",
+          "label": "To reduce the size of RAM"
+        },
+        {
+          "key": "C",
+          "label": "To allow only one job in memory"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-12",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 12,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 5: Time-Sharing Systems\n\n### 1. What is a Time-Sharing System?\n\nA **Time-Sharing Operating System** allows multiple users or tasks to share the CPU by giving each a small amount of CPU time, called a **time slice** or **time quantum**.\n\nSimple Hinglish mein: CPU har process ko thoda-thoda time deta hai, one by one, so that everyone gets a chance to execute. Isse users ko lagta hai ki sabke programs simultaneously run ho rahe hain.\n\n**Examples:** UNIX and Linux systems supporting multiple users and interactive sessions.\n\n### 2. How Does It Work?\n\nThe CPU switches rapidly between processes. Each process gets a limited time to execute.\n\n\n  \n    **Ready Queue**\n    \n  \n  <icon name=\"arrow-down\" size=\"lg\" color=\"secondary\"/>\n  \n    **CPU**\n    \n  \n  \n\n\n### 3. Important Terms\n\n- **Time Slice / Time Quantum:** The maximum CPU time allocated to a process in one turn.\n- **Context Switching:** Saving the state of one process and restoring another so the CPU can switch between them.\n- **Ready Queue:** The list of processes waiting for CPU time.\n- **Response Time:** The time between submitting a request and receiving the first response.\n\n**Example:** If the time quantum is 10 milliseconds, a process may run for up to 10 ms before the CPU scheduler gives another process a turn, unless it finishes or blocks earlier.\n\n### 4. Characteristics\n\n1. Multiple users or processes share CPU resources.\n2. Each process receives a small time slice.\n3. CPU switching happens rapidly.\n4. It supports interactive computing.\n5. The OS uses scheduling to distribute CPU time fairly.\n6. It aims to provide quick responses to users.\n\n### 5. Advantages\n\n1. **Quick response:** Users don't have to wait for one long job to finish before other processes get CPU time.\n2. **Fair CPU sharing:** Processes get opportunities to execute.\n3. **Interactive use:** Users can interact with running programs.\n4. **Better CPU utilisation:** The CPU can switch to another ready process when one process waits for I/O.\n5. **Multiple users:** Several users can use a system at the same time.\n\n### 6. Disadvantages\n\n1. **Context-switching overhead:** Switching between processes consumes time.\n2. **Security concerns:** Multiple users' data and processes must be protected.\n3. **Complex scheduling:** The OS must manage CPU time and competing processes.\n4. **Performance issues:** Too many active processes can slow down response times.\n5. **Dependence on system resources:** Insufficient memory or CPU capacity can affect performance.\n\n### 7. Multiprogramming vs Time-Sharing\n\n| Feature | Multiprogramming | Time-Sharing |\n|---|---|---|\n| Main objective | Maximise CPU utilisation | Provide quick interactive responses |\n| CPU switching | Often when a job waits for I/O or its execution yields | Commonly after a time quantum expires |\n| User interaction | May be non-interactive | Interactive |\n| Users | Not necessarily multiple interactive users | Often supports multiple interactive users |\n| Scheduling | Depends on the system | Commonly uses time-slice scheduling |\n\n**Remember:** Time-sharing builds on multiprogramming concepts, but focuses on interactive response and sharing CPU time.\n\n### 8. Exam-Ready Answer (3–5 Marks)\n\nA time-sharing operating system allows multiple users or processes to share the CPU by allocating a small amount of time, called a time quantum, to each process. The CPU switches rapidly between processes, providing interactive use and quick response.\n\nIts advantages include quick response, fair CPU sharing and support for multiple users. Its disadvantages include context-switching overhead, complex scheduling and possible performance degradation under heavy load.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** What is a time quantum?\n\n  \n  \n  {#if checked}\n    \n      {#if answer===\"b\"}\n        \n        A time quantum is the CPU time allocated to a process in one turn.\n      {:else}\n        \n        The correct answer is **B**.\n      {/if}\n    \n  {/if}\n\n\n**Next topic: Personal-Computer Systems.** We'll cover their meaning, characteristics, advantages and examples.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "The memory allocated to a program"
+        },
+        {
+          "key": "B",
+          "label": "The CPU time allotted to a process in one turn"
+        },
+        {
+          "key": "C",
+          "label": "The time required to start the computer"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-14",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 14,
+    "content": "Yess bhai, you're right! ❤️ Let's do **Multitasking and Multiprocessing Operating Systems** next, one by one, in our usual exam-focused format.\n\n# UNIT 1: OPERATING SYSTEM\n## Topic 6: Multitasking Operating System\n\n### 1. What is a Multitasking OS?\n\nA **Multitasking Operating System** allows a user to run multiple tasks or applications apparently at the same time.\n\nSimple Hinglish mein: tum Spotify pe music sun rahi ho, Chrome pe research kar rahi ho aur MS Word mein notes bana rahi ho. OS manages all these tasks so you can switch between them smoothly.\n\n**Examples:** Windows, macOS, Linux and Android.\n\n### 2. How Does It Work?\n\nThe OS rapidly switches the CPU between different tasks. On a single-core CPU, tasks generally take turns executing, creating the appearance of simultaneous execution.\n\n\n  \n    **Multiple Tasks**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **Operating System**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **CPU**\n    \n  \n\n\n### 3. Types of Multitasking\n\n**A. Preemptive Multitasking**\n\nThe OS decides when a task's CPU time ends and switches to another task.\n\n- The OS controls CPU scheduling.\n- One task cannot normally keep the CPU indefinitely.\n- It supports responsive systems.\n\n**Example:** Modern Windows and Linux systems.\n\n**B. Cooperative Multitasking**\n\nA task voluntarily gives up control of the CPU so another task can run.\n\n- Tasks must cooperate.\n- If one task fails to yield, other tasks may become unresponsive.\n\n**Example:** Older operating systems such as classic Mac OS.\n\n### 4. Advantages\n\n1. Multiple applications can run seemingly together.\n2. Improves productivity.\n3. CPU resources can be used efficiently.\n4. Users can switch between applications easily.\n\n### 5. Disadvantages\n\n1. Requires more memory and processing resources.\n2. Too many tasks can slow down the system.\n3. Scheduling and resource management are more complex.\n4. A malfunctioning task can affect system performance.\n\n### 6. Exam-Ready Answer (3–5 Marks)\n\nA multitasking operating system allows multiple tasks or applications to execute concurrently. It manages CPU time by switching between tasks and allocating system resources.\n\nIts types include preemptive and cooperative multitasking. Advantages include improved productivity and efficient resource utilisation, while disadvantages include increased resource requirements and scheduling complexity.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** In preemptive multitasking, who decides when to switch the CPU to another task?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"b\"}\n        \n        The OS controls scheduling and can interrupt a task to give another task CPU time.\n      {:else}\n        \n        The correct answer is **B: The operating system.**\n      {/if}\n    \n  {/if}\n\n\n**Next: Multiprocessing Operating System** — this is different from multitasking, so we'll learn it separately and then compare the two.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Only the running application"
+        },
+        {
+          "key": "B",
+          "label": "The operating system"
+        },
+        {
+          "key": "C",
+          "label": "The user every time"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-16",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 16,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 7: Multiprocessing Operating System\n\n### 1. What is a Multiprocessing OS?\n\nA **Multiprocessing Operating System** is an operating system that uses two or more processors or CPU cores to execute processes simultaneously.\n\nSimple Hinglish mein: computer ke paas multiple processing units hote hain, toh woh different tasks ko genuinely parallel execute kar sakta hai.\n\n**Example:** A computer with a multicore processor can run a video-editing task on one core while another process runs on a different core, depending on how the OS schedules them.\n\n### 2. How Does It Work?\n\nThe OS distributes processes across available processors or CPU cores.\n\n\n  \n    **Operating System**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  <grid columns={2} gap={2}>\n    <grid-item>\n      \n        <icon name=\"cpu\" size=\"xl\" color=\"#315A83\"/>\n        **CPU Core 1**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        <icon name=\"cpu\" size=\"xl\" color=\"#3F7653\"/>\n        **CPU Core 2**\n        \n      \n    </grid-item>\n  </grid>\n  \n\n\n### 3. Types of Multiprocessing\n\n**A. Symmetric Multiprocessing (SMP)**\n\nIn SMP, all processors are treated equally and can perform operating-system and application tasks. They typically share main memory and are managed by one OS.\n\nExample: A modern multicore laptop processor running Windows or Linux.\n\n**B. Asymmetric Multiprocessing (AMP)**\n\nIn AMP, processors have different assigned roles. One processor may control the system while other processors perform specific tasks.\n\nExample: An embedded system in which one processor controls overall operations and another handles a dedicated function.\n\n### 4. Advantages\n\n1. **Higher performance:** Multiple processes can execute in parallel.\n2. **Increased throughput:** More work can be completed in a given time.\n3. **Improved reliability:** Some systems can continue operating if one processor fails, depending on their design.\n4. **Better resource utilisation:** Work can be distributed among processors.\n5. **Suitable for demanding applications:** Useful for scientific computing, video editing and servers.\n\n### 5. Disadvantages\n\n1. **Higher cost:** Multiple processors or cores and supporting hardware may increase costs.\n2. **Complex OS design:** Scheduling and coordination are more complicated.\n3. **Synchronisation issues:** Processes sharing data must coordinate safely.\n4. **Memory contention:** Multiple processors may compete for shared memory resources.\n5. **Not every task becomes faster:** Some tasks cannot be divided efficiently into parallel work.\n\n### 6. Multitasking vs Multiprocessing\n\n| Feature | Multitasking | Multiprocessing |\n|---|---|---|\n| Meaning | Multiple tasks share CPU time | Multiple processors/cores execute work |\n| Main aim | Run multiple tasks responsively | Execute work in parallel |\n| Hardware | Can work on a single-core CPU | Requires multiple processing units |\n| Execution | May use rapid switching | Can execute processes simultaneously |\n| Example | Switching between music and a browser | Two CPU cores executing different processes |\n\n**Important:** A modern computer can support both multitasking and multiprocessing at the same time.\n\n### 7. Exam-Ready Answer (3–5 Marks)\n\nA multiprocessing operating system uses two or more processors or CPU cores to execute processes in parallel. It distributes work among the available processing units to improve performance and throughput.\n\nThe two common types are symmetric multiprocessing (SMP) and asymmetric multiprocessing (AMP).\n\nAdvantages include increased processing speed, higher throughput and improved reliability in suitably designed systems. Disadvantages include higher cost, complex scheduling and synchronisation challenges.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** What is the main difference between multitasking and multiprocessing?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"a\"}\n        \n        Multitasking focuses on managing multiple tasks, while multiprocessing enables parallel execution using multiple processing units.\n      {:else}\n        \n        The correct answer is **A**.\n      {/if}\n    \n  {/if}\n\n\n**Next topic:** Personal-Computer Systems, unless your syllabus lists another topic after multiprocessing.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Multitasking shares CPU time; multiprocessing uses multiple processing units for parallel execution."
+        },
+        {
+          "key": "B",
+          "label": "Both mean exactly the same thing."
+        },
+        {
+          "key": "C",
+          "label": "Multiprocessing always uses only one CPU core."
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-18",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 18,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 8: Personal-Computer Systems\n\n### 1. What is a Personal-Computer System?\n\nA **Personal-Computer (PC) System** is a computer system designed primarily for individual use. It provides computing resources to perform tasks such as studying, browsing, programming, gaming and creating documents.\n\nA personal computer typically runs an operating system that manages its hardware and software resources.\n\n**Examples:** Desktop computers and laptops running Windows, Linux or macOS.\n\nSimple Hinglish mein: jo laptop ya computer tum apni studies, assignments, coding ya browsing ke liye use karti ho, woh personal-computer system hai.\n\n### 2. Main Components\n\n\n  \n    **Hardware**\n    \n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Operating System**\n    \n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Application Software**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **User**\n    \n  \n\n\n### 3. Characteristics of Personal-Computer Systems\n\n1. **Designed for individual use:** Generally intended for one person's direct use at a time.\n2. **User-friendly interface:** Usually provides a GUI with windows, icons and menus.\n3. **Multitasking:** Can run multiple applications, such as a browser and a music player.\n4. **Resource management:** The OS manages CPU, memory, files and devices.\n5. **General-purpose computing:** Supports many different types of work.\n6. **Networking:** Can connect to the internet and other computers.\n\n### 4. Functions of the OS in a Personal Computer\n\n- **Process management:** Runs applications and manages their execution.\n- **Memory management:** Allocates RAM to running programs.\n- **File management:** Organises files and folders.\n- **Device management:** Controls devices such as printers and keyboards.\n- **Security:** Supports user accounts, permissions and system protection.\n- **User interaction:** Provides a graphical or command-line interface.\n\n### 5. Advantages\n\n1. Easy to use for everyday tasks.\n2. Supports multiple applications.\n3. Useful for education, business and entertainment.\n4. Offers a wide range of software.\n5. Can connect to networks and share information.\n\n### 6. Limitations\n\n1. Limited processing power compared with some specialised high-performance systems.\n2. Performance depends on available CPU, RAM and storage.\n3. Vulnerable to malware and unauthorised access without suitable protection.\n4. Requires maintenance, updates and backups.\n\n### 7. Exam-Ready Answer (3–5 Marks)\n\nA personal-computer system is a computer system designed mainly for individual use. It consists of hardware, an operating system and application software.\n\nThe operating system manages processes, memory, files, input/output devices and security while providing an interface for users to interact with applications.\n\nExamples include desktop computers and laptops running Windows, Linux or macOS.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which of the following is a primary function of an operating system in a personal computer?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"b\"}\n        \n        The OS manages memory, processes and other computer resources.\n      {:else}\n        \n        The correct answer is **B: Managing memory and running applications.**\n      {/if}\n    \n  {/if}\n\n\n**Next topic:** Parallel Systems. We'll cover their meaning, types, advantages and disadvantages in the same format.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Manufacturing the CPU"
+        },
+        {
+          "key": "B",
+          "label": "Managing memory and running applications"
+        },
+        {
+          "key": "C",
+          "label": "Physically repairing the keyboard"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-20",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 20,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 9: Parallel Systems\n\n### 1. What is a Parallel System?\n\nA **Parallel System** is a computer system in which multiple processors or processing units work together to perform computations simultaneously.\n\nThe main aim is to **increase processing speed and improve system performance** by dividing work among multiple processors.\n\nSimple Hinglish mein: ek hi bada task ko chhote parts mein divide karke multiple processors se ek saath karwana is parallel processing ka basic idea hai.\n\n**Example:** In weather forecasting, multiple processors can calculate different parts of a complex simulation simultaneously.\n\n### 2. How Does It Work?\n\n\n  \n    **Large Task**\n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **Task Divided into Smaller Parts**\n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  <grid columns={2} gap={2}>\n    <grid-item>\n      \n        **Processor 1**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **Processor 2**\n        \n      \n    </grid-item>\n  </grid>\n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **Combined Result**\n  \n\n\nThe processors work on separate parts of the task, and their results are combined when necessary.\n\n### 3. Types of Parallel Systems\n\n**A. Symmetric Multiprocessing (SMP)**\n\n- Two or more processors share main memory.\n- All processors have equal status.\n- They can execute operating-system and application tasks.\n\n**Example:** A multicore computer running Linux.\n\n**B. Asymmetric Multiprocessing (AMP)**\n\n- Processors have different assigned roles.\n- One processor may control the system while others perform specific tasks.\n- Often used in specialised or embedded systems.\n\n**Example:** An embedded system with one processor coordinating operations and another dedicated to signal processing.\n\n### 4. Advantages\n\n1. **High speed:** Multiple parts of a task can execute simultaneously.\n2. **Increased throughput:** More work can be completed in a given time.\n3. **Resource sharing:** Processors can share memory and other resources, depending on the architecture.\n4. **Suitable for complex problems:** Useful for scientific simulations, AI and large-scale calculations.\n5. **Potential scalability:** Performance can improve by adding processing units when the workload supports parallel execution.\n\n### 5. Disadvantages\n\n1. **High cost:** Multiple processors and supporting hardware can be expensive.\n2. **Complex programming:** Tasks must often be divided and coordinated.\n3. **Synchronisation issues:** Processors may need to coordinate access to shared data.\n4. **Communication overhead:** Sharing information between processors consumes time.\n5. **Limited speedup:** Some tasks cannot be divided effectively, so adding processors does not always make them much faster.\n\n### 6. Parallel Systems vs Multiprocessing Systems\n\n| Parallel Systems | Multiprocessing Systems |\n|---|---|\n| Focus on executing computations in parallel. | Focus on using multiple processors or cores. |\n| Describes a way of performing work. | Describes a system architecture or processing capability. |\n| Often uses multiple processing units. | Can support parallel execution of processes. |\n\n**Remember:** These concepts overlap significantly. A multiprocessing system can be used to perform parallel processing.\n\n### 7. Exam-Ready Answer (3–5 Marks)\n\nA parallel system is a computer system in which multiple processors or processing units work simultaneously to execute computations. It improves processing speed and throughput by dividing large tasks into smaller parts that can be processed in parallel.\n\nIts advantages include high performance, increased throughput and suitability for complex computations. Its disadvantages include higher cost, programming complexity, communication overhead and synchronisation problems.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** What is the main objective of parallel processing?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"a\"}\n        \n        Parallel processing allows work to be performed simultaneously, potentially reducing execution time.\n      {:else}\n        \n        The correct answer is **A**.\n      {/if}\n    \n  {/if}\n\n\n**Next topic: Distributed Systems.** We'll cover their meaning, working, advantages, disadvantages and examples.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "To execute computations simultaneously and improve performance"
+        },
+        {
+          "key": "B",
+          "label": "To prevent multiple processors from working together"
+        },
+        {
+          "key": "C",
+          "label": "To reduce the computer's storage capacity"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-22",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 22,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 10: Distributed Systems\n\n### 1. What is a Distributed System?\n\nA **Distributed System** is a collection of independent computers connected through a network that communicate and coordinate with each other to perform tasks and share resources.\n\nSimple Hinglish mein: multiple computers network ke through connected hote hain aur milkar kaam karte hain. Har computer apna processing work karta hai, but they communicate and share information.\n\n**Examples:**\n- Cloud computing platforms\n- Distributed databases\n- Online banking systems\n- Large websites that use multiple servers\n\n### 2. How Does It Work?\n\n\n  \n    **User / Client**\n    \n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Network**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  <grid columns={3} gap={1}>\n    <grid-item>\n      \n        <icon name=\"server\" size=\"lg\"/>\n        \n        \n      \n    </grid-item>\n    <grid-item>\n      \n        <icon name=\"server\" size=\"lg\"/>\n        \n        \n      \n    </grid-item>\n    <grid-item>\n      \n        <icon name=\"server\" size=\"lg\"/>\n        \n        \n      \n    </grid-item>\n  </grid>\n  \n\n\nFor example, when you use an online shopping website, different servers may handle your login, product catalogue, payment and order information."
+  },
+  {
+    "id": "topic-23",
+    "unit": "Operating Systems Unit 1",
+    "title": "3. Characteristics of Distributed Systems",
+    "turnIndex": 23,
+    "content": "### 3. Characteristics of Distributed Systems\n\n1. **Resource sharing:** Computers share data, files and services.\n2. **Communication:** Computers exchange information through a network.\n3. **Concurrency:** Multiple computers can perform tasks at the same time.\n4. **Scalability:** More computers can often be added to handle increased workload.\n5. **Fault tolerance:** The system may continue working when one component fails, if designed with redundancy.\n6. **Transparency:** Users may experience the system as one service rather than many separate computers.\n\n### 4. Advantages\n\n- **High performance:** Work can be distributed across multiple computers.\n- **Resource sharing:** Data and services can be accessed across the network.\n- **Scalability:** Capacity can be increased by adding computers.\n- **Reliability:** Redundant components can help maintain services during failures.\n- **Geographical flexibility:** Computers can be located in different places.\n\n### 5. Disadvantages\n\n- **Network dependency:** Network failures can interrupt communication.\n- **Security risks:** Data transmitted across networks must be protected.\n- **Complex management:** Coordinating multiple computers is difficult.\n- **Communication delays:** Transferring data between computers takes time.\n- **Fault detection:** Identifying which computer or network component has failed can be challenging.\n\n### 6. Distributed vs Parallel Systems\n\n| Feature | Distributed System | Parallel System |\n|---|---|---|\n| Processing units | Independent networked computers | Multiple processing units |\n| Communication | Usually through a network | Often through shared memory or high-speed interconnects |\n| Memory | Usually separate memory per computer | May use shared or distributed memory |\n| Main aim | Resource sharing and coordinated services | Faster computation through parallel work |\n| Example | Distributed cloud service | Multicore processor solving a computation |\n\n**Remember:** A distributed system can also perform parallel processing, but the two terms are not identical.\n\n### 7. Exam-Ready Answer (3–5 Marks)\n\nA distributed system consists of multiple independent computers connected through a network that communicate and coordinate to perform tasks and share resources.\n\nIts characteristics include resource sharing, communication, concurrency, scalability and fault tolerance.\n\nAdvantages include improved scalability, resource sharing and potential reliability. Disadvantages include network dependency, security risks, communication delays and complex management.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** What connects the computers in a distributed system?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"b\"}\n        \n        Network communication allows independent computers to exchange information and coordinate their work.\n      {:else}\n        \n        The correct answer is **B: A communication network.**\n      {/if}\n    \n  {/if}\n\n\n**Next topic: Real-Time Systems (RTOS)** — we'll cover hard and soft real-time systems, their characteristics, examples, advantages and disadvantages.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Only a single CPU"
+        },
+        {
+          "key": "B",
+          "label": "A communication network"
+        },
+        {
+          "key": "C",
+          "label": "A single keyboard"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-25",
+    "unit": "Operating Systems Unit 1",
+    "title": "UNIT 1: OPERATING SYSTEM",
+    "turnIndex": 25,
+    "content": "# UNIT 1: OPERATING SYSTEM\n## Topic 11: Real-Time Operating Systems (RTOS)\n\n### 1. What is a Real-Time Operating System?\n\nA **Real-Time Operating System (RTOS)** is an operating system designed to process data and respond to events within a specified time limit, called a **deadline**.\n\nSimple Hinglish mein: kuch systems mein sirf correct result dena enough nahi hota. Result **time par dena bhi zaroori hota hai**.\n\n**Example:** In an airbag system, the controller must respond extremely quickly when a crash is detected. A delayed response could be dangerous.\n\nOther examples include industrial control systems, medical monitoring equipment and aircraft control systems.\n\n### 2. How Does It Work?\n\n\n  \n    **Input / Event**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **RTOS**\n    \n  \n  <icon name=\"arrow-down\" color=\"secondary\" size=\"lg\"/>\n  \n    **Response**\n    \n  \n\n\nThe RTOS prioritises tasks according to the system's scheduling rules and timing requirements.\n\n### 3. Types of Real-Time Systems\n\n\n  \n  <divider color=\"subtle\"/>\n  \n  <divider color=\"subtle\"/>\n  \n\n\n### 4. Important Characteristics\n\n1. **Predictability:** The system should respond within predictable time limits.\n2. **Low latency:** It should minimise delays in responding to events.\n3. **Priority-based scheduling:** Important tasks may receive higher priority.\n4. **Reliability:** It should perform consistently under expected conditions.\n5. **Deadline awareness:** Tasks have timing requirements that must be considered.\n\n### 5. Advantages\n\n- Fast and predictable responses.\n- Suitable for time-critical applications.\n- Efficient task scheduling.\n- High reliability when properly designed and validated.\n\n### 6. Disadvantages\n\n- Complex to design and test.\n- Can require specialised hardware or software.\n- Limited resources may restrict the number of tasks.\n- Missing deadlines can have serious consequences in critical applications.\n\n### 7. Hard vs Soft vs Firm Real-Time Systems\n\n| Feature | Hard | Firm | Soft |\n|---|---|---|---|\n| Deadline | Must be met | Late result has no value | Important, but occasional delay is tolerable |\n| Missed deadline | System failure | That result is useless | Quality or usefulness decreases |\n| Example | Flight-control function | Time-sensitive inspection result | Video playback |\n\n### 8. Exam-Ready Answer (3–5 Marks)\n\nA Real-Time Operating System (RTOS) is an operating system designed to process events and produce responses within specified time constraints.\n\nReal-time systems are classified into hard, firm and soft real-time systems. Hard real-time systems must meet critical deadlines, firm real-time systems produce useless results after deadlines, and soft real-time systems can tolerate occasional delays.\n\nRTOSs are used in industrial automation, medical equipment, embedded systems and aircraft control.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** In which type of real-time system is missing a critical deadline considered a system failure?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"b\"}\n        \n        Hard real-time systems have strict deadlines that must be met.\n      {:else}\n        \n        The correct answer is **B: Hard real-time system.**\n      {/if}\n    \n  {/if}\n\n\n**Next topic:** Operating-System Structures. If that's next in your syllabus, we'll cover monolithic, layered and microkernel structures in the same format.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Soft real-time system"
+        },
+        {
+          "key": "B",
+          "label": "Hard real-time system"
+        },
+        {
+          "key": "C",
+          "label": "General-purpose system"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-27",
+    "unit": "Introduction to Linux & Commands",
+    "title": "UNIT 1: INTRODUCTION TO LINUX",
+    "turnIndex": 27,
+    "content": "Yesss, okay! ❤️ We've moved to the **Introduction to Linux** section now. We'll follow your syllabus in order, one topic at a time, using our usual format: easy explanations, light Hinglish, diagrams, examples, keywords, and exam-ready answers.\n\nI'll also keep track of the topics you've completed and **tell you clearly when the entire Linux section is finished.**\n\n# UNIT 1: INTRODUCTION TO LINUX\n\n## Topic 1: Introduction to Linux\n\n### 1. What is Linux?\n\n**Linux** is a free and open-source, Unix-like operating system. It manages computer hardware and software resources and provides an environment for running applications.\n\nSimple Hinglish mein: Linux ek operating system hai, just like Windows, but its source code is openly available, so people can study it, modify it and distribute it according to its licence.\n\n**Examples:** Ubuntu, Fedora, Debian and Linux Mint.\n\n### 2. Important Features of Linux\n\n- **Open-source:** Its source code is available for people to study and modify.\n- **Multiuser:** Multiple users can use the system with separate accounts and permissions.\n- **Multitasking:** Multiple tasks can run concurrently.\n- **Portable:** Linux can run on different hardware architectures.\n- **Secure:** Provides user permissions, authentication and access controls.\n- **Stable:** Can operate reliably for long periods when properly configured.\n- **Command-line interface:** Users can control the system using commands in a terminal.\n- **GUI support:** Desktop environments provide windows, icons and menus.\n\n### 3. Where Is Linux Used?\n\n\n  \n  \n  \n  \n\n\n### 4. Linux vs Windows\n\n| Feature | Linux | Windows |\n|---|---|---|\n| Source code | Generally open-source | Proprietary |\n| Cost | Many distributions are free | Licence may be paid or bundled |\n| Interface | CLI and GUI | Primarily GUI, with CLI tools |\n| Customisation | Extensive | Available, but more restricted |\n| Common uses | Servers, development, desktops | Desktops, gaming, business |\n\n### 5. Exam-Ready Answer (3–5 Marks)\n\nLinux is a free and open-source, Unix-like operating system based on the Linux kernel. It manages hardware resources and provides services for application programs.\n\nIts major features include multitasking, multiuser support, portability, security, stability and command-line support. Linux is widely used in personal computers, servers, cloud computing, embedded systems and software development.\n\n---\n\n## Quick revision\n\nRemember these three things:\n\n- **Linux = Operating system**\n- **Open-source = Source code can be studied and modified under its licence**\n- **Ubuntu, Fedora, Debian = Linux distributions**\n\n## Quick check 🧠\n\n\n  **Question:** Which of the following is a Linux distribution?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"b\"}\n        \n        Ubuntu is a popular Linux distribution.\n      {:else}\n        \n        The correct answer is **B: Ubuntu**.\n      {/if}\n    \n  {/if}\n\n\n**Next topic: Architecture of Linux OS.** We'll learn the layers of Linux, what each layer does, and draw an exam-ready diagram.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Microsoft Word"
+        },
+        {
+          "key": "B",
+          "label": "Ubuntu"
+        },
+        {
+          "key": "C",
+          "label": "Google Chrome"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-29",
+    "unit": "Introduction to Linux & Commands",
+    "title": "UNIT 1: INTRODUCTION TO LINUX",
+    "turnIndex": 29,
+    "content": "Chalo, next topic! ❤️\n\n# UNIT 1: INTRODUCTION TO LINUX\n## Topic 2: Architecture of Linux OS\n\n### 1. What is Linux Architecture?\n\nLinux architecture refers to the different layers and components that work together to make the operating system function.\n\nSimple Hinglish mein: Linux ke andar different parts hote hain. Har part ka apna kaam hai, aur sab milkar computer ko run karte hain.\n\n### 2. Diagram of Linux Architecture\n\n\n  \n    **User**\n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Application Programs & Utilities**\n    \n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Shell**\n    \n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Kernel**\n    \n  \n  <icon name=\"arrow-down-up\" color=\"secondary\" size=\"lg\"/>\n  \n    **Hardware**\n    \n  \n  \n\n\n### 3. Components of Linux Architecture\n\n**1. Hardware**\n\nThe physical components of a computer, such as the CPU, RAM, hard disk, keyboard and monitor.\n\nExample: RAM stores data that running programs need.\n\n**2. Kernel**\n\nThe **kernel is the core of the Linux operating system**. It directly manages hardware resources and provides essential services to programs.\n\nMain functions:\n- Process management\n- Memory management\n- Device management\n- Filesystem management\n- Networking\n\nExample: When you open an application, the kernel helps allocate memory and CPU time.\n\n**3. Shell**\n\nThe shell is a command interpreter that accepts commands from users and runs the requested programs.\n\nExamples: Bash, Zsh.\n\nExample:\n\n```bash\nls\n```\n\nThe shell runs the `ls` command to list directory contents.\n\n**4. System Utilities**\n\nThese are programs that help users perform common system tasks.\n\nExamples: `ls`, `cp`, `mv`, `mkdir`, `date`.\n\n**5. Application Programs**\n\nThese are programs used to perform specific tasks.\n\nExamples: text editors, web browsers, media players and development tools.\n\n### 4. Kernel vs Shell\n\n| Kernel | Shell |\n|---|---|\n| Core of the OS | Command interpreter |\n| Manages hardware and resources | Accepts commands and launches programs |\n| Communicates with hardware through system mechanisms and drivers | Requests OS services through programs and interfaces |\n| Example: Linux kernel | Example: Bash |\n\n**Exam trick:** The kernel and shell are not the same thing. The kernel manages resources; the shell provides a way to interact with the system through commands.\n\n### 5. Exam-Ready Answer (3–5 Marks)\n\nLinux architecture consists of several components, including hardware, the kernel, the shell, system utilities and application programs.\n\nThe hardware provides physical resources. The kernel manages processes, memory, devices and filesystems. The shell interprets user commands, while utilities and applications help users perform various tasks.\n\nTogether, these components enable the Linux operating system to function efficiently.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which component is the core of the Linux operating system?\n\n  \n  \n  {#if checked}\n    \n      {#if ans===\"b\"}\n        \n        The kernel is the core that manages system resources.\n      {:else}\n        \n        The correct answer is **B: Kernel**.\n      {/if}\n    \n  {/if}\n\n\n**Next topic: Basic Directory Structure of Linux** — we'll learn `/`, `/home`, `/bin`, `/etc`, `/root`, `/tmp` and other important directories.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "Shell"
+        },
+        {
+          "key": "B",
+          "label": "Kernel"
+        },
+        {
+          "key": "C",
+          "label": "Application program"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-33",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Topic 3: Basic Directory Structure of Linux",
+    "turnIndex": 33,
+    "content": "Done bhai ❤️ From now on, **you answer the quick check, and I'll immediately explain the next topic in the same reply.** No extra “shall we continue?” messages. Fatafat study mode ON. 😭\n\nSo our next topic is:\n\n# Topic 3: Basic Directory Structure of Linux\n\n### 1. What is a Directory?\n\nA **directory** is a location used to organise files and other directories.\n\nLinux uses a hierarchical directory structure, meaning directories are organised like a tree. The topmost directory is called the **root directory**, represented by `/`.\n\nSimple Hinglish: Windows mein folders hote hain; Linux mein bhi folders hote hain, jinhe directories kehte hain.\n\n### 2. Linux Directory Structure\n\n\n  \n    **`/` Root**\n  \n  <icon name=\"arrow-down\" color=\"secondary\"/>\n  <grid columns={2} gap={2}>\n    <grid-item>\n      \n        **`/home`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/etc`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/bin`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/var`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/tmp`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/dev`**\n        \n      \n    </grid-item>\n  </grid>\n  \n\n\n### 3. Important Linux Directories\n\n| Directory | Purpose |\n|---|---|\n| `/` | Root directory; the starting point of the filesystem. |\n| `/home` | Stores ordinary users' personal directories and files. |\n| `/root` | Home directory of the root (administrator) user. |\n| `/bin` | Traditionally contains essential user commands; commonly linked to `/usr/bin` on modern distributions. |\n| `/sbin` | Traditionally contains essential system-administration commands. |\n| `/etc` | Stores system-wide configuration files. |\n| `/dev` | Contains device files representing devices and interfaces. |\n| `/tmp` | Stores temporary files. |\n| `/var` | Stores variable data, such as logs and caches. |\n| `/usr` | Contains many user applications, utilities and shared resources. |\n| `/boot` | Contains files needed to boot the system, such as the Linux kernel and bootloader-related files. |\n| `/lib` | Traditionally contains essential shared libraries; often linked to `/usr/lib` on modern systems. |\n| `/media` | Common mount point for removable media. |\n| `/mnt` | Common temporary mount point for filesystems. |\n| `/opt` | Often used for optional or third-party application software. |\n| `/proc` | Virtual filesystem providing process and kernel information. |\n| `/sys` | Virtual filesystem exposing information about devices and the kernel. |\n\n### 4. Important Difference: `/` vs `/root` vs `/home`\n\n- `/` = the root of the entire filesystem.\n- `/root` = the home directory of the administrator account.\n- `/home` = contains personal directories of ordinary users.\n\n**Exam trick:** These three are not the same thing!\n\n### 5. Useful Commands\n\n```bash\npwd\nls /\ncd /home\nls\n```\n\n- `pwd` shows your current directory.\n- `ls /` lists directories and files at the filesystem root.\n- `cd /home` moves you into `/home`.\n- `ls` lists the contents of the current directory.\n\n### 6. Exam-Ready Answer (3–5 Marks)\n\nLinux follows a hierarchical filesystem structure that begins with the root directory `/`. It contains directories such as `/home` for users' files, `/etc` for configuration files, `/dev` for device files, `/tmp` for temporary files, `/var` for variable data and `/boot` for boot-related files.\n\nThis structure organises files systematically and helps the operating system manage data, applications and devices.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which directory stores system-wide configuration files in Linux?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `/etc` stores system-wide configuration files. Your next topic is **Linux help and documentation commands**: `man`, `info`, `help`, `whatis` and `apropos`.\n      \n    {:else}\n      \n        \n        The correct answer is **B: `/etc`**. Select B to continue directly to the next topic.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`/home`"
+        },
+        {
+          "key": "B",
+          "label": "`/etc`"
+        },
+        {
+          "key": "C",
+          "label": "`/tmp`"
+        }
+      ],
+      "continuePrompt": "My answer is B (/etc), correct. Continue immediately with the next topic: Linux help and documentation commands, in our usual easy Hinglish, exam-ready format. Cover man, info, help, whatis and apropos, with examples and a quick check at the end.",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-35",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Commands: Help & Documentation",
+    "turnIndex": 35,
+    "content": "Haan bilkul bhai 😭❤️ Ab Linux ke **saare commands Hinglish mein**, ekdum easy language mein karenge. Har command ka meaning, syntax, example aur exam point bhi milega. Chalo help commands se start karte hain!\n\n# Linux Commands: Help & Documentation\n\n## 1. `man` — Manual\n\n**Kaam:** Kisi command ki detailed information dekhne ke liye.\n\n```bash\nman ls\n```\n\nHinglish: `ls` command ka complete manual khol dega. Usmein usage, options aur details milengi.\n\n- `q` press karo to manual se bahar aa jaoge.\n- Example: `man date`\n\n**Exam keyword:** Displays the manual page of a command.\n\n## 2. `info` — Detailed Documentation\n\n**Kaam:** Command ki detailed documentation padhne ke liye, often topics aur navigation links ke saath.\n\n```bash\ninfo ls\n```\n\nHinglish: `ls` ke baare mein detailed documentation kholta hai, agar uski Info documentation installed hai.\n\n**Exam keyword:** Displays documentation in Info format.\n\n## 3. `help` — Built-in Commands ki Help\n\n**Kaam:** Shell ke built-in commands ke baare mein information deta hai.\n\n```bash\nhelp cd\nhelp echo\n```\n\nHinglish: Bash shell ko bolo ki `cd` ya `echo` command kaise kaam karti hai, toh woh uski help dikha dega.\n\n**Exam keyword:** Displays help for shell built-in commands.\n\n## 4. `whatis` — One-Line Meaning\n\n**Kaam:** Kisi command ka short, one-line description deta hai.\n\n```bash\nwhatis ls\nwhatis pwd\n```\n\nHinglish: Bas command ka chhota sa meaning batata hai, poori kahaani nahi.\n\n**Exam keyword:** Displays a brief description of a command.\n\n## 5. `apropos` — Related Commands Search\n\n**Kaam:** Kisi keyword ke basis par related manual-page descriptions search karta hai.\n\n```bash\napropos copy\napropos directory\n```\n\nHinglish: Agar tumhe files copy karne se related commands nahi pata, toh `apropos copy` related commands dhoondhne mein help karega.\n\n**Exam keyword:** Searches manual-page descriptions using a keyword.\n\n---\n\n## Ek nazar mein revision\n\n| Command | Easy meaning |\n|---|---|\n| `man` | Detailed manual |\n| `info` | Detailed documentation |\n| `help` | Shell built-in command help |\n| `whatis` | One-line meaning |\n| `apropos` | Keyword se related commands search |\n\n**Yaad rakhne ki trick:** `man` = manual, `info` = details, `help` = help, `whatis` = kya hai, `apropos` = kis cheez se related hai.\n\n## Quick check 🧠\n\n\n  **Question:** Tumhe `mkdir` command ka sirf one-line description chahiye. Kaunsa command use karogi?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `whatis mkdir` short description deta hai. Next we'll do `pwd`, `ls` aur `cd`.\n      \n    {:else}\n      \n        \n        Correct answer: **B — `whatis mkdir`**. Ye command ka one-line description deta hai.\n      \n    {/if}\n  {/if}\n\n\nAb se har quick check ke baad tumhara answer aate hi **next command ka explanation bhi saath mein** karenge. Fatafat syllabus complete karenge!",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`man mkdir`"
+        },
+        {
+          "key": "B",
+          "label": "`whatis mkdir`"
+        },
+        {
+          "key": "C",
+          "label": "`apropos mkdir`"
+        }
+      ],
+      "continuePrompt": "My answer is B: whatis mkdir. Correct, and continue immediately with the next Linux command topic in easy Hinglish: directory navigation commands pwd, ls and cd, with syntax, examples, and quick check.",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-37",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux: Basic Directory Structure",
+    "turnIndex": 37,
+    "content": "Areyyy haan 😭 sorry bhai! Hum abhi **Basic Directory Structure of Linux** par hi hain. Help commands baad mein karenge, syllabus ke order mein. Chalo directories ko Hinglish mein samajhte hain.\n\n# Linux: Basic Directory Structure\n\n## 1. Directory kya hoti hai?\n\nDirectory basically ek **folder** hota hai jisme files aur doosre folders store hote hain.\n\nLinux mein saari directories ek tree structure mein arranged hoti hain, jiska starting point `/` hota hai. Isko **Root Directory** kehte hain.\n\n## 2. Linux Directory Structure Diagram\n\n\n  \n    **`/` Root Directory**\n  \n  <icon name=\"arrow-down\" color=\"secondary\"/>\n  <grid columns={2} gap={2}>\n    <grid-item>\n      \n        **`/home`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/etc`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/bin`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/var`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/tmp`**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **`/dev`**\n        \n      \n    </grid-item>\n  </grid>\n  \n\n\n## 3. Important Linux Directories\n\n| Directory | Hinglish mein meaning |\n|---|---|\n| `/` | **Root:** Poore Linux filesystem ka starting point. |\n| `/home` | Normal users ki personal files aur folders. |\n| `/root` | Administrator, yaani root user ka personal home folder. |\n| `/bin` | Basic commands, jaise `ls`, `cp` aur `cat` ke liye traditionally use hoti hai. |\n| `/sbin` | System administration ke important commands. |\n| `/etc` | System ki configuration settings aur files. |\n| `/dev` | Devices ko represent karne wali files, jaise disks aur terminals. |\n| `/tmp` | Temporary files jo kuch time ke liye chahiye hoti hain. |\n| `/var` | Aisa data jo frequently change hota hai, jaise logs aur caches. |\n| `/usr` | Applications, utilities aur shared resources ka bada collection. |\n| `/boot` | System start hone ke liye zaroori boot-related files. |\n| `/lib` | Essential shared libraries; modern systems mein aksar `/usr/lib` se linked hoti hai. |\n| `/media` | USB drives jaise removable devices ko mount karne ki common location. |\n| `/mnt` | Filesystems ko temporarily mount karne ki common location. |\n| `/opt` | Optional ya third-party software install karne ki location. |\n| `/proc` | Running processes aur kernel ki information dikhane wala virtual filesystem. |\n| `/sys` | Hardware devices aur kernel se related information dene wala virtual filesystem. |\n\n## 4. Sabse Important Difference\n\nYe exam mein confuse mat karna:\n\n- **`/`** = poore filesystem ka root.\n- **`/root`** = administrator user ka home folder.\n- **`/home`** = normal users ke personal folders.\n\nExample:\n\n```text\n/\n├── home\n│   ├── student1\n│   └── student2\n├── root\n├── etc\n├── tmp\n└── var\n```\n\nYahaan `student1` aur `student2` normal users ke folders hain, jabki `root` administrator ka home folder hai.\n\n## 5. Directory Check Karne Ke Commands\n\n```bash\npwd\nls /\ncd /home\nls\n```\n\n- `pwd` — Abhi tum kis directory mein ho, woh batata hai.\n- `ls /` — Root directory ke andar kya-kya hai, woh dikhata hai.\n- `cd /home` — `/home` directory mein le jaata hai.\n- `ls` — Current directory ke files aur folders dikhata hai.\n\n## 6. Exam-Ready Answer\n\nLinux follows a hierarchical directory structure that begins with the root directory `/`. Important directories include `/home` for users' files, `/etc` for configuration files, `/tmp` for temporary files, `/var` for changing data, `/dev` for device files and `/boot` for boot-related files.\n\nThis structure helps organise files and manage system resources efficiently.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Normal users ki personal files generally kis directory mein hoti hain?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `/home` mein normal users ke personal folders hote hain. Next topic hoga Linux help commands.\n      \n    {:else}\n      \n        \n        Correct answer: **B — `/home`**. `/root` administrator ka home folder hai aur `/etc` configuration files ke liye hai.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`/root`"
+        },
+        {
+          "key": "B",
+          "label": "`/home`"
+        },
+        {
+          "key": "C",
+          "label": "`/etc`"
+        }
+      ],
+      "continuePrompt": "My answer is B: /home. Correct it and immediately continue with the next topic in my Linux syllabus: basic help and documentation commands man, info, help, whatis, apropos, all explained in easy Hinglish with syntax and examples, ending with a quick check.",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-39",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Commands: Help & Documentation",
+    "turnIndex": 39,
+    "content": "Bilkul correct bhai! ❤️ **B: `/home`** is the right answer. Normal users ki personal files aur folders generally `/home` mein hote hain. `/root` administrator ka home folder hota hai.\n\nChalo, ab next topic karte hain, aur iske baad tumhare answer ke saath hi agla topic continue karenge!\n\n# Linux Commands: Help & Documentation\n\nYe commands tab kaam aati hain jab tumhe kisi Linux command ka meaning, syntax ya usage samajhna ho.\n\n## 1. `man` — Manual\n\n**Kaam:** Kisi command ki detailed information dekhna.\n\n**Syntax:**\n```bash\nman command_name\n```\n\n**Example:**\n```bash\nman ls\n```\n\nHinglish: Isse `ls` command ka manual khulta hai, jisme uska use, options aur details milti hain.\n\n- Manual band karne ke liye `q` press karo.\n- Example: `man date`\n\n**Exam keyword:** Displays the manual page of a command.\n\n## 2. `info` — Detailed Documentation\n\n**Kaam:** Command ki detailed documentation dekhna, jo topics aur navigation links mein organised ho sakti hai.\n\n**Syntax:**\n```bash\ninfo command_name\n```\n\n**Example:**\n```bash\ninfo ls\n```\n\nHinglish: Ye `ls` ke baare mein Info documentation kholta hai, agar woh system par available hai.\n\n**Exam keyword:** Displays documentation in Info format."
+  },
+  {
+    "id": "topic-40",
+    "unit": "Introduction to Linux & Commands",
+    "title": "3. `help` — Built-in Command Help",
+    "turnIndex": 40,
+    "content": "## 3. `help` — Built-in Command Help\n\n**Kaam:** Bash shell ke built-in commands ki help dekhna.\n\n**Syntax:**\n```bash\nhelp command_name\n```\n\n**Example:**\n```bash\nhelp cd\nhelp echo\n```\n\nHinglish: Agar tumhe `cd` ya `echo` jaise Bash built-in command ka use samajhna hai, toh `help` use karo.\n\n**Exam keyword:** Displays help for shell built-in commands.\n\n## 4. `whatis` — One-Line Description\n\n**Kaam:** Kisi command ka short, one-line meaning batana.\n\n**Syntax:**\n```bash\nwhatis command_name\n```\n\n**Example:**\n```bash\nwhatis mkdir\nwhatis pwd\n```\n\nHinglish: Ye command ka bas ek chhota sa description deta hai, full details nahi.\n\n**Exam keyword:** Displays a brief description of a command.\n\n*Note:* Iske liye system par manual-page database available hona chahiye.\n\n## 5. `apropos` — Search Related Commands\n\n**Kaam:** Kisi keyword se related commands ko search karna.\n\n**Syntax:**\n```bash\napropos keyword\n```\n\n**Example:**\n```bash\napropos copy\napropos directory\n```\n\nHinglish: Maan lo tumhe files copy karne ke liye command yaad nahi hai. `apropos copy` related manual entries search karne mein help karta hai.\n\n**Exam keyword:** Searches manual-page descriptions using a keyword.\n\n*Note:* Ye bhi manual-page database par depend karta hai.\n\n---\n\n## Quick Revision Table\n\n| Command | Yaad rakhne ka tareeka |\n|---|---|\n| `man` | Detailed manual |\n| `info` | Structured documentation |\n| `help` | Shell built-in commands ki help |\n| `whatis` | One-line meaning |\n| `apropos` | Keyword se related commands |\n\n**Exam trick:** `whatis` = “Ye kya hai?” aur `apropos` = “Is topic se related kya hai?”\n\n## Quick check 🧠\n\n\n  **Question:** Tumhe `mkdir` command ka sirf one-line description chahiye. Kaunsa command use karogi?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `whatis mkdir` command ka one-line description deta hai. Next topic: `pwd`, `ls` aur `cd`.\n      \n    {:else}\n      \n        \n        Correct answer: **B — `whatis mkdir`**. Ye short description deta hai.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`man mkdir`"
+        },
+        {
+          "key": "B",
+          "label": "`whatis mkdir`"
+        },
+        {
+          "key": "C",
+          "label": "`apropos mkdir`"
+        }
+      ],
+      "continuePrompt": "My answer is B: whatis mkdir. Mark it correct and immediately continue with the next Linux syllabus topic in easy Hinglish: basic directory navigation commands pwd, ls and cd, with syntax, examples, exam keywords and a quick check at the end.",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-44",
+    "unit": "Introduction to Linux & Commands",
+    "title": "UNIT 1: Introduction to Linux",
+    "turnIndex": 44,
+    "content": "Chalo bhai, Linux commands start karte hain! ❤️ Notes ke liye mostly English, with thodi si Hinglish explanation. We'll follow your syllabus order and cover every command.\n\n# UNIT 1: Introduction to Linux\n## Topic 4: Basic Linux Commands\n\n### A. Directory Navigation Commands\n\n### 1. `pwd` — Print Working Directory\n\n**Definition:** Displays the full path of the current working directory.\n\nMatlab, abhi tum Linux ke kis folder mein ho, ye batata hai.\n\n**Syntax:**\n```bash\npwd\n```\n\n**Example output:**\n```text\n/home/student\n```\n\nYaani tum abhi `student` folder ke andar ho.\n\n### 2. `ls` — List\n\n**Definition:** Lists files and directories present in a directory.\n\nMatlab, current folder mein kya-kya files aur folders hain, woh dikhata hai.\n\n**Syntax:**\n```bash\nls\n```\n\n**Useful options:**\n- `ls -l` — Detailed list, including permissions and file sizes.\n- `ls -a` — Hidden files bhi dikhata hai.\n- `ls /home` — `/home` ke contents dikhata hai.\n\n### 3. `cd` — Change Directory\n\n**Definition:** Changes the current working directory.\n\nMatlab, ek folder se doosre folder mein jaane ke liye use hota hai.\n\n**Examples:**\n```bash\ncd /home/student\ncd ..\ncd ~\ncd /\n```\n\n| Command | Meaning |\n|---|---|\n| `cd /home/student` | Specified folder mein jaana |\n| `cd ..` | Parent directory mein jaana |\n| `cd ~` | Apne home directory mein jaana |\n| `cd /` | Root directory mein jaana |\n\n### Quick revision\n\n| Command | Main function |\n|---|---|\n| `pwd` | Current location batata hai |\n| `ls` | Files aur folders dikhata hai |\n| `cd` | Directory change karta hai |\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which command displays the current working directory?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `pwd` current working directory ka full path show karta hai.\n      \n    {:else}\n      \n        \n        Correct answer: **B — `pwd`**.\n      \n    {/if}\n  {/if}\n\n\nNext, we'll cover **`cat`**, then `mkdir`, `rmdir`, `mv`, `cp`, `rm` and the remaining commands in your syllabus.",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`ls`"
+        },
+        {
+          "key": "B",
+          "label": "`pwd`"
+        },
+        {
+          "key": "C",
+          "label": "`cd`"
+        }
+      ],
+      "continuePrompt": "My answer is B: pwd. Mark it correct and immediately continue to the next Linux command in my syllabus: cat, in the same balanced English-Hinglish notes format, with definition, syntax, examples, and quick check.",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-46",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 5: `cat`",
+    "turnIndex": 46,
+    "content": "Bilkul correct bhai! ❤️ **B: `pwd`** is the right answer. It displays the full path of the current working directory.\n\n# Linux Command 5: `cat`\n\n## 1. Definition\n\nThe `cat` command is used to **display, combine and create file contents** in Linux.\n\nHinglish: Is command se tum kisi text file ka content terminal par dekh sakti ho. Multiple files ka content combine karne ke liye bhi use hota hai.\n\n## 2. Syntax\n\n```bash\ncat filename\n```\n\n## 3. Examples\n\n**Example 1: Display file contents**\n\n```bash\ncat notes.txt\n```\n\nAgar `notes.txt` mein `Hello Linux!` likha hai, toh output hoga:\n\n```text\nHello Linux!\n```\n\n**Example 2: Display multiple files**\n\n```bash\ncat file1.txt file2.txt\n```\n\nDono files ka content ek ke baad ek display hoga.\n\n**Example 3: Create a file and enter text**\n\n```bash\ncat > notes.txt\n```\n\nAb text type karo. File save karke exit karne ke liye **Ctrl + D** press karo. Dhyaan rahe, `>` existing file ka content overwrite kar sakta hai.\n\n**Example 4: Add content to an existing file**\n\n```bash\ncat >> notes.txt\n```\n\nIsse existing content delete nahi hota; naya content end mein add hota hai. Finish karne ke liye Ctrl + D press karo.\n\n## 4. Important Points\n\n- `cat` stands for *concatenate*.\n- It can display file contents.\n- It can combine multiple files.\n- `>` overwrites; `>>` appends.\n\n**Exam keyword:** Displays and concatenates file contents.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which command displays the contents of `data.txt`?\n\n  \n  \n  {#if checked}\n    {#if ans===\"a\"}\n      \n        \n        `cat data.txt` file ka content display karta hai.\n      \n    {:else}\n      \n        \n        Correct answer: **A — `cat data.txt`**.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`cat data.txt`"
+        },
+        {
+          "key": "B",
+          "label": "`pwd data.txt`"
+        },
+        {
+          "key": "C",
+          "label": "`cd data.txt`"
+        }
+      ],
+      "continuePrompt": "My answer is A: cat data.txt. Mark it correct and immediately continue to the next Linux command in my syllabus: mkdir, in balanced English-Hinglish notes format with definition, syntax, examples and a quick check.",
+      "correctKey": "A",
+      "explanation": "`cat filename` concatenates and displays the contents of a file."
+    }
+  },
+  {
+    "id": "topic-48",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 6: `mkdir`",
+    "turnIndex": 48,
+    "content": "Correct bhai! ❤️ **A: `cat data.txt`** is absolutely right. It displays the contents of `data.txt`.\n\n# Linux Command 6: `mkdir`\n\n## 1. Definition\n\nThe `mkdir` command is used to **create new directories** in Linux.\n\nHinglish: Jab tumhe apne files organise karne ke liye ek naya folder banana ho, tab `mkdir` use karte hain.\n\n## 2. Syntax\n\n```bash\nmkdir directory_name\n```\n\n## 3. Examples\n\n**Example 1: Create a single directory**\n\n```bash\nmkdir Notes\n```\n\nThis creates a new directory named `Notes` in the current location.\n\n**Example 2: Create multiple directories**\n\n```bash\nmkdir Notes Assignments Projects\n```\n\nIsse teen alag-alag directories create hongi.\n\n**Example 3: Create nested directories**\n\n```bash\nmkdir -p College/BCA/Sem2\n```\n\nThe `-p` option creates parent directories as needed. Matlab, agar `College` aur `BCA` folders pehle se nahi hain, toh woh bhi create ho jayenge.\n\n## 4. Important Points\n\n- `mkdir` stands for **make directory**.\n- It creates new directories.\n- Directory names should not already exist at the specified location, unless you're using options such as `-p` for existing parent directories.\n\n**Exam keyword:** Creates directories in Linux.\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which command creates a directory named `College`?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `mkdir College` ek naya `College` directory banata hai.\n      \n    {:else}\n      \n        \n        Correct answer: **B — `mkdir College`**.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`cd College`"
+        },
+        {
+          "key": "B",
+          "label": "`mkdir College`"
+        },
+        {
+          "key": "C",
+          "label": "`rmdir College`"
+        }
+      ],
+      "continuePrompt": "My answer is B: mkdir College. Mark it correct and immediately continue to the next Linux command in my syllabus: rmdir, using balanced English-Hinglish notes with definition, syntax, examples, important points and a quick check.",
+      "correctKey": "B",
+      "explanation": "`mkdir FolderName` creates a new directory in Linux."
+    }
+  },
+  {
+    "id": "topic-50",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 7: `rmdir`",
+    "turnIndex": 50,
+    "content": "Bilkul correct bhai! ❤️ **B: `mkdir College`** creates a new directory named `College`.\n\n# Linux Command 7: `rmdir`\n\n## 1. Definition\n\nThe `rmdir` command is used to **remove empty directories** in Linux.\n\nHinglish: Agar kisi folder ke andar koi file ya doosra folder nahi hai, toh us folder ko delete karne ke liye `rmdir` use karte hain.\n\n## 2. Syntax\n\n```bash\nrmdir directory_name\n```\n\n## 3. Examples\n\n**Example 1: Remove an empty directory**\n\n```bash\nrmdir College\n```\n\nThis removes the `College` directory if it is empty.\n\n**Example 2: Remove multiple empty directories**\n\n```bash\nrmdir Notes Projects\n```\n\nIsse `Notes` aur `Projects` dono directories remove ho jayengi, provided both are empty.\n\n**Example 3: Remove nested empty directories**\n\n```bash\nrmdir -p College/BCA/Sem2\n```\n\nThe `-p` option removes the specified directory and its parent directories if they are all empty. Agar kisi parent folder mein files hain, toh removal stop ho sakta hai.\n\n## 4. Important Points\n\n- `rmdir` stands for **remove directory**.\n- It normally removes only empty directories.\n- It cannot remove a non-empty directory using the ordinary command.\n- Files inside a directory must be removed separately before `rmdir` can remove that directory.\n\n**Exam keyword:** Removes empty directories.\n\n### `mkdir` vs `rmdir`\n\n| `mkdir` | `rmdir` |\n|---|---|\n| Creates a directory | Removes an empty directory |\n| `mkdir Notes` | `rmdir Notes` |\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** You want to remove an empty directory named `Temp`. Which command should you use?\n\n  \n  \n  {#if checked}\n    {#if ans===\"b\"}\n      \n        \n        `rmdir Temp` empty `Temp` directory ko remove karta hai.\n      \n    {:else}\n      \n        \n        Correct answer: **B — `rmdir Temp`**.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`mkdir Temp`"
+        },
+        {
+          "key": "B",
+          "label": "`rmdir Temp`"
+        },
+        {
+          "key": "C",
+          "label": "`cd Temp`"
+        }
+      ],
+      "continuePrompt": "My answer is B: rmdir Temp. Mark it correct and immediately continue to the next Linux command in my syllabus: mv, using balanced English-Hinglish notes with definition, syntax, examples, important points and a quick check.",
+      "correctKey": "B",
+      "explanation": "`rmdir` removes empty directories only."
+    }
+  },
+  {
+    "id": "topic-52",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 8: `mv`",
+    "turnIndex": 52,
+    "content": "Bilkul correct bhai! ❤️ **B: `rmdir Temp`** removes the `Temp` directory, provided it is empty.\n\n# Linux Command 8: `mv`\n\n## 1. Definition\n\nThe `mv` command is used to **move or rename files and directories** in Linux.\n\nHinglish: Kisi file ko ek folder se doosre folder mein shift karna ho, ya file/folder ka naam change karna ho, toh `mv` command use karte hain.\n\n## 2. Syntax\n\n```bash\nmv source destination\n```\n\n- `source` = file ya directory jise move/rename karna hai.\n- `destination` = nayi location ya naya naam.\n\n## 3. Examples\n\n**Example 1: Rename a file**\n\n```bash\nmv old.txt new.txt\n```\n\nIsse `old.txt` ka naam change hokar `new.txt` ho jayega.\n\n**Example 2: Move a file to another directory**\n\n```bash\nmv notes.txt Documents/\n```\n\nIsse `notes.txt` file `Documents` folder mein move ho jayegi.\n\n**Example 3: Rename a directory**\n\n```bash\nmv OldFolder NewFolder\n```\n\nIsse directory ka naam `OldFolder` se `NewFolder` ho jayega, assuming destination name pehle se conflict nahi karta.\n\n**Example 4: Move a directory**\n\n```bash\nmv Projects /home/student/\n```\n\nIsse `Projects` directory `/home/student/` mein move ho jayegi.\n\n## 4. Important Points\n\n- `mv` stands for **move**.\n- It can move both files and directories.\n- It can rename files and directories.\n- Agar destination par same naam ki file already hai, toh woh overwrite ho sakti hai. Isliye carefully use karo.\n\n**Exam keyword:** Moves or renames files and directories.\n\n### `cp` vs `mv`\n\n| `cp` | `mv` |\n|---|---|\n| Copies a file | Moves a file |\n| Original file remains | Original location se file hat jaati hai |\n| `cp a.txt b.txt` | `mv a.txt b.txt` |\n\n---\n\n## Quick check 🧠\n\n\n  **Question:** Which command renames `old.txt` to `new.txt`?\n\n  \n  \n  {#if checked}\n    {#if ans===\"a\"}\n      \n        \n        `mv old.txt new.txt` file ko rename karta hai.\n      \n    {:else}\n      \n        \n        Correct answer: **A — `mv old.txt new.txt`**.\n      \n    {/if}\n  {/if}",
+    "quickCheck": {
+      "question": "Quick check question",
+      "options": [
+        {
+          "key": "A",
+          "label": "`mv old.txt new.txt`"
+        },
+        {
+          "key": "B",
+          "label": "`mkdir old.txt new.txt`"
+        },
+        {
+          "key": "C",
+          "label": "`rmdir old.txt`"
+        }
+      ],
+      "continuePrompt": "My answer is A: mv old.txt new.txt. Mark it correct and immediately continue to the next Linux command in my syllabus: cp, using balanced English-Hinglish notes with definition, syntax, examples, important points and a quick check.",
+      "correctKey": "A",
+      "explanation": "`mv old.txt new.txt` renames or moves a file."
+    }
+  },
+  {
+    "id": "topic-54",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `cp`",
+    "turnIndex": 54,
+    "content": "✅ **Correct! Option A: `mv old.txt new.txt`**\n\n`mv` renames or moves files. Perfect! Now let’s continue with the next command in your syllabus.\n\n# Linux Command: `cp`\n\n## 1. Definition\n\nThe `cp` command is used to **copy files and directories** from one location to another.\n\nSimple words mein, `cp` se file ki duplicate copy banti hai, while the original file remains unchanged.\n\n## 2. Syntax\n\n```bash\ncp source destination\n```\n\n- `source` – the file you want to copy.\n- `destination` – where you want the copy to be saved.\n\n## 3. Examples\n\n**Example 1: Copy and rename a file**\n\n```bash\ncp notes.txt backup.txt\n```\n\nCreates a copy named `backup.txt`. The original `notes.txt` remains there.\n\n**Example 2: Copy a file into a directory**\n\n```bash\ncp notes.txt Documents/\n```\n\nCopies `notes.txt` into the `Documents` directory.\n\n**Example 3: Copy a directory**\n\n```bash\ncp -r Projects Projects_backup\n```\n\nCopies the `Projects` directory and its contents into `Projects_backup`.\n\nHere, `-r` means **recursive**, which allows the command to copy directories and their contents.\n\n## 4. Important options\n\n| Option | Meaning |\n|---|---|\n| `-r` | Copies directories recursively |\n| `-i` | Asks before overwriting an existing file |\n| `-v` | Displays the files being copied |\n\nExample:\n\n```bash\ncp -i notes.txt backup.txt\n```\n\nIf `backup.txt` already exists, the command asks before overwriting it.\n\n## 5. `cp` vs `mv`\n\n| `cp` | `mv` |\n|---|---|\n| Copies a file | Moves a file |\n| Original remains | Original is moved from its location |\n| Can create a duplicate | Can rename a file |\n\n**Exam keyword:** The `cp` command is used to copy files and directories.\n\n## Quick check\n\n\n  **Which command copies `a.txt` to `b.txt` while keeping the original file?**",
+    "quickCheck": {
+      "question": "Which command copies `a.txt` to `b.txt` while keeping the original file?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`mv a.txt b.txt`"
+        },
+        {
+          "key": "B",
+          "label": "`cp a.txt b.txt`"
+        },
+        {
+          "key": "C",
+          "label": "`rm a.txt b.txt`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cp a.txt b.txt` copies a file while keeping original intact."
+    }
+  },
+  {
+    "id": "topic-56",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `rm`",
+    "turnIndex": 56,
+    "content": "✅ **Correct! Option B: `cp a.txt b.txt`**\n\nExactly! The `cp` command creates a copy of `a.txt` named `b.txt`, while the original remains unchanged.\n\n# Linux Command: `rm`\n\n## 1. Definition\n\nThe `rm` command is used to **remove or delete files** in Linux.\n\nSimple words mein, `rm` se unwanted files delete kar sakte hain. Directories ko delete karne ke liye specific options use karne padte hain.\n\n## 2. Syntax\n\n```bash\nrm filename\n```\n\nHere, `filename` is the name of the file you want to delete.\n\n## 3. Examples\n\n**Example 1: Delete a file**\n\n```bash\nrm old.txt\n```\n\nDeletes the file `old.txt`.\n\n**Example 2: Ask before deleting**\n\n```bash\nrm -i notes.txt\n```\n\nThe command asks for confirmation before deleting `notes.txt`.\n\n**Example 3: Delete a directory and its contents**\n\n```bash\nrm -r OldFolder\n```\n\nDeletes `OldFolder` along with its contents.\n\nBe careful with `rm -r`: it can permanently remove many files and directories. Always verify the folder name before running it.\n\n## 4. Important options\n\n| Option | Meaning |\n|---|---|\n| `-i` | Asks for confirmation before deletion |\n| `-r` | Deletes directories and their contents recursively |\n| `-f` | Forces deletion without prompting for confirmation |\n\n**Exam point:** The `rm` command removes files. The `-r` option allows it to remove directories and their contents.\n\n## 5. Difference between `rm` and `rmdir`\n\n| `rm` | `rmdir` |\n|---|---|\n| Removes files | Removes empty directories |\n| `rm -r` can remove directories with contents | Cannot remove non-empty directories |\n| Example: `rm notes.txt` | Example: `rmdir EmptyFolder` |\n\n## Quick check\n\n\n  **Which command removes a directory along with its contents?**",
+    "quickCheck": {
+      "question": "Which command removes a directory along with its contents?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`rmdir OldFolder`"
+        },
+        {
+          "key": "B",
+          "label": "`rm -r OldFolder`"
+        },
+        {
+          "key": "C",
+          "label": "`cp -r OldFolder`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`rm -r OldFolder` deletes directories and their contents recursively."
+    }
+  },
+  {
+    "id": "topic-58",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `file`",
+    "turnIndex": 58,
+    "content": "✅ **Correct! Option B: `rm -r OldFolder`**\n\nPerfect! `rm -r` removes a directory along with its contents, whereas `rmdir` works only with empty directories.\n\n# Linux Command: `file`\n\n## 1. Definition\n\nThe `file` command is used to **identify the type of a file** by examining its contents.\n\nSimple words mein, ye batata hai ki file text document hai, image hai, executable hai, ya kisi aur type ki file hai.\n\n## 2. Syntax\n\n```bash\nfile filename\n```\n\nHere, `filename` is the file whose type you want to identify.\n\n## 3. Examples\n\n**Example 1: Check a text file**\n\n```bash\nfile notes.txt\n```\n\nPossible output:\n\n```text\nnotes.txt: ASCII text\n```\n\nThis means the file contains text.\n\n**Example 2: Check an image**\n\n```bash\nfile photo.jpg\n```\n\nPossible output:\n\n```text\nphoto.jpg: JPEG image data\n```\n\nThis identifies the file as a JPEG image.\n\n**Example 3: Check multiple files**\n\n```bash\nfile notes.txt photo.jpg\n```\n\nDisplays the type of both files.\n\n## 4. Important points\n\n- The `file` command identifies a file's type by examining its contents.\n- It does not open or display the file's contents.\n- It can identify files even when their extensions are missing or misleading.\n- Its output depends on the actual file.\n\n**Exam keyword:** File type identification.\n\n## Quick check\n\n\n  **What is the main purpose of the `file` command?**",
+    "quickCheck": {
+      "question": "What is the main purpose of the `file` command?",
+      "options": [
+        {
+          "key": "A",
+          "label": "To delete a file"
+        },
+        {
+          "key": "B",
+          "label": "To identify a file's type"
+        },
+        {
+          "key": "C",
+          "label": "To rename a file"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-60",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `date`",
+    "turnIndex": 60,
+    "content": "✅ **Correct! Option B: To identify a file's type.**\n\nGreat! The `file` command examines a file's contents to determine its type. Now, let's move to the next command.\n\n# Linux Command: `date`\n\n## 1. Definition\n\nThe `date` command is used to **display the current system date and time**.\n\nSimple words mein, Linux system par aaj ki date aur current time check karne ke liye `date` command use hoti hai.\n\n## 2. Syntax\n\n```bash\ndate\n```\n\nNo arguments are required to display the current date and time.\n\n## 3. Examples\n\n**Example 1: Display the current date and time**\n\n```bash\ndate\n```\n\nPossible output:\n\n```text\nSun Oct 18 02:30:00 IST 2026\n```\n\n*Note: The actual output depends on your system's date, time and time zone.*\n\n**Example 2: Display the date in a specific format**\n\n```bash\ndate \"+%d-%m-%Y\"\n```\n\nPossible output:\n\n```text\n18-10-2026\n```\n\nHere:\n\n- `%d` = Day\n- `%m` = Month\n- `%Y` = Four-digit year\n\n**Example 3: Display only the year**\n\n```bash\ndate \"+%Y\"\n```\n\nPossible output:\n\n```text\n2026\n```\n\n## 4. Important points\n\n- `date` displays the current system date and time.\n- Formatting symbols can change how the date is displayed.\n- The displayed time depends on the system clock and time zone.\n- The command can also set the system date when used with special options and appropriate permissions, but for basic use, remember its display function.\n\n**Exam keyword:** Displays the current system date and time.\n\n## Quick check\n\n\n  **Which command displays the current system date and time?**",
+    "quickCheck": {
+      "question": "Which command displays the current system date and time?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`cal`"
+        },
+        {
+          "key": "B",
+          "label": "`date`"
+        },
+        {
+          "key": "C",
+          "label": "`whoami`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`date` displays current system date and time."
+    }
+  },
+  {
+    "id": "topic-62",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `cal`",
+    "turnIndex": 62,
+    "content": "✅ **Correct! Option B: `date`**\n\nExactly! The `date` command displays the current system date and time. Now, let’s move to the next command in your syllabus.\n\n# Linux Command: `cal`\n\n## 1. Definition\n\nThe `cal` command is used to **display a calendar** in the Linux terminal.\n\nSimple words mein, kisi month ya year ka calendar dekhne ke liye `cal` command use karte hain.\n\n## 2. Syntax\n\n```bash\ncal [month] [year]\n```\n\nThe month and year are optional arguments.\n\n## 3. Examples\n\n**Example 1: Display the current month's calendar**\n\n```bash\ncal\n```\n\nDisplays the calendar for the current month.\n\n**Example 2: Display the calendar for a specific year**\n\n```bash\ncal 2026\n```\n\nDisplays the calendar for the entire year 2026.\n\n**Example 3: Display a particular month's calendar**\n\n```bash\ncal 10 2026\n```\n\nDisplays the calendar for October 2026.\n\nPossible output:\n\n```text\n    October 2026\nSu Mo Tu We Th Fr Sa\n             1  2  3\n 4  5  6  7  8  9 10\n11 12 13 14 15 16 17\n18 19 20 21 22 23 24\n25 26 27 28 29 30 31\n```\n\n## 4. Important points\n\n- `cal` stands for **calendar**.\n- `cal` displays the current month's calendar.\n- `cal 2026` displays the full year's calendar.\n- `cal 10 2026` displays October 2026.\n- The command displays calendar information; it does not change the system date.\n\n**Exam keyword:** Displays a calendar in the terminal.\n\n## Quick check\n\n\n  **Which command displays the calendar for October 2026?**",
+    "quickCheck": {
+      "question": "Which command displays the calendar for October 2026?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`date 10 2026`"
+        },
+        {
+          "key": "B",
+          "label": "`cal 10 2026`"
+        },
+        {
+          "key": "C",
+          "label": "`cal October`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cal` displays an ASCII calendar."
+    }
+  },
+  {
+    "id": "topic-64",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `echo`",
+    "turnIndex": 64,
+    "content": "✅ **Correct! Option B: `cal 10 2026`**\n\nPerfect! This command displays the calendar for October 2026. Chalo, next command karte hain!\n\n# Linux Command: `echo`\n\n## 1. Definition\n\nThe `echo` command is used to **display text or the value of a variable on the terminal**.\n\nSimple words mein, screen par koi message, text, ya variable ki value print karne ke liye `echo` use hota hai.\n\n## 2. Syntax\n\n```bash\necho [text]\n```\n\n## 3. Examples\n\n**Example 1: Display a message**\n\n```bash\necho \"Hello Linux\"\n```\n\nOutput:\n\n```text\nHello Linux\n```\n\n**Example 2: Display a variable's value**\n\n```bash\necho $HOME\n```\n\nPossible output:\n\n```text\n/home/student\n```\n\nHere, `$HOME` represents the user's home directory. Output system ke according different ho sakta hai.\n\n**Example 3: Display numbers**\n\n```bash\necho 12345\n```\n\nOutput:\n\n```text\n12345\n```\n\n**Example 4: Write text into a file**\n\n```bash\necho \"Hello\" > message.txt\n```\n\nThis writes `Hello` into `message.txt`. If the file already contains text, `>` **overwrites its existing contents**.\n\nTo append text instead:\n\n```bash\necho \"Welcome\" >> message.txt\n```\n\nThe `>>` operator adds text at the end of the file.\n\n## 4. Important points\n\n- `echo` displays text or variable values.\n- Text can be enclosed in single or double quotation marks.\n- `$` is used to access a shell variable's value, such as `$HOME`.\n- `>` redirects output to a file and overwrites existing contents.\n- `>>` appends output to a file.\n\n**Exam keyword:** Displays text or variable values on the terminal.\n\n## Quick check\n\n\n  **Which command displays `Hello Linux` on the terminal?**",
+    "quickCheck": {
+      "question": "Which command displays `Hello Linux` on the terminal?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`echo \"Hello Linux\"`"
+        },
+        {
+          "key": "B",
+          "label": "`rm \"Hello Linux\"`"
+        },
+        {
+          "key": "C",
+          "label": "`cal \"Hello Linux\"`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "`echo` prints text or variables to the terminal standard output."
+    }
+  },
+  {
+    "id": "topic-66",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `bc`",
+    "turnIndex": 66,
+    "content": "✅ **Correct! Option A: `echo \"Hello Linux\"`**\n\nPerfect! The `echo` command displays text on the terminal. You're doing great with these commands. Let's move on!\n\n# Linux Command: `bc`\n\n## 1. Definition\n\nThe `bc` command is a **command-line calculator** used to perform mathematical calculations in Linux.\n\nSimple words mein, terminal ke andar calculations karne ke liye `bc` use hota hai, including arithmetic operations and decimal calculations.\n\n## 2. Syntax\n\n```bash\nbc\n```\n\nThis opens the calculator environment, if `bc` is installed on your system.\n\n## 3. Examples\n\n**Example 1: Addition**\n\n```bash\necho \"5+3\" | bc\n```\n\nOutput:\n\n```text\n8\n```\n\nHere, `|` is called a **pipe**. It sends the output of `echo` as input to `bc`.\n\n**Example 2: Multiplication**\n\n```bash\necho \"6*4\" | bc\n```\n\nOutput:\n\n```text\n24\n```\n\n**Example 3: Division**\n\n```bash\necho \"10/2\" | bc\n```\n\nOutput:\n\n```text\n5\n```\n\n**Example 4: Decimal calculations**\n\n```bash\necho \"scale=2; 10/3\" | bc\n```\n\nOutput:\n\n```text\n3.33\n```\n\nHere, `scale=2` specifies two decimal places for the calculation.\n\n**Example 5: Interactive calculator**\n\n```bash\nbc\n```\n\nThen type:\n\n```text\n5+3\n```\n\nOutput:\n\n```text\n8\n```\n\nType `quit` to exit the calculator.\n\n## 4. Important points\n\n- `bc` stands for **Basic Calculator**.\n- It performs mathematical calculations from the command line.\n- It supports arithmetic operators such as `+`, `-`, `*` and `/`.\n- `scale` controls decimal precision.\n- The command may need to be installed separately on some Linux systems.\n\n**Exam keyword:** Command-line calculator for mathematical operations.\n\n## Quick check\n\n\n  **Which command calculates `5 + 3` using the Linux calculator?**",
+    "quickCheck": {
+      "question": "Which command calculates `5 + 3` using the Linux calculator?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`echo \"5+3\" | bc`"
+        },
+        {
+          "key": "B",
+          "label": "`cal 5+3`"
+        },
+        {
+          "key": "C",
+          "label": "`date 5+3`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cal` displays an ASCII calendar."
+    }
+  },
+  {
+    "id": "topic-68",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `who`",
+    "turnIndex": 68,
+    "content": "✅ **Correct! Option A: `echo \"5+3\" | bc`**\n\nExactly! The `bc` command performs mathematical calculations, and the pipe (`|`) sends the expression to the calculator.\n\n# Linux Command: `who`\n\n## 1. Definition\n\nThe `who` command is used to **display information about users currently logged into the Linux system**.\n\nSimple words mein, ye batata hai ki system par kaun-kaun se users logged in hain.\n\n## 2. Syntax\n\n```bash\nwho\n```\n\nNo arguments are required for basic usage.\n\n## 3. Examples\n\n**Example 1: Display logged-in users**\n\n```bash\nwho\n```\n\nPossible output:\n\n```text\nstudent  tty2         2026-10-18 09:15\n```\n\nThis output indicates a logged-in user, their terminal, and the login date and time.\n\n**Example 2: Display additional information**\n\n```bash\nwho -a\n```\n\nDisplays more detailed login and system information, depending on the Linux implementation.\n\n## 4. Important points\n\n- `who` displays information about currently logged-in users.\n- Its output may include the username, terminal, login date, and login time.\n- The output depends on the system and its active login sessions.\n- Remember the difference: `who` shows logged-in users, while `whoami` displays your current effective username.\n\n**Exam keyword:** Displays information about logged-in users.\n\n## Quick check\n\n\n  **Which command displays information about users currently logged into Linux?**",
+    "quickCheck": {
+      "question": "Which command displays information about users currently logged into Linux?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`who`"
+        },
+        {
+          "key": "B",
+          "label": "`date`"
+        },
+        {
+          "key": "C",
+          "label": "`file`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "`who` lists all users currently logged into the system."
+    }
+  },
+  {
+    "id": "topic-70",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `whoami`",
+    "turnIndex": 70,
+    "content": "✅ **Correct! Option A: `who`**\n\nBilkul right! The `who` command displays information about users currently logged into the Linux system. Now, let's move to `whoami`.\n\n# Linux Command: `whoami`\n\n## 1. Definition\n\nThe `whoami` command is used to **display the username of the current effective user**.\n\nSimple words mein, ye batata hai ki terminal mein aap kis user ke naam se commands execute kar rahe ho.\n\n## 2. Syntax\n\n```bash\nwhoami\n```\n\nNo arguments are required.\n\n## 3. Examples\n\n**Example 1: Display the current username**\n\n```bash\nwhoami\n```\n\nOutput:\n\n```text\nstudent\n```\n\nThis means the current effective username is `student`.\n\n**Example 2: Compare `who` and `whoami`**\n\n```bash\nwho\nwhoami\n```\n\nPossible outputs:\n\n```text\nstudent  tty2  2026-10-18 09:15\nstudent\n```\n\nThe first command displays login-session information, while the second displays only the current effective username.\n\n## 4. Important points\n\n- `whoami` stands for **Who am I?**\n- It displays the current effective username.\n- It does not list every logged-in user.\n- It is useful for checking which user account is executing commands.\n\n### `who` vs `whoami`\n\n| `who` | `whoami` |\n|---|---|\n| Displays logged-in users | Displays the current effective username |\n| May show terminal and login time | Usually displays just one username |\n| Shows session information | Identifies the effective user |\n\n**Exam keyword:** Displays the current effective username.\n\n## Quick check\n\n\n  **Which command displays only your current effective username?**",
+    "quickCheck": {
+      "question": "Which command displays only your current effective username?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`who`"
+        },
+        {
+          "key": "B",
+          "label": "`whoami`"
+        },
+        {
+          "key": "C",
+          "label": "`hostname`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "`whoami` displays the effective username of the current user."
+    }
+  },
+  {
+    "id": "topic-72",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `hostname`",
+    "turnIndex": 72,
+    "content": "Almost! 😊 **Option A (`who`) is incorrect. The correct answer is B: `whoami`.**\n\n- `who` → shows information about users logged in.\n- `whoami` → displays your current effective username.\n\nEasy trick: **who = users logged in; whoami = my username.**\n\nNow, let's continue!\n\n# Linux Command: `hostname`\n\n## 1. Definition\n\nThe `hostname` command is used to **display the name of the computer or system on a network**.\n\nSimple words mein, har computer ya server ka ek system name hota hai. Us naam ko check karne ke liye `hostname` command use hoti hai.\n\n## 2. Syntax\n\n```bash\nhostname\n```\n\n## 3. Examples\n\n**Example 1: Display the system's hostname**\n\n```bash\nhostname\n```\n\nPossible output:\n\n```text\nstudent-pc\n```\n\nThis means the system's hostname is `student-pc`.\n\n**Example 2: Display the fully qualified domain name**\n\n```bash\nhostname -f\n```\n\nThis attempts to display the system's fully qualified domain name (FQDN), if it is configured.\n\n## 4. Important points\n\n- `hostname` displays the system's host name.\n- It helps identify a computer or server on a network.\n- The output depends on the system configuration.\n- The hostname can also be changed using special options and appropriate permissions, but for basic exams, remember its display function.\n\n**Exam keyword:** Displays the name of the host computer.\n\n## Quick check\n\n\n  **Which command displays the name of the computer or host system?**",
+    "quickCheck": {
+      "question": "Which command displays the name of the computer or host system?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`whoami`"
+        },
+        {
+          "key": "B",
+          "label": "`hostname`"
+        },
+        {
+          "key": "C",
+          "label": "`uname`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`hostname` shows the system network computer name."
+    }
+  },
+  {
+    "id": "topic-74",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `uname`",
+    "turnIndex": 74,
+    "content": "✅ **Correct! Option B: `hostname`**\n\nPerfect! The `hostname` command displays the name of the host computer. Now let's learn the next command in your syllabus.\n\n# Linux Command: `uname`\n\n## 1. Definition\n\nThe `uname` command is used to **display information about the operating system's kernel and system**.\n\nSimple words mein, ye system ke technical details batata hai, jaise kernel ka name, version, aur machine architecture.\n\n## 2. Syntax\n\n```bash\nuname [option]\n```\n\nThe option is optional. Different options display different types of system information.\n\n## 3. Examples\n\n**Example 1: Display the kernel name**\n\n```bash\nuname\n```\n\nPossible output:\n\n```text\nLinux\n```\n\n**Example 2: Display all available basic system information**\n\n```bash\nuname -a\n```\n\nPossible output:\n\n```text\nLinux student-pc 6.8.0 x86_64 GNU/Linux\n```\n\nThe exact output depends on your system.\n\n**Example 3: Display the kernel release**\n\n```bash\nuname -r\n```\n\nPossible output:\n\n```text\n6.8.0\n```\n\n**Example 4: Display the machine architecture**\n\n```bash\nuname -m\n```\n\nPossible output:\n\n```text\nx86_64\n```\n\nThis indicates a 64-bit x86 architecture.\n\n## 4. Important options\n\n| Option | Purpose |\n|---|---|\n| `-s` | Displays the kernel name |\n| `-n` | Displays the network node hostname |\n| `-r` | Displays the kernel release |\n| `-v` | Displays the kernel version |\n| `-m` | Displays the machine hardware name |\n| `-a` | Displays all available system information |\n\n## 5. Difference between `hostname` and `uname`\n\n| `hostname` | `uname` |\n|---|---|\n| Displays the host computer's name | Displays kernel and system information |\n| Example: `hostname` | Example: `uname -r` |\n\n**Exam keyword:** Displays kernel and system information.\n\n## Quick check\n\n\n  **Which command displays the kernel release in Linux?**",
+    "quickCheck": {
+      "question": "Which command displays the kernel release in Linux?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`uname -r`"
+        },
+        {
+          "key": "B",
+          "label": "`hostname -r`"
+        },
+        {
+          "key": "C",
+          "label": "`whoami -r`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "`uname -a` displays full operating system kernel details."
+    }
+  },
+  {
+    "id": "topic-76",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `tty`",
+    "turnIndex": 76,
+    "content": "✅ **Correct! Option A: `uname -r`**\n\nExactly! The `-r` option displays the **kernel release**. You're getting the hang of these commands. Let's continue!\n\n# Linux Command: `tty`\n\n## 1. Definition\n\nThe `tty` command is used to **display the file name of the terminal connected to standard input**.\n\nSimple words mein, it tells you which terminal device your current session is using.\n\n## 2. Syntax\n\n```bash\ntty\n```\n\nNo arguments are required for basic usage.\n\n## 3. Examples\n\n**Example 1: Display the terminal device**\n\n```bash\ntty\n```\n\nPossible output:\n\n```text\n/dev/pts/0\n```\n\nThis means the session is connected to the pseudo-terminal device `/dev/pts/0`.\n\n**Example 2: Check whether standard input is a terminal**\n\n```bash\ntty -s\n```\n\nThe `-s` option suppresses output and reports the result through the command's exit status. It is mainly useful in shell scripts.\n\n## 4. Important points\n\n- `tty` stands for **teletypewriter**.\n- It identifies the terminal device associated with standard input.\n- Output may look like `/dev/tty2` or `/dev/pts/0`.\n- `/dev/pts/0` commonly represents a pseudo-terminal used by terminal emulators or remote sessions.\n\n**Exam keyword:** Displays the name of the connected terminal device.\n\n## Quick check\n\n\n  **What does the `tty` command display?**",
+    "quickCheck": {
+      "question": "What does the `tty` command display?",
+      "options": [
+        {
+          "key": "A",
+          "label": "The current username"
+        },
+        {
+          "key": "B",
+          "label": "The terminal device name"
+        },
+        {
+          "key": "C",
+          "label": "The system's hostname"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`tty` prints the file name of the terminal connected to standard input."
+    }
+  },
+  {
+    "id": "topic-78",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command: `alias`",
+    "turnIndex": 78,
+    "content": "✅ **Correct! Option B: The terminal device name.**\n\nPerfect! The `tty` command displays the name of the terminal device connected to standard input. And now, we're at the **final command in your Linux syllabus**! 🎉\n\n# Linux Command: `alias`\n\n## 1. Definition\n\nThe `alias` command is used to **create a shortcut or an alternative name for a command** in Linux.\n\nSimple words mein, agar koi command baar-baar type karni padti hai, toh uska short name bana sakte ho using `alias`.\n\n## 2. Syntax\n\n```bash\nalias shortcut='command'\n```\n\n- `shortcut` = the new name you want to use.\n- `command` = the original command that the shortcut represents.\n\n## 3. Examples\n\n**Example 1: Create a shortcut for `ls -l`**\n\n```bash\nalias ll='ls -l'\n```\n\nNow type:\n\n```bash\nll\n```\n\nIt executes `ls -l`, which displays files and directories in a detailed list format.\n\n**Example 2: Display all defined aliases**\n\n```bash\nalias\n```\n\nDisplays the aliases currently defined in your shell.\n\n**Example 3: Create a shortcut for clearing the terminal**\n\n```bash\nalias c='clear'\n```\n\nNow, typing `c` runs the `clear` command.\n\n**Example 4: Remove an alias**\n\n```bash\nunalias ll\n```\n\nRemoves the `ll` shortcut. The original `ls -l` command remains unaffected.\n\n## 4. Important points\n\n- An alias provides a shorter name for a command.\n- Use `alias` to create or list aliases.\n- Use `unalias` to remove an alias.\n- Aliases are generally temporary and last for the current shell session unless configured in a shell startup file.\n- Spaces and quotation marks matter when defining an alias.\n\n**Exam keyword:** Creates shortcuts for commands.\n\n## Quick check: Final command!\n\n\n  **Which command creates a shortcut named `ll` for `ls -l`?**\n\n  \n  \n\n\n---\n\n## Is your Linux syllabus complete?\n\n**Almost there!** We've covered the Linux architecture, directory structure, documentation commands, and the listed basic commands, including `alias`.\n\nOnce you answer this final quick check, we'll confirm completion and give you a compact revision checklist for the entire syllabus.",
+    "quickCheck": {
+      "question": "Which command creates a shortcut named `ll` for `ls -l`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`unalias ll='ls -l'`"
+        },
+        {
+          "key": "B",
+          "label": "`alias ll='ls -l'`"
+        },
+        {
+          "key": "C",
+          "label": "`mkdir ll='ls -l'`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`alias cls=clear` creates a custom shortcut command."
+    }
+  },
+  {
+    "id": "topic-80",
+    "unit": "Introduction to Linux & Commands",
+    "title": "🎉 Introduction to Linux: Syllabus Checklist",
+    "turnIndex": 80,
+    "content": "✅ **Correct! Option B: `alias ll='ls -l'`**\n\nNo mistakes! This creates an alias named `ll` that runs `ls -l`. Remember, `unalias ll` removes that shortcut.\n\n# 🎉 Introduction to Linux: Syllabus Checklist\n\nYes, based on the syllabus you shared earlier, **we have covered all the listed topics and commands!** Here's your final revision checklist.\n\n## 1. Introduction and fundamentals\n\n- [x] Introduction to Linux\n- [x] Architecture of Linux OS\n- [x] Basic directory structure of Linux\n\n## 2. Help and documentation commands\n\n- [x] `man` — displays command manuals\n- [x] `info` — provides detailed documentation\n- [x] `help` — explains shell built-in commands\n- [x] `whatis` — gives a brief command description\n- [x] `apropos` — searches manual descriptions by keyword\n\n## 3. Basic commands\n\n- [x] `pwd` — displays the current directory\n- [x] `ls` — lists files and directories\n- [x] `cd` — changes the current directory\n- [x] `cat` — displays or combines file contents\n- [x] `mkdir` — creates directories\n- [x] `rmdir` — removes empty directories\n- [x] `mv` — moves or renames files\n- [x] `cp` — copies files and directories\n- [x] `rm` — removes files and, with options, directories\n- [x] `file` — identifies file types\n- [x] `date` — displays the system date and time\n- [x] `cal` — displays a calendar\n- [x] `echo` — displays text or variable values\n- [x] `bc` — performs calculations\n- [x] `who` — displays logged-in user information\n- [x] `whoami` — displays the current effective username\n- [x] `hostname` — displays the host name\n- [x] `uname` — displays kernel and system information\n- [x] `tty` — displays the terminal device name\n- [x] `alias` — creates command shortcuts\n\n## 4. Final status\n\n\n  \n  You've covered all the topics and commands listed in your Introduction to Linux syllabus.\n  \n\n\n**One small exam tip:** Be especially clear about these differences:\n\n- `cp` vs `mv`\n- `rm` vs `rmdir`\n- `who` vs `whoami`\n- `hostname` vs `uname`\n- `man` vs `help` vs `whatis` vs `apropos`\n\nThese comparisons make excellent short-answer and viva questions. You’ve finished the syllabus walkthrough; now it's time to make the commands stick through revision!"
+  },
+  {
+    "id": "topic-82",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 1: `man`",
+    "turnIndex": 82,
+    "content": "Yess, let's do the **help and documentation commands** properly, one by one, just like we've been doing the other Linux commands. We'll start from the first command, `man`, and won't skip anything. 💗\n\n# Linux Command 1: `man`\n\n## 1. Definition\n\nThe `man` command is used to **display the manual pages of Linux commands**. These pages provide information about a command's purpose, syntax, options, and usage.\n\nSimple Hinglish: Agar kisi command ko use karna hai but syntax ya options nahi pata, toh `man` se uski manual book open kar sakte ho.\n\n## 2. Syntax\n\n```bash\nman command_name\n```\n\n## 3. Examples\n\n**Example 1: Open the manual for `ls`**\n\n```bash\nman ls\n```\n\nDisplays the manual page for the `ls` command.\n\n**Example 2: Open the manual for `date`**\n\n```bash\nman date\n```\n\nDisplays information about the `date` command, including its options.\n\n**Example 3: Search within a manual page**\n\n```bash\nman ls\n```\n\nOnce the manual opens, type `/directory` and press Enter to search for that word.\n\nUseful navigation keys:\n\n| Key | Function |\n|---|---|\n| `Space` | Move forward one page |\n| `b` | Move backward one page |\n| `/word` | Search for a word |\n| `q` | Quit the manual |\n\n## 4. Important points\n\n- `man` stands for **manual**.\n- It provides detailed documentation for commands.\n- It explains syntax, options, and usage.\n- Press `q` to exit the manual viewer.\n\n**Exam keyword:** Displays manual pages for Linux commands.\n\n## Quick check\n\n\n  **Which command opens the manual page for `mkdir`?**",
+    "quickCheck": {
+      "question": "Which command opens the manual page for `mkdir`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`help mkdir`"
+        },
+        {
+          "key": "B",
+          "label": "`man mkdir`"
+        },
+        {
+          "key": "C",
+          "label": "`whatis mkdir`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`mkdir FolderName` creates a new directory in Linux."
+    }
+  },
+  {
+    "id": "topic-84",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 2: `info`",
+    "turnIndex": 84,
+    "content": "✅ **Correct! Option B: `man mkdir`**\n\nExactly! `man mkdir` opens the manual page for the `mkdir` command. Now let's move to the next help command.\n\n# Linux Command 2: `info`\n\n## 1. Definition\n\nThe `info` command is used to **display detailed documentation about Linux commands and programs** in Info format.\n\nSimple Hinglish: `info` bhi commands ki documentation provide karta hai, but its documentation can be organised into sections called *nodes*, with links between related topics.\n\n## 2. Syntax\n\n```bash\ninfo command_name\n```\n\n## 3. Examples\n\n**Example 1: Display information about `ls`**\n\n```bash\ninfo ls\n```\n\nOpens the Info documentation for `ls`, if available.\n\n**Example 2: Display information about `coreutils`**\n\n```bash\ninfo coreutils\n```\n\nOpens documentation for GNU Coreutils, a collection of common Linux command-line utilities.\n\n**Example 3: Open the general Info manual**\n\n```bash\ninfo\n```\n\nOpens the general Info documentation, if installed.\n\n## 4. Useful navigation keys\n\n| Key | Function |\n|---|---|\n| `Enter` | Open a link or topic |\n| `n` | Move to the next node |\n| `p` | Move to the previous node |\n| `u` | Move up to the parent node |\n| `q` | Quit |\n\n## 5. Difference between `man` and `info`\n\n| `man` | `info` |\n|---|---|\n| Displays manual pages | Displays Info documentation |\n| Usually organised as manual sections | Can be organised into linked nodes |\n| Command: `man ls` | Command: `info ls` |\n\n**Exam keyword:** Displays detailed, structured documentation in Info format.\n\n*Note:* Not every Linux command has a separate Info entry. Availability depends on your system and installed documentation.\n\n## Quick check\n\n\n  **Which command opens Info documentation for `ls`?**",
+    "quickCheck": {
+      "question": "Which command opens Info documentation for `ls`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`info ls`"
+        },
+        {
+          "key": "B",
+          "label": "`whatis ls`"
+        },
+        {
+          "key": "C",
+          "label": "`apropos ls`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-86",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 3: `help`",
+    "turnIndex": 86,
+    "content": "✅ **Correct! Option A: `info ls`**\n\nExactly! `info ls` opens the Info documentation for the `ls` command, if that documentation is installed. Now let's learn the next command.\n\n# Linux Command 3: `help`\n\n## 1. Definition\n\nThe `help` command is used to **display information about shell built-in commands**.\n\nSimple Hinglish: Linux shell mein kuch commands directly shell ke andar built-in hoti hain. Unka syntax aur usage samajhne ke liye `help` use karte hain.\n\n## 2. Syntax\n\n```bash\nhelp command_name\n```\n\n## 3. Examples\n\n**Example 1: Get help about `cd`**\n\n```bash\nhelp cd\n```\n\nDisplays information about the `cd` command, which changes the current directory.\n\n**Example 2: Get help about `echo`**\n\n```bash\nhelp echo\n```\n\nDisplays help information for the shell's built-in `echo` command.\n\n**Example 3: Display a list of available built-in commands**\n\n```bash\nhelp\n```\n\nIn Bash, this lists the available built-in commands and their descriptions.\n\n## 4. Important points\n\n- `help` is mainly used for **shell built-in commands**.\n- It provides a command's purpose, syntax, and available options.\n- It is especially useful in Bash.\n- External commands such as many versions of `ls` generally have their own manual pages instead.\n\n**Exam keyword:** Displays help for shell built-in commands.\n\n## 5. Difference between `man`, `info`, and `help`\n\n| Command | Main purpose |\n|---|---|\n| `man` | Displays manual pages |\n| `info` | Displays structured Info documentation |\n| `help` | Explains shell built-in commands |\n\n## Quick check\n\n\n  **Which command is commonly used to get help about the Bash built-in `cd`?**",
+    "quickCheck": {
+      "question": "Which command is commonly used to get help about the Bash built-in `cd`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`help cd`"
+        },
+        {
+          "key": "B",
+          "label": "`cal cd`"
+        },
+        {
+          "key": "C",
+          "label": "`date cd`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-88",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 4: `whatis`",
+    "turnIndex": 88,
+    "content": "✅ **Correct! Option A: `help cd`**\n\nExactly! `help cd` displays help for the Bash built-in `cd` command. Now let's continue with the next command in your syllabus.\n\n# Linux Command 4: `whatis`\n\n## 1. Definition\n\nThe `whatis` command is used to **display a brief, one-line description of a command** from the system's manual-page database.\n\nSimple Hinglish: Agar bas ye jaana hai ki koi command *kya karti hai*, without reading the entire manual, toh `whatis` use karte hain.\n\n## 2. Syntax\n\n```bash\nwhatis command_name\n```\n\n## 3. Examples\n\n**Example 1: Get a short description of `ls`**\n\n```bash\nwhatis ls\n```\n\nPossible output:\n\n```text\nls (1) - list directory contents\n```\n\nThis gives a short description of `ls`.\n\n**Example 2: Get a short description of `mkdir`**\n\n```bash\nwhatis mkdir\n```\n\nPossible output:\n\n```text\nmkdir (1) - make directories\n```\n\n**Example 3: Get a short description of `date`**\n\n```bash\nwhatis date\n```\n\nDisplays a brief description of the `date` command, if its manual database entry is available.\n\n## 4. Important points\n\n- `whatis` gives a **short, usually one-line description**.\n- It uses the system's manual-page database.\n- It does not provide the detailed explanation that `man` provides.\n- If the manual database is missing or outdated, the command may return no matching entry.\n\n**Exam keyword:** Displays a one-line description of a command.\n\n## 5. Difference between `man` and `whatis`\n\n| `man` | `whatis` |\n|---|---|\n| Provides detailed manual information | Provides a brief description |\n| Example: `man ls` | Example: `whatis ls` |\n\n## Quick check\n\n\n  **Which command gives a brief, one-line description of `mkdir`?**",
+    "quickCheck": {
+      "question": "Which command gives a brief, one-line description of `mkdir`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`whatis mkdir`"
+        },
+        {
+          "key": "B",
+          "label": "`help mkdir`"
+        },
+        {
+          "key": "C",
+          "label": "`mkdir whatis`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`mkdir FolderName` creates a new directory in Linux."
+    }
+  },
+  {
+    "id": "topic-90",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Linux Command 5: `apropos`",
+    "turnIndex": 90,
+    "content": "✅ **Correct! Option A: `whatis mkdir`**\n\nExactly! `whatis mkdir` gives a brief description of the `mkdir` command. Now, let's finish the final help/documentation command in your syllabus!\n\n# Linux Command 5: `apropos`\n\n## 1. Definition\n\nThe `apropos` command is used to **search manual-page descriptions for keywords and display related commands**.\n\nSimple Hinglish: Agar tumhe pata hai ki tumhe kya karna hai, but command ka naam nahi pata, toh `apropos` keyword search karke related commands find karne mein help karta hai.\n\n## 2. Syntax\n\n```bash\napropos keyword\n```\n\nHere, `keyword` is the word related to the task you want to perform.\n\n## 3. Examples\n\n**Example 1: Search for commands related to directories**\n\n```bash\napropos directory\n```\n\nDisplays commands whose manual-page descriptions match the keyword `directory`.\n\n**Example 2: Search for commands related to copying**\n\n```bash\napropos copy\n```\n\nMay display commands such as `cp` and other utilities related to copying.\n\n**Example 3: Search for commands related to calendars**\n\n```bash\napropos calendar\n```\n\nDisplays relevant manual entries whose descriptions match the keyword.\n\n*Note:* Results depend on the manual-page database available on your system.\n\n## 4. Important points\n\n- `apropos` searches manual-page descriptions using keywords.\n- It can return multiple related commands.\n- It is useful when you know the task but don't know the command name.\n- If the database is missing or outdated, results may be incomplete.\n\n**Exam keyword:** Searches manual descriptions for related commands.\n\n## 5. Difference between `whatis` and `apropos`\n\n| `whatis` | `apropos` |\n|---|---|\n| Gives a brief description of a specified command | Searches for commands related to a keyword |\n| Example: `whatis cp` | Example: `apropos copy` |\n| Best when you know the command name | Best when you know the task or keyword |\n\n## Quick check: Final help command!\n\n\n  **You want to find Linux commands related to copying, but don't know their names. Which command should you use?**",
+    "quickCheck": {
+      "question": "You want to find Linux commands related to copying, but don't know their names. Which command should you use?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`whatis copy`"
+        },
+        {
+          "key": "B",
+          "label": "`apropos copy`"
+        },
+        {
+          "key": "C",
+          "label": "`man copy`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-92",
+    "unit": "Introduction to Linux & Commands",
+    "title": "🎉 All five help/documentation commands are complete!",
+    "turnIndex": 92,
+    "content": "✅ **Correct! Option B: `apropos copy`**\n\nNo mistakes! `apropos copy` searches manual-page descriptions for commands related to copying. It can show multiple matching commands, depending on your system's manual database.\n\n# 🎉 All five help/documentation commands are complete!\n\nYou've now covered all five help commands from your Introduction to Linux syllabus:\n\n- [x] `man`\n- [x] `info`\n- [x] `help`\n- [x] `whatis`\n- [x] `apropos`\n\n## Quick comparison for exams\n\n| Command | Main purpose | Example |\n|---|---|---|\n| `man` | Displays detailed manual pages | `man ls` |\n| `info` | Displays structured Info documentation | `info ls` |\n| `help` | Explains shell built-in commands | `help cd` |\n| `whatis` | Gives a brief, one-line description | `whatis mkdir` |\n| `apropos` | Searches for commands related to a keyword | `apropos copy` |\n\n## The easiest way to remember\n\n\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n\n\n**Exam tip:** The most important distinction is between `whatis` and `apropos`: `whatis` looks up a brief description of a named command, while `apropos` searches for commands related to a keyword.\n\nYour **help/documentation section is now complete**, along with the other Linux topics and commands we've covered. 🎯"
+  },
+  {
+    "id": "topic-94",
+    "unit": "Operating Systems Unit 1",
+    "title": "What you need to study",
+    "turnIndex": 94,
+    "content": "Nooo, don't worry 😭💗 **This isn't a very long topic.** It's actually quite manageable compared to Linux architecture or learning all those commands.\n\nI'd say it takes around **25–35 minutes to understand properly** and another 10 minutes to revise.\n\n## What you need to study\n\n\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n\n\n## The main thing to remember\n\nThe three modes are the heart of this topic:\n\n| Mode | Purpose |\n|---|---|\n| **Command mode** | Navigate and edit text |\n| **Insert mode** | Type and modify text |\n| **Last-line mode** | Save, quit and execute editor commands |\n\nFor shell scripts, you'll learn this simple workflow:\n\n```bash\nvi hello.sh\n```\n\nWrite the script, save it using `:wq`, and then execute it using:\n\n```bash\nchmod +x hello.sh\n./hello.sh\n```\n\nWe'll cover the script itself and explain each command properly.\n\n**My suggestion:** Let's do it exactly like your Linux commands: one topic at a time, easy English with a little Hinglish, examples, important exam points, and a quick check after each topic. We'll start with **Vi Editor basics** and finish the entire section without dragging it out."
+  },
+  {
+    "id": "topic-96",
+    "unit": "Vi Editor & Shell Scripting",
+    "title": "Topic 1: Vi Editor Basics",
+    "turnIndex": 96,
+    "content": "Chalo, let's finish this topic too! 💗 We'll follow our usual format: definition, syntax, examples, important points, and a quick check. One topic at a time.\n\n# Topic 1: Vi Editor Basics\n\n## 1. Definition\n\n**Vi Editor** is a text editor in Linux used to create, view, and modify text files. It is commonly used to write configuration files and shell scripts.\n\nSimple Hinglish: `vi` ek editor hai jisme hum Linux terminal ke andar hi files create aur edit kar sakte hain.\n\n## 2. Syntax\n\n```bash\nvi filename\n```\n\nThis opens the specified file in the Vi editor.\n\n## 3. Examples\n\n**Example 1: Create or open a file**\n\n```bash\nvi notes.txt\n```\n\n- If `notes.txt` exists, Vi opens it.\n- If it doesn't exist, Vi opens a new buffer; the file is created when you save it.\n\n**Example 2: Create a shell script**\n\n```bash\nvi hello.sh\n```\n\nOpens a file named `hello.sh`, where you can write shell commands.\n\n**Example 3: Open a file in read-only mode**\n\n```bash\nvi -R notes.txt\n```\n\nOpens the file in read-only mode, preventing ordinary editing.\n\n## 4. Basic keys to remember\n\n| Key | Function |\n|---|---|\n| `i` | Enter Insert mode |\n| `Esc` | Return to Command mode |\n| `:w` | Save the file |\n| `:q` | Quit Vi |\n| `:wq` | Save and quit |\n| `:q!` | Quit without saving changes |\n\nWe'll practise these properly in the next topics.\n\n## 5. Important points\n\n- Vi is a **terminal-based text editor**.\n- It can create and edit text files.\n- It is commonly used to write shell scripts.\n- Its behaviour is based on different modes.\n- A new file is saved to disk when you save it.\n\n**Exam keyword:** Vi is a text editor used to create and modify files in Linux.\n\n## Quick check\n\n\n  **Which command opens or creates a file named `test.txt` in Vi?**",
+    "quickCheck": {
+      "question": "Which command opens or creates a file named `test.txt` in Vi?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`cat test.txt`"
+        },
+        {
+          "key": "B",
+          "label": "`vi test.txt`"
+        },
+        {
+          "key": "C",
+          "label": "`mkdir test.txt`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-98",
+    "unit": "Vi Editor & Shell Scripting",
+    "title": "Topic 2: Three Modes of Vi Editor",
+    "turnIndex": 98,
+    "content": "✅ **Correct! Option B: `vi test.txt`**\n\nExactly! The command opens an existing file or lets you create a new one in Vi. Now comes the **most important part of this topic: the three modes of Vi Editor.**\n\n# Topic 2: Three Modes of Vi Editor\n\nVi works in three main modes. Each mode has a different purpose, so understanding these is essential for your practical and viva.\n\n## 1. The three modes\n\n\n  \n    \n    Used to navigate through text and perform editing operations, such as deleting or copying text.\n\n    \n  \n  \n    \n    Used to type new text or modify existing text.\n\n    \n  \n  \n    \n    Used to enter commands such as save, quit, and save-and-quit.\n\n    \n  \n\n\n## 2. Comparison table\n\n| Feature | Command Mode | Insert Mode | Last-Line Mode |\n|---|---|---|---|\n| Main purpose | Navigate and edit | Enter text | Execute editor commands |\n| How to enter | Press `Esc` | Press `i` | Press `Esc`, then `:` |\n| Example | `dd` deletes a line | Type `Hello` | `:wq` saves and quits |\n| How to return | Already in this mode | Press `Esc` | Press `Esc` |\n\n## 3. Example: Switching between modes\n\nSuppose you want to write `Hello Linux` in a file.\n\n<list connector=\"solid\" marker=\"number\" gap={2}>\n  <list-item>Open the file:\n\n    ```bash\n    vi notes.txt\n    ```\n  </list-item>\n  <list-item>Press `i` to enter Insert mode.</list-item>\n  <list-item>Type `Hello Linux`.</list-item>\n  <list-item>Press `Esc` to return to Command mode.</list-item>\n  <list-item>Type `:wq` and press `Enter` to save and quit.</list-item>\n</list>\n\nBas, you've written and saved your first file!\n\n## 4. Important points for exams\n\n- Vi opens in **Command mode** by default.\n- `i` switches from Command mode to Insert mode.\n- `Esc` returns to Command mode.\n- `:` opens the Last-Line mode for entering commands.\n- `:w` saves, `:q` quits, and `:wq` saves and quits.\n\n**Exam-ready definition:** The three modes of Vi Editor are Command mode, Insert mode, and Last-Line mode. They are used for editing operations, entering text, and executing editor commands, respectively.\n\n## Quick check\n\n\n  **Which mode is used to type text into a file in Vi?**",
+    "quickCheck": {
+      "question": "Which mode is used to type text into a file in Vi?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Command mode"
+        },
+        {
+          "key": "B",
+          "label": "Insert mode"
+        },
+        {
+          "key": "C",
+          "label": "Last-Line mode"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "The 3 modes of Vi are Command Mode, Insert Mode, and Last-Line (Ex) Mode."
+    }
+  },
+  {
+    "id": "topic-100",
+    "unit": "Vi Editor & Shell Scripting",
+    "title": "Topic 3: How to Write and Save a File in Vi Editor",
+    "turnIndex": 100,
+    "content": "✅ **Correct! Option B: Insert mode**\n\nExactly! Insert mode is where you type text into a file. Remember: press `i` to start typing and `Esc` to return to Command mode.\n\nNow let's learn how to write and save files in Vi. This is especially important for your practical exam.\n\n# Topic 3: How to Write and Save a File in Vi Editor\n\n## 1. Steps to write and save a file\n\n<list connector=\"solid\" marker=\"number\" gap={2}>\n  <list-item>**Open or create a file**\n\n    ```bash\n    vi notes.txt\n    ```\n\n    This opens the file if it exists, or starts a new buffer if it doesn't.\n  </list-item>\n  <list-item>**Enter Insert mode**\n\n    Press `i` on your keyboard. You can now type text.\n  </list-item>\n  <list-item>**Write your text**\n\n    For example, type:\n\n    ```text\n    Hello Linux\n    Welcome to Vi Editor\n    ```\n  </list-item>\n  <list-item>**Return to Command mode**\n\n    Press `Esc` after finishing your text.\n  </list-item>\n  <list-item>**Save the file**\n\n    Type `:w` and press `Enter`.\n\n    This saves the changes while keeping the editor open.\n  </list-item>\n  <list-item>**Save and exit**\n\n    Type `:wq` and press `Enter`.\n\n    This saves the file and closes Vi.\n  </list-item>\n</list>\n\n## 2. Important Vi commands\n\n| Command | Function |\n|---|---|\n| `i` | Enters Insert mode |\n| `Esc` | Returns to Command mode |\n| `:w` | Saves the file |\n| `:q` | Quits the editor if there are no unsaved changes |\n| `:wq` | Saves and quits |\n| `:q!` | Quits without saving unsaved changes |\n\n**Exam tip:** The `:` commands are entered after pressing `Esc`. Then press `Enter` to execute them.\n\n## 3. Example: Complete procedure\n\nSuppose you want to create `hello.txt` containing `Hello World`.\n\n```bash\nvi hello.txt\n```\n\nInside Vi:\n\n1. Press `i`.\n2. Type `Hello World`.\n3. Press `Esc`.\n4. Type `:wq`.\n5. Press `Enter`.\n\nYour file is now saved as `hello.txt`.\n\n## 4. Important points\n\n- Vi does not automatically save every change.\n- Press `Esc` before entering save or quit commands.\n- `:w` saves without exiting.\n- `:wq` saves and exits.\n- `:q!` discards unsaved changes, so use it carefully.\n\n**Exam-ready answer:** To write and save a file in Vi, open the file using `vi filename`, press `i` to enter Insert mode, type the text, press `Esc`, and enter `:wq` followed by `Enter`.\n\n## Quick check\n\n\n  **You have typed text in Vi and want to save the file and exit. Which command should you use after pressing `Esc`?**",
+    "quickCheck": {
+      "question": "You have typed text in Vi and want to save the file and exit. Which command should you use after pressing `Esc`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`:q!`"
+        },
+        {
+          "key": "B",
+          "label": "`:wq`"
+        },
+        {
+          "key": "C",
+          "label": "`i`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-102",
+    "unit": "Vi Editor & Shell Scripting",
+    "title": "Topic 4: Write, Save and Execute a Shell Script Using Vi Editor",
+    "turnIndex": 102,
+    "content": "✅ **Correct! Option B: `:wq`**\n\nPerfect! `:wq` saves your changes and exits the Vi Editor. Now let's finish the last topic in your syllabus: writing and executing a shell script.\n\n# Topic 4: Write, Save and Execute a Shell Script Using Vi Editor\n\n## 1. Definition\n\nA **shell script** is a text file containing a sequence of shell commands that are executed by a shell interpreter.\n\nSimple Hinglish: Instead of typing commands one by one in the terminal, hum unhe ek file mein likh sakte hain and execute them together.\n\nShell scripts commonly use the `.sh` extension.\n\n## 2. Steps to create and execute a shell script\n\n<list connector=\"solid\" marker=\"number\" gap={3}>\n  <list-item>**Step 1: Open or create the script**\n\n    ```bash\n    vi hello.sh\n    ```\n\n    This opens a file named `hello.sh`.\n  </list-item>\n  <list-item>**Step 2: Enter Insert mode**\n\n    Press `i` and type the following script:\n\n    ```bash\n    #!/bin/bash\n    echo \"Hello Linux\"\n    echo \"Welcome to Shell Scripting\"\n    ```\n\n    Here:\n    - `#!/bin/bash` specifies the Bash interpreter.\n    - `echo` displays text on the terminal.\n  </list-item>\n  <list-item>**Step 3: Save and exit Vi**\n\n    Press `Esc`, type `:wq`, and press `Enter`.\n  </list-item>\n  <list-item>**Step 4: Give execute permission**\n\n    ```bash\n    chmod +x hello.sh\n    ```\n\n    This adds execute permission to the file, subject to the system's permissions.\n  </list-item>\n  <list-item>**Step 5: Execute the script**\n\n    ```bash\n    ./hello.sh\n    ```\n\n    The `./` tells Linux to run the script from the current directory.\n  </list-item>\n</list>\n\n## 3. Expected output\n\n```text\nHello Linux\nWelcome to Shell Scripting\n```\n\nThat's it! You've written, saved and executed your first shell script.\n\n## 4. Alternative way to execute\n\nYou can also run the script directly through Bash:\n\n```bash\nbash hello.sh\n```\n\nThis usually works without adding execute permission, because Bash reads and interprets the file.\n\n## 5. Important commands for exams\n\n| Command | Purpose |\n|---|---|\n| `vi hello.sh` | Opens or creates the script |\n| `i` | Enters Insert mode |\n| `Esc` | Returns to Command mode |\n| `:wq` | Saves and exits Vi |\n| `chmod +x hello.sh` | Adds execute permission |\n| `./hello.sh` | Executes the script from the current directory |\n| `bash hello.sh` | Runs the script using Bash |\n\n### Important points\n\n- A shell script contains multiple shell commands in a file.\n- `#!/bin/bash` is called the **shebang**.\n- `echo` displays output.\n- `chmod +x` makes the file executable, provided other permissions and system settings allow it.\n- `./hello.sh` runs the executable script from the current directory.\n- `bash hello.sh` runs the script through Bash.\n\n**Exam-ready answer:** To create and execute a shell script using Vi, open a file with `vi filename.sh`, enter Insert mode, write the commands, press `Esc`, save using `:wq`, give execute permission using `chmod +x filename.sh`, and run it using `./filename.sh`.\n\n## Quick check: Final Vi Editor question\n\n\n  **Which command adds execute permission to `hello.sh`?**\n\n  \n  \n\n\n---\n\n## Is your Vi Editor syllabus complete?\n\nOnce you answer this final check, we'll confirm the completion of all three syllabus areas:\n\n- Vi Editor basics\n- Three modes of Vi Editor\n- Writing and saving files\n- Writing, saving and executing shell scripts",
+    "quickCheck": {
+      "question": "Which command adds execute permission to `hello.sh`?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`chmod +x hello.sh`"
+        },
+        {
+          "key": "B",
+          "label": "`vi +x hello.sh`"
+        },
+        {
+          "key": "C",
+          "label": "`echo +x hello.sh`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`man` displays the official Linux manual pages."
+    }
+  },
+  {
+    "id": "topic-104",
+    "unit": "Vi Editor & Shell Scripting",
+    "title": "🎉 Your Vi Editor syllabus is complete!",
+    "turnIndex": 104,
+    "content": "✅ **Correct! Option A: `chmod +x hello.sh`**\n\nNo mistakes! The `chmod +x hello.sh` command adds execute permission to the script, allowing you to run it directly using `./hello.sh`, provided the other permissions and system settings allow it.\n\n# 🎉 Your Vi Editor syllabus is complete!\n\nYou've covered all the topics you listed. Here's your concise final revision checklist.\n\n## 1. Vi Editor basics\n\n- [x] Definition and uses of Vi Editor\n- [x] Open or create a file: `vi filename`\n- [x] Read-only mode: `vi -R filename`\n\n## 2. Three modes of Vi Editor\n\n- [x] **Command mode:** Navigate and perform editing operations.\n- [x] **Insert mode:** Enter or modify text using `i`.\n- [x] **Last-Line mode:** Enter commands using `:` after pressing `Esc`.\n\n## 3. Writing and saving files\n\n- [x] `i` — enter Insert mode\n- [x] `Esc` — return to Command mode\n- [x] `:w` — save the file\n- [x] `:q` — quit if there are no unsaved changes\n- [x] `:wq` — save and quit\n- [x] `:q!` — quit without saving unsaved changes\n\n## 4. Writing and executing shell scripts\n\n- [x] Create a script: `vi hello.sh`\n- [x] Write commands inside the file\n- [x] Use `#!/bin/bash` as the shebang\n- [x] Save and exit using `:wq`\n- [x] Add execute permission: `chmod +x hello.sh`\n- [x] Execute the script: `./hello.sh`\n- [x] Alternative execution: `bash hello.sh`\n\n## Must-remember commands\n\n| Command | Purpose |\n|---|---|\n| `vi hello.sh` | Open or create a script |\n| `i` | Start typing |\n| `Esc` | Return to Command mode |\n| `:w` | Save |\n| `:wq` | Save and exit |\n| `:q!` | Exit without saving |\n| `chmod +x hello.sh` | Add execute permission |\n| `./hello.sh` | Run the script directly |\n\n\n  \n  You've finished the full Vi Editor section you shared. Your next revision priority should be practising the commands and remembering the three modes, especially the difference between `:w`, `:wq`, and `:q!`.\n\n\n**One final exam tip:** If a question asks how to write and execute a shell script using Vi, explain the entire sequence from `vi hello.sh` to `./hello.sh`, not just the individual commands."
+  },
+  {
+    "id": "topic-106",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Topic 1: Process Concept",
+    "turnIndex": 106,
+    "content": "Let's gooo! 💗 We're starting **Operating Systems: Unit II** now. We'll follow our usual method: one topic at a time, easy English with a little Hinglish, definitions, examples, important exam points, and a quick check after every topic.\n\nUnit II has four major parts. We'll finish them in syllabus order.\n\n\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n\n\n# Topic 1: Process Concept\n\n## 1. Definition\n\nA **process** is a program that is currently in execution.\n\nSimple Hinglish: Program disk par stored instructions hota hai. Jab hum us program ko run karte hain, it becomes a process.\n\n**Example:**\n- A file containing a Python program is a program.\n- When you run that Python program, it becomes a process.\n- Running a browser, music player, or text editor creates processes.\n\n## 2. Program vs Process\n\n| Program | Process |\n|---|---|\n| A passive set of instructions | A program in execution |\n| Stored on disk | Active and managed by the OS |\n| Does not need a running state | Has a process state |\n| Example: `hello.py` file | The running `hello.py` program |\n\n## 3. Components of a process\n\nA process generally includes the following:\n\n\n  \n    **Process**\n  \n  \n    <icon name=\"arrow-down\" size=\"lg\" color=\"secondary\" />\n  \n  <grid columns={2} gap={2}>\n    <grid-item>\n      \n        **Text section**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **Data section**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **Heap**\n        \n      \n    </grid-item>\n    <grid-item>\n      \n        **Stack**\n        \n      \n    </grid-item>\n  </grid>\n\n\nThe operating system also maintains information about the process, such as its ID, state, CPU registers, and scheduling information.\n\n## 4. Process ID (PID)\n\nEvery process running in a typical Linux system is assigned a **Process ID (PID)**, which identifies that process.\n\nExample:\n\n```bash\nps\n```\n\nThis command can display information about processes associated with your terminal, including their PIDs.\n\n## 5. Important exam points\n\n- A process is a program in execution.\n- Each process has its own execution state and allocated resources.\n- The OS manages processes and allocates CPU time to them.\n- A process typically contains text, data, heap, and stack sections.\n- A PID is used to identify a process.\n\n**Exam-ready definition:** A process is an active instance of a program in execution, together with its execution state, memory, and resources managed by the operating system.\n\n## Quick check\n\n\n  **Which statement correctly defines a process?**",
+    "quickCheck": {
+      "question": "Which statement correctly defines a process?",
+      "options": [
+        {
+          "key": "A",
+          "label": "A program stored on disk that is not running"
+        },
+        {
+          "key": "B",
+          "label": "A program that is currently in execution"
+        },
+        {
+          "key": "C",
+          "label": "A folder containing program files"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "A process is formally defined as an active program in execution."
+    }
+  },
+  {
+    "id": "topic-108",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Topic 2: Process Scheduling",
+    "turnIndex": 108,
+    "content": "✅ **Correct! Option B: A program that is currently in execution.**\n\nExactly! A program is passive, while a process is an active, running instance of that program. Let's move to the next topic in Unit II.\n\n# Topic 2: Process Scheduling\n\n## 1. Definition\n\n**Process scheduling** is the activity of selecting a process from the available processes and deciding which process should get CPU time.\n\nSimple Hinglish: Ek time par multiple processes CPU use karna chahti hain. Operating System decide karta hai ki **CPU kis process ko kab milega**. This is called process scheduling.\n\n## 2. Why is process scheduling needed?\n\nImagine you're listening to music, browsing the internet, and downloading a file at the same time.\n\nThe OS manages CPU time among these tasks so that the system stays responsive and resources are used efficiently.\n\nMain objectives:\n\n- Keep the CPU busy.\n- Improve system performance.\n- Give processes a fair opportunity to execute.\n- Reduce waiting and response times.\n- Manage multiple processes efficiently.\n\n## 3. Types of schedulers\n\nThere are three commonly discussed schedulers in Operating Systems.\n\n\n  \n    **1. Long-Term Scheduler (Job Scheduler)**\n\n    Selects jobs from the job pool and admits them into main memory for execution.\n\n    \n  \n  \n    **2. Short-Term Scheduler (CPU Scheduler)**\n\n    Selects a process from the ready queue and allocates the CPU to it.\n\n    \n  \n  \n    **3. Medium-Term Scheduler**\n\n    Temporarily suspends processes by swapping them out of memory and may later bring them back.\n\n    \n  \n\n\n## 4. Process scheduling vs CPU scheduling\n\nThese terms are closely related and are sometimes used interchangeably in introductory material.\n\n| Process scheduling | CPU scheduling |\n|---|---|\n| Broadly concerns managing process execution and progress | Specifically selects a ready process to run on the CPU |\n| Can involve different scheduling decisions | Usually refers to the short-term scheduler |\n\n**Important:** The short-term scheduler is the one that chooses the next ready process for CPU execution.\n\n## 5. Preemptive vs non-preemptive scheduling\n\nThese are two important scheduling approaches.\n\n| Preemptive | Non-preemptive |\n|---|---|\n| OS can take the CPU away from a running process | Process keeps the CPU until it finishes or blocks |\n| Better responsiveness for many interactive systems | Simpler, but a long process can delay others |\n| Example: Round Robin, SRTF | Example: FCFS, non-preemptive SJF |\n\nWe'll study these algorithms properly in the CPU Scheduling section of your syllabus.\n\n## 6. Important exam points\n\n- Process scheduling helps manage CPU allocation among processes.\n- The short-term scheduler selects a process from the ready queue.\n- The long-term scheduler admits jobs into the system.\n- The medium-term scheduler handles suspension and swapping.\n- Scheduling may be preemptive or non-preemptive.\n\n**Exam-ready definition:** Process scheduling is an operating-system activity that determines the order in which processes are admitted, selected, suspended, or allocated CPU time to support efficient execution.\n\n## Quick check\n\n\n  **Which scheduler selects a process from the ready queue and allocates the CPU to it?**",
+    "quickCheck": {
+      "question": "Which scheduler selects a process from the ready queue and allocates the CPU to it?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Long-term scheduler"
+        },
+        {
+          "key": "B",
+          "label": "Short-term scheduler"
+        },
+        {
+          "key": "C",
+          "label": "Medium-term scheduler"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "`cat filename` concatenates and displays the contents of a file."
+    }
+  },
+  {
+    "id": "topic-110",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "What is preemptive scheduling?",
+    "turnIndex": 110,
+    "content": "Okay, let's forget the textbook definition for a second. I'll explain it with a simple example. 💗\n\n## What is preemptive scheduling?\n\n**Preemptive scheduling means the OS can stop a running process temporarily and give the CPU to another process.**\n\nImagine the CPU is a teacher who can help only one student at a time.\n\n\n  \n  \n  \n  \n  \n\n\nThat's **preemptive scheduling**. Process A is paused, not necessarily terminated. Its progress is saved so it can continue later.\n\n## What is non-preemptive scheduling?\n\nNow imagine the teacher promises to finish helping Student A first. Even if Student B arrives, A keeps the teacher until the task is finished or A has to wait for something.\n\nThat's **non-preemptive scheduling**.\n\n## Difference to remember\n\n| Preemptive | Non-preemptive |\n|---|---|\n| OS can take the CPU away | OS doesn't forcibly take the CPU away while the process is running |\n| A process can be paused and resumed | Process continues until it finishes or blocks |\n| Example: Round Robin, SRTF | Example: FCFS, non-preemptive SJF |\n\n**Exam trick:** Preemptive = CPU can be taken away. Non-preemptive = CPU is not forcibly taken away.\n\n## Quick check\n\n\n  **Process A is running. The OS pauses A and gives the CPU to Process B. What type of scheduling is this?**",
+    "quickCheck": {
+      "question": "Process A is running. The OS pauses A and gives the CPU to Process B. What type of scheduling is this?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Preemptive scheduling"
+        },
+        {
+          "key": "B",
+          "label": "Non-preemptive scheduling"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cp a.txt b.txt` copies a file while keeping original intact."
+    }
+  },
+  {
+    "id": "topic-112",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Topic 3: Operations on Processes",
+    "turnIndex": 112,
+    "content": "✅ **Correct! Option A: Preemptive scheduling.**\n\nExactly! The OS can pause Process A and give the CPU to Process B. A isn't deleted; it can resume later. You've got it now! 💗\n\nNow let's continue in syllabus order.\n\n# Topic 3: Operations on Processes\n\n## 1. Definition\n\n**Operations on processes** are the actions performed by the operating system to create, execute, suspend, resume, and terminate processes.\n\nSimple Hinglish: OS ko processes ko start karna, chalana, manage karna aur finish karna hota hai. These are called operations on processes.\n\n## 2. Main operations on processes\n\n\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n  <divider color=\"subtle\" />\n  \n\n\n## 3. Parent and child processes\n\nA process can create another process.\n\n- **Parent process:** The process that creates another process.\n- **Child process:** The process created by the parent.\n\nFor example, a terminal shell may start a text editor. The shell is the parent, and the editor is its child in that process relationship.\n\n## 4. Important system calls\n\nA **system call** is a way for a program to request a service from the operating system.\n\n| System call | Purpose |\n|---|---|\n| `fork()` | Creates a new process in Unix-like systems |\n| `exec()` | Replaces the current process's program with another program |\n| `wait()` | Allows a parent to wait for a child process |\n| `exit()` | Terminates the calling process |\n\nEasy trick:\n- `fork()` = create\n- `exec()` = run a different program in the process\n- `wait()` = wait for a child\n- `exit()` = terminate\n\nWe'll revisit system calls in more detail when we reach that part of your Linux syllabus.\n\n## 5. Important exam points\n\n- Process creation starts a new process.\n- Process suspension pauses execution temporarily.\n- Process resumption allows a suspended process to continue.\n- Process termination ends a process.\n- A parent process can create child processes.\n- System calls allow programs to request OS services.\n\n**Exam-ready definition:** Operations on processes are the activities through which an operating system creates, executes, suspends, resumes, and terminates processes.\n\n## Quick check\n\n\n  **Which system call is commonly used to create a new process in Unix-like operating systems?**",
+    "quickCheck": {
+      "question": "Which system call is commonly used to create a new process in Unix-like operating systems?",
+      "options": [
+        {
+          "key": "A",
+          "label": "`fork()`"
+        },
+        {
+          "key": "B",
+          "label": "`wait()`"
+        },
+        {
+          "key": "C",
+          "label": "`exit()`"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cal` displays an ASCII calendar."
+    }
+  },
+  {
+    "id": "topic-114",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Topic 4: Threads",
+    "turnIndex": 114,
+    "content": "✅ **Correct! Option A: `fork()`**\n\nExactly! `fork()` creates a new process in Unix-like operating systems. `wait()` waits for a child process, while `exit()` terminates the calling process.\n\nNow let's move to the next topic in your Unit II syllabus!\n\n# Topic 4: Threads\n\n## 1. Definition\n\nA **thread** is the smallest unit of CPU execution within a process. A process can contain one or more threads.\n\nSimple Hinglish: Ek process ke andar multiple threads ho sakte hain. Ye same process ke resources share karte hue different tasks perform kar sakte hain.\n\n**Example:** In a music application, one thread may handle playback while another responds to user interactions.\n\n## 2. Process vs Thread\n\n| Process | Thread |\n|---|---|\n| An independent program in execution | A unit of execution within a process |\n| Has its own process address space | Shares the process's address space with other threads |\n| Generally more expensive to create and switch | Generally cheaper to create and switch |\n| Processes are isolated from each other by default | Threads in the same process can access shared data |\n\n**Remember:** Threads share resources, but each thread has its own stack and CPU execution state.\n\n## 3. Why are threads used?\n\nThreads are useful because they can:\n\n- **Improve responsiveness:** The application can respond while another task is running.\n- **Share resources:** Threads can access the same process data and files.\n- **Support concurrency:** Multiple tasks can make progress during overlapping periods.\n- **Improve CPU utilisation:** On multicore systems, threads may execute in parallel.\n\nHinglish example: A browser can use different threads for handling the interface, processing tasks, and other background work.\n\n## 4. Types of threads\n\nThere are two main types commonly discussed in Operating Systems.\n\n\n  \n    **1. User-Level Threads (ULT)**\n\n    Managed by a user-level thread library without requiring the kernel to manage each thread individually.\n\n    \n  \n  \n    **2. Kernel-Level Threads (KLT)**\n\n    Managed and scheduled by the operating system kernel.\n\n    \n  \n\n\n## 5. Multithreading\n\n**Multithreading** is the ability of a process or program to use multiple threads.\n\nFor example, a word processor may use:\n- One thread for user input.\n- Another for spell-checking.\n- Another for autosaving.\n\nThese tasks can make progress without requiring a separate process for every task.\n\n## 6. Important exam points\n\n- A thread is the smallest unit of CPU execution.\n- A process may contain multiple threads.\n- Threads in the same process share code, data, and process resources.\n- Each thread has its own stack, registers, and execution state.\n- The two commonly discussed types are user-level and kernel-level threads.\n\n**Exam-ready definition:** A thread is the smallest unit of CPU execution within a process. Multiple threads of the same process share its resources but maintain their own execution state and stack.\n\n## Quick check\n\n\n  **Which statement about threads is correct?**",
+    "quickCheck": {
+      "question": "Which statement about threads is correct?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Threads in the same process always have separate address spaces."
+        },
+        {
+          "key": "B",
+          "label": "Threads in the same process share resources but have their own stacks."
+        },
+        {
+          "key": "C",
+          "label": "A process can contain only one thread."
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "A thread is a lightweight execution unit sharing the code, data, and OS resources of its parent process."
+    }
+  },
+  {
+    "id": "topic-116",
+    "unit": "Introduction to Linux & Commands",
+    "title": "CPU Scheduling: Basic Concepts",
+    "turnIndex": 116,
+    "content": "✅ **Correct! Option B: Threads in the same process share resources but have their own stacks.**\n\nExactly! Threads share the process's address space and resources, but each thread has its own stack and execution state. Now we're moving to the next major section of Unit II: **CPU Scheduling**. 💗\n\n# CPU Scheduling: Basic Concepts\n\n## 1. Definition\n\n**CPU Scheduling** is the process by which the operating system selects a process from the ready queue and allocates the CPU to it.\n\nSimple Hinglish: Multiple processes CPU ka wait kar rahi hoti hain. OS decide karta hai ki next CPU kisko milega.\n\n## 2. How CPU scheduling works\n\n\n  \n    **Ready Queue**\n    \n  \n  <icon name=\"arrow-down\" size=\"xl\" color=\"secondary\" />\n  \n    **CPU Scheduler**\n    \n  \n  <icon name=\"arrow-down\" size=\"xl\" color=\"secondary\" />\n  \n    **CPU**\n    \n  \n\n\n**Example:** Suppose Processes P1, P2 and P3 are waiting in the ready queue. The scheduling algorithm determines which process gets the CPU first.\n\n## 3. Important terms\n\n| Term | Meaning |\n|---|---|\n| **Ready Queue** | Processes ready to execute and waiting for CPU time |\n| **Burst Time (BT)** | Total CPU time a process needs for a particular CPU burst |\n| **Arrival Time (AT)** | Time when a process enters the ready queue |\n| **Waiting Time (WT)** | Total time spent waiting in the ready queue |\n| **Turnaround Time (TAT)** | Total time from arrival until completion |\n| **Response Time (RT)** | Time from arrival until the process first gets the CPU |\n\nThese terms are extremely important because we'll use them to solve scheduling numericals.\n\n### Formulas to remember\n\n\\[\n\\text{Turnaround Time}=\\text{Completion Time}-\\text{Arrival Time}\n\\]\n\n\\[\n\\text{Waiting Time}=\\text{Turnaround Time}-\\text{Burst Time}\n\\]\n\n\\[\n\\text{Response Time}=\\text{First Start Time}-\\text{Arrival Time}\n\\]\n\nEasy trick: **Turnaround = total time in the system; Waiting = time spent waiting; Response = time until first CPU access.**\n\n## 4. Objectives of CPU scheduling\n\nThe OS tries to:\n\n- **Maximise CPU utilisation:** Keep the CPU busy.\n- **Maximise throughput:** Complete more processes per unit of time.\n- **Minimise waiting time:** Reduce time spent in the ready queue.\n- **Minimise turnaround time:** Finish processes sooner.\n- **Minimise response time:** Make interactive systems respond quickly.\n\n## 5. Scheduling algorithms in your syllabus\n\nWe'll learn these one by one, including numerical problems:\n\n1. First Come First Serve (FCFS)\n2. Shortest Job First (SJF)\n3. Shortest Remaining Time First (SRTF)\n4. Priority Scheduling\n5. Round Robin (RR)\n\n## Quick check\n\n\n  **A process arrives at time 2 and first gets the CPU at time 5. What is its response time?**",
+    "quickCheck": {
+      "question": "A process arrives at time 2 and first gets the CPU at time 5. What is its response time?",
+      "options": [
+        {
+          "key": "A",
+          "label": "2 time units"
+        },
+        {
+          "key": "B",
+          "label": "3 time units"
+        },
+        {
+          "key": "C",
+          "label": "5 time units"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cp a.txt b.txt` copies a file while keeping original intact."
+    },
+    "gantt": {
+      "processes": [
+        {
+          "id": "CPU Scheduler",
+          "duration": 5,
+          "color": "surface"
+        },
+        {
+          "id": "CPU",
+          "duration": 3,
+          "color": "surface-secondary"
+        }
+      ],
+      "timestamps": [
+        0,
+        5,
+        8,
+        9
+      ]
+    }
+  },
+  {
+    "id": "topic-118",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "1. Arrival Time (AT)",
+    "turnIndex": 118,
+    "content": "Of course! Let's understand all 5 important terms in **CPU Scheduling** with one simple example, so you don't have to mug up the formulas blindly. 💗\n\nImagine you're at a bank. You arrive, wait in a queue, get served, and then leave. Processes work similarly!\n\n## 1. Arrival Time (AT)\n\n**Meaning:** The time at which a process enters the ready queue and becomes available for CPU scheduling.\n\nHinglish: Process CPU ke liye queue mein **kab aayi**, that's its Arrival Time.\n\nExample: Process P1 enters the ready queue at time 2.\n\nSo, **AT = 2**\n\n## 2. Burst Time (BT)\n\n**Meaning:** The amount of CPU time a process needs to complete its CPU burst.\n\nHinglish: Process ko apna kaam karne ke liye CPU kitni der chahiye, that's Burst Time.\n\nExample: P1 needs 4 units of CPU time to execute.\n\nSo, **BT = 4**\n\n## 3. Completion Time (CT)\n\n**Meaning:** The time at which a process finishes execution.\n\nHinglish: Process ka kaam **kis time par completely finish hua**, that's Completion Time.\n\nExample: P1 arrives at time 2, needs 4 units of CPU time, and runs without interruption from time 2 to time 6.\n\nSo, **CT = 6**\n\n## 4. Turnaround Time (TAT)\n\n**Meaning:** The total time from a process's arrival until its completion.\n\nHinglish: Process ke aane se lekar uska kaam finish hone tak ka total time.\n\nFormula:\n\n\\[\n\\boxed{TAT=CT-AT}\n\\]\n\nExample: P1 arrives at time 2 and completes at time 6.\n\n\\[\nTAT=6-2=\\boxed{4}\n\\]\n\n## 5. Waiting Time (WT)\n\n**Meaning:** The total time a process spends waiting in the ready queue for CPU time.\n\nHinglish: Process jitni der CPU milne ka wait karti hai, that's Waiting Time.\n\nFor a simple single CPU-burst problem:\n\n\\[\n\\boxed{WT=TAT-BT}\n\\]\n\nExample: P1 has turnaround time 4 and burst time 4.\n\n\\[\nWT=4-4=\\boxed{0}\n\\]\n\nIt didn't wait at all; it started running as soon as it arrived.\n\n## Let's see the complete example\n\n\n  <title size=\"lg\">Process P1</title>\n  <grid columns={2} gap={2}>\n    <grid-item>\n      \n        \n        <title size=\"xl\">2</title>\n      \n    </grid-item>\n    <grid-item>\n      \n        \n        <title size=\"xl\">4</title>\n      \n    </grid-item>\n    <grid-item>\n      \n        \n        <title size=\"xl\">6</title>\n      \n    </grid-item>\n    <grid-item>\n      \n        \n        <title size=\"xl\">4</title>\n      \n    </grid-item>\n  </grid>\n  <divider />\n  \n  \n\n\n## Quick memory trick\n\n| Term | Ask yourself… |\n|---|---|\n| AT | Process queue mein kab aayi? |\n| BT | CPU par kitna time kaam chahiye? |\n| CT | Process kab finish hui? |\n| TAT | Arrival se completion tak kitna time? |\n| WT | CPU ka wait kitni der kiya? |\n\n**Two formulas to memorise first:**\n\n\\[\nTAT=CT-AT\n\\]\n\n\\[\nWT=TAT-BT\n\\]\n\nOne more term from our earlier notes: **Response Time (RT)** means arrival se lekar process ko pehli baar CPU milne tak ka time.\n\n\\[\nRT=\\text{First Start Time}-AT\n\\]\n\nNotice that response time measures the wait until the *first* CPU access, while waiting time counts the total time spent waiting in the ready queue."
+  },
+  {
+    "id": "topic-120",
+    "unit": "Introduction to Linux & Commands",
+    "title": "CPU Scheduling Algorithm 1: FCFS",
+    "turnIndex": 120,
+    "content": "# CPU Scheduling Algorithm 1: FCFS\n\n## 1. Definition\n\n**FCFS (First Come, First Serve)** is a CPU scheduling algorithm in which the process that arrives first gets the CPU first.\n\nSimple Hinglish: *Jo process ready queue mein pehle aayegi, usko CPU pehle milega.* Bilkul line mein khade hone jaisa!\n\n## 2. Important points\n\n- **Type:** Non-preemptive\n- Processes execute in their order of arrival.\n- Once a process gets the CPU, it continues until it finishes or blocks.\n- It is simple and easy to implement.\n- It may cause the **Convoy Effect**, where short processes wait behind a long process.\n\n## 3. Numerical example\n\nSuppose we have these processes:\n\n| Process | Arrival Time (AT) | Burst Time (BT) |\n|---|---:|---:|\n| P1 | 0 | 5 |\n| P2 | 1 | 3 |\n| P3 | 2 | 1 |\n\nSince P1 arrives first, it runs first. P2 and P3 wait for their turns.\n\n### Step 1: Draw the Gantt chart\n\n\n  \n  \n\n\n- P1 runs from 0 to 5.\n- P2 runs from 5 to 8.\n- P3 runs from 8 to 9.\n\n### Step 2: Calculate CT, TAT and WT\n\nRemember these formulas:\n\n- **CT = Completion Time**\n- **TAT = CT − AT**\n- **WT = TAT − BT**\n- **RT = First Start Time − AT**\n\n| Process | CT | TAT = CT − AT | WT = TAT − BT | RT |\n|---|---:|---:|---:|---:|\n| P1 | 5 | 5 − 0 = 5 | 5 − 5 = 0 | 0 |\n| P2 | 8 | 8 − 1 = 7 | 7 − 3 = 4 | 4 |\n| P3 | 9 | 9 − 2 = 7 | 7 − 1 = 6 | 6 |\n\n**Average Waiting Time:**\n\n\\[\n\\frac{0+4+6}{3}=\\frac{10}{3}=3.33\n\\]\n\n**Average Turnaround Time:**\n\n\\[\n\\frac{5+7+7}{3}=\\frac{19}{3}=6.33\n\\]\n\nRemember: FCFS is non-preemptive, so **RT = WT** in this example.\n\n## 4. Convoy Effect\n\nSuppose a process needs 20 seconds of CPU time, while three other processes need only 1 second each. If the long process arrives first, the shorter processes must wait for it.\n\nThis situation is called the **Convoy Effect**.\n\n## 5. Exam-ready short notes\n\nFCFS stands for First Come, First Serve. It is a non-preemptive CPU scheduling algorithm that allocates the CPU to processes in their order of arrival. It is simple to implement but may result in high average waiting time and the convoy effect.\n\n---\n\n## Quick check\n\n\n  **Q1. Which type of scheduling is FCFS?**",
+    "quickCheck": {
+      "question": "Q1. Which type of scheduling is FCFS?",
+      "options": [
+        {
+          "key": "A",
+          "label": "Preemptive"
+        },
+        {
+          "key": "B",
+          "label": "Non-preemptive"
+        },
+        {
+          "key": "C",
+          "label": "Both always"
+        },
+        {
+          "key": "D",
+          "label": "Neither"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "B",
+      "explanation": "`cp a.txt b.txt` copies a file while keeping original intact."
+    },
+    "gantt": {
+      "processes": [
+        {
+          "id": "P1",
+          "duration": 5,
+          "color": "#B9D6F2"
+        },
+        {
+          "id": "P2",
+          "duration": 3,
+          "color": "#D8C9F0"
+        },
+        {
+          "id": "P3",
+          "duration": 1,
+          "color": "#C6E4D1"
+        }
+      ],
+      "timestamps": [
+        0,
+        5,
+        8,
+        9
+      ]
+    }
+  },
+  {
+    "id": "topic-122",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Next Topic: First Come, First Serve (FCFS)",
+    "turnIndex": 122,
+    "content": "Your answer **B is correct!** ✅ FCFS is a **non-preemptive** scheduling algorithm.\n\n# Next Topic: First Come, First Serve (FCFS)\n\nFCFS stands for **First Come, First Serve**. The process that arrives first gets the CPU first.\n\n*Hinglish:* Ready queue mein jo process pehle aayegi, usko CPU pehle milega, bilkul line mein khade hone jaisa.\n\n## 1. Important points\n\n- **Type:** Non-preemptive\n- Execution follows arrival order.\n- Simple to understand and implement.\n- Disadvantage: It can cause the **Convoy Effect**, where short processes wait behind a long process.\n\n## 2. Numerical example\n\n| Process | Arrival Time (AT) | Burst Time (BT) |\n|---|---:|---:|\n| P1 | 0 | 5 |\n| P2 | 1 | 3 |\n| P3 | 2 | 1 |\n\n### Step 1: Gantt chart\n\n\n  \n  \n\n\n- P1 executes from 0 to 5.\n- P2 executes from 5 to 8.\n- P3 executes from 8 to 9.\n\n### Step 2: Calculate the times\n\nFormulas:\n\n- \\(CT=\\) Completion Time\n- \\(TAT=CT-AT\\)\n- \\(WT=TAT-BT\\)\n- \\(RT=\\text{First Start Time}-AT\\)\n\n| Process | CT | TAT | WT | RT |\n|---|---:|---:|---:|---:|\n| P1 | 5 | 5 | 0 | 0 |\n| P2 | 8 | 7 | 4 | 4 |\n| P3 | 9 | 7 | 6 | 6 |\n\nAverage Waiting Time:\n\n\\[\nAWT=\\frac{0+4+6}{3}=3.33\n\\]\n\nAverage Turnaround Time:\n\n\\[\nATAT=\\frac{5+7+7}{3}=6.33\n\\]\n\n*Remember:* In this FCFS example, \\(RT=WT\\), because each process starts running as soon as its turn arrives.\n\n## 3. Convoy Effect\n\nWhen a long process executes first, shorter processes must wait for it to finish. This increases their waiting time and is called the **Convoy Effect**.\n\n## 4. Exam-ready definition\n\nFCFS is a non-preemptive CPU scheduling algorithm in which processes are executed in the order of their arrival. It is simple to implement but may lead to high average waiting time and the convoy effect.\n\n## Quick check\n\n\n  **Q1. Three processes arrive in this order: P1, P2, P3. Which process executes first under FCFS?**",
+    "quickCheck": {
+      "question": "Q1. Three processes arrive in this order: P1, P2, P3. Which process executes first under FCFS?",
+      "options": [
+        {
+          "key": "A",
+          "label": "P3"
+        },
+        {
+          "key": "B",
+          "label": "P2"
+        },
+        {
+          "key": "C",
+          "label": "P1"
+        },
+        {
+          "key": "D",
+          "label": "The shortest process"
+        }
+      ],
+      "continuePrompt": "Next topic in syllabus",
+      "correctKey": "A",
+      "explanation": "Verified syllabus exam point."
+    }
+  },
+  {
+    "id": "topic-147",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "FCFS quick check",
+    "turnIndex": 147,
+    "content": "Perfect, let's continue with your **Unit 2 Processes PDF**, following your teacher's slides. 💗\n\n## FCFS quick check\n\nYour answer to the earlier CPU Scheduling Basics question was **B**, but that was for the previous quick check. For FCFS, answer this one:\n\n\n  **Q1. Which data structure is used to implement FCFS scheduling?**\n\n  \n  \n\n\n**Exam keyword:** FCFS uses a **FIFO (First In, First Out) queue**. The process at the front of the queue gets the CPU first."
+  },
+  {
+    "id": "topic-149",
+    "unit": "Introduction to Linux & Commands",
+    "title": "Formula for Response Time (RT)",
+    "turnIndex": 149,
+    "content": "**First Start Time** is the exact time when a process starts executing on the CPU for the very first time.\n\nHinglish: *Process ne CPU par kaam karna exactly kab shuru kiya.*\n\nLet's use our FCFS example:\n\n| Process | AT | BT | First Start Time |\n|---|---:|---:|---:|\n| P1 | 0 | 5 | 0 |\n| P2 | 1 | 3 | 5 |\n| P3 | 2 | 1 | 8 |\n\nFrom our Gantt chart:\n\n`0 | P1 | 5 | P2 | 8 | P3 | 9`\n\n- P1 starts at time **0**.\n- P2 starts at time **5**, because P1 finishes then.\n- P3 starts at time **8**, because P2 finishes then.\n\n### Formula for Response Time (RT)\n\n\\[\nRT=\\text{First Start Time}-AT\n\\]\n\nFor P2:\n\n\\[\nRT=5-1=\\boxed{4}\n\\]\n\n**Remember the difference:**\n- **AT:** When the process arrives in the ready queue.\n- **First Start Time:** When it actually starts using the CPU.\n- **RT:** How long it waits before its first CPU execution.\n\nSo, a process can arrive at time 1 but start at time 5. Its response time is 4 units."
+  },
+  {
+    "id": "topic-165",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Question 1: FCFS scheduling",
+    "turnIndex": 165,
+    "content": "Let's practise with **more numerical questions from your Unit 2 Processes PDF**, especially the FCFS and SJF scheduling questions your teacher included. We'll do them one by one, starting with a simple FCFS problem. You'll draw the Gantt chart and calculate CT, TAT, WT and average waiting time.\n\nYour PDF has an FCFS numerical with **P1 = 24 ms, P2 = 3 ms, P3 = 3 ms**, all arriving at time 0. Let's practise that exact question first. \n\n## Question 1: FCFS scheduling\n\nAll processes arrive at time 0.\n\n| Process | Arrival Time (AT) | Burst Time (BT) |\n|---|---:|---:|\n| P1 | 0 | 24 ms |\n| P2 | 0 | 3 ms |\n| P3 | 0 | 3 ms |\n\n**Solve these:**\n\n1. Draw the Gantt chart.\n2. Find the Completion Time (CT) of each process.\n3. Find the Turnaround Time (TAT) of each process.\n4. Find the Waiting Time (WT) of each process.\n5. Calculate the average waiting time.\n\nRemember:\n\n- \\(CT =\\) time when the process finishes.\n- \\(TAT = CT - AT\\)\n- \\(WT = TAT - BT\\)\n- \\(\\text{Average WT}=\\frac{\\text{Sum of all WT}}{\\text{Number of processes}}\\)\n\nSince all arrival times are 0, FCFS follows the order **P1 → P2 → P3**.\n\nTry solving it yourself and send me your Gantt chart and answers. I'll check each step before giving you the next question."
+  },
+  {
+    "id": "topic-166",
+    "unit": "OS Unit 2: Processes & CPU Scheduling",
+    "title": "Question 1: FCFS scheduling",
+    "turnIndex": 166,
+    "content": "Your PDF has an FCFS numerical with **P1 = 24 ms, P2 = 3 ms, P3 = 3 ms**, all arriving at time 0. Let's practise that exact question first. \n\n## Question 1: FCFS scheduling\n\nAll processes arrive at time 0.\n\n| Process | Arrival Time (AT) | Burst Time (BT) |\n|---|---:|---:|\n| P1 | 0 | 24 ms |\n| P2 | 0 | 3 ms |\n| P3 | 0 | 3 ms |\n\n**Solve these:**\n\n1. Draw the Gantt chart.\n2. Find the Completion Time (CT) of each process.\n3. Find the Turnaround Time (TAT) of each process.\n4. Find the Waiting Time (WT) of each process.\n5. Calculate the average waiting time.\n\nRemember:\n\n- \\(CT =\\) time when the process finishes.\n- \\(TAT = CT - AT\\)\n- \\(WT = TAT - BT\\)\n- \\(\\text{Average WT}=\\frac{\\text{Sum of all WT}}{\\text{Number of processes}}\\)\n\nSince all arrival times are 0, FCFS follows the order **P1 → P2 → P3**.\n\nTry solving it yourself and send me your Gantt chart and answers. I'll check each step before giving you the next question."
+  }
+];
+
+export const SYLLABUS_TRACKS: SyllabusTrack[] = [
+  {
+    id: 'os-unit2-cpu',
+    name: 'Operating Systems: Processes & CPU Scheduling',
+    description: 'Unit 2: Process States, PCB, CPU Scheduling (FCFS, SJF, SRTF, RR), Gantt Charts & Numerical Problems',
+    icon: 'Cpu',
+    topics: GOLD_TOPICS.filter(t => t.unit === 'OS Unit 2: Processes & CPU Scheduling' || t.title.includes('Process') || t.title.includes('CPU') || t.title.includes('FCFS') || t.title.includes('Preemptive') || t.title.includes('Scheduling'))
+  },
+  {
+    id: 'linux-commands',
+    name: 'Introduction to Linux & Core Commands',
+    description: 'Linux Architecture, Filesystem (/root, /home, /bin), and 15 Essential Commands (cat, mkdir, rm, cp, mv, etc.)',
+    icon: 'Terminal',
+    topics: GOLD_TOPICS.filter(t => t.unit === 'Introduction to Linux & Commands')
+  },
+  {
+    id: 'vi-editor',
+    name: 'Vi Editor & Shell Scripting',
+    description: '3 Modes of Vi, Writing, Saving, and Executing Bash Shell Scripts',
+    icon: 'FileCode',
+    topics: GOLD_TOPICS.filter(t => t.unit === 'Vi Editor & Shell Scripting')
+  }
+];
