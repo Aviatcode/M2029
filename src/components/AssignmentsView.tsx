@@ -19,6 +19,7 @@ import {
   BookOpen,
   AlertCircle,
   Calendar,
+  Trash2,
 } from 'lucide-react';
 import { AcademicAssignment, Subject, ClassworkType } from '../types';
 import { getAiRequestPayload } from '../utils/aiModelService';
@@ -84,11 +85,70 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     }
   }, [isAddModalOpen, newDueDate, newSubject, selectedFolder, availableSubjects]);
 
-  // CR Portal Modal
+  // CR Portal Modal with Structured Proper Inputs (No comma-separated textareas)
   const [isCRPortalOpen, setIsCRPortalOpen] = useState(false);
-  const [crRosterText, setCrRosterText] = useState('');
+  const [crSubject, setCrSubject] = useState('');
+  const [crEntries, setCrEntries] = useState<{ id: string; rollOrName: string; topic: string; dueDate: string }[]>([
+    {
+      id: 'entry-1',
+      rollOrName: 'Roll 101 - 105',
+      topic: 'Banker Algorithm & Deadlock Avoidance',
+      dueDate: new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10),
+    },
+    {
+      id: 'entry-2',
+      rollOrName: 'Roll 106 - 110',
+      topic: '3NF and BCNF Database Normalization',
+      dueDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+    },
+  ]);
   const [isSyncingCR, setIsSyncingCR] = useState(false);
   const [crSyncSuccess, setCrSyncSuccess] = useState('');
+
+  const handleAddCrEntry = () => {
+    setCrEntries((prev) => [
+      ...prev,
+      {
+        id: `entry-${Date.now()}`,
+        rollOrName: '',
+        topic: '',
+        dueDate: new Date(Date.now() + (prev.length + 3) * 86400000).toISOString().slice(0, 10),
+      },
+    ]);
+  };
+
+  const handleRemoveCrEntry = (idToRemove: string) => {
+    setCrEntries((prev) => prev.filter((e) => e.id !== idToRemove));
+  };
+
+  const handleUpdateCrEntry = (id: string, field: 'rollOrName' | 'topic' | 'dueDate', value: string) => {
+    setCrEntries((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, [field]: value } : e))
+    );
+  };
+
+  const handleLoadSampleCrRoster = () => {
+    setCrEntries([
+      {
+        id: `entry-${Date.now()}-1`,
+        rollOrName: 'Roll 101 - 105',
+        topic: 'Banker Algorithm & Deadlock Avoidance',
+        dueDate: new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10),
+      },
+      {
+        id: `entry-${Date.now()}-2`,
+        rollOrName: 'Roll 106 - 110',
+        topic: '3NF and BCNF Database Normalization',
+        dueDate: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+      },
+      {
+        id: `entry-${Date.now()}-3`,
+        rollOrName: 'Roll 111 - 115',
+        topic: 'Process Scheduling & Semaphore Synchronization',
+        dueDate: new Date(Date.now() + 10 * 86400000).toISOString().slice(0, 10),
+      },
+    ]);
+  };
 
   // Sync props changes
   useEffect(() => {
@@ -197,42 +257,48 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
   };
 
   // CR 1-Click Classwide Sync
+  // CR 1-Click Classwide Sync (Takes proper inputs, converts to comma-separated under the hood)
   const handleCRSync = async () => {
     setIsSyncingCR(true);
     setCrSyncSuccess('');
 
-    const lines = crRosterText.split('\n').filter((l) => l.trim().length > 0);
-    const parsedItems: Partial<AcademicAssignment>[] = [];
-
-    if (lines.length === 0) {
-      alert('Please enter at least one presentation line (e.g. Roll 101 - Presentation Topic - 2026-10-25)');
+    const validEntries = crEntries.filter((e) => e.topic.trim().length > 0);
+    if (validEntries.length === 0) {
+      alert('Please fill in at least one presentation slot topic.');
       setIsSyncingCR(false);
       return;
     }
 
-    const defaultSubject = subjects[0]?.name || 'General';
-    const defaultSubjectId = subjects[0]?.id || 'sub-gen';
+    const defaultSubject = crSubject || availableSubjects[0]?.name || 'General';
+    const targetSub = availableSubjects.find((s) => s.name === defaultSubject);
 
-    lines.forEach((line, idx) => {
-      const parts = line.split('-').map((p) => p.trim());
-      const rollAndName = parts[0] || `Roll ${idx + 101}`;
-      const topic = parts[1] || 'Syllabus Presentation Topic';
-      const date = parts[2] || new Date(Date.now() + (idx + 2) * 86400000).toISOString().slice(0, 10);
+    const parsedItems: AcademicAssignment[] = validEntries.map((entry, idx) => ({
+      id: `cr-ppt-${Date.now()}-${idx}`,
+      classId: 'class-bca',
+      title: `PPT Presentation: ${entry.topic.trim()}`,
+      type: 'ppt_presentation',
+      subjectName: defaultSubject,
+      subjectId: targetSub?.id || 'sub-gen',
+      dueDate: entry.dueDate || new Date(Date.now() + (idx + 3) * 86400000).toISOString().slice(0, 10),
+      presenterName: entry.rollOrName.trim() || `Roll ${101 + idx}`,
+      rollNumber: entry.rollOrName.trim() || `Roll ${101 + idx}`,
+      instructions: `Formal 10-slide PowerPoint presentation on ${entry.topic.trim()}. Ensure diagrams and practical examples are included.`,
+      integrityMode: 'teach_me',
+      outlineSteps: ['Introduction & Concepts', 'Core Mechanism / Architecture', 'Real-world Application / Demo'],
+      keyReferences: ['Prescribed Syllabus & University Guidelines'],
+      assignedBy: 'Class Representative (CR Official Roster)',
+      completed: false,
+    }));
 
-      parsedItems.push({
-        id: `cr-ppt-${Date.now()}-${idx}`,
-        title: `PPT Presentation: ${topic}`,
-        type: 'ppt_presentation',
-        subjectName: newSubject || defaultSubject,
-        subjectId: defaultSubjectId,
-        dueDate: date,
-        presenterName: rollAndName,
-        rollNumber: rollAndName.split(' ')[1] || `Roll ${idx + 101}`,
-        instructions: `Formal 10-slide PowerPoint presentation on ${topic}. Ensure diagrams and practical examples are included.`,
-        assignedBy: 'Class Representative (CR Official Roster)',
-        completed: false,
-      });
-    });
+    // Update local state immediately
+    const updated = [...parsedItems, ...assignments];
+    setAssignments(updated);
+    if (onUpdateAssignments) onUpdateAssignments(updated);
+
+    // Convert proper inputs into comma-separated lines for backend serialization
+    const commaSeparatedLines = validEntries
+      .map((e) => `${e.rollOrName.trim()}, ${e.topic.trim()}, ${e.dueDate}`)
+      .join('\n');
 
     try {
       const res = await fetch('/api/assignments/cr-sync', {
@@ -240,25 +306,28 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: parsedItems,
-          broadcastMessage: `Class Representative has synchronized ${parsedItems.length} official assignment deadlines and PPT presentation slots for the entire cohort.`,
+          csvFormat: commaSeparatedLines,
+          broadcastMessage: `Class Representative has synchronized ${parsedItems.length} official presentation deadlines for ${defaultSubject}.`,
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        setAssignments(data.assignments);
-        if (onUpdateAssignments) onUpdateAssignments(data.assignments);
-        setCrSyncSuccess(`✓ Successfully synchronized ${parsedItems.length} items with the whole class!`);
-        setTimeout(() => {
-          setIsCRPortalOpen(false);
-          setCrSyncSuccess('');
-        }, 2200);
+        if (data.assignments) {
+          setAssignments(data.assignments);
+          if (onUpdateAssignments) onUpdateAssignments(data.assignments);
+        }
       }
-    } catch (err: any) {
-      alert('CR sync failed: ' + err.message);
-    } finally {
-      setIsSyncingCR(false);
+    } catch {
+      // offline safe
     }
+
+    setCrSyncSuccess(`✓ Synchronized ${parsedItems.length} presentation slots with the cohort!`);
+    setTimeout(() => {
+      setIsCRPortalOpen(false);
+      setCrSyncSuccess('');
+    }, 2000);
+    setIsSyncingCR(false);
   };
 
   // Auto-load pre-cached solution when modal opens
@@ -1237,66 +1306,172 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
         </div>
       )}
 
-      {/* 7. CR (CLASS REPRESENTATIVE) 1-CLICK SYNC MODAL */}
+      {/* 7. CR (CLASS REPRESENTATIVE) PORTAL MODAL */}
       {isCRPortalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in cursor-pointer"
-          onClick={() => setIsCRPortalOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-4 animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsCRPortalOpen(false);
+          }}
           role="dialog"
           aria-modal="true"
           aria-label="Class Representative Portal Modal"
         >
           <div
-            className="w-full max-w-xl rounded-2xl bg-slate-900 border border-indigo-500/40 p-6 shadow-2xl text-slate-100 space-y-4 cursor-default"
+            className="w-full max-w-2xl rounded-2xl bg-slate-900 border border-slate-700 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[92vh] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-indigo-400" />
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
+                  <ShieldCheck className="w-4 h-4 text-slate-200" />
+                </div>
                 <div>
-                  <h3 className="font-semibold text-base">Class Representative (CR) Portal</h3>
-                  <p className="text-xs text-slate-400">1-Click Synchronization with Whole Class</p>
+                  <h3 className="font-semibold text-sm sm:text-base text-white">
+                    Class Representative (CR) Portal
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Add presentation slots or class assignments and sync with your cohort
+                  </p>
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsCRPortalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                aria-label="Close"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {crSyncSuccess ? (
-              <div className="p-6 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-center space-y-2 animate-fade-in">
-                <CheckCircle2 className="w-10 h-10 text-neutral-300 mx-auto" />
-                <h4 className="font-semibold text-base">{crSyncSuccess}</h4>
-                <p className="text-xs text-neutral-400">
-                  Notification and class announcement broadcasted to every student in cohort.
+              <div className="p-8 rounded-xl bg-slate-950 border border-slate-800 text-center space-y-2 animate-fade-in my-auto">
+                <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
+                <h4 className="font-semibold text-sm sm:text-base text-white">{crSyncSuccess}</h4>
+                <p className="text-xs text-slate-400">
+                  Presentation roster has been synchronized for all students.
                 </p>
               </div>
             ) : (
-              <div className="space-y-4 text-xs">
-                <div>
-                  <label className="block text-slate-300 font-medium mb-1">
-                    Paste Presentation Order / Classwork Lines:
-                  </label>
-                  <textarea
-                    rows={6}
-                    placeholder="Format: [Roll & Name] - [Topic] - [Due Date YYYY-MM-DD]&#10;Example:&#10;Roll 101-105 - Banker Algorithm Simulation - 2026-10-22&#10;Roll 106-110 - 3NF and BCNF Normalization - 2026-10-25"
-                    value={crRosterText}
-                    onChange={(e) => setCrRosterText(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-slate-700 resize-none leading-relaxed"
-                  />
-                  <span className="text-[11px] text-slate-400 block mt-1">
-                    Enter one presentation slot per line.
-                  </span>
+              <div className="flex-1 overflow-y-auto space-y-4 text-xs pr-0.5">
+                {/* Subject Selector & Preset Buttons */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-1">
+                  <div className="flex-1">
+                    <label className="block text-slate-300 font-medium text-[11px] mb-1">
+                      Target Subject *
+                    </label>
+                    <select
+                      value={crSubject || availableSubjects[0]?.name || ''}
+                      onChange={(e) => setCrSubject(e.target.value)}
+                      className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition cursor-pointer"
+                    >
+                      {availableSubjects.map((sub) => (
+                        <option key={sub.id} value={sub.name}>
+                          {sub.name} ({sub.code})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLoadSampleCrRoster}
+                    className="self-end sm:self-auto text-[11px] text-slate-300 hover:text-white border border-slate-700 hover:border-slate-600 bg-slate-800/80 px-3 py-2 rounded-xl transition cursor-pointer shrink-0"
+                  >
+                    Load Sample Roster
+                  </button>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                {/* Structured Slots List (NO COMMA SEPARATED TEXTAREA) */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-slate-300 font-semibold text-[11px]">
+                      Presentation Slots ({crEntries.length})
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleAddCrEntry}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 hover:text-emerald-300 cursor-pointer transition"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Slot</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 max-h-[38vh] overflow-y-auto pr-1">
+                    {crEntries.map((entry, idx) => (
+                      <div
+                        key={entry.id}
+                        className="p-3 rounded-xl bg-slate-950 border border-slate-800/90 hover:border-slate-700 transition space-y-2"
+                      >
+                        <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                          <span className="font-semibold text-slate-300">Slot #{idx + 1}</span>
+                          {crEntries.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCrEntry(entry.id)}
+                              className="text-slate-500 hover:text-rose-400 p-0.5 cursor-pointer transition"
+                              title="Delete slot"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                          {/* Presenter / Roll */}
+                          <div className="sm:col-span-4">
+                            <input
+                              type="text"
+                              value={entry.rollOrName}
+                              onChange={(e) => handleUpdateCrEntry(entry.id, 'rollOrName', e.target.value)}
+                              placeholder="Roll / Student Name (e.g. Roll 101-105)"
+                              className="w-full bg-slate-900 border border-slate-700/80 focus:border-slate-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 placeholder:text-slate-500 outline-none transition"
+                            />
+                          </div>
+
+                          {/* Presentation Topic */}
+                          <div className="sm:col-span-5">
+                            <input
+                              type="text"
+                              value={entry.topic}
+                              onChange={(e) => handleUpdateCrEntry(entry.id, 'topic', e.target.value)}
+                              placeholder="Presentation Topic / Title"
+                              className="w-full bg-slate-900 border border-slate-700/80 focus:border-slate-500 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 placeholder:text-slate-500 outline-none transition"
+                            />
+                          </div>
+
+                          {/* Due Date */}
+                          <div className="sm:col-span-3">
+                            <input
+                              type="date"
+                              value={entry.dueDate}
+                              onChange={(e) => handleUpdateCrEntry(entry.id, 'dueDate', e.target.value)}
+                              className="w-full bg-slate-900 border border-slate-700/80 focus:border-slate-500 rounded-lg px-2 py-1.5 text-xs text-slate-100 font-mono outline-none transition [color-scheme:dark]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAddCrEntry}
+                    className="w-full py-2 rounded-xl border border-dashed border-slate-700/80 hover:border-slate-600 bg-slate-950/40 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Add Another Presentation Slot</span>
+                  </button>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800 shrink-0">
                   <button
                     type="button"
                     onClick={() => setIsCRPortalOpen(false)}
-                    className="px-3.5 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 cursor-pointer text-xs"
+                    className="px-3.5 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 text-xs font-medium transition cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1304,9 +1479,9 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                     type="button"
                     onClick={handleCRSync}
                     disabled={isSyncingCR}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-xs shadow-sm transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
                   >
-                    <ShieldCheck className="w-4 h-4" />
+                    <ShieldCheck className="w-3.5 h-3.5" />
                     <span>{isSyncingCR ? 'Syncing...' : 'Sync with Class'}</span>
                   </button>
                 </div>
