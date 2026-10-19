@@ -110,7 +110,7 @@ export interface MaterialResources {
   }[];
   possibleQuestions: { marks: number; question: string; answerOutline: string }[];
   relatedPYQs: { year: number; marks: number; question: string }[];
-  detectedCategory?: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'cheat_sheet' | 'lab';
+  detectedCategory?: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'timetable' | 'cheat_sheet' | 'lab';
   folderPath?: string;
   crossReferences?: string[];
 }
@@ -135,7 +135,7 @@ export interface AcademicMaterial {
   unitNumber?: number;
   unitTitle?: string;
   folderPath?: string;
-  detectedCategory?: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'cheat_sheet' | 'lab';
+  detectedCategory?: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'timetable' | 'cheat_sheet' | 'lab';
   title: string;
   fileName: string;
   fileType: 'pdf' | 'ppt' | 'pptx' | 'doc' | 'docx' | 'notes' | 'image' | 'jpg' | 'png' | 'txt' | string;
@@ -211,6 +211,7 @@ export interface AcademicAssignment {
   rollNumber?: string;
   presenterName?: string;
   completed?: boolean;
+  status?: 'todo' | 'in_progress' | 'completed';
   aiSolvedAnswer?: string;
   solution?: string;
   solvedBy?: string;
@@ -324,3 +325,23 @@ export interface GitHubPublishFiles {
     commands: string[];
   }[];
 }
+
+export interface EvolutionStep {
+  iteration: number;
+  studentLabel: string; // e.g. "Student 1", "Student 2", ..., "Student 60"
+  improvedAt: string;
+  focus: string;
+  summary: string;
+}
+
+export interface CohortIntelligenceMeta {
+  iterationCount: number;
+  targetCohortSize: number; // 60
+  isCohortPerfected: boolean;
+  perfectionScore: number;
+  perfectionTier: 'Draft (Student 1)' | 'Peer-Enhanced (Students 2-10)' | 'Exam-Hardened (Students 11-40)' | 'Master Gold Standard (60th Student)';
+  evolutionHistory: EvolutionStep[];
+  contributorsCount?: number;
+  lastRefinedAt?: string;
+}
+

@@ -121,7 +121,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         memberCount: 2,
         adminId: 'user-admin',
       };
-      const subjects: Subject[] = existing?.subjects && existing.subjects.length > 0
+      const subjects: Subject[] = existing && Array.isArray(existing.subjects)
         ? existing.subjects
         : getDefaultSubjectsForClass(targetCode, 1);
 
@@ -361,7 +361,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                       onChange={(e) => setNewSemester(Number(e.target.value))}
                       className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-100 focus:outline-none focus:border-neutral-500 transition text-xs"
                     >
-                      {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
                         <option key={s} value={s}>Semester {s}</option>
                       ))}
                     </select>

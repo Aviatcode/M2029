@@ -88,7 +88,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'deepseek/deepseek-r1';
           break;
         case 'gemini':
-          this.modelName = 'gemini-2.0-flash';
+          this.modelName = 'gemini-3.8-flash';
           break;
         case 'custom':
           this.modelName = 'llama3:latest';
@@ -100,8 +100,8 @@ export class UniversalAIProvider implements AIProvider {
 
     // Clean up Gemini model names
     if (this.provider === 'gemini') {
-      if (!this.modelName || this.modelName === 'gemini-3.8-flash') {
-        this.modelName = 'gemini-2.0-flash';
+      if (!this.modelName || this.modelName === 'gemini-2.0-flash') {
+        this.modelName = 'gemini-3.8-flash';
       }
     }
 
@@ -730,7 +730,7 @@ export class AIProviderFactory {
         this.classInstance = new UniversalAIProvider({
           apiKey: this.classConfig.apiKey || envKey,
           provider: this.classConfig.provider || (isGeminiKey ? 'gemini' : 'auto'),
-          modelName: this.classConfig.modelName || 'gemini-2.0-flash',
+          modelName: this.classConfig.modelName || 'gemini-3.8-flash',
           baseUrl: this.classConfig.baseUrl,
         });
       } else {

@@ -20,10 +20,20 @@ import {
   AlertCircle,
   Calendar,
   Trash2,
+  Kanban,
+  Table as TableIcon,
+  RotateCcw,
+  SlidersHorizontal,
+  ChevronDown,
+  Trophy,
+  Zap,
+  Flame,
 } from 'lucide-react';
 import { AcademicAssignment, Subject, ClassworkType } from '../types';
 import { getAiRequestPayload } from '../utils/aiModelService';
 import { getDefaultSubjectsForClass } from '../utils/classManager';
+
+export type AssignmentsViewMode = 'board' | 'table' | 'folders';
 
 interface AssignmentsViewProps {
   assignments: AcademicAssignment[];
@@ -37,15 +47,35 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
   onUpdateAssignments,
 }) => {
   const [assignments, setAssignments] = useState<AcademicAssignment[]>(initialAssignments);
+  const [viewMode, setViewMode] = useState<AssignmentsViewMode>(() => {
+    try {
+      const saved = localStorage.getItem('assignments_view_mode') as any;
+      if (saved === 'table' || saved === 'folders' || saved === 'board') return saved;
+    } catch {}
+    return 'board';
+  });
   const [selectedFolder, setSelectedFolder] = useState<string>('all'); // 'all' = folder shelf view
-  const [filterType, setFilterType] = useState<'all' | 'pending' | 'completed' | 'ppt'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'pending' | 'in_progress' | 'completed' | 'ppt'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Notion-Style Fast Inline Task Add Bar state
+  const [quickAddTitle, setQuickAddTitle] = useState('');
+  const [quickAddSubject, setQuickAddSubject] = useState('');
+  const [quickAddType, setQuickAddType] = useState<ClassworkType>('assignment');
+  const [quickAddDueDate, setQuickAddDueDate] = useState('');
+
+  // Notion Database Table inline bottom-row add state
+  const [inlineTableTitle, setInlineTableTitle] = useState('');
+
+  // Kanban column inline add state
+  const [columnInlineTitle, setColumnInlineTitle] = useState<Record<string, string>>({});
 
   // Selected Assignment for Detail / AI Solver Modal
   const [activeModalItem, setActiveModalItem] = useState<AcademicAssignment | null>(null);
 
   // AI Solver state
   const [isSolving, setIsSolving] = useState(false);
+  const [isElevatingSolution, setIsElevatingSolution] = useState(false);
   const [aiSolution, setAiSolution] = useState<string>('');
   const [studentNotes, setStudentNotes] = useState('');
   const [copiedSolution, setCopiedSolution] = useState(false);
@@ -56,10 +86,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
   const [isReviewing, setIsReviewing] = useState(false);
   const [assistantTab, setAssistantTab] = useState<'ai_solver' | 'draft_critique' | 'structure'>('ai_solver');
 
-  // Available Subjects fallback for semester
+  // Available Subjects (flexible, no minimum subjects mandated)
   const availableSubjects = useMemo(() => {
-    if (subjects && subjects.length > 0) return subjects;
-    return getDefaultSubjectsForClass('BCA-2028', 1);
+    if (Array.isArray(subjects)) return subjects;
+    return [];
   }, [subjects]);
 
   // New Assignment Modal
@@ -180,20 +210,167 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     }
   };
 
+  const getAssignmentStatus = (a: AcademicAssignment): 'todo' | 'in_progress' | 'completed' => {
+    if (a.status) return a.status;
+    return a.completed ? 'completed' : 'todo';
+  };
+
+  const ASSIGNMENT_STATUS_CONFIG = {
+    todo: {
+      label: 'To Do',
+      bg: 'bg-amber-950/40',
+      text: 'text-amber-300',
+      border: 'border-amber-500/30',
+      next: 'in_progress' as const,
+    },
+    in_progress: {
+      label: 'In Progress',
+      bg: 'bg-blue-950/40',
+      text: 'text-blue-300',
+      border: 'border-blue-500/30',
+      next: 'completed' as const,
+    },
+    completed: {
+      label: 'Completed',
+      bg: 'bg-emerald-950/40',
+      text: 'text-emerald-300',
+      border: 'border-emerald-500/30',
+      next: 'todo' as const,
+    },
+  };
+
+  // Notion-Style Status Tag Cycling (todo -> in_progress -> completed -> todo)
+  const handleCycleStatus = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = assignments.map((a) => {
+      if (a.id === id) {
+        const current = getAssignmentStatus(a);
+        const next = ASSIGNMENT_STATUS_CONFIG[current].next;
+        return {
+          ...a,
+          status: next,
+          completed: next === 'completed',
+        };
+      }
+      return a;
+    });
+    setAssignments(updated);
+    if (activeModalItem?.id === id) {
+      setActiveModalItem((prev) => {
+        if (!prev) return null;
+        const current = getAssignmentStatus(prev);
+        const next = ASSIGNMENT_STATUS_CONFIG[current].next;
+        return { ...prev, status: next, completed: next === 'completed' };
+      });
+    }
+    if (onUpdateAssignments) onUpdateAssignments(updated);
+  };
+
+  // Explicit status setter
+  const handleSetStatus = (id: string, newStatus: 'todo' | 'in_progress' | 'completed', e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = assignments.map((a) => {
+      if (a.id === id) {
+        return {
+          ...a,
+          status: newStatus,
+          completed: newStatus === 'completed',
+        };
+      }
+      return a;
+    });
+    setAssignments(updated);
+    if (activeModalItem?.id === id) {
+      setActiveModalItem((prev) => (prev ? { ...prev, status: newStatus, completed: newStatus === 'completed' } : null));
+    }
+    if (onUpdateAssignments) onUpdateAssignments(updated);
+  };
+
+  // Delete Assignment
+  const handleDeleteAssignment = async (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = assignments.filter((a) => a.id !== id);
+    setAssignments(updated);
+    if (activeModalItem?.id === id) setActiveModalItem(null);
+    if (onUpdateAssignments) onUpdateAssignments(updated);
+
+    try {
+      fetch(`/api/assignments/${id}`, { method: 'DELETE' }).catch(() => {});
+    } catch {}
+  };
+
+  // Notion-Style Quick Inline Add (Zero-Modal friction)
+  const handleQuickAdd = (
+    customTitle?: string,
+    customSubject?: string,
+    customStatus?: 'todo' | 'in_progress' | 'completed'
+  ) => {
+    const title = (customTitle || quickAddTitle).trim();
+    if (!title) return;
+
+    const targetSubName = customSubject || quickAddSubject || selectedFolder !== 'all' ? (selectedFolder !== 'all' ? selectedFolder : (availableSubjects[0]?.name || 'General')) : (availableSubjects[0]?.name || 'General');
+    const subObj = availableSubjects.find((s) => s.name === targetSubName);
+    const targetDate = quickAddDueDate || new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+    const assignedStatus = customStatus || 'todo';
+
+    const newItem: AcademicAssignment = {
+      id: `asgn-${Date.now()}`,
+      classId: 'class-bca',
+      title,
+      subjectName: targetSubName,
+      subjectId: subObj?.id || 'sub-general',
+      dueDate: targetDate,
+      type: quickAddType,
+      instructions: 'Complete according to course guidelines.',
+      integrityMode: 'teach_me',
+      outlineSteps: ['Review requirements', 'Draft key definitions and points', 'Finalize submission'],
+      keyReferences: ['Prescribed Syllabus & Course Notes'],
+      assignedBy: 'Student Task / Faculty',
+      completed: assignedStatus === 'completed',
+      status: assignedStatus,
+    };
+
+    const updated = [newItem, ...assignments];
+    setAssignments(updated);
+    if (onUpdateAssignments) onUpdateAssignments(updated);
+
+    setQuickAddTitle('');
+    setInlineTableTitle('');
+
+    try {
+      fetch('/api/assignments/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItem),
+      }).catch(() => {});
+    } catch {}
+  };
+
   // Toggle Done state
   const handleToggleDone = async (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
 
-    const updated = assignments.map((a) => {
+    const updated: AcademicAssignment[] = assignments.map((a) => {
       if (a.id === id) {
-        return { ...a, completed: !a.completed };
+        const nextCompleted = !a.completed;
+        const nextStatus: 'completed' | 'todo' = nextCompleted ? 'completed' : 'todo';
+        return {
+          ...a,
+          completed: nextCompleted,
+          status: nextStatus,
+        };
       }
       return a;
     });
 
     setAssignments(updated);
     if (activeModalItem?.id === id) {
-      setActiveModalItem((prev) => (prev ? { ...prev, completed: !prev.completed } : null));
+      setActiveModalItem((prev) => {
+        if (!prev) return null;
+        const nextCompleted = !prev.completed;
+        const nextStatus: 'completed' | 'todo' = nextCompleted ? 'completed' : 'todo';
+        return { ...prev, completed: nextCompleted, status: nextStatus };
+      });
     }
     if (onUpdateAssignments) {
       onUpdateAssignments(updated);
@@ -391,6 +568,41 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     }
   };
 
+  // 60-Student Master Elevation for Assignments
+  const handleElevateAssignmentSolution = async () => {
+    if (!activeModalItem) return;
+    setIsElevatingSolution(true);
+    try {
+      const res = await fetch('/api/ai/compound-to-60', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: activeModalItem.title,
+          subjectName: activeModalItem.subjectName,
+        }),
+      });
+      const data = await res.json();
+      if (data.cached && data.cached.answer) {
+        setAiSolution(data.cached.answer);
+        const updatedItem: AcademicAssignment = {
+          ...activeModalItem,
+          solution: data.cached.answer,
+          aiSolvedAnswer: data.cached.answer,
+          solvedBy: '60-Student Cohort Distiller (Class Gold Standard)',
+          solvedAt: new Date().toISOString(),
+        };
+        setActiveModalItem(updatedItem);
+        const updatedList = assignments.map((a) => (a.id === updatedItem.id ? updatedItem : a));
+        setAssignments(updatedList);
+        if (onUpdateAssignments) onUpdateAssignments(updatedList);
+      }
+    } catch (err: any) {
+      console.error('Error elevating assignment to 60:', err);
+    } finally {
+      setIsElevatingSolution(false);
+    }
+  };
+
   const handleCopySolution = () => {
     if (!aiSolution) return;
     navigator.clipboard.writeText(aiSolution);
@@ -482,9 +694,11 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     }
 
     if (filterType === 'pending') {
-      list = list.filter((a) => !a.completed);
+      list = list.filter((a) => getAssignmentStatus(a) === 'todo');
+    } else if (filterType === 'in_progress') {
+      list = list.filter((a) => getAssignmentStatus(a) === 'in_progress');
     } else if (filterType === 'completed') {
-      list = list.filter((a) => a.completed);
+      list = list.filter((a) => getAssignmentStatus(a) === 'completed');
     } else if (filterType === 'ppt') {
       list = list.filter((a) => a.type === 'ppt_presentation');
     }
@@ -503,29 +717,90 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     return list;
   }, [assignments, selectedFolder, filterType, searchQuery]);
 
-  const completedCount = assignments.filter((a) => a.completed).length;
-  const pendingCount = assignments.length - completedCount;
+  const completedCount = assignments.filter((a) => getAssignmentStatus(a) === 'completed').length;
+  const inProgressCount = assignments.filter((a) => getAssignmentStatus(a) === 'in_progress').length;
+  const pendingCount = assignments.filter((a) => getAssignmentStatus(a) === 'todo').length;
   const dueSoonCount = assignments.filter((a) => {
-    if (a.completed) return false;
+    if (getAssignmentStatus(a) === 'completed') return false;
     const days = calculateDaysLeft(a.dueDate);
     return days >= 0 && days <= 4;
   }).length;
 
+  const todoItems = filteredAssignments.filter((a) => getAssignmentStatus(a) === 'todo');
+  const inProgressItems = filteredAssignments.filter((a) => getAssignmentStatus(a) === 'in_progress');
+  const completedItems = filteredAssignments.filter((a) => getAssignmentStatus(a) === 'completed');
+
   return (
-    <div className="max-w-4xl mx-auto py-7 px-2 sm:px-4 space-y-7 animate-fade-in text-slate-100 pb-12">
-      {/* 1. Header with Stats & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 border-b border-slate-800/60">
-        <div>
-          <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-            Assignments
-          </h1>
+    <div className="max-w-5xl mx-auto py-7 px-2 sm:px-4 space-y-6 animate-fade-in text-slate-100 pb-16">
+      {/* 1. Header with View Switcher, Stats & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800/60">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+              Assignments & Coursework
+            </h1>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400">
+              {assignments.length} Total
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 font-sans-ui">
+            Notion-style coursework tracker with Kanban board, database table, and instant AI solver.
+          </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        {/* View Switcher & Action Controls */}
+        <div className="flex items-center flex-wrap gap-2">
+          {/* Notion Multi-View Switcher */}
+          <div className="flex items-center gap-0.5 bg-slate-900/90 border border-slate-800 p-0.5 rounded-lg shadow-2xs">
+            <button
+              onClick={() => {
+                setViewMode('board');
+                localStorage.setItem('assignments_view_mode', 'board');
+              }}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+                viewMode === 'board'
+                  ? 'bg-slate-800 text-cyan-300 font-semibold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Kanban className="w-3.5 h-3.5" />
+              <span>Board</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setViewMode('table');
+                localStorage.setItem('assignments_view_mode', 'table');
+              }}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+                viewMode === 'table'
+                  ? 'bg-slate-800 text-cyan-300 font-semibold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <TableIcon className="w-3.5 h-3.5" />
+              <span>Table</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setViewMode('folders');
+                localStorage.setItem('assignments_view_mode', 'folders');
+              }}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
+                viewMode === 'folders'
+                  ? 'bg-slate-800 text-cyan-300 font-semibold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Folder className="w-3.5 h-3.5" />
+              <span>Folders</span>
+            </button>
+          </div>
+
           <button
             onClick={() => setIsCRPortalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
             title="Class Representative 1-Click Sync"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
@@ -537,21 +812,77 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               if (selectedFolder !== 'all') setNewSubject(selectedFolder);
               setIsAddModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
           >
             <Plus className="w-4 h-4" />
-            <span>Add Work</span>
+            <span>Detailed Add</span>
           </button>
         </div>
       </div>
 
-      {/* 2. Search & Filter Bar */}
+      {/* 2. Fast Inline Task Add Bar (Zero Modal Friction) */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 shadow-xs">
+        <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
+          <Plus className="w-4 h-4 text-cyan-400 shrink-0" />
+          <input
+            type="text"
+            placeholder="Quick add task: e.g. DBMS Normalization Assignment 3, Lab 4 Record... (Press Enter)"
+            value={quickAddTitle}
+            onChange={(e) => setQuickAddTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleQuickAdd();
+            }}
+            className="w-full bg-transparent text-xs text-slate-100 placeholder-slate-500 outline-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <select
+            value={quickAddSubject}
+            onChange={(e) => setQuickAddSubject(e.target.value)}
+            className="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-cyan-500/50 max-w-[140px] truncate"
+          >
+            <option value="">Subject (Auto)</option>
+            {availableSubjects.map((s) => (
+              <option key={s.id} value={s.name}>
+                {s.name}
+              </option>
+            ))}
+            <option value="General Studies">General Studies</option>
+          </select>
+
+          <select
+            value={quickAddType}
+            onChange={(e) => setQuickAddType(e.target.value as ClassworkType)}
+            className="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-cyan-500/50"
+          >
+            <option value="assignment">📝 Assignment</option>
+            <option value="lab_record">🔬 Lab Record</option>
+            <option value="ppt_presentation">🎤 PPT</option>
+          </select>
+
+          <button
+            onClick={() => handleQuickAdd()}
+            disabled={!quickAddTitle.trim()}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer shrink-0 ${
+              quickAddTitle.trim()
+                ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-xs'
+                : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+            }`}
+          >
+            + Add
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Search & Filter Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
         {/* Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {[
             { id: 'all', label: `All (${assignments.length})` },
-            { id: 'pending', label: `Pending (${pendingCount})` },
+            { id: 'pending', label: `To Do (${pendingCount})` },
+            { id: 'in_progress', label: `In Progress (${inProgressCount})` },
             { id: 'completed', label: `Completed (${completedCount})` },
             { id: 'ppt', label: `PPT Roster (${assignments.filter((a) => a.type === 'ppt_presentation').length})` },
           ].map((pill) => (
@@ -590,271 +921,638 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
         </div>
       </div>
 
-      {/* 3. ROOT VIEW: Subject Folders Shelf (When selectedFolder === 'all' and no active search) */}
-      {selectedFolder === 'all' && !searchQuery.trim() && filterType === 'all' ? (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs border-b border-slate-800/50 pb-2">
-            <span className="academic-tag text-[10px] text-slate-400">
-              Subject Folders ({subjectFolders.length})
-            </span>
-            {dueSoonCount > 0 && (
-              <span className="academic-tag text-[10px] text-amber-400/90 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-amber-400" />
-                <span>{dueSoonCount} Deadlines Approaching</span>
-              </span>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-            {subjectFolders.length === 0 ? (
-              <div className="col-span-full py-10 rounded-xl bg-slate-900/30 border border-dashed border-slate-800 text-center space-y-3">
-                <Folder className="w-8 h-8 text-slate-600 mx-auto" />
-                <h3 className="text-xs font-semibold text-slate-300">No coursework or assignments yet</h3>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Add your first class assignment, lab task, or presentation roster to track deadlines and generate AI guides.
-                </p>
-                <button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add First Assignment</span>
-                </button>
-              </div>
-            ) : (
-              subjectFolders.map((folder) => {
-              const percentDone =
-                folder.totalCount > 0 ? Math.round((folder.completedCount / folder.totalCount) * 100) : 0;
-
-              return (
-                <div
-                  key={folder.id}
-                  onClick={() => setSelectedFolder(folder.name)}
-                  className="p-4 sm:p-5 rounded-md bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/70 transition cursor-pointer flex flex-col justify-between gap-4 group shadow-2xs select-none"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      {/* Folder Graphic */}
-                      <div className="w-8 h-8 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition">
-                        <Folder className="w-4 h-4" />
-                      </div>
-
-                      {/* File count tag */}
-                      <div className="flex items-center gap-1.5">
-                        {folder.urgentCount > 0 && (
-                          <span className="academic-tag text-[9px] px-1.5 py-0.2 rounded bg-amber-950/50 text-amber-300 border border-amber-500/30">
-                            {folder.urgentCount} Urgent
-                          </span>
-                        )}
-                        <span className="academic-tag text-[9px] px-1.5 py-0.2 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                          {folder.totalCount} {folder.totalCount === 1 ? 'item' : 'items'}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="font-editorial text-base font-medium text-slate-100 group-hover:text-white transition">
-                        {folder.name}
-                      </h3>
-                      <span className="academic-tag text-[9px] text-slate-400">
-                        {folder.code} · Syllabus Coursework
-                      </span>
-                    </div>
+      {/* 4. NOTION VIEW RENDERING */}
+      {viewMode === 'board' ? (
+        /* ================== A. KANBAN BOARD VIEW ================== */
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+          {[
+            {
+              id: 'todo' as const,
+              title: 'To Do',
+              badge: `${todoItems.length}`,
+              headerColor: 'text-amber-300 border-amber-500/30 bg-amber-950/20',
+              dotColor: 'bg-amber-400',
+              items: todoItems,
+            },
+            {
+              id: 'in_progress' as const,
+              title: 'In Progress',
+              badge: `${inProgressItems.length}`,
+              headerColor: 'text-blue-300 border-blue-500/30 bg-blue-950/20',
+              dotColor: 'bg-blue-400',
+              items: inProgressItems,
+            },
+            {
+              id: 'completed' as const,
+              title: 'Completed',
+              badge: `${completedItems.length}`,
+              headerColor: 'text-emerald-300 border-emerald-500/30 bg-emerald-950/20',
+              dotColor: 'bg-emerald-400',
+              items: completedItems,
+            },
+          ].map((column) => (
+            <div
+              key={column.id}
+              className="rounded-xl bg-slate-900/40 border border-slate-800/80 p-3.5 space-y-3 min-h-[350px] flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                {/* Column Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-slate-800/60 text-xs">
+                  <div className="flex items-center gap-2 font-medium text-slate-200">
+                    <span className={`w-2 h-2 rounded-full ${column.dotColor}`} />
+                    <span>{column.title}</span>
                   </div>
-
-                  {/* Folder Completion Bar */}
-                  <div className="space-y-1.5 pt-2 border-t border-slate-800/60 font-sans-ui text-xs">
-                    <div className="flex items-center justify-between text-[11px] text-slate-400">
-                      <span>{folder.completedCount} of {folder.totalCount} Completed</span>
-                      <span className="font-mono text-neutral-200 font-medium">{percentDone}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-neutral-300 group-hover:bg-white transition-all duration-300 rounded-full"
-                        style={{ width: `${percentDone}%` }}
-                      />
-                    </div>
-                  </div>
+                  <span className={`academic-tag text-[10px] px-2 py-0.5 rounded border font-mono ${column.headerColor}`}>
+                    {column.badge}
+                  </span>
                 </div>
-              );
-            }))}
+
+                {/* Column Cards */}
+                <div className="space-y-2.5">
+                  {column.items.length === 0 ? (
+                    <div className="py-8 text-center text-xs text-slate-500 border border-dashed border-slate-800/80 rounded-lg">
+                      No items in {column.title.toLowerCase()}
+                    </div>
+                  ) : (
+                    column.items.map((item) => {
+                      const daysLeft = calculateDaysLeft(item.dueDate);
+                      const isUrgent = daysLeft >= 0 && daysLeft <= 3 && !item.completed;
+                      const statusCfg = ASSIGNMENT_STATUS_CONFIG[getAssignmentStatus(item)];
+
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setActiveModalItem(item);
+                            setAiSolution('');
+                            setReviewResult('');
+                          }}
+                          className={`p-3.5 rounded-xl border transition cursor-pointer flex flex-col justify-between gap-2.5 group hover:border-slate-650 ${
+                            item.completed
+                              ? 'bg-slate-900/30 border-slate-800/70 opacity-85'
+                              : isUrgent
+                              ? 'bg-amber-950/15 border-amber-500/30'
+                              : 'bg-slate-900/70 border-slate-800 hover:border-cyan-500/30'
+                          }`}
+                        >
+                          <div className="space-y-1.5">
+                            {/* Badges strip */}
+                            <div className="flex items-center justify-between gap-1.5 text-[10px] flex-wrap">
+                              <span className="font-mono px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300 truncate max-w-[130px]">
+                                {item.subjectName}
+                              </span>
+
+                              {/* Due Date Pill */}
+                              <span
+                                className={`font-mono text-[10px] font-medium ${
+                                  item.completed
+                                    ? 'text-neutral-400'
+                                    : daysLeft < 0
+                                    ? 'text-rose-400'
+                                    : daysLeft <= 1
+                                    ? 'text-amber-400 font-semibold'
+                                    : 'text-slate-400'
+                                }`}
+                              >
+                                {item.completed
+                                  ? 'Done ✓'
+                                  : daysLeft < 0
+                                  ? 'Overdue'
+                                  : daysLeft === 0
+                                  ? 'Due Today'
+                                  : daysLeft === 1
+                                  ? 'Tomorrow'
+                                  : `${daysLeft}d left`}
+                              </span>
+                            </div>
+
+                            {/* Card Title */}
+                            <h4 className="font-medium text-xs text-slate-100 group-hover:text-cyan-300 transition line-clamp-2">
+                              {item.title}
+                            </h4>
+
+                            {/* Solved or Presenter Indicator */}
+                            {(item.solution || item.aiSolvedAnswer) && (
+                              <div className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-300 bg-emerald-950/50 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+                                <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
+                                <span>Solved (0 Tokens)</span>
+                              </div>
+                            )}
+
+                            {item.presenterName && (
+                              <div className="text-[10px] text-indigo-300 font-mono truncate">
+                                🎤 {item.presenterName}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Card Footer Actions */}
+                          <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+                            {/* Status Tag Pill (Click to cycle status) */}
+                            <button
+                              onClick={(e) => handleCycleStatus(item.id, e)}
+                              className={`text-[10px] font-mono px-2 py-0.5 rounded border transition cursor-pointer flex items-center gap-1 ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}
+                              title="Click to cycle status: To Do → In Progress → Completed"
+                            >
+                              <span>{statusCfg.label}</span>
+                            </button>
+
+                            <div className="flex items-center gap-1.5">
+                              {/* AI Solver Trigger */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveModalItem(item);
+                                  setReviewResult('');
+                                  setAssistantTab('ai_solver');
+                                }}
+                                className="text-[11px] text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1"
+                                title="Solve with AI"
+                              >
+                                <Sparkles className="w-3 h-3" />
+                              </button>
+
+                              {/* Delete Task */}
+                              <button
+                                onClick={(e) => handleDeleteAssignment(item.id, e)}
+                                className="text-slate-500 hover:text-rose-400 p-1 rounded transition cursor-pointer"
+                                title="Delete Task"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Inline Column Fast Add */}
+              <div className="pt-2 border-t border-slate-800/50">
+                <div className="flex items-center gap-1.5 bg-slate-950/60 border border-slate-800/80 rounded-lg px-2 py-1 text-xs">
+                  <Plus className="w-3 h-3 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder={`+ New ${column.title.toLowerCase()}...`}
+                    value={columnInlineTitle[column.id] || ''}
+                    onChange={(e) =>
+                      setColumnInlineTitle((prev) => ({ ...prev, [column.id]: e.target.value }))
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && columnInlineTitle[column.id]?.trim()) {
+                        handleQuickAdd(columnInlineTitle[column.id], undefined, column.id);
+                        setColumnInlineTitle((prev) => ({ ...prev, [column.id]: '' }));
+                      }
+                    }}
+                    className="w-full bg-transparent text-slate-200 placeholder-slate-500 outline-none text-[11px]"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : viewMode === 'table' ? (
+        /* ================== B. NOTION DATABASE TABLE VIEW ================== */
+        <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px]">
+                <tr>
+                  <th className="py-2.5 px-3 w-10 text-center">✓</th>
+                  <th className="py-2.5 px-3 font-medium">Task Name</th>
+                  <th className="py-2.5 px-3 font-medium">Subject</th>
+                  <th className="py-2.5 px-3 font-medium">Type</th>
+                  <th className="py-2.5 px-3 font-medium">Due Date</th>
+                  <th className="py-2.5 px-3 font-medium">Status</th>
+                  <th className="py-2.5 px-3 font-medium text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/50">
+                {filteredAssignments.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-10 text-center text-slate-500 text-xs">
+                      No assignments found matching this filter.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredAssignments.map((item) => {
+                    const daysLeft = calculateDaysLeft(item.dueDate);
+                    const isUrgent = daysLeft >= 0 && daysLeft <= 3 && !item.completed;
+                    const statusCfg = ASSIGNMENT_STATUS_CONFIG[getAssignmentStatus(item)];
+
+                    return (
+                      <tr
+                        key={item.id}
+                        onClick={() => {
+                          setActiveModalItem(item);
+                          setAiSolution('');
+                          setReviewResult('');
+                        }}
+                        className="hover:bg-slate-800/40 transition cursor-pointer group"
+                      >
+                        {/* Checkbox */}
+                        <td className="py-2.5 px-3 text-center" onClick={(e) => handleToggleDone(item.id, e)}>
+                          <div
+                            className={`w-4 h-4 rounded border mx-auto flex items-center justify-center transition cursor-pointer ${
+                              item.completed
+                                ? 'bg-emerald-500 border-emerald-400 text-slate-950'
+                                : 'border-slate-700 bg-slate-950 hover:border-slate-500'
+                            }`}
+                          >
+                            {item.completed && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                        </td>
+
+                        {/* Task Title */}
+                        <td className="py-2.5 px-3">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`font-medium text-xs group-hover:text-cyan-300 transition ${
+                                item.completed ? 'line-through text-slate-500' : 'text-slate-100'
+                              }`}
+                            >
+                              {item.title}
+                            </span>
+                            {(item.solution || item.aiSolvedAnswer) && (
+                              <span className="font-mono text-[9px] px-1.5 py-0.2 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 shrink-0">
+                                Solved
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Subject */}
+                        <td className="py-2.5 px-3">
+                          <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300 whitespace-nowrap">
+                            {item.subjectName}
+                          </span>
+                        </td>
+
+                        {/* Type */}
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <span className="text-[11px] text-slate-400">
+                            {item.type === 'ppt_presentation'
+                              ? '🎤 PPT'
+                              : item.type === 'lab_record'
+                              ? '🔬 Lab'
+                              : '📝 Assignment'}
+                          </span>
+                        </td>
+
+                        {/* Due Date & Urgency */}
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                            <span className="text-slate-300">{item.dueDate}</span>
+                            <span
+                              className={`text-[10px] px-1.5 py-0.2 rounded ${
+                                item.completed
+                                  ? 'text-neutral-400 bg-neutral-900'
+                                  : daysLeft < 0
+                                  ? 'text-rose-400 bg-rose-950/40 border border-rose-500/30'
+                                  : daysLeft <= 1
+                                  ? 'text-amber-400 bg-amber-950/40 border border-amber-500/30'
+                                  : 'text-slate-400'
+                              }`}
+                            >
+                              {item.completed
+                                ? '✓'
+                                : daysLeft < 0
+                                ? 'Overdue'
+                                : daysLeft === 0
+                                ? 'Today'
+                                : daysLeft === 1
+                                ? 'Tomorrow'
+                                : `${daysLeft}d`}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Status Tag Pill (Cycles on click) */}
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <button
+                            onClick={(e) => handleCycleStatus(item.id, e)}
+                            className={`font-mono text-[10px] px-2.5 py-0.5 rounded border transition cursor-pointer ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}
+                            title="Click to cycle status"
+                          >
+                            {statusCfg.label}
+                          </button>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-2.5 px-3 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => {
+                                setActiveModalItem(item);
+                                setReviewResult('');
+                                setAssistantTab('ai_solver');
+                              }}
+                              className="text-[11px] text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1"
+                            >
+                              <Sparkles className="w-3 h-3" />
+                              <span>Solve</span>
+                            </button>
+                            <button
+                              onClick={(e) => handleDeleteAssignment(item.id, e)}
+                              className="text-slate-500 hover:text-rose-400 p-1 rounded transition cursor-pointer"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+
+                {/* Notion Table Bottom Row: Inline + New Row */}
+                <tr className="bg-slate-950/30">
+                  <td className="py-2 px-3 text-center text-slate-500">+</td>
+                  <td colSpan={6} className="py-2 px-3">
+                    <input
+                      type="text"
+                      placeholder="+ New task row... (Type title & press Enter)"
+                      value={inlineTableTitle}
+                      onChange={(e) => setInlineTableTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && inlineTableTitle.trim()) {
+                          handleQuickAdd(inlineTableTitle);
+                        }
+                      }}
+                      className="w-full bg-transparent text-xs text-slate-200 placeholder-slate-500 outline-none"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       ) : (
-        /* 4. FOLDER CONTENTS VIEW (When inside a folder, searching, or filtering) */
+        /* ================== C. SUBJECT FOLDERS SHELF VIEW ================== */
         <div className="space-y-4">
-          {/* Breadcrumb Header */}
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs">
-            <div className="flex items-center gap-2">
-              {selectedFolder !== 'all' ? (
-                <button
-                  onClick={() => setSelectedFolder('all')}
-                  className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer group"
-                >
-                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-                  <span>All Folders</span>
-                </button>
-              ) : (
-                <span className="text-slate-400">All Subjects</span>
-              )}
-
-              {selectedFolder !== 'all' && (
-                <>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-                  <span className="font-bold text-slate-100 flex items-center gap-1.5">
-                    <FolderOpen className="w-4 h-4 text-cyan-400" />
-                    <span>{selectedFolder}</span>
+          {selectedFolder === 'all' && !searchQuery.trim() && filterType === 'all' ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-xs border-b border-slate-800/50 pb-2">
+                <span className="academic-tag text-[10px] text-slate-400">
+                  Subject Folders ({subjectFolders.length})
+                </span>
+                {dueSoonCount > 0 && (
+                  <span className="academic-tag text-[10px] text-amber-400/90 bg-amber-950/40 border border-amber-500/30 px-2 py-0.5 rounded flex items-center gap-1.5">
+                    <Clock className="w-3 h-3 text-amber-400" />
+                    <span>{dueSoonCount} Deadlines Approaching</span>
                   </span>
-                </>
-              )}
-            </div>
+                )}
+              </div>
 
-            <span className="text-slate-400 font-mono text-[11px]">
-              {filteredAssignments.length} {filteredAssignments.length === 1 ? 'item' : 'items'}
-            </span>
-          </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+                {subjectFolders.length === 0 ? (
+                  <div className="col-span-full py-10 rounded-xl bg-slate-900/30 border border-dashed border-slate-800 text-center space-y-3">
+                    <Folder className="w-8 h-8 text-slate-600 mx-auto" />
+                    <h3 className="text-xs font-semibold text-slate-300">No coursework or assignments yet</h3>
+                    <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                      Add your first class assignment, lab task, or presentation roster to track deadlines and generate AI guides.
+                    </p>
+                    <button
+                      onClick={() => setIsAddModalOpen(true)}
+                      className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-medium cursor-pointer inline-flex items-center gap-1.5"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add First Assignment</span>
+                    </button>
+                  </div>
+                ) : (
+                  subjectFolders.map((folder) => {
+                    const percentDone =
+                      folder.totalCount > 0 ? Math.round((folder.completedCount / folder.totalCount) * 100) : 0;
 
-          {/* Items List */}
-          {filteredAssignments.length === 0 ? (
-            <div className="p-10 rounded-2xl bg-slate-900/30 border border-slate-800 text-center space-y-3">
-              <Folder className="w-8 h-8 text-slate-600 mx-auto" />
-              <p className="text-xs text-slate-400">No assignments found matching this filter.</p>
-              {selectedFolder !== 'all' && (
-                <button
-                  onClick={() => setSelectedFolder('all')}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs cursor-pointer"
-                >
-                  Return to All Folders
-                </button>
-              )}
+                    return (
+                      <div
+                        key={folder.id}
+                        onClick={() => setSelectedFolder(folder.name)}
+                        className="p-4 sm:p-5 rounded-xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/70 transition cursor-pointer flex flex-col justify-between gap-4 group shadow-2xs select-none"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-white transition">
+                              <Folder className="w-4 h-4" />
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              {folder.urgentCount > 0 && (
+                                <span className="academic-tag text-[9px] px-1.5 py-0.2 rounded bg-amber-950/50 text-amber-300 border border-amber-500/30">
+                                  {folder.urgentCount} Urgent
+                                </span>
+                              )}
+                              <span className="academic-tag text-[9px] px-1.5 py-0.2 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                                {folder.totalCount} {folder.totalCount === 1 ? 'item' : 'items'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <h3 className="font-editorial text-base font-medium text-slate-100 group-hover:text-white transition">
+                              {folder.name}
+                            </h3>
+                            <span className="academic-tag text-[9px] text-slate-400">
+                              {folder.code} · Syllabus Coursework
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Folder Completion Bar */}
+                        <div className="space-y-1.5 pt-2 border-t border-slate-800/60 font-sans-ui text-xs">
+                          <div className="flex items-center justify-between text-[11px] text-slate-400">
+                            <span>{folder.completedCount} of {folder.totalCount} Completed</span>
+                            <span className="font-mono text-neutral-200 font-medium">{percentDone}%</span>
+                          </div>
+                          <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-neutral-300 group-hover:bg-white transition-all duration-300 rounded-full"
+                              style={{ width: `${percentDone}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {filteredAssignments.map((item) => {
-                const daysLeft = calculateDaysLeft(item.dueDate);
-                const isUrgent = daysLeft >= 0 && daysLeft <= 3 && !item.completed;
+            /* Folder Drill-Down View */
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs">
+                <div className="flex items-center gap-2">
+                  {selectedFolder !== 'all' ? (
+                    <button
+                      onClick={() => setSelectedFolder('all')}
+                      className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer group"
+                    >
+                      <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                      <span>All Folders</span>
+                    </button>
+                  ) : (
+                    <span className="text-slate-400">All Subjects</span>
+                  )}
 
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => {
-                      setActiveModalItem(item);
-                      setAiSolution('');
-                      setReviewResult('');
-                    }}
-                    className={`p-4 rounded-2xl border transition cursor-pointer flex flex-col justify-between gap-3 ${
-                      item.completed
-                        ? 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700 opacity-80'
-                        : isUrgent
-                        ? 'bg-amber-950/20 border-amber-500/30 hover:border-amber-500/60 shadow-sm'
-                        : 'bg-slate-900/70 border-slate-800 hover:border-cyan-500/40'
-                    }`}
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-[11px] gap-2 flex-wrap">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span
-                            className={`font-mono px-2 py-0.5 rounded border ${
-                              item.type === 'ppt_presentation'
-                                ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/30'
-                                : 'bg-slate-950 text-slate-400 border-slate-800'
-                            }`}
-                          >
-                            {item.type === 'ppt_presentation' ? '🎤 PPT Presentation' : '📝 Written Assignment'}
-                          </span>
+                  {selectedFolder !== 'all' && (
+                    <>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                      <span className="font-bold text-slate-100 flex items-center gap-1.5">
+                        <FolderOpen className="w-4 h-4 text-cyan-400" />
+                        <span>{selectedFolder}</span>
+                      </span>
+                    </>
+                  )}
+                </div>
 
-                          {(item.solution || item.aiSolvedAnswer) && (
-                            <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-semibold">
-                              <Sparkles className="w-3 h-3 text-emerald-400" />
-                              <span>Solved (0 Tokens)</span>
+                <span className="text-slate-400 font-mono text-[11px]">
+                  {filteredAssignments.length} {filteredAssignments.length === 1 ? 'item' : 'items'}
+                </span>
+              </div>
+
+              {filteredAssignments.length === 0 ? (
+                <div className="p-10 rounded-2xl bg-slate-900/30 border border-slate-800 text-center space-y-3">
+                  <Folder className="w-8 h-8 text-slate-600 mx-auto" />
+                  <p className="text-xs text-slate-400">No assignments found matching this filter.</p>
+                  {selectedFolder !== 'all' && (
+                    <button
+                      onClick={() => setSelectedFolder('all')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs cursor-pointer"
+                    >
+                      Return to All Folders
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {filteredAssignments.map((item) => {
+                    const daysLeft = calculateDaysLeft(item.dueDate);
+                    const isUrgent = daysLeft >= 0 && daysLeft <= 3 && !item.completed;
+                    const statusCfg = ASSIGNMENT_STATUS_CONFIG[getAssignmentStatus(item)];
+
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          setActiveModalItem(item);
+                          setAiSolution('');
+                          setReviewResult('');
+                        }}
+                        className={`p-4 rounded-xl border transition cursor-pointer flex flex-col justify-between gap-3 ${
+                          item.completed
+                            ? 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700 opacity-80'
+                            : isUrgent
+                            ? 'bg-amber-950/20 border-amber-500/30 hover:border-amber-500/60 shadow-sm'
+                            : 'bg-slate-900/70 border-slate-800 hover:border-cyan-500/40'
+                        }`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-[11px] gap-2 flex-wrap">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`font-mono px-2 py-0.5 rounded border ${
+                                  item.type === 'ppt_presentation'
+                                    ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/30'
+                                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                                }`}
+                              >
+                                {item.type === 'ppt_presentation' ? '🎤 PPT Presentation' : '📝 Written Assignment'}
+                              </span>
+
+                              {(item.solution || item.aiSolvedAnswer) && (
+                                <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-semibold">
+                                  <Sparkles className="w-3 h-3 text-emerald-400" />
+                                  <span>Solved (0 Tokens)</span>
+                                </span>
+                              )}
+                            </div>
+
+                            <span
+                              className={`font-mono font-medium ${
+                                item.completed
+                                  ? 'text-neutral-300'
+                                  : isUrgent
+                                  ? 'text-amber-400 font-semibold'
+                                  : 'text-slate-400'
+                              }`}
+                            >
+                              {item.completed
+                                ? 'Completed ✓'
+                                : daysLeft === 0
+                                ? 'Due Today'
+                                : daysLeft === 1
+                                ? 'Due Tomorrow'
+                                : `Due in ${daysLeft}d (${item.dueDate})`}
                             </span>
+                          </div>
+
+                          <div>
+                            <h4 className="font-bold text-sm text-slate-100 hover:text-cyan-300 transition line-clamp-2">
+                              {item.title}
+                            </h4>
+                            <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
+                              📁 {item.subjectName}
+                            </span>
+                          </div>
+
+                          {item.presenterName && (
+                            <div className="p-2 rounded-lg bg-indigo-950/30 border border-indigo-500/20 text-[11px] text-indigo-300 font-mono">
+                              Presenter: {item.presenterName} {item.rollNumber && `(${item.rollNumber})`}
+                            </div>
                           )}
                         </div>
 
-                        <span
-                          className={`font-mono font-medium ${
-                            item.completed
-                              ? 'text-neutral-300'
-                              : isUrgent
-                              ? 'text-amber-400 font-semibold'
-                              : 'text-slate-400'
-                          }`}
-                        >
-                          {item.completed
-                            ? 'Completed ✓'
-                            : daysLeft === 0
-                            ? 'Due Today'
-                            : daysLeft === 1
-                            ? 'Due Tomorrow'
-                            : `Due in ${daysLeft}d (${item.dueDate})`}
-                        </span>
-                      </div>
+                        {/* Bottom Actions */}
+                        <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/60 text-xs">
+                          {/* Status cycle tag */}
+                          <button
+                            onClick={(e) => handleCycleStatus(item.id, e)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium transition cursor-pointer border ${statusCfg.bg} ${statusCfg.text} ${statusCfg.border}`}
+                          >
+                            <span>{statusCfg.label}</span>
+                          </button>
 
-                      <div>
-                        <h4 className="font-bold text-sm text-slate-100 hover:text-cyan-300 transition line-clamp-2">
-                          {item.title}
-                        </h4>
-                        <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                          📁 {item.subjectName}
-                        </span>
-                      </div>
+                          <div className="flex items-center gap-3">
+                            {/* AI Solver Trigger */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveModalItem(item);
+                                setReviewResult('');
+                                setAssistantTab('ai_solver');
+                              }}
+                              className={`flex items-center gap-1.5 font-medium text-xs cursor-pointer hover:underline ${
+                                item.solution || item.aiSolvedAnswer
+                                  ? 'text-emerald-400 hover:text-emerald-300 font-semibold'
+                                  : 'text-cyan-400 hover:text-cyan-300'
+                              }`}
+                            >
+                              <Sparkles className="w-3.5 h-3.5" />
+                              <span>
+                                {item.solution || item.aiSolvedAnswer
+                                  ? 'View Solution →'
+                                  : 'Solve with AI →'}
+                              </span>
+                            </button>
 
-                      {item.presenterName && (
-                        <div className="p-2 rounded-lg bg-indigo-950/30 border border-indigo-500/20 text-[11px] text-indigo-300 font-mono">
-                          Presenter: {item.presenterName} {item.rollNumber && `(${item.rollNumber})`}
+                            <button
+                              onClick={(e) => handleDeleteAssignment(item.id, e)}
+                              className="text-slate-500 hover:text-rose-400 p-1 transition cursor-pointer"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Bottom Actions */}
-                    <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/60 text-xs">
-                      {/* Done Toggle */}
-                      <button
-                        onClick={(e) => handleToggleDone(item.id, e)}
-                        className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition cursor-pointer border ${
-                          item.completed
-                            ? 'bg-neutral-800 text-neutral-200 border-neutral-700 hover:bg-neutral-750'
-                            : 'bg-slate-800 text-slate-300 border-slate-700 hover:text-white'
-                        }`}
-                      >
-                        {item.completed ? (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-neutral-300" />
-                            <span>Done ✓</span>
-                          </>
-                        ) : (
-                          <>
-                            <Check className="w-3.5 h-3.5 text-slate-400" />
-                            <span>Mark Done</span>
-                          </>
-                        )}
-                      </button>
-
-                      {/* AI Solver Trigger */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveModalItem(item);
-                          setReviewResult('');
-                          setAssistantTab('ai_solver');
-                        }}
-                        className={`flex items-center gap-1.5 font-medium text-xs cursor-pointer hover:underline ${
-                          item.solution || item.aiSolvedAnswer
-                            ? 'text-emerald-400 hover:text-emerald-300 font-semibold'
-                            : 'text-cyan-400 hover:text-cyan-300'
-                        }`}
-                      >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>
-                          {item.solution || item.aiSolvedAnswer
-                            ? '⚡ View Solution (0 Tokens) →'
-                            : 'Solve with AI →'}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -975,35 +1673,51 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               {/* Tab 1: AI Assignment Solver */}
               {assistantTab === 'ai_solver' && (
                 <div className="space-y-3 animate-fade-in text-xs">
-                  {/* Zero-Token Model Solution Banner */}
-                  {aiSolution ? (
-                    <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                     {aiSolution ? (
+                    <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-slate-900 to-emerald-950/20 border border-amber-500/30 rounded-xl flex items-center justify-between gap-3 shadow-sm">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                          <Trophy className="w-4 h-4 text-amber-400" />
+                        </div>
                         <div>
-                          <div className="font-semibold text-emerald-200">
-                            ⚡ Class Model Answer Synced (0 Tokens Consumed)
+                          <div className="font-semibold text-amber-200 text-xs sm:text-sm flex items-center gap-2">
+                            <span>Cohort Master Solution • Student 60/60 Standard</span>
+                            <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-500/20 text-emerald-300 font-mono">
+                              100% Exam Aligned
+                            </span>
                           </div>
-                          <div className="text-[11px] text-emerald-400/80">
-                            Solved once & cached for all students across mobile, tablet & desktop.
+                          <div className="text-[11px] text-slate-300 leading-snug">
+                            Iteratively refined across 60 student peers. Zero AI tokens spent for whole class.
                           </div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleSolveWithAI(true)}
-                        disabled={isSolving}
-                        className="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition cursor-pointer shrink-0"
-                      >
-                        Re-solve
-                      </button>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={handleElevateAssignmentSolution}
+                          disabled={isElevatingSolution}
+                          className="px-2.5 py-1 text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 font-semibold rounded border border-amber-500/40 transition cursor-pointer flex items-center gap-1"
+                          title="Run 60-student distillation cycle"
+                        >
+                          <Zap className={`w-3 h-3 ${isElevatingSolution ? 'animate-spin' : ''}`} />
+                          <span>{isElevatingSolution ? 'Elevating...' : '60-Peer Perfect'}</span>
+                        </button>
+                        <button
+                          onClick={() => handleSolveWithAI(true)}
+                          disabled={isSolving}
+                          className="px-2 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition cursor-pointer"
+                        >
+                          Re-solve
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <div className="p-3 bg-cyan-950/30 border border-cyan-500/20 rounded-xl text-slate-300">
-                      <div className="font-medium text-cyan-300 mb-0.5">
-                        💡 Solve once for the whole class
+                    <div className="p-3.5 bg-gradient-to-r from-indigo-950/30 via-slate-900 to-amber-950/20 border border-indigo-500/30 rounded-xl text-slate-300 space-y-1">
+                      <div className="font-semibold text-amber-300 text-xs flex items-center gap-1.5">
+                        <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                        <span>60-Student Compounding Intelligence Enabled</span>
                       </div>
-                      <div className="text-[11px] text-slate-400">
-                        Generating this answer will save it to the shared classroom cache so no classmate burns extra tokens!
+                      <div className="text-[11px] text-slate-400 leading-relaxed">
+                        Solving this will synthesize peer refinements through the 60th student gold standard, caching it permanently for every student across the entire batch!
                       </div>
                     </div>
                   )}
@@ -1193,15 +1907,19 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   Subject *
                 </label>
                 <select
-                  value={newSubject || availableSubjects[0]?.name || ''}
+                  value={newSubject || availableSubjects[0]?.name || 'General Curriculum'}
                   onChange={(e) => setNewSubject(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition cursor-pointer"
                 >
-                  {availableSubjects.map((sub) => (
-                    <option key={sub.id} value={sub.name}>
-                      {sub.name} ({sub.code})
-                    </option>
-                  ))}
+                  {availableSubjects.length === 0 ? (
+                    <option value="General Curriculum">General Curriculum</option>
+                  ) : (
+                    availableSubjects.map((sub) => (
+                      <option key={sub.id} value={sub.name}>
+                        {sub.name} ({sub.code})
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
 
@@ -1363,15 +2081,19 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                       Target Subject *
                     </label>
                     <select
-                      value={crSubject || availableSubjects[0]?.name || ''}
+                      value={crSubject || availableSubjects[0]?.name || 'General Curriculum'}
                       onChange={(e) => setCrSubject(e.target.value)}
                       className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition cursor-pointer"
                     >
-                      {availableSubjects.map((sub) => (
-                        <option key={sub.id} value={sub.name}>
-                          {sub.name} ({sub.code})
-                        </option>
-                      ))}
+                      {availableSubjects.length === 0 ? (
+                        <option value="General Curriculum">General Curriculum</option>
+                      ) : (
+                        availableSubjects.map((sub) => (
+                          <option key={sub.id} value={sub.name}>
+                            {sub.name} ({sub.code})
+                          </option>
+                        ))
+                      )}
                     </select>
                   </div>
                   <button

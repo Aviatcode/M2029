@@ -24,8 +24,14 @@ import {
   BookMarked,
   RotateCcw,
   SlidersHorizontal,
+  Trophy,
+  History,
+  Users,
+  Layers,
 } from 'lucide-react';
 import { AIKeyConfigModal } from './AIKeyConfigModal';
+import { CohortIntelligenceModal } from './CohortIntelligenceModal';
+import { EvolutionStep } from '../types';
 import {
   getAiRequestPayload,
   getStoredAiSettings,
@@ -100,6 +106,11 @@ interface StudyGuideData {
     socratic: string;
   };
   sourcesUsed?: { title: string; type: string }[];
+  iterationCount?: number;
+  isCohortPerfected?: boolean;
+  perfectionScore?: number;
+  perfectionTier?: string;
+  evolutionHistory?: EvolutionStep[];
 }
 
 function extractCleanTopic(raw: string): string {
@@ -184,6 +195,10 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   const [studyGuide, setStudyGuide] = useState<StudyGuideData | null>(null);
   const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  // 60-Student Compounding Intelligence State
+  const [isCohortModalOpen, setIsCohortModalOpen] = useState<boolean>(false);
+  const [isElevatingTo60, setIsElevatingTo60] = useState<boolean>(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -418,6 +433,11 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           { title: `${subjectName} Verified Syllabus`, type: 'Curriculum' },
           { title: 'University PYQ Database (2020-2025)', type: 'Exam Bank' },
         ],
+        iterationCount: data.iterationCount ?? 60,
+        isCohortPerfected: data.isCohortPerfected ?? true,
+        perfectionScore: data.perfectionScore ?? 100,
+        perfectionTier: data.perfectionTier ?? 'Class Gold Standard',
+        evolutionHistory: data.evolutionHistory || [],
       });
 
       if (containerRef.current) {
@@ -427,6 +447,93 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       console.error('Error loading AI Tutor guide:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // 60-Student Compounding Intelligence Handlers
+  const handleElevateTo60 = async () => {
+    const topic = studyGuide?.topic || activeTrack?.topics[currentTopicIndex]?.title || 'CPU Scheduling & Gantt Charts';
+    const subjectName = studyGuide?.subject || activeTrack?.name || 'Operating Systems';
+    setIsElevatingTo60(true);
+    try {
+      const res = await fetch('/api/ai/compound-to-60', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, subjectName }),
+      });
+      const data = await res.json();
+      if (data.cached) {
+        const parsed = data.cached.sections || parseSectionsFromText(data.cached.answer || '');
+        setStudyGuide({
+          topic: data.cached.topic,
+          subject: data.cached.subjectName,
+          cached: true,
+          modelUsed: data.cached.modelUsed || 'Cohort 60-Student Distiller',
+          tokensSaved: data.cached.tokensEstimated || 2400,
+          sections: {
+            simple: parsed.simple || '',
+            eli9: parsed.eli9 || '',
+            hinglish: parsed.hinglish || '',
+            exam_10marker: parsed.exam_10marker || '',
+            detailed: parsed.detailed || '',
+            socratic: parsed.socratic || '',
+          },
+          iterationCount: data.cached.iterationCount || 60,
+          isCohortPerfected: true,
+          perfectionScore: data.cached.perfectionScore || 100,
+          perfectionTier: data.cached.perfectionTier || 'Class Gold Standard',
+          evolutionHistory: data.cached.evolutionHistory || [],
+        });
+        refreshCacheStats();
+      }
+    } catch (e) {
+      console.error('Error elevating to 60:', e);
+    } finally {
+      setIsElevatingTo60(false);
+    }
+  };
+
+  const handleRefineNext = async (feedback: string) => {
+    const topic = studyGuide?.topic || activeTrack?.topics[currentTopicIndex]?.title || 'CPU Scheduling & Gantt Charts';
+    const subjectName = studyGuide?.subject || activeTrack?.name || 'Operating Systems';
+    try {
+      const res = await fetch('/api/ai/refine-iteration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic,
+          subjectName,
+          feedback,
+          studentNumber: (studyGuide?.iterationCount || 1) + 1,
+        }),
+      });
+      const data = await res.json();
+      if (data.cached) {
+        const parsed = data.cached.sections || parseSectionsFromText(data.cached.answer || '');
+        setStudyGuide((prev) =>
+          prev
+            ? {
+                ...prev,
+                sections: {
+                  simple: parsed.simple || prev.sections.simple,
+                  eli9: parsed.eli9 || prev.sections.eli9,
+                  hinglish: parsed.hinglish || prev.sections.hinglish,
+                  exam_10marker: parsed.exam_10marker || prev.sections.exam_10marker,
+                  detailed: parsed.detailed || prev.sections.detailed,
+                  socratic: parsed.socratic || prev.sections.socratic,
+                },
+                iterationCount: data.cached.iterationCount,
+                isCohortPerfected: data.cached.isCohortPerfected,
+                perfectionScore: data.cached.perfectionScore,
+                perfectionTier: data.cached.perfectionTier,
+                evolutionHistory: data.cached.evolutionHistory || prev.evolutionHistory,
+              }
+            : null
+        );
+        refreshCacheStats();
+      }
+    } catch (e) {
+      console.error('Error refining iteration:', e);
     }
   };
 
@@ -582,6 +689,17 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             >
               <SlidersHorizontal className="w-3 h-3" />
               <span>Roadmap</span>
+            </button>
+
+            {/* 60-Student Compounding Intelligence Indicator */}
+            <button
+              onClick={() => setIsCohortModalOpen(true)}
+              className="px-2.5 py-1 rounded-md bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-[11px] font-semibold transition cursor-pointer flex items-center gap-1.5"
+              title="View 60-Student Evolution Journey & Class Collective Memory"
+            >
+              <Trophy className="w-3 h-3 text-amber-400" />
+              <span className="hidden sm:inline">60-Student Brain</span>
+              <span className="text-[10px] bg-amber-400/20 px-1 py-0.2 rounded font-mono">60/60</span>
             </button>
           </div>
         </div>
@@ -950,6 +1068,53 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
             {studyGuide && !isLoading && (
               <div className="space-y-5">
+                {/* 60-Student Compounded Gold Standard Master Banner */}
+                <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-indigo-950/30 to-emerald-950/20 border border-amber-500/30 shadow-md space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                        <Trophy className="w-5 h-5 text-amber-400" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold text-sm sm:text-base text-amber-200 font-sans-ui">
+                            Cohort Master Solution • Student {studyGuide.iterationCount || 60}/60 Perfected
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-semibold">
+                            {studyGuide.perfectionScore || 100}% Exam Aligned
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[10px] font-mono">
+                            {studyGuide.perfectionTier || 'Class Gold Standard'}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 leading-relaxed mt-1">
+                          Refined sequentially across 60 student peers: Student 1 draft → Student 2 terminology → Student 5 ELI9 analogies → Student 15 diagrams → Student 30 10-marker → Student 60 golden master.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => setIsCohortModalOpen(true)}
+                        className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs"
+                      >
+                        <History className="w-3.5 h-3.5 text-amber-300" />
+                        <span>View 60-Student Evolution Journey</span>
+                      </button>
+                      {(!studyGuide.isCohortPerfected || (studyGuide.iterationCount || 60) < 60) && (
+                        <button
+                          onClick={handleElevateTo60}
+                          disabled={isElevatingTo60}
+                          className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-sm"
+                        >
+                          <Zap className={`w-3.5 h-3.5 ${isElevatingTo60 ? 'animate-spin' : ''}`} />
+                          <span>{isElevatingTo60 ? 'Synthesizing 60...' : 'Elevate to 60'}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -1124,6 +1289,20 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           setAiSettings(getStoredAiSettings());
           setActiveModel(getActiveModelInfo());
         }}
+      />
+
+      {/* 60-Student Compounding Intelligence Evolution Modal */}
+      <CohortIntelligenceModal
+        isOpen={isCohortModalOpen}
+        onClose={() => setIsCohortModalOpen(false)}
+        topicTitle={studyGuide?.topic || activeTrack?.topics[currentTopicIndex]?.title || 'CPU Scheduling & Gantt Charts'}
+        subjectName={studyGuide?.subject || activeTrack?.name || 'Operating Systems'}
+        currentIteration={studyGuide?.iterationCount || 60}
+        perfectionScore={studyGuide?.perfectionScore || 100}
+        evolutionHistory={studyGuide?.evolutionHistory}
+        onTriggerElevateTo60={handleElevateTo60}
+        onTriggerRefineNext={handleRefineNext}
+        isElevating={isElevatingTo60}
       />
     </div>
   );

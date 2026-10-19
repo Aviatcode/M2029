@@ -113,8 +113,8 @@ export const PROVIDER_PORTALS: Record<
 export const MODEL_PRESETS: ModelPreset[] = [
   // Gemini
   {
-    id: 'gemini-2.0-flash',
-    name: 'Gemini 2.0 Flash',
+    id: 'gemini-3.8-flash',
+    name: 'Gemini 3.8 Flash',
     provider: 'gemini',
     badge: 'Recommended',
     tagline: 'Google latest ultra-fast model with top academic comprehension & low latency.',
@@ -385,7 +385,7 @@ export function getAiRequestPayload(): {
       userAiConfig: {
         apiKey: (settings.personalApiKey || '').trim(),
         provider: settings.personalProvider || 'auto',
-        modelName: settings.personalModel || 'gemini-2.0-flash',
+        modelName: settings.personalModel || 'gemini-3.8-flash',
         baseUrl: (settings.personalBaseUrl || '').trim(),
       },
     };
@@ -424,7 +424,7 @@ export function getActiveModelInfo(): {
   return {
     isPersonal: false,
     provider: 'gemini',
-    modelName: 'gemini-2.0-flash',
+    modelName: 'gemini-3.8-flash',
     displayName: 'Academic Engine',
     badge: 'Class Shared',
   };

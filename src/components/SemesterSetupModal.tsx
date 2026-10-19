@@ -51,7 +51,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
         setSemester(initialWorkspace.semester || 1);
         setUniversity(initialWorkspace.university || 'Affiliated University');
       }
-      if (initialSubjects && initialSubjects.length > 0) {
+      if (initialSubjects !== undefined && Array.isArray(initialSubjects)) {
         setSubjects(initialSubjects.map((s) => s.name));
       } else {
         setSubjects(RECOMMENDED_BCA_SEM1_SUBJECTS);
@@ -89,18 +89,47 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   };
 
   const handleAddSubject = () => {
-    const trimmed = newSubjectInput.trim();
-    if (!trimmed) {
+    const raw = newSubjectInput.trim();
+    if (!raw) {
       setSubjectError('Please enter a subject name');
       return;
     }
-    if (subjects.some((s) => s.toLowerCase() === trimmed.toLowerCase())) {
-      setSubjectError('This subject is already in the list');
+    // Allow single subject or comma-separated subjects with no min/max restrictions
+    const parts = raw
+      .split(/[,\n]/)
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0);
+
+    if (parts.length === 0) {
+      setSubjectError('Please enter a valid subject name');
       return;
     }
-    setSubjects((prev) => [...prev, trimmed]);
+
+    const currentNames = new Set(subjects.map((s) => s.toLowerCase()));
+    const toAdd: string[] = [];
+    const duplicates: string[] = [];
+
+    for (const part of parts) {
+      if (currentNames.has(part.toLowerCase())) {
+        duplicates.push(part);
+      } else {
+        currentNames.add(part.toLowerCase());
+        toAdd.push(part);
+      }
+    }
+
+    if (toAdd.length === 0 && duplicates.length > 0) {
+      setSubjectError(`Already in list: ${duplicates.join(', ')}`);
+      return;
+    }
+
+    setSubjects((prev) => [...prev, ...toAdd]);
     setNewSubjectInput('');
-    setSubjectError('');
+    if (duplicates.length > 0) {
+      setSubjectError(`Added ${toAdd.length} subject(s). Ignored duplicates: ${duplicates.join(', ')}`);
+    } else {
+      setSubjectError('');
+    }
   };
 
   const handleKeyDownSubject = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -125,7 +154,8 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
 
     const finalCode = (classCode.trim() || 'BCA-2028').toUpperCase();
     const finalName = className.trim() || `${finalCode} Semester ${semester}`;
-    const subjectNames = subjects.length > 0 ? subjects : RECOMMENDED_BCA_SEM1_SUBJECTS;
+    // No minimum or maximum subjects mandated: preserves 0 subjects, 1 subject, or any number of subjects
+    const subjectNames = subjects;
 
     const defaultColors = [
       'from-blue-500 to-indigo-600',
@@ -133,6 +163,9 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
       'from-amber-500 to-orange-600',
       'from-purple-500 to-pink-600',
       'from-emerald-500 to-teal-600',
+      'from-cyan-500 to-blue-600',
+      'from-rose-500 to-red-600',
+      'from-violet-500 to-purple-600',
     ];
 
     const localSubjects: Subject[] = subjectNames.map((name, idx) => ({
@@ -256,7 +289,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 onChange={(e) => setSemester(Number(e.target.value))}
                 className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition cursor-pointer"
               >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => (
                   <option key={s} value={s}>
                     Semester {s}
                   </option>
@@ -297,15 +330,27 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               <label className="text-[11px] font-semibold text-slate-200 flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5 text-slate-400" />
                 <span>Enrolled Subjects ({subjects.length})</span>
+                <span className="text-[10px] text-slate-500 font-normal">· No min/max required</span>
               </label>
-              <button
-                type="button"
-                onClick={handleLoadRecommended}
-                className="text-[11px] text-emerald-400 hover:text-emerald-300 font-medium inline-flex items-center gap-1 cursor-pointer transition"
-              >
-                <CheckCircle2 className="w-3 h-3" />
-                <span>+ Load BCA Sem 1 Defaults</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {subjects.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSubjects([])}
+                    className="text-[11px] text-slate-400 hover:text-rose-400 font-medium transition cursor-pointer"
+                  >
+                    Clear all
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleLoadRecommended}
+                  className="text-[11px] text-emerald-400 hover:text-emerald-300 font-medium inline-flex items-center gap-1 cursor-pointer transition"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  <span>+ Load BCA Defaults</span>
+                </button>
+              </div>
             </div>
 
             {/* Add Subject Input */}
@@ -318,7 +363,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                   if (subjectError) setSubjectError('');
                 }}
                 onKeyDown={handleKeyDownSubject}
-                placeholder="Enter subject name (e.g. Data Structures)..."
+                placeholder="Enter subject name or paste comma-separated list..."
                 className="flex-1 bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition"
               />
               <button
@@ -338,10 +383,10 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
             )}
 
             {/* Subject List */}
-            <div className="space-y-1.5 max-h-44 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
               {subjects.length === 0 ? (
                 <div className="p-4 rounded-xl border border-dashed border-slate-800 text-center text-slate-400 space-y-2">
-                  <p>No subjects added yet.</p>
+                  <p className="text-xs">No subjects added yet. You can save without subjects or add any custom amount.</p>
                   <button
                     type="button"
                     onClick={handleLoadRecommended}
@@ -390,7 +435,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || subjects.length === 0}
+              disabled={isSubmitting}
               className="px-4 py-2 rounded-xl bg-white hover:bg-slate-200 text-slate-950 text-xs font-semibold shadow-sm transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
             >
               {isSubmitting ? (

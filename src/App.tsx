@@ -5,6 +5,7 @@ import {
   ClassWorkspace,
   Subject,
   Unit,
+  Topic,
   TimetableClass,
   AcademicMaterial,
   HistoricalPYQ,
@@ -52,6 +53,14 @@ import { SettingsView } from './components/SettingsView';
 import { LoginModal, UserProfile } from './components/LoginModal';
 import { LandingPageView } from './components/LandingPageView';
 import { ShareInviteModal } from './components/ShareInviteModal';
+import { SemesterOnboardingModal } from './components/SemesterOnboardingModal';
+import {
+  extractTextFromFile,
+  isTimetableDocument,
+  isSyllabusDocument,
+  parseTimetableWithAi,
+  parseSyllabusClient,
+} from './utils/documentAiClassifier';
 import {
   getDefaultSubjectsForClass,
   saveClassLocally,
@@ -266,14 +275,98 @@ export default function App() {
       setIsGlobalDragging(false);
 
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        const filesArray = Array.from(e.dataTransfer.files);
-        setPendingIngestFiles(filesArray);
-        setActiveTab('dump');
-        try {
-          window.location.hash = 'dump';
-        } catch {}
-        setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. AI auto-sorting into syllabus folders...`);
-        setTimeout(() => setShareToast(''), 4500);
+        const file = e.dataTransfer.files[0];
+        extractTextFromFile(file)
+          .then(async (extracted) => {
+            const isTimetable = isTimetableDocument(file.name, extracted.text);
+            const isSyllabus = isSyllabusDocument(file.name, extracted.text);
+
+            if (isTimetable) {
+              setShareToast(`📅 Reading Timetable "${file.name}" with AI...`);
+              const parsed = await parseTimetableWithAi({
+                rawText: extracted.text,
+                fileDataUrl: extracted.dataUrl,
+                fileName: file.name,
+                fileType: extracted.fileExt,
+                classCode: classCode || 'BCA-2028',
+              });
+
+              if (parsed.subjects.length > 0) {
+                setSubjects(parsed.subjects);
+                try {
+                  localStorage.setItem('syllabus_subjects', JSON.stringify(parsed.subjects));
+                } catch {}
+              }
+              if (parsed.timetable.length > 0) {
+                setTimetable(parsed.timetable);
+                try {
+                  localStorage.setItem('syllabus_timetable', JSON.stringify(parsed.timetable));
+                } catch {}
+              }
+              setIsSemesterSetupDone(true);
+              setIsOnboardingModalOpen(false);
+              setActiveTab('timetable');
+              try {
+                window.location.hash = 'timetable';
+              } catch {}
+              setShareToast(`✓ Timetable Loaded! Configured ${parsed.subjects.length} subjects & ${parsed.timetable.length} class slots.`);
+              setTimeout(() => setShareToast(''), 4500);
+              return;
+            }
+
+            if (isSyllabus) {
+              setShareToast(`📚 Reading Syllabus "${file.name}" with AI...`);
+              const parsed = parseSyllabusClient(extracted.text, file.name.replace(/\.[^/.]+$/, ''));
+              if (parsed.subjects.length > 0) {
+                setSubjects((prev) => {
+                  const updated = [...prev];
+                  parsed.subjects.forEach((s) => {
+                    if (!updated.some((u) => u.name.toLowerCase() === s.name.toLowerCase())) {
+                      updated.push(s);
+                    }
+                  });
+                  try {
+                    localStorage.setItem('syllabus_subjects', JSON.stringify(updated));
+                  } catch {}
+                  return updated;
+                });
+              }
+              if (Object.keys(parsed.unitsBySubject).length > 0) {
+                setUnitsBySubject((prev) => {
+                  const merged = { ...prev, ...parsed.unitsBySubject };
+                  try {
+                    localStorage.setItem('syllabus_units', JSON.stringify(merged));
+                  } catch {}
+                  return merged;
+                });
+              }
+              setIsSemesterSetupDone(true);
+              setIsOnboardingModalOpen(false);
+              setActiveTab('syllabus');
+              try {
+                window.location.hash = 'syllabus';
+              } catch {}
+              setShareToast(`✓ Syllabus Loaded! Added ${parsed.subjects[0]?.name || 'Subject'} and course units.`);
+              setTimeout(() => setShareToast(''), 4500);
+              return;
+            }
+
+            // Normal study note/document: route to smart dump
+            const filesArray = Array.from(e.dataTransfer!.files);
+            setPendingIngestFiles(filesArray);
+            setActiveTab('dump');
+            try {
+              window.location.hash = 'dump';
+            } catch {}
+            setShareToast(`📥 Dropped ${filesArray.length} file(s). Auto-sorting into syllabus folders...`);
+            setTimeout(() => setShareToast(''), 4500);
+          })
+          .catch((err) => {
+            console.warn('Drop error fallback:', err);
+            const filesArray = Array.from(e.dataTransfer!.files);
+            setPendingIngestFiles(filesArray);
+            setActiveTab('dump');
+          });
       }
     };
 
@@ -364,18 +457,35 @@ export default function App() {
     const fromUrl = getUrlClassCode();
     if (fromUrl) {
       const savedClass = getSavedClass(fromUrl);
-      if (savedClass && savedClass.subjects && savedClass.subjects.length > 0) {
+      if (savedClass && Array.isArray(savedClass.subjects) && savedClass.subjects.length > 0) {
         return savedClass.subjects;
       }
     }
     try {
       const saved = localStorage.getItem('syllabus_subjects');
-      if (saved) {
+      if (saved !== null) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) {
+          // If cached subjects are legacy built-in defaults (e.g. "Programming Principles & C Language"), purge them!
+          const isLegacyBuiltIn = parsed.some(
+            (s: any) =>
+              s.name === 'Programming Principles & C Language' ||
+              s.name === 'Digital Computer Fundamentals' ||
+              s.name === 'Communication & Technical English' ||
+              s.name === 'Office Automation & Web Basics'
+          );
+          if (isLegacyBuiltIn) {
+            localStorage.removeItem('syllabus_subjects');
+            localStorage.removeItem('syllabus_units');
+            localStorage.removeItem('syllabus_timetable');
+            return [];
+          }
+          return parsed;
+        }
       }
     } catch {}
-    return getDefaultSubjectsForClass('BCA-2028', 1);
+    // Pure clean state: NO built-in subjects!
+    return [];
   });
 
   // Google Classroom Style Share Modal
@@ -385,33 +495,89 @@ export default function App() {
     name: 'BCA 2028',
   });
 
+  // Onboarding Upload Modal: Ask user to upload timetable/syllabus first before proceeding!
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('syllabus_subjects');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return false;
+      }
+    } catch {}
+    return true;
+  });
+
   const handleOpenShareModal = (code?: string, name?: string) => {
     const c = code || classCode || workspace.code || 'BCA-2028';
     const n = name || workspace.name || `${c} Workspace`;
     setShareModalData({ code: c, name: n });
     setIsShareModalOpen(true);
   };
+
   const [unitsBySubject, setUnitsBySubject] = useState<Record<string, any>>(() => {
     try {
       const saved = localStorage.getItem('syllabus_units');
       if (saved) return JSON.parse(saved);
     } catch {}
-    return SEED_UNITS;
+    return {};
   });
+
   const [timetable, setTimetable] = useState<TimetableClass[]>(() => {
     try {
       const saved = localStorage.getItem('syllabus_timetable');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
     } catch {}
-    return SEED_TIMETABLE;
+    return [];
   });
+
   const [materials, setMaterials] = useState<AcademicMaterial[]>(() => {
     try {
       const saved = localStorage.getItem('syllabus_materials');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Purge any old materials mistakenly placed into legacy C Language folder
+          const clean = parsed.filter(
+            (m: any) => !m.subjectName?.includes('Programming Principles & C')
+          );
+          return clean;
+        }
+      }
     } catch {}
-    return SEED_MATERIALS;
+    return [];
   });
+
+  const handleOnboardingSetupComplete = (data: {
+    subjects: Subject[];
+    timetable?: TimetableClass[];
+    unitsBySubject?: Record<string, Unit[]>;
+  }) => {
+    if (data.subjects && data.subjects.length > 0) {
+      setSubjects(data.subjects);
+      try {
+        localStorage.setItem('syllabus_subjects', JSON.stringify(data.subjects));
+      } catch {}
+    }
+    if (data.timetable && data.timetable.length > 0) {
+      setTimetable(data.timetable);
+      try {
+        localStorage.setItem('syllabus_timetable', JSON.stringify(data.timetable));
+      } catch {}
+    }
+    if (data.unitsBySubject && Object.keys(data.unitsBySubject).length > 0) {
+      setUnitsBySubject(data.unitsBySubject);
+      try {
+        localStorage.setItem('syllabus_units', JSON.stringify(data.unitsBySubject));
+      } catch {}
+    }
+    setIsSemesterSetupDone(true);
+    setIsOnboardingModalOpen(false);
+    setShareToast(`✓ Configured ${data.subjects.length} subjects & ${data.timetable?.length || 0} class slots!`);
+    setTimeout(() => setShareToast(''), 4500);
+  };
   const [pyqs, setPyqs] = useState<HistoricalPYQ[]>(() => {
     try {
       const saved = localStorage.getItem('syllabus_pyqs');
@@ -979,6 +1145,304 @@ export default function App() {
     }).catch(console.error);
   };
 
+  // --- Timetable Management ---
+  const handleAddTimetableClass = (newClass: Omit<TimetableClass, 'id'>) => {
+    const classWithId: TimetableClass = {
+      ...newClass,
+      id: `cls-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    };
+    setTimetable((prev) => {
+      const updated = [...prev, classWithId];
+      try {
+        localStorage.setItem('syllabus_timetable', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+    setShareToast(`✓ Added ${classWithId.subjectName} to ${classWithId.day}!`);
+    setTimeout(() => setShareToast(''), 3000);
+  };
+
+  const handleDeleteTimetableClass = (classId: string) => {
+    setTimetable((prev) => {
+      const updated = prev.filter((t) => t.id !== classId);
+      try {
+        localStorage.setItem('syllabus_timetable', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  // --- Syllabus Map Units & Topics Management ---
+  const handleAddUnit = (subjectId: string, unit: Unit) => {
+    setUnitsBySubject((prev) => {
+      const existing = prev[subjectId] || [];
+      const updated = {
+        ...prev,
+        [subjectId]: [...existing, unit],
+      };
+      try {
+        localStorage.setItem('syllabus_units', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+    setShareToast(`✓ Added "${unit.title}" to syllabus map!`);
+    setTimeout(() => setShareToast(''), 3000);
+  };
+
+  const handleDeleteUnit = (subjectId: string, unitId: string) => {
+    setUnitsBySubject((prev) => {
+      const existing = prev[subjectId] || [];
+      const updated = {
+        ...prev,
+        [subjectId]: existing.filter((u: any) => u.id !== unitId),
+      };
+      try {
+        localStorage.setItem('syllabus_units', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleAddTopicToUnit = (subjectId: string, unitId: string, topic: Topic) => {
+    setUnitsBySubject((prev) => {
+      const existingUnits = prev[subjectId] || [];
+      const updated = {
+        ...prev,
+        [subjectId]: existingUnits.map((u: any) => {
+          if (u.id !== unitId) return u;
+          return {
+            ...u,
+            topics: [...(u.topics || []), topic],
+          };
+        }),
+      };
+      try {
+        localStorage.setItem('syllabus_units', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+    setShareToast(`✓ Added topic "${topic.title}"!`);
+    setTimeout(() => setShareToast(''), 3000);
+  };
+
+  const handleGenerateUnits = (subjectId: string, subjectName: string) => {
+    const generatedUnits: Unit[] = [
+      {
+        id: `unit-${Date.now()}-1`,
+        subjectId,
+        number: 1,
+        title: `Unit 1: ${subjectName} Foundations & Architecture`,
+        topics: [
+          {
+            id: `top-${Date.now()}-1`,
+            unitId: `unit-${Date.now()}-1`,
+            unitTitle: `Unit 1: ${subjectName} Foundations & Architecture`,
+            title: `Introduction & Foundational Principles of ${subjectName}`,
+            difficulty: 'Easy',
+            examWeightage: 'Must Read (10 Marks)',
+            estimatedMinutes: 15,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+          {
+            id: `top-${Date.now()}-2`,
+            unitId: `unit-${Date.now()}-1`,
+            unitTitle: `Unit 1: ${subjectName} Foundations & Architecture`,
+            title: 'Theoretical Framework & Structural Block Diagram',
+            difficulty: 'Medium',
+            examWeightage: 'High',
+            estimatedMinutes: 20,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+          {
+            id: `top-${Date.now()}-3`,
+            unitId: `unit-${Date.now()}-1`,
+            unitTitle: `Unit 1: ${subjectName} Foundations & Architecture`,
+            title: 'Core Terminologies & Standard Exam Definitions',
+            difficulty: 'Easy',
+            examWeightage: 'Medium',
+            estimatedMinutes: 12,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+        ],
+      },
+      {
+        id: `unit-${Date.now()}-2`,
+        subjectId,
+        number: 2,
+        title: `Unit 2: Core Mechanism, Protocols & Algorithms`,
+        topics: [
+          {
+            id: `top-${Date.now()}-4`,
+            unitId: `unit-${Date.now()}-2`,
+            unitTitle: `Unit 2: Core Mechanism, Protocols & Algorithms`,
+            title: 'Primary Operational Workflow & Step-by-Step Execution',
+            difficulty: 'Hard',
+            examWeightage: 'Must Read (10 Marks)',
+            estimatedMinutes: 25,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+          {
+            id: `top-${Date.now()}-5`,
+            unitId: `unit-${Date.now()}-2`,
+            unitTitle: `Unit 2: Core Mechanism, Protocols & Algorithms`,
+            title: 'Invariant Conditions, Mathematical Formulas & Proofs',
+            difficulty: 'Medium',
+            examWeightage: 'High',
+            estimatedMinutes: 18,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+        ],
+      },
+      {
+        id: `unit-${Date.now()}-3`,
+        subjectId,
+        number: 3,
+        title: `Unit 3: Applied Systems & Implementation Techniques`,
+        topics: [
+          {
+            id: `top-${Date.now()}-6`,
+            unitId: `unit-${Date.now()}-3`,
+            unitTitle: `Unit 3: Applied Systems & Implementation Techniques`,
+            title: 'Real-World Case Study & Implementation Invariants',
+            difficulty: 'Medium',
+            examWeightage: 'High',
+            estimatedMinutes: 20,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+          {
+            id: `top-${Date.now()}-7`,
+            unitId: `unit-${Date.now()}-3`,
+            unitTitle: `Unit 3: Applied Systems & Implementation Techniques`,
+            title: 'Comparative Analysis & Tradeoff Matrices',
+            difficulty: 'Medium',
+            examWeightage: 'Medium',
+            estimatedMinutes: 15,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+        ],
+      },
+      {
+        id: `unit-${Date.now()}-4`,
+        subjectId,
+        number: 4,
+        title: `Unit 4: Advanced Topics & University 10-Marker Bank`,
+        topics: [
+          {
+            id: `top-${Date.now()}-8`,
+            unitId: `unit-${Date.now()}-4`,
+            unitTitle: `Unit 4: Advanced Topics & University 10-Marker Bank`,
+            title: 'Comprehensive End-Term 10-Marker Model Questions',
+            difficulty: 'Hard',
+            examWeightage: 'Must Read (10 Marks)',
+            estimatedMinutes: 30,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+          {
+            id: `top-${Date.now()}-9`,
+            unitId: `unit-${Date.now()}-4`,
+            unitTitle: `Unit 4: Advanced Topics & University 10-Marker Bank`,
+            title: 'Recent Industry Advances & University Viva Questions',
+            difficulty: 'Easy',
+            examWeightage: 'Medium',
+            estimatedMinutes: 15,
+            status: 'not_started',
+            completed: false,
+            masteryScore: 0,
+          },
+        ],
+      },
+    ];
+
+    setUnitsBySubject((prev) => {
+      const updated = {
+        ...prev,
+        [subjectId]: generatedUnits,
+      };
+      try {
+        localStorage.setItem('syllabus_units', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    setShareToast(`✓ Generated 4 course units for ${subjectName}!`);
+    setTimeout(() => setShareToast(''), 3500);
+  };
+
+  // --- Exam Datesheet Management ---
+  const handleAddExam = (newExam: Omit<ExamDateSheetItem, 'id' | 'classId'>) => {
+    const examWithId: ExamDateSheetItem = {
+      ...newExam,
+      id: `exam-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      classId: workspace?.id || 'class-default',
+    };
+
+    setExams((prev) => {
+      const updated = [...prev, examWithId];
+      try {
+        localStorage.setItem('syllabus_exams', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    setShareToast(`✓ Added ${examWithId.subjectName} to university datesheet!`);
+    setTimeout(() => setShareToast(''), 3000);
+  };
+
+  const handleDeleteExam = (examId: string) => {
+    setExams((prev) => {
+      const updated = prev.filter((e) => e.id !== examId);
+      try {
+        localStorage.setItem('syllabus_exams', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  // --- PYQ Past Question Management ---
+  const handleAddPYQ = (newPYQ: Omit<HistoricalPYQ, 'id'>) => {
+    const pyqWithId: HistoricalPYQ = {
+      ...newPYQ,
+      id: `pyq-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    };
+
+    setPyqs((prev) => {
+      const updated = [pyqWithId, ...prev];
+      try {
+        localStorage.setItem('syllabus_pyqs', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
+    setShareToast(`✓ Added past question to ${pyqWithId.subjectName || 'curriculum'} archive!`);
+    setTimeout(() => setShareToast(''), 3000);
+  };
+
+  const handleDeletePYQ = (pyqId: string) => {
+    setPyqs((prev) => {
+      const updated = prev.filter((p) => p.id !== pyqId);
+      try {
+        localStorage.setItem('syllabus_pyqs', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
   const handleMaterialUploaded = (newMat: AcademicMaterial) => {
     setActiveMaterialId(newMat.id);
     setMaterials((prev) => {
@@ -1286,6 +1750,7 @@ export default function App() {
               onTriggerQuickAIAction={handleQuickAIAction}
               onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
               onOpenMaterial={handleOpenMaterial}
+              onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
               calmMode={calmMode}
             />
           )}
@@ -1328,6 +1793,18 @@ export default function App() {
               onSelectActiveMaterialId={setActiveMaterialId}
               onMaterialUploaded={handleMaterialUploaded}
               onNavigateToTab={(tab) => setActiveTab(tab as any)}
+              onUpdateSubjects={(newSubs) => {
+                setSubjects(newSubs);
+                try {
+                  localStorage.setItem('syllabus_subjects', JSON.stringify(newSubs));
+                } catch {}
+              }}
+              onUpdateTimetable={(newSlots) => {
+                setTimetable(newSlots);
+                try {
+                  localStorage.setItem('syllabus_timetable', JSON.stringify(newSlots));
+                } catch {}
+              }}
               pendingFiles={pendingIngestFiles}
               onClearPendingFiles={() => setPendingIngestFiles([])}
             />
@@ -1339,6 +1816,10 @@ export default function App() {
               unitsBySubject={unitsBySubject}
               onUpdateTopicStatus={handleUpdateTopicStatus}
               onStudyTopic={handleStudyTopic}
+              onAddUnit={handleAddUnit}
+              onDeleteUnit={handleDeleteUnit}
+              onAddTopicToUnit={handleAddTopicToUnit}
+              onGenerateUnits={handleGenerateUnits}
             />
           )}
 
@@ -1371,19 +1852,31 @@ export default function App() {
                 importanceTier: (p.frequencyCount || 1) >= 3 ? 'Very High (Must Prepare)' : 'High',
               }))}
               subjects={subjects}
+              onAddPYQ={handleAddPYQ}
+              onDeletePYQ={handleDeletePYQ}
             />
           )}
 
           {activeTab === 'exams' && (
             <ExamModeView
               exams={exams}
+              subjects={subjects}
               onToggleRevisionDay={handleToggleRevisionDay}
               onOpenStudySession={(subName) => handleStudyTopic('End-Term Revision', subName)}
+              onAddExam={handleAddExam}
+              onDeleteExam={handleDeleteExam}
             />
           )}
 
           {activeTab === 'timetable' && (
-            <TimetableView timetable={timetable} onStudyTopic={handleStudyTopic} />
+            <TimetableView
+              timetable={timetable}
+              subjects={subjects}
+              onStudyTopic={handleStudyTopic}
+              onAddClass={handleAddTimetableClass}
+              onDeleteClass={handleDeleteTimetableClass}
+              onOpenUploadModal={() => setIsOnboardingModalOpen(true)}
+            />
           )}
 
           {activeTab === 'assignments' && (
@@ -1402,11 +1895,7 @@ export default function App() {
               onNavigateTab={(tab) => handleSelectTab(tab)}
               onOpenInvite={() => handleOpenShareModal()}
               onAddRecommendedSubjects={() => {
-                const rec = getDefaultSubjectsForClass(workspace.code || 'BCA-2028', workspace.semester || 1);
-                setSubjects(rec);
-                saveClassLocally(workspace, rec);
-                setShareToast('✓ Loaded BCA Semester 1 subjects!');
-                setTimeout(() => setShareToast(''), 3000);
+                setIsOnboardingModalOpen(true);
               }}
             />
           )}
@@ -1427,6 +1916,14 @@ export default function App() {
       )}
 
       {/* 3. MODALS & DRAWERS */}
+      <SemesterOnboardingModal
+        isOpen={isOnboardingModalOpen}
+        onClose={() => setIsOnboardingModalOpen(false)}
+        classCode={classCode}
+        onSetupComplete={handleOnboardingSetupComplete}
+        onOpenManualSetup={() => setIsSetupModalOpen(true)}
+      />
+
       <TomorrowPrepModal
         isOpen={isTomorrowModalOpen}
         onClose={() => setIsTomorrowModalOpen(false)}

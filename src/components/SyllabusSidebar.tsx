@@ -68,10 +68,10 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
     setTimeout(() => setCopiedCohortCode(false), 2000);
   };
 
-  // Calculate overall syllabus readiness
+  // Calculate overall syllabus readiness safely
   let totalTopics = 0;
   let masteredTopics = 0;
-  classroom.units.forEach((u: any) => {
+  (classroom?.units || []).forEach((u: any) => {
     (u.topics || []).forEach((t: any) => {
       totalTopics++;
       if ((t.masteryScore || 0) >= 70) masteredTopics++;
@@ -79,7 +79,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
   });
 
   const readinessPercent = totalTopics > 0 ? Math.round((masteredTopics / totalTopics) * 100) : 0;
-  const cachedCount = Object.keys(classroom.cachedLessons || {}).length;
+  const cachedCount = Object.keys(classroom?.cachedLessons || {}).length;
 
   return (
     <aside className="w-full md:w-80 lg:w-88 bg-slate-950 border-r border-slate-800 flex flex-col h-full shrink-0">

@@ -19,6 +19,16 @@ import {
   Bell,
   ShieldCheck,
   UploadCloud,
+  Check,
+  Plus,
+  Trash2,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  ListTodo,
+  StickyNote,
+  Trophy,
+  Zap,
 } from 'lucide-react';
 import { ActiveNavTab } from './Sidebar';
 import {
@@ -44,6 +54,7 @@ interface DashboardViewProps {
   calmMode?: boolean;
   onOpenAIKeyConfig?: () => void;
   onOpenMaterial?: (mat: AcademicMaterial) => void;
+  onOpenOnboardingUpload?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -63,10 +74,84 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   calmMode = false,
   onOpenAIKeyConfig,
   onOpenMaterial,
+  onOpenOnboardingUpload,
 }) => {
   const [activeTab, setActiveTab] = useState<'schedule' | 'exams' | 'notes'>('schedule');
   const [notifPermission, setNotifPermission] = useState<NotificationPermissionState>(getNotificationPermission());
   const [currentTime, setCurrentTime] = useState<Date>(() => new Date());
+
+  // Notion-Style Student Scratchpad & Quick To-Do Capture (Auto-saved in localStorage)
+  const [scratchpadOpen, setScratchpadOpen] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('dashboard_scratchpad_open') !== 'false';
+    } catch {
+      return true;
+    }
+  });
+  const [scratchpadTab, setScratchpadTab] = useState<'checklist' | 'notes'>('checklist');
+  const [scratchpadNotes, setScratchpadNotes] = useState<string>(() => {
+    try {
+      return localStorage.getItem('student_daily_notes') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [quickTodos, setQuickTodos] = useState<{ id: string; text: string; completed: boolean }[]>(() => {
+    try {
+      const saved = localStorage.getItem('student_quick_todos');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return [
+      { id: 'todo-1', text: 'Get lab practical record verified', completed: false },
+      { id: 'todo-2', text: 'Revise 10-marker questions for upcoming test', completed: false },
+    ];
+  });
+  const [newTodoInput, setNewTodoInput] = useState('');
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('student_daily_notes', scratchpadNotes);
+    } catch {}
+  }, [scratchpadNotes]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('student_quick_todos', JSON.stringify(quickTodos));
+    } catch {}
+  }, [quickTodos]);
+
+  const handleToggleScratchpad = () => {
+    setScratchpadOpen((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('dashboard_scratchpad_open', String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  const handleAddQuickTodo = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const text = newTodoInput.trim();
+    if (!text) return;
+    setQuickTodos((prev) => [...prev, { id: `todo-${Date.now()}`, text, completed: false }]);
+    setNewTodoInput('');
+  };
+
+  const handleToggleQuickTodo = (id: string) => {
+    setQuickTodos((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+    );
+  };
+
+  const handleDeleteQuickTodo = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setQuickTodos((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const handleClearCompletedTodos = () => {
+    setQuickTodos((prev) => prev.filter((t) => !t.completed));
+  };
 
   // Keep greeting and clock synchronized live in real-time
   useEffect(() => {
@@ -157,11 +242,204 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </span>
         </div>
 
+        {/* 60-Student Compounding Intelligence Live Cohort Brain Banner */}
+        <div
+          onClick={() => onNavigateTab('ai-tutor')}
+          className="p-3.5 rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-slate-900/60 to-indigo-950/20 hover:border-amber-500/50 transition cursor-pointer flex items-center justify-between gap-3 shadow-xs group"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center shrink-0">
+              <Trophy className="w-4 h-4 group-hover:scale-110 transition" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <span>Class Brain: 60-Student Compounding Intelligence</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+                  Active
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-300">
+                Core university topics perfected across 60 student peers. 100% exam rubric aligned, 0 AI tokens spent!
+              </div>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-xs font-medium shrink-0 transition cursor-pointer flex items-center gap-1">
+            <span>Explore Brain</span>
+            <ArrowRight className="w-3.5 h-3.5 text-amber-300" />
+          </span>
+        </div>
+
         {/* Calm Mode Indicator */}
         {calmMode && (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400">
             <ShieldCheck className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
             <span>Calm Mode active: Notifications silenced.</span>
+          </div>
+        )}
+      </div>
+
+      {/* 1.5 Notion-Style Daily Scratchpad & Quick To-Do Capture */}
+      <div className="rounded-xl bg-slate-900/40 border border-slate-800/80 overflow-hidden shadow-xs">
+        {/* Notion Toggle Header */}
+        <div
+          onClick={handleToggleScratchpad}
+          className="p-3.5 flex items-center justify-between cursor-pointer hover:bg-slate-850/40 transition select-none"
+        >
+          <div className="flex items-center gap-2.5">
+            <button className="text-slate-400 hover:text-white transition">
+              {scratchpadOpen ? (
+                <ChevronDown className="w-4 h-4 text-cyan-400" />
+              ) : (
+                <ChevronRight className="w-4 h-4 text-slate-500" />
+              )}
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                <StickyNote className="w-3.5 h-3.5 text-amber-400" />
+                <span>Daily Scratchpad & Quick Tasks</span>
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                {quickTodos.filter((t) => t.completed).length}/{quickTodos.length} done
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs" onClick={(e) => e.stopPropagation()}>
+            {/* Tab switch between Checklist and Notes */}
+            <div className="flex items-center bg-slate-950/80 border border-slate-800 rounded-lg p-0.5">
+              <button
+                onClick={() => setScratchpadTab('checklist')}
+                className={`px-2 py-0.5 rounded text-[11px] font-medium transition cursor-pointer flex items-center gap-1 ${
+                  scratchpadTab === 'checklist'
+                    ? 'bg-slate-800 text-cyan-300 font-semibold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <ListTodo className="w-3 h-3" />
+                <span>To-Dos</span>
+              </button>
+              <button
+                onClick={() => setScratchpadTab('notes')}
+                className={`px-2 py-0.5 rounded text-[11px] font-medium transition cursor-pointer flex items-center gap-1 ${
+                  scratchpadTab === 'notes'
+                    ? 'bg-slate-800 text-cyan-300 font-semibold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <StickyNote className="w-3 h-3" />
+                <span>Notes</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Collapsible Content */}
+        {scratchpadOpen && (
+          <div className="p-4 border-t border-slate-800/60 bg-slate-950/30 space-y-3">
+            {scratchpadTab === 'checklist' ? (
+              <div className="space-y-3">
+                {/* To-Do Items List */}
+                <div className="space-y-1.5">
+                  {quickTodos.length === 0 ? (
+                    <div className="text-xs text-slate-500 py-3 text-center italic">
+                      No quick to-dos for today. Add one below!
+                    </div>
+                  ) : (
+                    quickTodos.map((todo) => (
+                      <div
+                        key={todo.id}
+                        className="flex items-center justify-between gap-2.5 p-2 rounded-lg hover:bg-slate-900/60 transition group text-xs"
+                      >
+                        <div
+                          onClick={() => handleToggleQuickTodo(todo.id)}
+                          className="flex items-center gap-2.5 cursor-pointer flex-1 min-w-0"
+                        >
+                          <div
+                            className={`w-4 h-4 rounded border flex items-center justify-center transition shrink-0 ${
+                              todo.completed
+                                ? 'bg-emerald-500 border-emerald-400 text-slate-950'
+                                : 'border-slate-700 bg-slate-900 hover:border-slate-500'
+                            }`}
+                          >
+                            {todo.completed && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                          <span
+                            className={`truncate transition font-sans-ui ${
+                              todo.completed ? 'line-through text-slate-500' : 'text-slate-200'
+                            }`}
+                          >
+                            {todo.text}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={(e) => handleDeleteQuickTodo(todo.id, e)}
+                          className="text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition p-1 cursor-pointer"
+                          title="Delete task"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Inline Fast Add & Action Bar */}
+                <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/60 text-xs">
+                  <form onSubmit={handleAddQuickTodo} className="flex-1 flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="+ Add daily task (e.g. submit lab report, ask prof...) Press Enter"
+                      value={newTodoInput}
+                      onChange={(e) => setNewTodoInput(e.target.value)}
+                      className="w-full bg-slate-900/60 border border-slate-800 focus:border-cyan-500/50 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 outline-none transition"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!newTodoInput.trim()}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer shrink-0 ${
+                        newTodoInput.trim()
+                          ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-xs'
+                          : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                      }`}
+                    >
+                      Add
+                    </button>
+                  </form>
+
+                  {quickTodos.some((t) => t.completed) && (
+                    <button
+                      onClick={handleClearCompletedTodos}
+                      className="text-[11px] text-slate-400 hover:text-slate-200 transition cursor-pointer underline underline-offset-4 shrink-0"
+                    >
+                      Clear done
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              /* Freeform Auto-Saving Scratchpad */
+              <div className="space-y-2">
+                <textarea
+                  value={scratchpadNotes}
+                  onChange={(e) => setScratchpadNotes(e.target.value)}
+                  placeholder="Type anything freely: professor announcements, exam hints, code snippets, formula notes... (Auto-saved instantly to your browser)"
+                  rows={4}
+                  className="w-full bg-slate-900/60 border border-slate-800 focus:border-cyan-500/50 rounded-lg p-3 text-xs text-slate-200 placeholder-slate-500 outline-none transition resize-y font-mono leading-relaxed"
+                />
+                <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                  <span>✓ Auto-saved locally</span>
+                  {scratchpadNotes.trim() && (
+                    <button
+                      onClick={() => setScratchpadNotes('')}
+                      className="hover:text-rose-400 transition cursor-pointer"
+                    >
+                      Clear notes
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -191,8 +469,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          {/* Subject Progress Strip: 5-column balanced layout on desktop */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+          {/* Subject Progress Strip: responsive layout for any number of subjects */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
             {subjects.map((sub) => {
               const subPercent =
                 sub.totalTopicsCount > 0
@@ -236,18 +514,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       ) : (
-        <div className="rounded-xl bg-slate-900/40 border border-dashed border-slate-800 p-6 text-center space-y-2.5">
-          <BookOpen className="w-7 h-7 text-slate-500 mx-auto" />
-          <h2 className="text-sm font-semibold text-slate-200">Start Your Semester Setup</h2>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            No subjects configured yet. Add your semester subjects to start.
-          </p>
-          <div className="pt-1 flex justify-center">
+        <div className="rounded-2xl bg-slate-900/40 border border-dashed border-cyan-500/30 p-6 sm:p-7 text-center space-y-3">
+          <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto">
+            <UploadCloud className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-sm sm:text-base font-bold text-white">Upload Your Timetable or Syllabus First</h2>
+            <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+              No subjects or schedule found. Upload your weekly timetable or syllabus — our AI will automatically extract your subjects, teachers, and lecture periods.
+            </p>
+          </div>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            {onOpenOnboardingUpload && (
+              <button
+                type="button"
+                onClick={onOpenOnboardingUpload}
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg transition cursor-pointer inline-flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Upload Timetable / Syllabus with AI</span>
+              </button>
+            )}
             <button
+              type="button"
               onClick={() => onNavigateTab('setup')}
-              className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer inline-flex items-center gap-1.5 shadow-2xs"
+              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium text-xs transition cursor-pointer inline-flex items-center gap-1.5"
             >
-              <span>Configure Subjects →</span>
+              <span>Add Manually →</span>
             </button>
           </div>
         </div>

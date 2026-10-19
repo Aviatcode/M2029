@@ -1,34 +1,10 @@
 import { ClassWorkspace, Subject } from '../types';
 
-export const RECOMMENDED_BCA_SEM1_SUBJECTS: string[] = [
-  'Programming Principles & C Language',
-  'Digital Computer Fundamentals',
-  'Discrete Mathematical Structures',
-  'Communication & Technical English',
-  'Office Automation & Web Basics',
-];
+export const RECOMMENDED_BCA_SEM1_SUBJECTS: string[] = [];
 
-export const getDefaultSubjectsForClass = (classId: string, semester: number = 1): Subject[] => {
-  const colors = [
-    'from-blue-500 to-indigo-600',
-    'from-slate-700 to-zinc-700',
-    'from-amber-500 to-orange-600',
-    'from-purple-500 to-pink-600',
-    'from-emerald-500 to-teal-600',
-  ];
-
-  return RECOMMENDED_BCA_SEM1_SUBJECTS.map((name, idx) => ({
-    id: `sub-${classId.toLowerCase()}-${idx + 1}`,
-    classId: classId,
-    name,
-    code: `BCA-${semester}0${idx + 1}`,
-    teacherName: 'Faculty In-Charge',
-    credits: 4,
-    color: colors[idx % colors.length],
-    totalUnits: 4,
-    completedTopicsCount: 0,
-    totalTopicsCount: 10,
-  }));
+export const getDefaultSubjectsForClass = (_classId: string, _semester: number = 1): Subject[] => {
+  // Pure Clean Initial State: Do not inject any hardcoded or built-in default subjects
+  return [];
 };
 
 /**

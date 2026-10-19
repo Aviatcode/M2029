@@ -66,9 +66,18 @@ export const ClassroomDoubtsBoard: React.FC<ClassroomDoubtsBoardProps> = ({
           <div className="p-2 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
             <Users className="w-4 h-4 text-slate-400" />
           </div>
-          <h3 className="font-semibold text-white text-base">
-            Class Doubts
-          </h3>
+          <div>
+            <h3 className="font-semibold text-white text-base">
+              Class Doubts
+            </h3>
+            <p className="text-[11px] text-slate-400">
+              Shared question board with 60-student compounded answers
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-mono font-semibold">
+          <Sparkles className="w-3 h-3 text-amber-400" />
+          <span>Student 60 Master Standard</span>
         </div>
       </div>
 

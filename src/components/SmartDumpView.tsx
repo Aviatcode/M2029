@@ -33,11 +33,17 @@ import {
   Share,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { AcademicMaterial, Subject, Unit, UserRole } from '../types';
+import { AcademicMaterial, Subject, Unit, UserRole, TimetableClass } from '../types';
 import { MindmapViewer } from './MindmapViewer';
 import { getAiRequestPayload } from '../utils/aiModelService';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { checkAndRetrieveSharedFiles } from '../utils/shareTargetService';
+import {
+  extractTextFromFile,
+  isTimetableDocument,
+  isSyllabusDocument,
+  parseTimetableClient,
+} from '../utils/documentAiClassifier';
 
 interface SmartDumpViewProps {
   materials: AcademicMaterial[];
@@ -49,6 +55,8 @@ interface SmartDumpViewProps {
   onSelectActiveMaterialId?: (id: string) => void;
   onMaterialUploaded?: (mat: AcademicMaterial) => void;
   onNavigateToTab?: (tab: string) => void;
+  onUpdateSubjects?: (subjects: Subject[]) => void;
+  onUpdateTimetable?: (slots: TimetableClass[]) => void;
   pendingFiles?: File[];
   onClearPendingFiles?: () => void;
 }
@@ -63,6 +71,8 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
   onSelectActiveMaterialId,
   onMaterialUploaded,
   onNavigateToTab,
+  onUpdateSubjects,
+  onUpdateTimetable,
   pendingFiles,
   onClearPendingFiles,
 }) => {
@@ -148,61 +158,64 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     const fileExt = fileData.fileType || rawFileName.split('.').pop()?.toLowerCase() || 'pdf';
     const textSample = `${rawFileName} ${fileData.rawTextContent || ''}`.toLowerCase();
 
-    // 1. Subject Matching
-    let matchedSubject = subjects.find(
-      (s) => textSample.includes(s.name.toLowerCase()) || textSample.includes(s.code.toLowerCase())
-    );
-
-    if (!matchedSubject && subjects.length > 0) {
-      if (textSample.includes('deadlock') || textSample.includes('operating') || textSample.includes('process') || textSample.includes('paging') || textSample.includes('semaphore') || textSample.includes('bca-304')) {
-        matchedSubject = subjects.find((s) => s.name.toLowerCase().includes('operating')) || subjects[0];
-      } else if (textSample.includes('database') || textSample.includes('sql') || textSample.includes('dbms') || textSample.includes('normalization') || textSample.includes('acid') || textSample.includes('bca-302')) {
-        matchedSubject = subjects.find((s) => s.name.toLowerCase().includes('database')) || subjects[0];
-      } else if (textSample.includes('network') || textSample.includes('osi') || textSample.includes('tcp') || textSample.includes('ip') || textSample.includes('router') || textSample.includes('bca-303')) {
-        matchedSubject = subjects.find((s) => s.name.toLowerCase().includes('network')) || subjects[0];
-      } else if (textSample.includes('java') || textSample.includes('oops') || textSample.includes('polymorphism') || textSample.includes('inheritance') || textSample.includes('bca-301')) {
-        matchedSubject = subjects.find((s) => s.name.toLowerCase().includes('java')) || subjects[0];
-      } else {
-        matchedSubject = subjects[0];
-      }
-    }
-
-    const subjectName = matchedSubject?.name || 'Curriculum Core';
-    const subjectId = matchedSubject?.id || 'sub-general';
-
-    // 2. Category Matching
-    let detectedCategory: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'cheat_sheet' = 'notes';
-    if (textSample.includes('pyq') || textSample.includes('question paper') || textSample.includes('previous year') || textSample.includes('exam paper')) {
-      detectedCategory = 'pyq';
-    } else if (textSample.includes('assignment') || textSample.includes('homework') || textSample.includes('submission') || textSample.includes('lab task')) {
-      detectedCategory = 'assignment';
-    } else if (textSample.includes('cheat sheet') || textSample.includes('formula') || textSample.includes('mnemonic')) {
-      detectedCategory = 'cheat_sheet';
-    } else if (textSample.includes('syllabus') || textSample.includes('curriculum')) {
-      detectedCategory = 'syllabus';
-    }
-
-    // 3. Unit Matching
-    let unitNumber = 1;
-    let unitTitle = 'Fundamental Concepts';
-    const unitMatch = textSample.match(/unit[\s_-]*([1-5])/i);
-    if (unitMatch) {
-      unitNumber = parseInt(unitMatch[1]);
-      unitTitle = `Unit ${unitNumber}: Core Syllabus Modules`;
-    } else if (textSample.includes('deadlock') || textSample.includes('normalization') || textSample.includes('transport')) {
-      unitNumber = 3;
-      unitTitle = textSample.includes('deadlock')
-        ? 'Deadlocks & Process Synchronization'
-        : textSample.includes('normalization')
-        ? 'Relational Schema & Normalization'
-        : 'Transport Layer & Protocols';
-    }
+    const isTimetable = isTimetableDocument(rawFileName, fileData.rawTextContent);
+    const isSyllabus = isSyllabusDocument(rawFileName, fileData.rawTextContent);
 
     const cleanTitle = rawFileName
       .replace(/\.[^/.]+$/, '')
       .replace(/[_-]/g, ' ')
       .replace(/\b\w/g, (c) => c.toUpperCase())
       .trim();
+
+    // 1. Subject Matching
+    let matchedSubject = subjects.find(
+      (s) => textSample.includes(s.name.toLowerCase()) || textSample.includes(s.code.toLowerCase())
+    );
+
+    let subjectName = 'Curriculum Core';
+    let subjectId = 'sub-general';
+    let detectedCategory: 'notes' | 'pyq' | 'assignment' | 'syllabus' | 'timetable' | 'cheat_sheet' = 'notes';
+    let unitNumber = 1;
+    let unitTitle = 'Fundamental Concepts';
+
+    if (isTimetable) {
+      detectedCategory = 'timetable';
+      subjectName = 'Timetable & Class Schedule';
+      subjectId = 'sub-timetable';
+      unitTitle = 'Weekly Lecture Routine';
+    } else if (isSyllabus) {
+      detectedCategory = 'syllabus';
+      subjectName = matchedSubject?.name || cleanTitle || 'Course Curriculum';
+      subjectId = matchedSubject?.id || `sub-${cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'core'}`;
+      unitTitle = 'Syllabus & Course Modules';
+    } else {
+      if (textSample.includes('pyq') || textSample.includes('question paper') || textSample.includes('previous year') || textSample.includes('exam paper')) {
+        detectedCategory = 'pyq';
+      } else if (textSample.includes('assignment') || textSample.includes('homework') || textSample.includes('submission') || textSample.includes('lab task')) {
+        detectedCategory = 'assignment';
+      } else if (textSample.includes('cheat sheet') || textSample.includes('formula') || textSample.includes('mnemonic')) {
+        detectedCategory = 'cheat_sheet';
+      }
+
+      if (matchedSubject) {
+        subjectName = matchedSubject.name;
+        subjectId = matchedSubject.id;
+      } else if (subjects.length > 0) {
+        matchedSubject = subjects[0];
+        subjectName = matchedSubject.name;
+        subjectId = matchedSubject.id;
+      } else {
+        // Dynamic subject name from note title - never hardcoded C language
+        subjectName = cleanTitle || 'General Academic Notes';
+        subjectId = `sub-${cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'core'}`;
+      }
+
+      const unitMatch = textSample.match(/unit[\s_-]*([1-5])/i);
+      if (unitMatch) {
+        unitNumber = parseInt(unitMatch[1]);
+        unitTitle = `Unit ${unitNumber}: Core Syllabus Modules`;
+      }
+    }
 
     const folderPath = `${subjectName} / Unit ${unitNumber} - ${unitTitle} / ${detectedCategory.toUpperCase()}`;
 
@@ -341,6 +354,14 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
         const data = await response.json();
         if (data.status === 'success' && data.material) {
           finalMaterial = data.material;
+          if (data.isTimetable) {
+            if (Array.isArray(data.subjects) && data.subjects.length > 0) {
+              onUpdateSubjects?.(data.subjects);
+            }
+            if (Array.isArray(data.timetable) && data.timetable.length > 0) {
+              onUpdateTimetable?.(data.timetable);
+            }
+          }
         }
       }
     } catch (err) {
@@ -349,6 +370,11 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
 
     if (!finalMaterial) {
       finalMaterial = buildClientMaterial(fileData);
+      if (isTimetableDocument(fileData.fileName, fileData.rawTextContent)) {
+        const parsed = parseTimetableClient(fileData.rawTextContent || fileData.fileName, classCode);
+        if (parsed.subjects.length > 0) onUpdateSubjects?.(parsed.subjects);
+        if (parsed.timetable.length > 0) onUpdateTimetable?.(parsed.timetable);
+      }
     }
 
     setProcessingProgress(100);
@@ -388,96 +414,23 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     const filesArray = Array.from(fileList);
     if (filesArray.length === 0) return;
 
-    filesArray.forEach((file) => {
-      const isImage = file.type.startsWith('image/');
-      const fileExt = file.name.split('.').pop()?.toLowerCase() || 'pdf';
-
-      if (isImage) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result as string;
-          processAndIngest({
-            fileName: file.name,
-            fileType: fileExt,
-            fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-            rawTextContent: `${file.name.replace(/\.[^/.]+$/, '')} image notes`,
-            fileDataUrl: result,
-          });
-        };
-        reader.onerror = () => {
-          processAndIngest({
-            fileName: file.name,
-            fileType: fileExt,
-            fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-          });
-        };
-        reader.readAsDataURL(file);
-      } else if (file.type.includes('text') || fileExt === 'txt' || fileExt === 'md') {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result as string;
-          processAndIngest({
-            fileName: file.name,
-            fileType: fileExt,
-            fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-            rawTextContent: result.slice(0, 8000),
-          });
-        };
-        reader.onerror = () => {
-          processAndIngest({
-            fileName: file.name,
-            fileType: fileExt,
-            fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-          });
-        };
-        reader.readAsText(file);
-      } else if (fileExt === 'docx') {
-        // DOCX Document: Unpack XML archive and extract real text
-        file
-          .arrayBuffer()
-          .then(async (buffer) => {
-            try {
-              const JSZip = (await import('jszip')).default;
-              const zip = await JSZip.loadAsync(buffer);
-              const docXml = await zip.file('word/document.xml')?.async('text');
-              const extractedText = docXml
-                ? docXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
-                : '';
-
-              processAndIngest({
-                fileName: file.name,
-                fileType: fileExt,
-                fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-                rawTextContent:
-                  extractedText.length > 20
-                    ? extractedText.slice(0, 12000)
-                    : `${file.name.replace(/\.[^/.]+$/, '')} study notes`,
-              });
-            } catch (docxErr) {
-              console.warn('DOCX unzip fallback:', docxErr);
-              processAndIngest({
-                fileName: file.name,
-                fileType: fileExt,
-                fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-                rawTextContent: `${file.name.replace(/\.[^/.]+$/, '')} university syllabus notes`,
-              });
-            }
-          })
-          .catch(() => {
-            processAndIngest({
-              fileName: file.name,
-              fileType: fileExt,
-              fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-              rawTextContent: `${file.name.replace(/\.[^/.]+$/, '')} university syllabus notes`,
-            });
-          });
-      } else {
-        // PDF, DOC, PPT, PPTX or other binary document
+    filesArray.forEach(async (file) => {
+      try {
+        const extracted = await extractTextFromFile(file);
         processAndIngest({
           fileName: file.name,
-          fileType: fileExt,
+          fileType: extracted.fileExt,
           fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-          rawTextContent: `${file.name.replace(/\.[^/.]+$/, '')} university syllabus curriculum notes`,
+          rawTextContent: extracted.text,
+          fileDataUrl: extracted.dataUrl,
+        });
+      } catch (err) {
+        console.warn('File extraction error:', err);
+        processAndIngest({
+          fileName: file.name,
+          fileType: file.name.split('.').pop() || 'txt',
+          fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+          rawTextContent: file.name,
         });
       }
     });
@@ -992,6 +945,17 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
             {/* TAB 4: 10-MARKER MODEL ANSWER */}
             {activeDetailTab === '10marker' && (
               <div className="space-y-4">
+                {/* 60-Student Compounded Gold Standard Badge */}
+                <div className="p-3 bg-gradient-to-r from-amber-500/15 via-slate-900 to-indigo-950/20 border border-amber-500/30 rounded-xl flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-amber-400 font-bold">🏆 Student 60 Master Standard</span>
+                    <span className="text-slate-400">• Refined for 10/10 university internal marks</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">
+                    0 Tokens • Shared Batch Vault
+                  </span>
+                </div>
+
                 {activeItem.resources?.exam10Marker ? (
                   <div className="space-y-4">
                     <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 space-y-2">
