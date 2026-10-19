@@ -666,11 +666,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                     onChange={(e) => setUploadSubjectId(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
                   >
-                    {subjects.map((sub) => (
-                      <option key={sub.id} value={sub.id}>
-                        {sub.name}
-                      </option>
-                    ))}
+                    {subjects.length === 0 ? (
+                      <option value="sub-general">General Academic Notes</option>
+                    ) : (
+                      subjects.map((sub) => (
+                        <option key={sub.id} value={sub.id}>
+                          {sub.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
 

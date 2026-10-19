@@ -469,7 +469,19 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
       </div>
 
       {/* 2. MAIN CONTENT AREA BASED ON NOTION VIEW MODE */}
-      {rawUnits.length === 0 ? (
+      {subjects.length === 0 ? (
+        <div className="text-center py-16 rounded-2xl bg-slate-900/30 border border-dashed border-slate-800 p-8 space-y-4">
+          <BookOpen className="w-10 h-10 text-slate-500 mx-auto" />
+          <div className="space-y-1.5">
+            <h3 className="text-base font-semibold text-slate-100">
+              No Subjects Configured Yet
+            </h3>
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              Upload your semester timetable or syllabus first, or drag and drop your course documents to automatically structure your curriculum.
+            </p>
+          </div>
+        </div>
+      ) : rawUnits.length === 0 ? (
         <div className="text-center py-12 rounded-2xl bg-slate-900/30 border border-dashed border-slate-800 p-6 space-y-3.5">
           <BookOpen className="w-9 h-9 text-slate-500 mx-auto" />
           <div className="space-y-1">

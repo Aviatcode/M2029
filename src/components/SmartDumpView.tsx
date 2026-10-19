@@ -200,14 +200,10 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
       if (matchedSubject) {
         subjectName = matchedSubject.name;
         subjectId = matchedSubject.id;
-      } else if (subjects.length > 0) {
-        matchedSubject = subjects[0];
-        subjectName = matchedSubject.name;
-        subjectId = matchedSubject.id;
       } else {
-        // Dynamic subject name from note title - never hardcoded C language
+        // Dynamic subject name from note title - never hardcode or blindly dump into subjects[0]
         subjectName = cleanTitle || 'General Academic Notes';
-        subjectId = `sub-${cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'core'}`;
+        subjectId = `sub-${cleanTitle.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 16) || 'general'}`;
       }
 
       const unitMatch = textSample.match(/unit[\s_-]*([1-5])/i);

@@ -186,7 +186,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
   // Reference Study Guide State
   const [selectedSubject, setSelectedSubject] = useState<string>(
-    initialSubject || subjects[0]?.name || 'Operating Systems'
+    initialSubject || subjects[0]?.name || 'General Academic'
   );
   const [activeTabMode, setActiveTabMode] = useState<'all' | TutorResponseMode>('all');
   const [inputQuery, setInputQuery] = useState<string>('');

@@ -1964,27 +1964,39 @@ apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
     (s) => textSample.includes(s.name.toLowerCase()) || textSample.includes(s.code.toLowerCase())
   );
 
-  // If no subject matches, dynamically create a subject based on the material rather than defaulting to hardcoded C language!
+  // If no subject matches directly, try word-level keyword match or dynamically create a subject
+  if (!matchedSubject && knownSubjects.length > 0) {
+    const textWords = textSample.split(/[\s,._-]+/).filter((w) => w.length > 3);
+    matchedSubject = knownSubjects.find((s) => {
+      const sWords = s.name.toLowerCase().split(/[\s,._-]+/).filter((w) => w.length > 3);
+      return sWords.some((sw) => textWords.includes(sw));
+    });
+  }
+
   if (!matchedSubject) {
-    if (knownSubjects.length > 0) {
-      matchedSubject = knownSubjects[0];
-    } else {
-      const cleanTitleCandidate = rawFileName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ').trim();
-      const newSub: Subject = {
-        id: `sub-${Date.now()}-1`,
-        classId: targetClassId,
-        name: cleanTitleCandidate || 'Core Curriculum',
-        code: 'SUB-101',
-        teacherName: 'Faculty In-Charge',
-        credits: 4,
-        color: 'from-blue-500 to-indigo-600',
-        totalUnits: 4,
-        completedTopicsCount: 0,
-        totalTopicsCount: 10,
-      };
-      db.subjects[targetClassId] = [newSub];
-      matchedSubject = newSub;
+    const cleanTitleCandidate = rawFileName
+      .replace(/\.[^/.]+$/, '')
+      .replace(/[_-]/g, ' ')
+      .replace(/\b\w/g, (c: string) => c.toUpperCase())
+      .trim();
+    const newSub: Subject = {
+      id: `sub-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      classId: targetClassId,
+      name: cleanTitleCandidate || 'General Academic Notes',
+      code: `SUB-${101 + knownSubjects.length}`,
+      teacherName: 'Faculty In-Charge',
+      credits: 4,
+      color: 'from-blue-500 to-indigo-600',
+      totalUnits: 4,
+      completedTopicsCount: 0,
+      totalTopicsCount: 10,
+    };
+    if (!db.subjects[targetClassId]) {
+      db.subjects[targetClassId] = [];
     }
+    db.subjects[targetClassId].push(newSub);
+    db.saveToDisk();
+    matchedSubject = newSub;
   }
 
   // Detect Category
