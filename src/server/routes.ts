@@ -596,7 +596,7 @@ apiRouter.get('/attendance/monthly/:code', (req: Request, res: Response) => {
   res.json(summary);
 });
 
-// 2.2 Get Today's Daily Lecture Pulses (With Robert Greene Persuasion Levers)
+// 2.2 Get Today's Daily Lecture Pulses (With Dynamic Participation Motivators)
 apiRouter.get('/daily-pulse/:code', (req: Request, res: Response) => {
   const code = (req.params.code || 'BCA-2028').toUpperCase();
   const cls = db.classes[code] || SEED_CLASS;

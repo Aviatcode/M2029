@@ -405,9 +405,7 @@ export interface MonthlyAttendanceSummary {
   semesterSpan: string; // e.g. "Odd Semester (August – December)"
 }
 
-export interface GreeneTactic {
-  lawNumber: number;
-  lawName: string; // e.g. "Law of Covetousness & Scarcity", "Law of Social Proof", "Law of Reciprocity"
+export interface CohortParticipationNudge {
   headline: string;
   persuasiveCopy: string;
   callToAction: string;
@@ -445,7 +443,8 @@ export interface DailyLecturePulse {
   totalVotes: number;
   crVerified: boolean;
   votes: LecturePulseVote[];
-  persuasionTactic: GreeneTactic;
+  participationNudge?: CohortParticipationNudge;
+  persuasionTactic?: CohortParticipationNudge;
   quizUnlocked?: boolean;
 }
 

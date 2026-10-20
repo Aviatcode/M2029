@@ -482,15 +482,15 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
                       )}
                     </div>
 
-                    {/* Robert Greene Persuasion Box */}
-                    {pulse.persuasionTactic && !hasVoted && (
+                    {/* Cohort Participation Insight */}
+                    {(pulse.participationNudge || pulse.persuasionTactic) && !hasVoted && (
                       <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 mb-3 text-xs">
                         <div className="font-bold text-amber-300 flex items-center gap-1">
                           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                          <span>{pulse.persuasionTactic.headline}</span>
+                          <span>{(pulse.participationNudge || pulse.persuasionTactic)?.headline}</span>
                         </div>
                         <p className="text-[11px] text-slate-300 mt-0.5">
-                          {pulse.persuasionTactic.persuasiveCopy}
+                          {(pulse.participationNudge || pulse.persuasionTactic)?.persuasiveCopy}
                         </p>
                       </div>
                     )}

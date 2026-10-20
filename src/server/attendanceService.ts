@@ -3,7 +3,7 @@ import {
   MonthlyAttendanceSummary,
   DailyLecturePulse,
   LecturePulseVote,
-  GreeneTactic,
+  CohortParticipationNudge,
   UniversityCalendarNotice,
   ClassWorkspace,
   TimetableClass,
@@ -12,46 +12,36 @@ import {
   Topic,
 } from '../types/index.js';
 
-// Robert Greene Tactics Bank (The Laws of Human Nature / The 48 Laws of Power)
-const GREENE_PERSUASION_TACTICS: GreeneTactic[] = [
+// High-Engagement Cohort Participation Motivators
+const COHORT_PARTICIPATION_NUDGES: CohortParticipationNudge[] = [
   {
-    lawNumber: 13,
-    lawName: 'Appeal to Self-Interest (Law of Reciprocity)',
     headline: '⚡ Protect Your October 75% Safeguard',
     persuasiveCopy:
-      'College administrations review defaulter lists on the 1st of every month. 1 tap logs your attendance securely and reveals tomorrow’s 2-minute exam cheat sheet.',
+      'College administrations compile defaulter lists on the 1st of every month. 1 tap logs your attendance securely and unlocks tomorrow’s 2-minute exam cheat sheet.',
     callToAction: 'Confirm Attendance & Unlock Sheet',
   },
   {
-    lawNumber: 10,
-    lawName: 'Law of Covetousness & Artificial Scarcity',
     headline: '🔒 34 Batchmates Unlocked Tomorrow’s Primer',
     persuasiveCopy:
-      'The 7-minute AI intuition primer for tomorrow’s lecture is exclusive to students who confirm today’s lecture coverage before 11:59 PM.',
+      'The 7-minute AI intuition primer for tomorrow’s lecture is available to students who confirm today’s lecture coverage before 11:59 PM.',
     callToAction: '1-Tap Verify to Claim Access',
   },
   {
-    lawNumber: 14,
-    lawName: 'Law of Conformity & Social Proof',
     headline: '👥 85% of Your Cohort Has Already Checked In',
     persuasiveCopy:
-      'Your CR and batchmates marked Dr. Sharma’s lecture as completed. Don’t be the outlier left on the unverified registry.',
+      'Your CR and batchmates marked Dr. Sharma’s lecture as completed. Keep your attendance record aligned in 1 tap.',
     callToAction: 'Align With Cohort (1-Tap)',
   },
   {
-    lawNumber: 6,
-    lawName: 'Law of Role-Playing & High-Status Ego',
     headline: '👑 Trusted Academic Voice of BCA-2028',
     persuasiveCopy:
       'The curriculum algorithm prioritizes your input to lock in official syllabus progression. Verify what was taught to maintain your Verified Student badge.',
     callToAction: 'Submit Official Verification',
   },
   {
-    lawNumber: 15,
-    lawName: 'Law of Loss Aversion & Defaulter Dread',
-    headline: '⚠️ 75% Monthly Cutoff Warning',
+    headline: '⚠️ 75% Monthly Cutoff Notice',
     persuasiveCopy:
-      'Missing consecutive daily check-ins flags your profile under the 75% monthly threshold. Prevent debarment notice with a single tap.',
+      'Regular daily check-ins keep your profile above the 75% monthly threshold. Prevent attendance shortage with a single tap.',
     callToAction: 'Mark Present & Stay Safe',
   },
 ];
@@ -253,7 +243,7 @@ export class AttendanceService {
   }
 
   /**
-   * Get today's lecture pulses for the class with Robert Greene psychological nudges
+   * Get today's lecture pulses for the class with dynamic participation motivators
    */
   public getDailyPulses(classCode: string, timetable: TimetableClass[] = []): DailyLecturePulse[] {
     const today = new Date().toISOString().split('T')[0];
@@ -325,7 +315,7 @@ export class AttendanceService {
       const classesToPulse = todayClasses.length > 0 ? todayClasses : sourceList.slice(0, 3);
 
       pulses = classesToPulse.map((t, idx) => {
-        const tactic = GREENE_PERSUASION_TACTICS[idx % GREENE_PERSUASION_TACTICS.length];
+        const nudge = COHORT_PARTICIPATION_NUDGES[idx % COHORT_PARTICIPATION_NUDGES.length];
         return {
           id: `pulse-${classCode}-${today}-${idx}`,
           classId: classCode,
@@ -343,7 +333,8 @@ export class AttendanceService {
           totalVotes: 0,
           crVerified: false,
           votes: [],
-          persuasionTactic: tactic,
+          participationNudge: nudge,
+          persuasionTactic: nudge,
           quizUnlocked: false,
         };
       });

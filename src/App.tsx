@@ -1062,7 +1062,7 @@ export default function App() {
     step4MiniQuiz: [],
   });
 
-  // Daily Lecture Pulses for 1-Tap Attendance & Greene Nudges
+  // Daily Lecture Pulses for 1-Tap Attendance & Participation Nudges
   const [dailyPulses, setDailyPulses] = useState<DailyLecturePulse[]>([]);
 
   // Fetch live tomorrow prep and daily lecture pulses

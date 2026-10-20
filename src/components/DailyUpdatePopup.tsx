@@ -98,15 +98,15 @@ export const DailyUpdatePopup: React.FC<DailyUpdatePopupProps> = ({
         </p>
       </div>
 
-      {/* Robert Greene Psychological Nudge */}
-      {currentPulse.persuasionTactic && (
+      {/* Cohort Participation Insight */}
+      {(currentPulse.participationNudge || currentPulse.persuasionTactic) && (
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2 mb-3">
           <p className="text-[10px] font-semibold text-amber-300 flex items-center gap-1">
             <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
-            {currentPulse.persuasionTactic.headline}
+            {(currentPulse.participationNudge || currentPulse.persuasionTactic)?.headline}
           </p>
           <p className="text-[10px] text-slate-300 line-clamp-2 mt-0.5">
-            {currentPulse.persuasionTactic.persuasiveCopy}
+            {(currentPulse.participationNudge || currentPulse.persuasionTactic)?.persuasiveCopy}
           </p>
         </div>
       )}
