@@ -13,7 +13,15 @@ import {
   HelpCircle,
   File,
   Layers,
+  Database,
+  Search,
+  Loader2,
+  Github,
+  FolderGit2,
+  AlertCircle,
 } from 'lucide-react';
+import { RagDocumentViewer } from './RagDocumentViewer';
+import { uploadLargeFileToRag, fetchFromGitHubUrl } from '../utils/ragService';
 
 interface MaterialsViewProps {
   materials: AcademicMaterial[];
@@ -40,7 +48,18 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   const [uploadFileDataUrl, setUploadFileDataUrl] = useState<string>('');
   const [uploadTextSnippet, setUploadTextSnippet] = useState<string>('');
   const [processingStage, setProcessingStage] = useState<ProcessingStage>('idle');
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [selectedRawFile, setSelectedRawFile] = useState<File | null>(null);
+  const [showRagModal, setShowRagModal] = useState<boolean>(false);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
+
+  // GitHub Fetch Modal State
+  const [showGithubModal, setShowGithubModal] = useState<boolean>(false);
+  const [githubFetchUrl, setGithubFetchUrl] = useState<string>('');
+  const [githubFetchTitle, setGithubFetchTitle] = useState<string>('');
+  const [githubFetchSubjectId, setGithubFetchSubjectId] = useState<string>(subjects[0]?.id || '');
+  const [isGithubFetching, setIsGithubFetching] = useState<boolean>(false);
+  const [githubFetchError, setGithubFetchError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -61,6 +80,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
   // Handle incoming file selection (PDF, DOCX, JPG, PNG, TXT, etc.)
   const handleFileSelected = (file: File) => {
+    setSelectedRawFile(file);
     const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
     setUploadFileName(file.name);
     setUploadFileType(ext);
@@ -79,29 +99,22 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       setUploadTitle(cleanName);
     }
 
-    // Read file contents
-    const reader = new FileReader();
-
-    if (file.type.startsWith('image/')) {
+    // Only read DataURL for small images so 300MB files never spike client RAM
+    if (file.type.startsWith('image/') && file.size < 10 * 1024 * 1024) {
+      const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setUploadFileDataUrl(result);
         setUploadTextSnippet(`[Scanned Image / Handwritten Notes: ${file.name}]`);
       };
       reader.readAsDataURL(file);
-    } else if (file.type === 'text/plain' || file.name.endsWith('.md') || file.name.endsWith('.txt')) {
+    } else if ((file.type === 'text/plain' || file.name.endsWith('.md')) && file.size < 2 * 1024 * 1024) {
+      const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target?.result as string;
         setUploadTextSnippet(text);
       };
       reader.readAsText(file);
-    } else {
-      // PDF, DOCX, PPTX: read as DataURL for client-side offline storage & previews
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setUploadFileDataUrl(result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -110,18 +123,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     if (!uploadTitle.trim()) return;
 
     setProcessingStage('uploading');
-    await new Promise((r) => setTimeout(r, 300));
-
-    setProcessingStage('reading');
-    await new Promise((r) => setTimeout(r, 350));
-
-    setProcessingStage('understanding');
-    await new Promise((r) => setTimeout(r, 350));
-
-    setProcessingStage('organizing');
-    await new Promise((r) => setTimeout(r, 350));
-
-    setProcessingStage('generating');
+    setUploadProgress(10);
 
     const targetSub = subjects.find((s) => s.id === uploadSubjectId);
     const resolvedTitle = uploadTitle.trim() || uploadFileName.replace(/\.[^/.]+$/, '').trim() || 'Uploaded Document';
@@ -130,33 +132,61 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
     let uploadedMat: AcademicMaterial | null = null;
 
-    try {
-      const res = await fetch('/api/materials/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+    if (selectedRawFile) {
+      try {
+        const ragRes = await uploadLargeFileToRag(selectedRawFile, {
           classId: 'class-bca-2028',
           subjectId: uploadSubjectId,
           subjectName: resolvedSubName,
           title: resolvedTitle,
-          fileName: resolvedFileName,
-          fileType: uploadFileType,
-          fileSize: uploadFileSize || '2.4 MB',
-          rawTextContent: uploadTextSnippet.trim() || undefined,
-          fileDataUrl: uploadFileDataUrl || undefined,
-          uploaderRole: currentRole,
           uploaderName: currentRole === 'cr' ? 'Class Representative (CR)' : currentRole === 'teacher' ? 'Faculty Professor' : 'Classmate',
-        }),
-      });
+          uploaderRole: currentRole,
+          onProgress: (pct) => {
+            setUploadProgress(Math.max(10, Math.min(92, pct)));
+            if (pct >= 90) {
+              setProcessingStage('generating');
+            }
+          },
+        });
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data.material) {
-          uploadedMat = data.material;
+        if (ragRes.material) {
+          uploadedMat = ragRes.material;
         }
+      } catch (ragErr) {
+        console.warn('RAG streaming upload error, falling back to legacy endpoint:', ragErr);
       }
-    } catch (err) {
-      console.warn('Backend materials upload failed or offline, creating locally:', err);
+    }
+
+    if (!uploadedMat) {
+      try {
+        setProcessingStage('understanding');
+        const res = await fetch('/api/materials/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            classId: 'class-bca-2028',
+            subjectId: uploadSubjectId,
+            subjectName: resolvedSubName,
+            title: resolvedTitle,
+            fileName: resolvedFileName,
+            fileType: uploadFileType,
+            fileSize: uploadFileSize || '2.4 MB',
+            rawTextContent: uploadTextSnippet.trim() || undefined,
+            fileDataUrl: uploadFileDataUrl || undefined,
+            uploaderRole: currentRole,
+            uploaderName: currentRole === 'cr' ? 'Class Representative (CR)' : currentRole === 'teacher' ? 'Faculty Professor' : 'Classmate',
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.material) {
+            uploadedMat = data.material;
+          }
+        }
+      } catch (err) {
+        console.warn('Backend materials upload failed or offline, creating locally:', err);
+      }
     }
 
     if (!uploadedMat) {
@@ -281,13 +311,23 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           </h1>
         </div>
 
-        <button
-          onClick={() => setIsUploading(true)}
-          className="group px-3.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-850 text-slate-200 hover:text-white text-xs font-medium border border-slate-700/80 hover:border-slate-600 ring-1 ring-cyan-500/20 hover:ring-cyan-500/40 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] transition-all cursor-pointer self-start sm:self-auto flex items-center gap-2 font-sans-ui"
-        >
-          <UploadCloud className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-105 transition-transform" />
-          <span>Upload Material</span>
-        </button>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            onClick={() => setShowGithubModal(true)}
+            className="group px-3.5 py-1.5 rounded-lg bg-indigo-950/70 hover:bg-indigo-900/80 text-indigo-200 hover:text-white text-xs font-medium border border-indigo-700/60 ring-1 ring-indigo-500/20 shadow-sm transition-all cursor-pointer flex items-center gap-2 font-sans-ui"
+          >
+            <Github className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-105 transition-transform" />
+            <span>Fetch from GitHub</span>
+          </button>
+
+          <button
+            onClick={() => setIsUploading(true)}
+            className="group px-3.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-850 text-slate-200 hover:text-white text-xs font-medium border border-slate-700/80 hover:border-slate-600 ring-1 ring-cyan-500/20 hover:ring-cyan-500/40 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] transition-all cursor-pointer flex items-center gap-2 font-sans-ui"
+          >
+            <UploadCloud className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-105 transition-transform" />
+            <span>Upload Material</span>
+          </button>
+        </div>
       </div>
 
       {/* 2. Filter Tabs */}
@@ -390,16 +430,41 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                   </h2>
                 </div>
 
-                {selectedMaterial.fileDataUrl && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => setShowRagModal(true)}
+                    className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md transition cursor-pointer"
+                  >
+                    <Database className="w-3.5 h-3.5 text-indigo-300" />
+                    <span>⚡ Fetch Anything (RAG)</span>
+                  </button>
+
+                  {selectedMaterial.githubUrl && (
+                    <a
+                      href={selectedMaterial.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-700/60 text-indigo-300 text-xs font-medium flex items-center gap-1.5 shrink-0 transition"
+                      title="View source on GitHub"
+                    >
+                      <Github className="w-3.5 h-3.5" />
+                      <span>GitHub</span>
+                    </a>
+                  )}
+
                   <a
-                    href={selectedMaterial.fileDataUrl}
+                    href={
+                      selectedMaterial.ragDocId
+                        ? `/api/rag/file/${encodeURIComponent(selectedMaterial.ragDocId)}`
+                        : selectedMaterial.fileDataUrl || '#'
+                    }
                     download={selectedMaterial.fileName || `${selectedMaterial.title}.${selectedMaterial.fileType || 'pdf'}`}
                     className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium flex items-center gap-1.5 shrink-0 transition"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Download File</span>
+                    <span>Download ({selectedMaterial.fileSize})</span>
                   </a>
-                )}
+                </div>
               </div>
 
               {/* Real Image Preview if user uploaded photos of notes or diagrams */}
@@ -575,14 +640,22 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
             {processingStage !== 'idle' ? (
               <div className="py-8 text-center space-y-3">
                 <span className="w-6 h-6 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin inline-block" />
-                <p className="text-xs text-slate-300 capitalize">
-                  {processingStage === 'uploading' && 'Transferring file payload...'}
+                <p className="text-xs text-slate-300">
+                  {processingStage === 'uploading' && `Streaming file to backend storage (${uploadProgress}%)...`}
                   {processingStage === 'reading' && 'Extracting multi-format text & structure...'}
                   {processingStage === 'understanding' && 'Querying classroom cache for zero-token deduplication...'}
                   {processingStage === 'organizing' && 'Formulating semester syllabus notes...'}
-                  {processingStage === 'generating' && 'Finalizing flashcards and exam questions...'}
-                  {processingStage === 'complete' && 'Synchronized across all student devices!'}
+                  {processingStage === 'generating' && '⚡ Chunking & Building active in-memory BM25 RAG index...'}
+                  {processingStage === 'complete' && 'Active on backend! Synchronized across all student devices.'}
                 </p>
+                {processingStage === 'uploading' && (
+                  <div className="w-56 h-2 bg-slate-800 rounded-full mx-auto overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-cyan-500 to-indigo-500 transition-all duration-200"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                )}
               </div>
             ) : (
               <form onSubmit={handleStartProcessing} className="space-y-4 text-xs">
@@ -719,6 +792,186 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* RAG Interactive Document Viewer Modal */}
+      {showRagModal && selectedMaterial && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setShowRagModal(false)}
+        >
+          <div
+            className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl bg-slate-950 border border-indigo-500/30 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <RagDocumentViewer
+              docId={selectedMaterial.ragDocId || selectedMaterial.id}
+              onClose={() => setShowRagModal(false)}
+            />
+          </div>
+        </div>
+      )}
+      {/* GitHub Fetch Modal */}
+      {showGithubModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => !isGithubFetching && setShowGithubModal(false)}
+        >
+          <div
+            className="w-full max-w-lg rounded-2xl bg-slate-950 border border-slate-800 shadow-2xl p-6 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center space-x-2">
+                <Github className="w-5 h-5 text-indigo-400" />
+                <h3 className="font-semibold text-base text-slate-100">Fetch Material from GitHub</h3>
+              </div>
+              {!isGithubFetching && (
+                <button
+                  onClick={() => setShowGithubModal(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed font-sans">
+              Enter any GitHub file URL (blob, raw content, or release asset). The backend will stream and index it directly into active RAG memory.
+            </p>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!githubFetchUrl.trim()) return;
+                try {
+                  setIsGithubFetching(true);
+                  setGithubFetchError(null);
+                  const selectedSub = subjects.find((s) => s.id === githubFetchSubjectId);
+                  const result = await fetchFromGitHubUrl({
+                    url: githubFetchUrl.trim(),
+                    title: githubFetchTitle.trim() || undefined,
+                    classId: 'class-bca-2028',
+                    subjectId: githubFetchSubjectId,
+                    subjectName: selectedSub?.name || 'Core Curriculum',
+                  });
+                  if (result.material) {
+                    onMaterialUploaded(result.material);
+                    setSelectedMaterial(result.material);
+                  }
+                  setShowGithubModal(false);
+                  setGithubFetchUrl('');
+                  setGithubFetchTitle('');
+                } catch (err: any) {
+                  setGithubFetchError(err?.message || 'Failed to fetch file from GitHub.');
+                } finally {
+                  setIsGithubFetching(false);
+                }
+              }}
+              className="space-y-4 text-xs"
+            >
+              <div>
+                <label className="text-slate-300 font-semibold block mb-1">GitHub File URL</label>
+                <input
+                  type="text"
+                  value={githubFetchUrl}
+                  onChange={(e) => setGithubFetchUrl(e.target.value)}
+                  placeholder="https://github.com/owner/repo/blob/main/textbook.pdf"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 font-mono text-xs focus:outline-none focus:border-indigo-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-slate-300 font-semibold block mb-1">Document Title (Optional)</label>
+                  <input
+                    type="text"
+                    value={githubFetchTitle}
+                    onChange={(e) => setGithubFetchTitle(e.target.value)}
+                    placeholder="e.g. Operating Systems Notes"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-slate-300 font-semibold block mb-1">Associate Subject</label>
+                  <select
+                    value={githubFetchSubjectId}
+                    onChange={(e) => setGithubFetchSubjectId(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-indigo-500"
+                  >
+                    {subjects.map((sub) => (
+                      <option key={sub.id} value={sub.id}>
+                        {sub.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Quick links */}
+              <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-400">
+                <span className="text-slate-500">Quick:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGithubFetchUrl('https://github.com/Aviatcode/M2029/blob/main/curriculum-repo/TIMETABLE.md');
+                    setGithubFetchTitle('BCA Timetable & Schedule');
+                  }}
+                  className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-indigo-300 font-mono cursor-pointer"
+                >
+                  📅 Timetable
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGithubFetchUrl('https://github.com/Aviatcode/M2029/blob/main/curriculum-repo/SYLLABUS.md');
+                    setGithubFetchTitle('Core Syllabus Guide');
+                  }}
+                  className="px-2 py-0.5 rounded bg-slate-900 hover:bg-slate-800 text-indigo-300 font-mono cursor-pointer"
+                >
+                  📋 Syllabus
+                </button>
+              </div>
+
+              {githubFetchError && (
+                <div className="p-3 rounded-xl bg-red-950/40 border border-red-800/60 text-red-300 text-xs flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{githubFetchError}</span>
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setShowGithubModal(false)}
+                  disabled={isGithubFetching}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-400 text-xs hover:text-slate-200 border border-slate-800 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isGithubFetching || !githubFetchUrl.trim()}
+                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-md"
+                >
+                  {isGithubFetching ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Fetching & Indexing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Fetch & Index</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

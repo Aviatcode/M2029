@@ -1,7 +1,38 @@
 {
-  "classes": {},
-  "subjects": {},
+  "classes": {
+    "BCA-2028": {
+      "id": "class-bca-2028",
+      "code": "BCA-2028",
+      "name": "BCA-2028 Workspace",
+      "university": "State University",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin",
+      "universityWebsiteUrl": "https://ipu.ac.in",
+      "academicCalendarUrl": "https://ipu.ac.in/academic-calendar",
+      "circularsNoticeUrl": "https://ipu.ac.in/circulars",
+      "universityLinksLastChecked": "2026-10-20T17:37:20.013Z"
+    }
+  },
+  "subjects": {
+    "class-bca-2028": [
+      {
+        "id": "sub-1792515207955-idva",
+        "classId": "class-bca-2028",
+        "name": "Operating Systems Notes",
+        "code": "SUB-101",
+        "teacherName": "Faculty In-Charge",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 10
+      }
+    ]
+  },
   "units": {},
+  "timetable": {},
   "materials": {
     "class-bca-2028": [
       {
@@ -289,12 +320,2992 @@
             }
           ]
         }
+      },
+      {
+        "id": "mat-gh-1792487205787",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-general",
+        "subjectName": "Core Curriculum",
+        "title": "M2029 SyllabusOS Architecture Blueprint",
+        "fileName": "README.md",
+        "fileType": "md",
+        "fileSize": "12.1 KB",
+        "uploaderName": "GitHub: Aviatcode/M2029",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "Just now (GitHub)",
+        "ragDocId": "doc-1792487205764-8srm",
+        "downloadUrl": "https://github.com/Aviatcode/M2029/blob/main/README.md",
+        "githubUrl": "https://github.com/Aviatcode/M2029/blob/main/README.md",
+        "source": "github",
+        "resources": {
+          "summary": "# 🎓 M2029 — Academic Operating System & Autonomous AI Companion [![Live Web Application](https://img.shields.io/badge/Live_App-M2029_PWA-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://aviatcode.github.io/M2029/) [![GitHub Repo](https://img.shields.io/badge/GitHub-Aviatcode%2FM2029-181717?style=for-the-badge&logo=github&log...",
+          "hinglishSummary": "Ye file GitHub (Aviatcode/M2029) se fetch ho chuki hai aur backend RAG par 100% active hai.",
+          "mindmapMermaid": "graph TD\n  A[M2029 SyllabusOS Architec] --> B[GitHub Cloud Source]\n  A --> C[Active Chunks: 13]\n  A --> D[BM25 Indexed]",
+          "keyConcepts": [],
+          "importantDefinitions": [
+            {
+              "term": "M2029 SyllabusOS Architecture Blueprint",
+              "definition": "GitHub Cloud Material (12.1 KB). Indexed into local sub-millisecond RAG vector/BM25 memory."
+            }
+          ],
+          "examples": [],
+          "examPoints": [
+            "Cloud-synced from GitHub: https://github.com/Aviatcode/M2029/blob/main/README.md",
+            "Contains 13 active searchable chunks",
+            "Direct citation retrieval available in AI Tutor"
+          ],
+          "flashcards": [],
+          "quiz": [],
+          "possibleQuestions": [],
+          "relatedPYQs": []
+        }
+      },
+      {
+        "id": "mat-dump-1792515306786",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Deadlock Characterization and Banker's Algorithm for Deadlock Avoidance",
+        "fileName": "Operating_Systems_Notes.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Chapter on Deadlocks: Four conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait. Avoidance by Bankers Algorithm.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "A deadlock occurs in an operating system when a set of concurrent processes are permanently blocked because each holds resources while waiting for others to release theirs. Deadlock arises if and only if four Coffman conditions hold simultaneously: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. Deadlock avoidance dynamically evaluates resource allocation states using the Banker's Algorithm to ensure the system never transitions into an unsafe state.",
+          "hinglishSummary": "Deadlock tab hota hai jab processes ek dusre ke resources ke release hone ka circular wait karte reh jaate hain aur system freeze ho jata hai. Isko prevent karne ke liye 4 conditions todni hoti hain, ya fir Banker's Algorithm use karke safe state maintain ki jaati hai.",
+          "mindmapMermaid": "graph TD\n    A[Deadlock] --> B[Necessary Conditions]\n    A --> C[Avoidance Strategy]\n    B --> D[Mutual Exclusion & Hold-Wait]\n    B --> E[No Preemption & Circular Wait]\n    C --> F[Banker's Algorithm]\n    F --> G[Safety & Resource-Request]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Deadlocks in OS",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "Coffman Conditions (MHNC)",
+                  "type": "category"
+                },
+                {
+                  "id": "c2",
+                  "label": "Banker's Algorithm",
+                  "type": "category"
+                },
+                {
+                  "id": "c3",
+                  "label": "Safe State Analysis",
+                  "type": "category"
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Coffman Conditions",
+              "acronym": "MHNC",
+              "mnemonic": "Must Hold No Circle",
+              "explanation": "M: Mutual Exclusion, H: Hold and Wait, N: No Preemption, C: Circular Wait. Essential for recollecting all 4 conditions required for deadlock."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Define Deadlock. State and explain the four necessary conditions for a deadlock to occur. Describe how Dijkstra's Banker's Algorithm is used for deadlock avoidance with its key data structures.",
+            "answerStructure": "1. Definition of Deadlock\n2. Four Coffman Conditions\n3. Deadlock Avoidance vs. Safe State\n4. Banker's Algorithm Data Structures & Safety Algorithm\n5. Resource-Request Algorithm and Concluding Remarks",
+            "modelAnswerMarkdown": "### 1. Definition of Deadlock\nA deadlock is a condition in a multi-programming environment where two or more processes are permanently blocked because each process holds a non-shareable resource and is waiting to acquire another resource held by another process in the same set.\n\n### 2. Four Necessary (Coffman) Conditions\nA deadlock can occur if and only if the following four conditions hold simultaneously:\n1. **Mutual Exclusion**: At least one resource must be held in a non-shareable mode (only one process can use it at a time).\n2. **Hold and Wait**: A process must currently hold at least one resource and simultaneously wait to acquire additional resources held by other processes.\n3. **No Preemption**: Resources cannot be preempted; a resource can be released only voluntarily by the process holding it after task completion.\n4. **Circular Wait**: A closed chain of processes exists such that $P_0$ waits for a resource held by $P_1$, $P_1$ waits for $P_2$, ..., and $P_n$ waits for $P_0$.\n\n### 3. Deadlock Avoidance and Safe State\nDeadlock avoidance dynamically tracks resource allocation state. A state is **safe** if the system can allocate resources to each process in some sequence without leading to a deadlock. An unsafe state is not necessarily a deadlock, but it can potentially lead to one.\n\n### 4. Banker's Algorithm\nBanker's Algorithm (by Edsger Dijkstra) tests for safety by simulating the allocation of predetermined maximum possible amounts of all resources.\n\n#### Key Data Structures (for $n$ processes and $m$ resource types):\n- **Available**: Vector of length $m$. If `Available[j] = k`, then $k$ instances of resource type $R_j$ are available.\n- **Max**: $n \\times m$ matrix defining the maximum demand of each process. If `Max[i][j] = k`, then process $P_i$ may request at most $k$ instances of $R_j$.\n- **Allocation**: $n \\times m$ matrix defining current allocations. If `Allocation[i][j] = k`, then process $P_i$ currently holds $k$ instances of $R_j$.\n- **Need**: $n \\times m$ matrix indicating remaining resource needs:\n$$\\text{Need}[i][j] = \\text{Max}[i][j] - \\text{Allocation}[i][j]$$\n\n#### Safety Algorithm Steps:\n1. Initialize `Work = Available` (vector of size $m$) and `Finish[i] = false` for $i = 0, 1, \\dots, n-1$.\n2. Find an index $i$ such that both:\n   - `Finish[i] == false`\n   - `Need[i] <= Work`\n   If no such $i$ exists, go to Step 4.\n3. `Work = Work + Allocation[i]`, set `Finish[i] = true`, and return to Step 2.\n4. If `Finish[i] == true` for all $i$, the system is in a safe state.",
+            "keyDiagramText": "Resource Allocation Graph (RAG) showing a cycle indicative of deadlock, paired with a State Space Diagram showing Unsafe State containing Deadlock as a subset of Unsafe States."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Coffman Conditions",
+              "explanation": "The four simultaneous conditions (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) required for a deadlock to arise."
+            },
+            {
+              "concept": "Safe State",
+              "explanation": "A state in which there exists at least one execution sequence of processes where all can complete their execution without deadlocking."
+            },
+            {
+              "concept": "Banker's Algorithm",
+              "explanation": "A classic deadlock avoidance algorithm that checks if granting a request leaves the system in a safe state before physical allocation."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Deadlock",
+              "definition": "A condition in concurrent systems where two or more processes are blocked indefinitely because each holds a resource while waiting for another resource held by another process in the set."
+            },
+            {
+              "term": "Need Matrix",
+              "definition": "A derived matrix in the Banker's algorithm calculated as Need[i][j] = Max[i][j] - Allocation[i][j], representing remaining resource requirements."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Deadlock Characterization and Banker's Algorithm for Deadlock Avoidance principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Deadlock prevention requires invalidating at least one of the four Coffman conditions.",
+            "Banker's algorithm requires processes to declare their maximum resource demand a priori.",
+            "All deadlocked states are unsafe, but not all unsafe states are deadlocked."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515306786-1",
+              "question": "What is the core role of Deadlock Characterization and Banker's Algorithm for Deadlock Avoidance?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which of the following conditions is negated if resources are forcefully taken away from a process holding them?",
+              "options": [
+                "Mutual Exclusion",
+                "Hold and Wait",
+                "No Preemption",
+                "Circular Wait"
+              ],
+              "correctIndex": 2,
+              "explanation": "Preemption means forcibly deallocating resources from a process. Negating 'No Preemption' allows the operating system to reclaim resources to prevent a deadlock."
+            },
+            {
+              "id": "q2",
+              "question": "In the Banker's Algorithm, if the system enters an 'Unsafe State', what does it signify?",
+              "options": [
+                "The system is definitely in a deadlock state",
+                "A deadlock is not currently present, but the OS cannot prevent eventual deadlock if processes request their maximum needs",
+                "All processes have terminated abnormally",
+                "CPU utilization drops to zero permanently"
+              ],
+              "correctIndex": 1,
+              "explanation": "An unsafe state is not equivalent to a deadlock; rather, it is a state from which the OS can no longer guarantee that a deadlock will be avoided if processes claim their maximum declared demands."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Define Deadlock. State and explain the four necessary conditions for a deadlock to occur. Describe how Dijkstra's Banker's Algorithm is used for deadlock avoidance with its key data structures.",
+              "answerOutline": "1. Definition of Deadlock\n2. Four Coffman Conditions\n3. Deadlock Avoidance vs. Safe State\n4. Banker's Algorithm Data Structures & Safety Algorithm\n5. Resource-Request Algorithm and Concluding Remarks"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Deadlock Characterization and Banker's Algorithm for Deadlock Avoidance"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360580",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 3,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 3 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 3 Operating Systems",
+        "fileName": "Unit_3_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 3: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 3 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 3 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 3 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "acronym": "U3OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 3 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 3 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 3 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 3 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 3 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360580-1",
+              "question": "What is the core role of Unit 3 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360580-1",
+              "question": "What is the primary objective of studying Unit 3 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360580-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 3 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 3 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360624",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 4,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 4 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 4 Operating Systems",
+        "fileName": "Unit_4_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 4: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 4 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 4 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 4 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "acronym": "U4OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 4 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 4 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 4 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 4 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 4 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360624-1",
+              "question": "What is the core role of Unit 4 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360624-1",
+              "question": "What is the primary objective of studying Unit 4 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360624-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 4 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 4 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360640",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 2,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 2 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 2 Operating Systems",
+        "fileName": "Unit_2_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 2: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 2 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 2 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 2 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 2 Operating Systems",
+              "acronym": "U2OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 2 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 2 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 2 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 2 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 2 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 2 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 2 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360640-1",
+              "question": "What is the core role of Unit 2 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360640-1",
+              "question": "What is the primary objective of studying Unit 2 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360640-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 2 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 2 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 2 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360654",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 1 Operating Systems",
+        "fileName": "Unit_1_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 1: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 1 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 1 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 1 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "acronym": "U1OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 1 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 1 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 1 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 1 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 1 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360654-1",
+              "question": "What is the core role of Unit 1 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360654-1",
+              "question": "What is the primary objective of studying Unit 1 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360654-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 1 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 1 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360672",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 3,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 3 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 3 Operating Systems",
+        "fileName": "Unit_3_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 3: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 3 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 3 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 3 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "acronym": "U3OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 3 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 3 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 3 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 3 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 3 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360672-1",
+              "question": "What is the core role of Unit 3 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360672-1",
+              "question": "What is the primary objective of studying Unit 3 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360672-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 3 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 3 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360680",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 1 Operating Systems",
+        "fileName": "Unit_1_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 1: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 1 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 1 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 1 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "acronym": "U1OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 1 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 1 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 1 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 1 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 1 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360680-1",
+              "question": "What is the core role of Unit 1 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360680-1",
+              "question": "What is the primary objective of studying Unit 1 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360680-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 1 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 1 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360689",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 3,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 3 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 3 Operating Systems",
+        "fileName": "Unit_3_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 3: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 3 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 3 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 3 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "acronym": "U3OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 3 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 3 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 3 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 3 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 3 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360689-1",
+              "question": "What is the core role of Unit 3 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360689-1",
+              "question": "What is the primary objective of studying Unit 3 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360689-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 3 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 3 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360705",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 4,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 4 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 4 Operating Systems",
+        "fileName": "Unit_4_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 4: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 4 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 4 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 4 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "acronym": "U4OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 4 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 4 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 4 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 4 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 4 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360705-1",
+              "question": "What is the core role of Unit 4 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360705-1",
+              "question": "What is the primary objective of studying Unit 4 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360705-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 4 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 4 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360712",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 3,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 3 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 3 Operating Systems",
+        "fileName": "Unit_3_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 3: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 3 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 3 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 3 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "acronym": "U3OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 3 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 3 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 3 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 3 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 3 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360712-1",
+              "question": "What is the core role of Unit 3 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360712-1",
+              "question": "What is the primary objective of studying Unit 3 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360712-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 3 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 3 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360721",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 4,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 4 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 4 Operating Systems",
+        "fileName": "Unit_4_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 4: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 4 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 4 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 4 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "acronym": "U4OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 4 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 4 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 4 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 4 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 4 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360721-1",
+              "question": "What is the core role of Unit 4 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360721-1",
+              "question": "What is the primary objective of studying Unit 4 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360721-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 4 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 4 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360729",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 1 Operating Systems",
+        "fileName": "Unit_1_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 1: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 1 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 1 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 1 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "acronym": "U1OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 1 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 1 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 1 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 1 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 1 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360729-1",
+              "question": "What is the core role of Unit 1 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360729-1",
+              "question": "What is the primary objective of studying Unit 1 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360729-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 1 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 1 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360736",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 3,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 3 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 3 Operating Systems",
+        "fileName": "Unit_3_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 3: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 3 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 3 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 3 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "acronym": "U3OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 3 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 3 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 3 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 3 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 3 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360736-1",
+              "question": "What is the core role of Unit 3 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360736-1",
+              "question": "What is the primary objective of studying Unit 3 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360736-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 3 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 3 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360756",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 4,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 4 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 4 Operating Systems",
+        "fileName": "Unit_4_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 4: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 4 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 4 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 4 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "acronym": "U4OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 4 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 4 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 4 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 4 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 4 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 4 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360756-1",
+              "question": "What is the core role of Unit 4 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360756-1",
+              "question": "What is the primary objective of studying Unit 4 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360756-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 4 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 4 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 4 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360763",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 1 Operating Systems",
+        "fileName": "Unit_1_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 1: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 1 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 1 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 1 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "acronym": "U1OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 1 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 1 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 1 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 1 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 1 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360763-1",
+              "question": "What is the core role of Unit 1 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360763-1",
+              "question": "What is the primary objective of studying Unit 1 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360763-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 1 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 1 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515360771",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 2,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 2 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 2 Operating Systems",
+        "fileName": "Unit_2_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 2: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 2 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 2 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 2 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 2 Operating Systems",
+              "acronym": "U2OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 2 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 2 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 2 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 2 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 2 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 2 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 2 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515360771-1",
+              "question": "What is the core role of Unit 2 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515360771-1",
+              "question": "What is the primary objective of studying Unit 2 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515360771-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 2 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 2 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 2 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515361596",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 1 Operating Systems",
+        "fileName": "Unit_1_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 1: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 1 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 1 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 1 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "acronym": "U1OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 1 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 1 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 1 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 1 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 1 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 1 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515361596-1",
+              "question": "What is the core role of Unit 1 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515361596-1",
+              "question": "What is the primary objective of studying Unit 1 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515361596-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 1 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 1 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 1 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515383022",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 3,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 3 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Unit 3 Operating Systems",
+        "fileName": "Unit_3_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 3: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Synthesized high-yield academic breakdown of Unit 3 Operating Systems. Pre-evaluated for university semester questions and practical evaluations.",
+          "hinglishSummary": "Is topic (Unit 3 Operating Systems) mein main conceptual working aur exam gotchas cover kiye gaye hain.",
+          "mindmapMermaid": "graph TD\n  A[Unit 3 Operating Systems] --> B[Theoretical Foundation]\n  A --> C[Algorithms & Schema]\n  A --> D[10-Marker Structure]",
+          "mnemonics": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "acronym": "U3OS",
+              "mnemonic": "Analyze Boundaries, Trace Invariants, Eliminate Anomalies",
+              "explanation": "Essential memory hook for Unit 3 Operating Systems in university examinations."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+            "answerStructure": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)",
+            "modelAnswerMarkdown": "### 1. Introduction & Formal Definition\nUnit 3 Operating Systems represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.",
+            "keyDiagramText": "Block Architecture Diagram for Unit 3 Operating Systems illustrating data flow and state verification"
+          },
+          "keyConcepts": [
+            {
+              "concept": "System Invariant",
+              "explanation": "Core behavioral guarantee established in Unit 3 Operating Systems."
+            },
+            {
+              "concept": "Boundary Constraints",
+              "explanation": "Conditions under which algorithm correctness holds."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Unit 3 Operating Systems",
+              "definition": "Standardized university definition prescribed for semester examinations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Unit 3 Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "State definition in the first 2 lines.",
+            "Draw block diagram with clean labels.",
+            "Highlight boundary conditions to secure full marks."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515383022-1",
+              "question": "What is the core role of Unit 3 Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q-1792515383022-1",
+              "question": "What is the primary objective of studying Unit 3 Operating Systems in the university curriculum?",
+              "options": [
+                "Minimizing system overhead and preventing runtime anomalies",
+                "Replacing hardware processors entirely",
+                "Bypassing all security validations",
+                "None of the above"
+              ],
+              "correctIndex": 0,
+              "explanation": "It provides theoretical and practical guarantees against failures, ensuring system reliability."
+            },
+            {
+              "id": "q-1792515383022-2",
+              "question": "Under standard evaluation criteria, what component is mandatory when answering a 10-marker on Unit 3 Operating Systems?",
+              "options": [
+                "Formal definition, structural block diagram, and state boundaries",
+                "Random pseudocode without explanation",
+                "Only a single line definition",
+                "Historical trivia without technical steps"
+              ],
+              "correctIndex": 0,
+              "explanation": "University evaluators look for the formal definition, clear diagram, and mathematical/logical steps."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain Unit 3 Operating Systems in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.",
+              "answerOutline": "1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Unit 3 Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515400022",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 2,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 2 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Process Synchronization and Deadlock Management in Operating Systems",
+        "fileName": "Unit_2_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 2: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Process synchronization coordinates concurrent execution using primitives such as semaphores, mutexes, and Peterson's algorithm to resolve critical section contention. Deadlocks arise when processes are permanently blocked waiting for resources held by each other, characterized by the four simultaneous Coffman conditions: mutual exclusion, hold and wait, no preemption, and circular wait. Deadlock avoidance leverages Dijkstra's Banker's Algorithm to dynamically evaluate resource allocation states and guarantee transitions only into safe execution sequences.",
+          "hinglishSummary": "Critical section problem ko solve karne ke liye Semaphores aur Mutex use hote hain jabki Deadlock tab hota hai jab chaar Coffman conditions simultaneously hold karti hain. Banker's Algorithm system ko unsafe state me jaane se rok kar safe sequence dynamically calculate karta hai.",
+          "mindmapMermaid": "graph TD\n    A[Process Coordination & Concurrency] --> B[Synchronization Primitives]\n    A --> C[Deadlock Characterization]\n    B --> D[Critical Section: Peterson & Semaphores]\n    C --> E[Coffman Conditions: M-H-N-C]\n    C --> F[Banker's Algorithm: Safety & Request]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Process Coordination & Concurrency",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "Synchronization Primitives",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "Critical Section: Peterson & Semaphores",
+                      "type": "leaf"
+                    }
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "label": "Deadlock Handling",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l2",
+                      "label": "Coffman Conditions (MHNC)",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l3",
+                      "label": "Banker's Algorithm (Safety)",
+                      "type": "leaf"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Coffman Conditions",
+              "acronym": "M-H-N-C",
+              "mnemonic": "Must Hold No Circle",
+              "explanation": "Stands for Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait; all four must hold simultaneously for a deadlock to exist."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Define Deadlock. State and explain the four Coffman conditions necessary for deadlock occurrence, and explain how the Banker's Algorithm ensures deadlock avoidance.",
+            "answerStructure": "1. Deadlock Definition & System Model\n2. The Four Coffman Conditions\n3. Deadlock Avoidance vs. Prevention\n4. Banker's Algorithm Data Structures & Safety Algorithm\n5. Resource-Request Algorithm Steps\n6. Conclusion & Complexity Analysis",
+            "modelAnswerMarkdown": "### 1. Deadlock Definition\nA **deadlock** is a state in which a set of concurrent processes are permanently blocked because each process holds one or more resources while waiting for another resource held by another process in the same set.\n\n### 2. The Four Coffman Conditions\nA deadlock can occur if and only if all four conditions hold simultaneously in the system:\n1. **Mutual Exclusion**: At least one resource must be held in a non-shareable mode (only one process can use it at a time).\n2. **Hold and Wait**: A process must currently hold at least one resource while waiting to acquire additional resources currently held by other processes.\n3. **No Preemption**: Resources cannot be preemptively confiscated; they can only be released voluntarily by the holding process upon task completion.\n4. **Circular Wait**: A closed chain of processes must exist: $P_0$ waits for a resource held by $P_1$, $P_1$ waits for $P_2$, ..., and $P_n$ waits for $P_0$.\n\n### 3. Deadlock Avoidance: Banker's Algorithm\nDeadlock avoidance dynamically examines resource allocation state to ensure a circular-wait condition cannot emerge. The **Banker's Algorithm** ensures that the system always remains in a **Safe State**—a state where there exists at least one safe sequence $\\langle P_1, P_2, \\dots, P_n \\rangle$ such that each $P_i$'s maximum resource demands can be satisfied by the currently available resources plus resources released by preceding processes.\n\n#### Key Data Structures:\n- **Available**: Vector of length $m$ (available units per resource type).\n- **Max**: $n \\times m$ matrix defining maximum claim of each process.\n- **Allocation**: $n \\times m$ matrix defining currently assigned resources.\n- **Need**: $n \\times m$ matrix where $\\text{Need}[i][j] = \\text{Max}[i][j] - \\text{Allocation}[i][j]$.\n\n#### Safety Algorithm Steps:\n1. Initialize $\\text{Work} = \\text{Available}$ and $\\text{Finish}[i] = \\text{False}$ for $i = 0, 1, \\dots, n-1$.\n2. Find an index $i$ such that:\n   $$\\text{Finish}[i] == \\text{False} \\quad \\text{and} \\quad \\text{Need}_i \\le \\text{Work}$$\n   If no such $i$ exists, proceed to Step 4.\n3. Update state for process $i$:\n   $$\\text{Work} = \\text{Work} + \\text{Allocation}_i$$\n   $$\\text{Finish}[i] = \\text{True}$$\n   Return to Step 2.\n4. If $\\text{Finish}[i] == \\text{True}$ for all $i$, the system is in a safe state; otherwise, it is unsafe.",
+            "keyDiagramText": "Resource Allocation Graph (RAG) illustrating a circular dependency cycle versus a Safe State transition diagram for Banker's Algorithm."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Critical Section Problem",
+              "explanation": "A structural protocol requiring mutual exclusion, progress, and bounded waiting when multiple threads or processes modify shared data structures."
+            },
+            {
+              "concept": "Coffman Conditions",
+              "explanation": "Four essential prerequisites (Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait) that must co-occur for a deadlock to exist."
+            },
+            {
+              "concept": "Safe State & Safe Sequence",
+              "explanation": "An execution ordering of processes ensuring that each process can satisfy its maximum remaining resource demands without producing a deadlock."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Deadlock",
+              "definition": "A pathological situation in concurrent programming where two or more processes are blocked indefinitely waiting for events that only other processes in the set can cause."
+            },
+            {
+              "term": "Semaphore",
+              "definition": "A protected integer variable accessed only via atomic wait() (P) and signal() (V) operations used for mutual exclusion and process synchronization."
+            },
+            {
+              "term": "Banker's Algorithm",
+              "definition": "A classic deadlock-avoidance algorithm that simulates resource allocation to verify whether granting a request maintains the system in a safe state."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Process Synchronization and Deadlock Management in Operating Systems principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Differentiate clearly between Deadlock Prevention (restricting how requests are made to break one of the 4 Coffman conditions) and Deadlock Avoidance (dynamically tracking states using Banker's Algorithm).",
+            "Remember the formula: Need[i][j] = Max[i][j] - Allocation[i][j] for matrix numericals in semester exams.",
+            "A cycle in a Resource Allocation Graph (RAG) is a necessary and sufficient condition for deadlock ONLY if every resource type has exactly one single instance."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515400022-1",
+              "question": "What is the core role of Process Synchronization and Deadlock Management in Operating Systems?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which of the following conditions is negated if an operating system forces a process to release all currently held resources before requesting new ones?",
+              "options": [
+                "Mutual Exclusion",
+                "Hold and Wait",
+                "Circular Wait",
+                "No Preemption"
+              ],
+              "correctIndex": 1,
+              "explanation": "Requiring a process to request all its resources up front or release current allocations prior to requesting new ones directly breaks the 'Hold and Wait' condition."
+            },
+            {
+              "id": "q2",
+              "question": "In the context of the Banker's Algorithm, an 'unsafe state' always implies which of the following?",
+              "options": [
+                "The system is currently in a deadlock.",
+                "The system will crash immediately.",
+                "A deadlock is possible, but not guaranteed to occur.",
+                "Resource utilization has exceeded 100% capacity."
+              ],
+              "correctIndex": 2,
+              "explanation": "An unsafe state is not necessarily a deadlocked state; it simply means the operating system cannot prevent processes from deadlocking if they all request their maximum specified claims simultaneously."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Define Deadlock. State and explain the four Coffman conditions necessary for deadlock occurrence, and explain how the Banker's Algorithm ensures deadlock avoidance.",
+              "answerOutline": "1. Deadlock Definition & System Model\n2. The Four Coffman Conditions\n3. Deadlock Avoidance vs. Prevention\n4. Banker's Algorithm Data Structures & Safety Algorithm\n5. Resource-Request Algorithm Steps\n6. Conclusion & Complexity Analysis"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Process Synchronization and Deadlock Management in Operating Systems"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515408359",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 4,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 4 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Process Synchronization, Deadlock Characterization, and Banker's Algorithm",
+        "fileName": "Unit_4_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 4: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Module 4 addresses concurrent execution challenges by resolving the critical section problem using primitives such as semaphores, mutex locks, and Peterson's algorithm. Deadlock occurrence is formally characterized by the simultaneous existence of the four Coffman conditions: mutual exclusion, hold and wait, no preemption, and circular wait. To avoid deadlock scenarios dynamically, Dijkstra's Banker's Algorithm analyzes resource-allocation matrices to verify that every state transition maintains system safety.",
+          "hinglishSummary": "Deadlock tabhi activate hota hai jab charo Coffman conditions ek saath satisfy ho jayein. Banker's Algorithm system ko safe sequence check karke ensure karta hai ki resource allocation ke baad bhi deadlock kabhi trigger na ho.",
+          "mindmapMermaid": "graph TD\n    A[Module 4: Sync & Deadlocks] --> B[Critical Section Primitives]\n    A --> C[Coffman Conditions]\n    A --> D[Banker's Algorithm]\n    B --> E[Semaphores & Mutex]\n    C --> F[Circular Wait & Preemption]\n    D --> G[Safety & Request Algorithms]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Process Sync & Deadlocks",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "Synchronization Primitives",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "Peterson's Solution",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l2",
+                      "label": "Semaphores & Mutex",
+                      "type": "leaf"
+                    }
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "label": "Deadlock Characterization",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l3",
+                      "label": "Coffman Conditions (MHNC)",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l4",
+                      "label": "Resource Allocation Graph",
+                      "type": "leaf"
+                    }
+                  ]
+                },
+                {
+                  "id": "c3",
+                  "label": "Deadlock Avoidance",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l5",
+                      "label": "Banker's Safety Algorithm",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l6",
+                      "label": "Resource-Request Verification",
+                      "type": "leaf"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Coffman Conditions",
+              "acronym": "MHNC",
+              "mnemonic": "Must Hold No Circles",
+              "explanation": "Helps immediately recall Mutual exclusion, Hold and wait, No preemption, and Circular wait—all four must be present simultaneously for a deadlock to occur."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Define Deadlock. State and explain the four Coffman conditions necessary for a deadlock to occur. Furthermore, explain how the Banker's Algorithm ensures deadlock avoidance using its Safety Algorithm.",
+            "answerStructure": "1. Definition of Deadlock\n2. The Four Coffman Conditions (Detailed Explanation)\n3. Banker's Algorithm: Data Structures & Mathematical Formulation\n4. Step-by-Step Safety Algorithm\n5. Resource-Request Algorithm Logic and Conclusion",
+            "modelAnswerMarkdown": "### 1. Definition of Deadlock\nA **deadlock** is a state in which two or more concurrent processes are unable to proceed because each is waiting for a resource currently held by another process in the set, creating an indefinite standstill.\n\n---\n\n### 2. The Four Coffman Conditions\nA deadlock can occur if and only if all four conditions hold simultaneously in a system:\n\n1. **Mutual Exclusion:** At least one resource must be held in a non-shareable mode (only one process can use it at a time).\n2. **Hold and Wait:** A process must currently hold at least one resource and be waiting to acquire additional resources held by other processes.\n3. **No Preemption:** Resources cannot be forcibly revoked from a process; they can only be released voluntarily after the process completes its execution.\n4. **Circular Wait:** A closed chain of processes exists such that $P_0$ waits for a resource held by $P_1$, $P_1$ waits for $P_2$, ..., and $P_n$ waits for a resource held by $P_0$.\n\n*Note:* If any one condition is eliminated, deadlock is structurally prevented.\n\n---\n\n### 3. Banker's Algorithm for Deadlock Avoidance\nDeadlock avoidance allows requests only if granting them leads to a **Safe State** (a state where there exists an execution sequence $\\langle P_1, P_2, \\dots, P_n \\rangle$ such that every process can satisfy its remaining needs).\n\n#### Data Structures ($n$ processes, $m$ resource types):\n- $\\text{Available}[m]$: Number of available instances per resource type.\n- $\\text{Max}[n][m]$: Maximum resource demand of each process.\n- $\\text{Allocation}[n][m]$: Resources currently allocated to each process.\n- $\\text{Need}[n][m]$: Remaining resources required:  \n  $$\\text{Need}[i][j] = \\text{Max}[i][j] - \\text{Allocation}[i][j]$$\n\n---\n\n### 4. Safety Algorithm\n1. Let $\\text{Work} = \\text{Available}$ (vector of length $m$) and $\\text{Finish}[i] = \\text{false}$ for $i = 0, 1, \\dots, n-1$.\n2. Find an index $i$ such that:\n   - $\\text{Finish}[i] == \\text{false}$\n   - $\\text{Need}_i \\le \\text{Work}$\n   If no such $i$ exists, jump to **Step 4**.\n3. Execute the process conceptually and reclaim its resources:\n   - $\\text{Work} = \\text{Work} + \\text{Allocation}_i$\n   - $\\text{Finish}[i] = \\text{true}$\n   Return to **Step 2**.\n4. If $\\text{Finish}[i] == \\text{true}$ for all $i$, the system is in a **Safe State**; otherwise, it is in an **Unsafe State**.\n\n---\n\n### 5. Resource-Request Algorithm\nWhen process $P_i$ issues $\\text{Request}_i$:\n1. If $\\text{Request}_i \\le \\text{Need}_i$, proceed; else raise error (request exceeded maximum declared claim).\n2. If $\\text{Request}_i \\le \\text{Available}$, proceed; else $P_i$ must wait.\n3. Pretend to allocate requested resources:\n   $$\\text{Available} = \\text{Available} - \\text{Request}_i$$\n   $$\\text{Allocation}_i = \\text{Allocation}_i + \\text{Request}_i$$\n   $$\\text{Need}_i = \\text{Need}_i - \\text{Request}_i$$\n4. Run the **Safety Algorithm**. If safe, commit changes; if unsafe, rollback and force $P_i$ to wait.",
+            "keyDiagramText": "Resource Allocation Graph (RAG) showing circular wait directed edges (Process -> Resource -> Process) contrasted with Banker's Algorithm Allocation/Need Matrix representation table."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Coffman Conditions",
+              "explanation": "A set of four criteria (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) that must all simultaneously hold true for a deadlock to materialize."
+            },
+            {
+              "concept": "Banker's Algorithm",
+              "explanation": "A proactive deadlock avoidance algorithm that checks whether granting an allocation request maintains the system in a provably safe state."
+            },
+            {
+              "concept": "Safe State vs Unsafe State",
+              "explanation": "A safe state implies that deadlock can be avoided through a safe execution sequence; an unsafe state does not guarantee a deadlock, but creates the potential for one."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Deadlock",
+              "definition": "A condition in concurrent computing where a set of processes are permanently blocked because each process holds resources needed by others while waiting for resources held by another."
+            },
+            {
+              "term": "Circular Wait",
+              "definition": "A closed chain of processes where each process holds at least one resource required by the subsequent process in the chain."
+            },
+            {
+              "term": "Safe Sequence",
+              "definition": "An ordered sequence of processes <P1, P2, ..., Pn> such that for each Pi, the resources that Pi can still request can be satisfied by current available resources plus resources held by all preceding processes Pj (j < i)."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Process Synchronization, Deadlock Characterization, and Banker's Algorithm principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Deadlock Prevention involves invalidating at least one Coffman condition; Deadlock Avoidance dynamically allows only states with a guaranteed safe sequence.",
+            "Need Matrix formula is strictly: Need[i][j] = Max[i][j] - Allocation[i][j]. Always compute this first in 10-marker numericals.",
+            "An Unsafe state is not equal to a Deadlock; however, all deadlocked states are unsafe states.",
+            "Banker's algorithm assumes the maximum resource requirement of each process is declared a priori."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515408359-1",
+              "question": "What is the core role of Process Synchronization, Deadlock Characterization, and Banker's Algorithm?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which of the following is NOT one of the Coffman conditions required for a deadlock to occur?",
+              "options": [
+                "Mutual exclusion",
+                "Hold and wait",
+                "Preemptive allocation",
+                "Circular wait"
+              ],
+              "correctIndex": 2,
+              "explanation": "'No Preemption' is the necessary condition. If preemptive allocation is permitted, deadlocks are eliminated because the OS can revoke resources to break stalls."
+            },
+            {
+              "id": "q2",
+              "question": "In Banker's Algorithm, what must hold true for a state to be classified as 'Safe'?",
+              "options": [
+                "No resources are currently allocated",
+                "A sequence exists where every process can acquire its maximum need and finish",
+                "Available resources exceed total allocated resources",
+                "Need is less than Allocation for all processes"
+              ],
+              "correctIndex": 1,
+              "explanation": "A safe state guarantees the existence of at least one safe sequence of processes such that all can eventually execute to completion without deadlock."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Define Deadlock. State and explain the four Coffman conditions necessary for a deadlock to occur. Furthermore, explain how the Banker's Algorithm ensures deadlock avoidance using its Safety Algorithm.",
+              "answerOutline": "1. Definition of Deadlock\n2. The Four Coffman Conditions (Detailed Explanation)\n3. Banker's Algorithm: Data Structures & Mathematical Formulation\n4. Step-by-Step Safety Algorithm\n5. Resource-Request Algorithm Logic and Conclusion"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Process Synchronization, Deadlock Characterization, and Banker's Algorithm"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515419940",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 4,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 4 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Process Synchronization and Deadlock Management",
+        "fileName": "Unit_4_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 4: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "This module covers core process synchronization mechanisms, including Peterson's solution, semaphores, and mutex locks to resolve the critical section problem. It outlines the four Coffman conditions—mutual exclusion, hold and wait, no preemption, and circular wait—that are simultaneously required for deadlock to occur. Deadlock handling is primarily achieved through prevention by invalidating these conditions and avoidance using Dijkstra's Banker's Algorithm via safe state evaluations.",
+          "hinglishSummary": "Critical section problem ko solve karne ke liye Semaphores aur Mutex use hote hain. Deadlock tabhi hota hai jab chaaron Coffman conditions ek saath satisfy ho jayein, jise Banker's algorithm safe sequence verify karke avoid karta hai.",
+          "mindmapMermaid": "graph TD\n    A[OS Concurrency & Deadlocks] --> B[Synchronization Primitives]\n    A --> C[Deadlock Characterization]\n    B --> B1[Mutex & Semaphores]\n    B --> B2[Peterson's Algorithm]\n    C --> C1[Coffman Conditions]\n    C --> C2[Banker's Algorithm]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Concurrency & Deadlocks",
+              "type": "root",
+              "children": [
+                {
+                  "id": "sync",
+                  "label": "Process Synchronization",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "csp",
+                      "label": "Critical Section Problem",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "sem",
+                      "label": "Semaphores & Mutex",
+                      "type": "leaf"
+                    }
+                  ]
+                },
+                {
+                  "id": "deadlock",
+                  "label": "Deadlock Handling",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "coffman",
+                      "label": "Coffman Conditions",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "banker",
+                      "label": "Banker's Algorithm",
+                      "type": "leaf"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Coffman Conditions",
+              "acronym": "M-H-N-C",
+              "mnemonic": "Monkeys Hold No Circles",
+              "explanation": "Stands for Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. Recalling this ensures full marks in 5-mark and 10-mark deadlock questions."
+            }
+          ],
+          "exam10Marker": {
+            "question": "Explain the four Coffman conditions necessary for a deadlock to occur. Discuss how Banker's Algorithm is used for deadlock avoidance with necessary data structures and the Safety Algorithm.",
+            "answerStructure": "1. Definition of Deadlock and the Four Coffman Conditions\n2. Deadlock Handling Strategies (Prevention vs. Avoidance)\n3. Banker's Algorithm Architecture & Data Structures (Available, Max, Allocation, Need)\n4. Step-by-Step Safety Algorithm\n5. Time Complexity and Practical Limitations",
+            "modelAnswerMarkdown": "### 1. Introduction to Deadlock\nA deadlock occurs when a set of concurrent processes are permanently blocked because each process holds a resource and waits for another resource held by another process in the same set.\n\n### 2. The Four Coffman Conditions\nA deadlock state can arise if and only if all four conditions hold simultaneously in a system:\n1. **Mutual Exclusion:** At least one resource must be held in a non-sharable mode (only one process can use the resource at a time).\n2. **Hold and Wait:** A process must currently hold at least one resource and simultaneously request additional resources that are held by other processes.\n3. **No Preemption:** Resources cannot be forcibly preempted from a process; they can only be released voluntarily after the process completes its task.\n4. **Circular Wait:** A closed chain of processes exists such that $P_0$ waits for a resource held by $P_1$, $P_1$ waits for $P_2$, ..., and $P_n$ waits for a resource held by $P_0$.\n\n### 3. Banker's Algorithm for Deadlock Avoidance\nBanker's Algorithm is a dynamic deadlock avoidance strategy developed by Edsger Dijkstra. When a process requests resources, the system simulates allocation to verify whether the resulting system state is **safe** (i.e., there exists at least one safe sequence $\\langle P_1, P_2, \\dots, P_n \\rangle$ ensuring all processes can finish).\n\n#### Data Structures (for $n$ processes and $m$ resource types):\n- **`Available[m]`**: Vector indicating available units of each resource type.\n- **`Max[n][m]`**: Matrix defining the maximum demand of each process.\n- **`Allocation[n][m]`**: Matrix defining current resources allocated to each process.\n- **`Need[n][m]`**: Remaining resource need of each process, calculated as:\n  $$\\text{Need}[i][j] = \\text{Max}[i][j] - \\text{Allocation}[i][j]$$\n\n### 4. Safety Algorithm\n1. Let `Work` be a vector of length $m$ initialized to `Available`, and `Finish` be a boolean array of length $n$ initialized to `false` for all $i = 0, 1, \\dots, n-1$.\n2. Find an index $i$ such that:\n   - `Finish[i] == false`\n   - `Need[i] <= Work`\n   If no such $i$ exists, proceed to Step 4.\n3. Update:\n   - `Work = Work + Allocation[i]`\n   - `Finish[i] = true`\n   Return to Step 2.\n4. If `Finish[i] == true` for all $i$, the system is in a **safe state**; otherwise, it is in an unsafe state (potential deadlock).\n\n### 5. Conclusion\nWhile the Banker's algorithm mathematically guarantees deadlock avoidance, it incurs an $O(m \\cdot n^2)$ overhead and requires processes to state their maximum resource needs in advance, which is rarely practical in modern dynamic operating systems.",
+            "keyDiagramText": "A 2D Resource Allocation Graph (RAG) illustrating circular wait along with a table displaying Allocation, Max, Need, and Available matrices for 5 processes and 3 resources."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Critical Section Problem",
+              "explanation": "The challenge of designing a protocol where concurrent processes execute code sections accessing shared memory without race conditions, satisfying Mutual Exclusion, Progress, and Bounded Waiting."
+            },
+            {
+              "concept": "Coffman Conditions",
+              "explanation": "The four non-negotiable concurrent criteria (Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait) that must all hold true for a deadlock to exist."
+            },
+            {
+              "concept": "Deadlock Avoidance vs. Prevention",
+              "explanation": "Prevention alters how requests are made to structurally eliminate at least one Coffman condition; Avoidance dynamically tracks state trajectories (using Banker's algorithm) to reject transitions leading to unsafe states."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Deadlock",
+              "definition": "A state in which every process in a set is waiting for an event that only another process in the same set can cause, typically resource release."
+            },
+            {
+              "term": "Safe State",
+              "definition": "A state in resource allocation where there exists at least one order (safe sequence) in which all processes can satisfy their maximum resource claims and terminate."
+            },
+            {
+              "term": "Counting Semaphore",
+              "definition": "A synchronization variable initialized to an integer value representing the number of available units of a shared resource, manipulated only via atomic wait() (P) and signal() (V) operations."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Process Synchronization and Deadlock Management principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Always state all 4 Coffman conditions by name in any 5 or 10-mark deadlock question.",
+            "Remember the formula: Need = Max - Allocation; examiners check this matrix calculation first in Banker's algorithm numericals.",
+            "A deadlock implies an unsafe state, but an unsafe state does not guarantee a deadlock (Deadlock ⊂ Unsafe State).",
+            "Peterson's solution works strictly for two processes and relies on shared variables 'turn' and 'flag[2]'."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515419940-1",
+              "question": "What is the core role of Process Synchronization and Deadlock Management?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which of the following conditions is negated if an operating system forces processes to release all allocated resources before requesting new ones?",
+              "options": [
+                "Mutual Exclusion",
+                "Hold and Wait",
+                "No Preemption",
+                "Circular Wait"
+              ],
+              "correctIndex": 1,
+              "explanation": "Requiring a process to request all its resources at once or release currently held resources before making a new request directly breaks the 'Hold and Wait' condition."
+            },
+            {
+              "id": "q2",
+              "question": "In the Banker's Algorithm, what does a system being in an 'unsafe state' indicate?",
+              "options": [
+                "A deadlock has definitely occurred.",
+                "A deadlock cannot possibly occur.",
+                "The system has the potential to enter a deadlock, but is not necessarily deadlocked.",
+                "CPU utilization is 0%."
+              ],
+              "correctIndex": 2,
+              "explanation": "An unsafe state is not equivalent to a deadlock; it merely implies that the operating system cannot guarantee the prevention of a future deadlock if maximum resource demands are claimed."
+            },
+            {
+              "id": "q3",
+              "question": "Given Allocation = [2, 1, 0] and Max = [4, 3, 2] for process P1, what is the Need vector for P1?",
+              "options": [
+                "[2, 2, 2]",
+                "[6, 4, 2]",
+                "[2, 1, 0]",
+                "[1, 2, 2]"
+              ],
+              "correctIndex": 0,
+              "explanation": "Need[i] = Max[i] - Allocation[i]. Thus, Need = [4-2, 3-1, 2-0] = [2, 2, 2]."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "Explain the four Coffman conditions necessary for a deadlock to occur. Discuss how Banker's Algorithm is used for deadlock avoidance with necessary data structures and the Safety Algorithm.",
+              "answerOutline": "1. Definition of Deadlock and the Four Coffman Conditions\n2. Deadlock Handling Strategies (Prevention vs. Avoidance)\n3. Banker's Algorithm Architecture & Data Structures (Available, Max, Allocation, Need)\n4. Step-by-Step Safety Algorithm\n5. Time Complexity and Practical Limitations"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Process Synchronization and Deadlock Management"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515446057",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 1,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 1 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Process Synchronization and Deadlock Management: Coffman Conditions & Banker's Algorithm",
+        "fileName": "Unit_1_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 1: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Process synchronization coordinates concurrent execution using primitives like semaphores and mutex locks to guarantee mutual exclusion in critical sections. A deadlock arises when multiple processes remain perpetually blocked, simultaneously fulfilling the four Coffman conditions: mutual exclusion, hold and wait, no preemption, and circular wait. Deadlock avoidance evaluates resource allocations dynamically using the Banker's Algorithm to guarantee that the system consistently transitions only through safe states.",
+          "hinglishSummary": "Jab processes critical section ke resources ko bina coordination access karte hain toh race condition aur deadlocks bante hain. Deadlock tabhi aayega jab char Coffman conditions simultaneously hold karein, aur Banker's Algorithm safe sequence check karke is deadlock ko prevent/avoid karta hai.",
+          "mindmapMermaid": "graph TD\n    A[OS Concurrency] --> B[Process Synchronization]\n    A --> C[Deadlock Management]\n    B --> D[Semaphores & Mutex]\n    C --> E[Coffman Conditions]\n    C --> F[Banker's Algorithm]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Concurrency & Deadlocks",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "Process Synchronization",
+                  "type": "category"
+                },
+                {
+                  "id": "c2",
+                  "label": "Coffman Conditions",
+                  "type": "category"
+                },
+                {
+                  "id": "c3",
+                  "label": "Banker's Algorithm",
+                  "type": "category"
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Coffman Conditions for Deadlock",
+              "acronym": "MHNC",
+              "mnemonic": "Must Hold No Circle",
+              "explanation": "Stands for Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. If any one of these four conditions is invalidated, a deadlock cannot occur."
+            }
+          ],
+          "exam10Marker": {
+            "question": "State and explain the four Coffman conditions necessary for a deadlock to occur. Describe how Dijkstra's Banker's Algorithm avoids deadlock using the Safety and Resource-Request algorithms.",
+            "answerStructure": "1. Definition of Deadlock\n2. Detailed breakdown of the Four Coffman Conditions\n3. Deadlock Avoidance vs Prevention\n4. Banker's Algorithm Data Structures & Safety Algorithm Steps\n5. Example Matrix Calculation & Proof of Safe State",
+            "modelAnswerMarkdown": "### 1. Definition of Deadlock\nA deadlock is a state where a set of concurrent processes are permanently blocked because each process holds resources while waiting for other resources acquired by other processes in the same set.\n\n### 2. The Four Coffman Conditions\nA deadlock can occur if and only if all four conditions hold simultaneously:\n1. **Mutual Exclusion:** At least one resource must be held in a non-sharable mode (only one process can use it at a time).\n2. **Hold and Wait:** A process must currently hold at least one resource and simultaneously request additional resources held by other processes.\n3. **No Preemption:** Allocated resources cannot be forcibly seized; a resource can be released only voluntarily by the process holding it after finishing its task.\n4. **Circular Wait:** A closed chain of processes exists: $P_0 \\rightarrow P_1 \\rightarrow \\dots \\rightarrow P_n \\rightarrow P_0$, where $P_i$ waits for a resource held by $P_{(i+1) \\pmod n}$.\n\n### 3. Banker's Algorithm for Deadlock Avoidance\nThe Banker's Algorithm dynamically inspects resource-allocation states to ensure the system never enters an unsafe state.\n\n#### Key Data Structures:\n- **$Available[m]$**: Available instances of each resource type $R_j$.\n- **$Max[n][m]$**: Maximum demand of process $P_i$ for resource $R_j$.\n- **$Allocation[n][m]$**: Instances of resource $R_j$ currently allocated to process $P_i$.\n- **$Need[n][m]$**: Remaining resource requirement ($Need[i][j] = Max[i][j] - Allocation[i][j]$).\n\n#### Safety Algorithm:\n1. Initialize vectors: $Work = Available$ and $Finish[i] = \\text{false}$ for $i = 0, 1, \\dots, n-1$.\n2. Find an index $i$ such that:  \n   $Finish[i] == \\text{false}$ and $Need[i] \\le Work$.  \n   If no such $i$ exists, proceed to Step 4.\n3. Execute process $i$:  \n   $Work = Work + Allocation[i]$  \n   $Finish[i] = \\text{true}$  \n   Return to Step 2.\n4. If $Finish[i] == \\text{true}$ for all $i$, the system is in a **Safe State**, and the ordered execution order forms a **Safe Sequence** $\\langle P_0, P_1, \\dots, P_{n-1} \\rangle$. Otherwise, the system is in an unsafe state.",
+            "keyDiagramText": "Resource Allocation Graph (RAG) illustrating a directed cycle among processes and resources, paired with a Banker's Algorithm state-transition flow diagram."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Coffman Conditions",
+              "explanation": "A set of four simultaneous criteria (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) required for a system to reach deadlock."
+            },
+            {
+              "concept": "Safe State",
+              "explanation": "A state in which there exists at least one sequence of process allocations that allows all processes to finish without deadlocking."
+            },
+            {
+              "concept": "Critical Section Problem",
+              "explanation": "A concurrency design challenge requiring Mutual Exclusion, Progress, and Bounded Waiting to avoid race conditions during shared resource access."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Deadlock",
+              "definition": "A condition in a multiprogramming environment where a set of processes are permanently blocked because each process holds resources and waits for others held by members of the same set."
+            },
+            {
+              "term": "Banker's Algorithm",
+              "definition": "A deadlock avoidance algorithm developed by Edsger Dijkstra that simulates allocation for predetermined maximum possible amounts of all resources, testing for safe states before approving requests."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Process Synchronization and Deadlock Management: Coffman Conditions & Banker's Algorithm principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Deadlock prevention requires invalidating at least one of the four Coffman conditions.",
+            "An unsafe state is NOT synonymous with a deadlock; rather, an unsafe state may lead to a deadlock if processes request their maximum claims.",
+            "Peterson's solution is a software-based solution to the critical section problem restricted to exactly two concurrent processes."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515446057-1",
+              "question": "What is the core role of Process Synchronization and Deadlock Management: Coffman Conditions & Banker's Algorithm?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which of the following is NOT a necessary condition for a deadlock to occur according to Coffman?",
+              "options": [
+                "Mutual Exclusion",
+                "Hold and Wait",
+                "Preemptive Scheduling",
+                "Circular Wait"
+              ],
+              "correctIndex": 2,
+              "explanation": "The condition is 'No Preemption'. If preemption is allowed, deadlocks can be broken by forcibly preempting resources."
+            },
+            {
+              "id": "q2",
+              "question": "In the Banker's Algorithm, what is the relation used to compute the Need matrix?",
+              "options": [
+                "Need = Max + Allocation",
+                "Need = Max - Allocation",
+                "Need = Available - Allocation",
+                "Need = Max - Available"
+              ],
+              "correctIndex": 1,
+              "explanation": "Need represents remaining requirements and is calculated by subtracting current Allocation from maximum possible demand: Need[i][j] = Max[i][j] - Allocation[i][j]."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "State and explain the four Coffman conditions necessary for a deadlock to occur. Describe how Dijkstra's Banker's Algorithm avoids deadlock using the Safety and Resource-Request algorithms.",
+              "answerOutline": "1. Definition of Deadlock\n2. Detailed breakdown of the Four Coffman Conditions\n3. Deadlock Avoidance vs Prevention\n4. Banker's Algorithm Data Structures & Safety Algorithm Steps\n5. Example Matrix Calculation & Proof of Safe State"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Process Synchronization and Deadlock Management: Coffman Conditions & Banker's Algorithm"
+            }
+          ]
+        }
+      },
+      {
+        "id": "mat-dump-1792515450904",
+        "classId": "class-bca-2028",
+        "subjectId": "sub-1792515207955-idva",
+        "subjectName": "Operating Systems Notes",
+        "unitNumber": 2,
+        "unitTitle": "Fundamental Concepts",
+        "folderPath": "Operating Systems Notes / Unit 2 - Fundamental Concepts / NOTES",
+        "detectedCategory": "notes",
+        "title": "Process Synchronization and Deadlock Management",
+        "fileName": "Unit_2_Operating_Systems.txt",
+        "fileType": "txt",
+        "fileSize": "2.4 MB",
+        "rawTextContent": "Module 2: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.",
+        "uploaderName": "Classmate",
+        "uploaderRole": "student",
+        "verificationStatus": "student_shared",
+        "createdAt": "Just now",
+        "resources": {
+          "summary": "Process synchronization resolves critical section contention among concurrent processes using primitives such as semaphores, mutex locks, and Peterson's algorithm. Deadlocks arise when four simultaneous Coffman conditions hold: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. Systems employ Dijkstra's Banker's Algorithm to dynamically evaluate resource allocation states, guaranteeing that a safe sequence always exists to prevent deadlock.",
+          "hinglishSummary": "Synchronization race conditions ko rokta hai Peterson's solution aur semaphores ke through, jabki Deadlock tab banta hai jab 4 Coffman conditions ek sath satisfy ho jayein. Banker's Algorithm allocation aur need matrices inspect karke ensure karta hai ki system hamesha ek Safe State mein rahe.",
+          "mindmapMermaid": "graph TD\n    A[Process Synchronization & Deadlocks] --> B[Synchronization Primitives]\n    A --> C[Deadlock Characterization]\n    A --> D[Deadlock Avoidance]\n    B --> B1[Peterson's Solution & Semaphores]\n    C --> C1[Coffman Conditions: MHNC]\n    D --> D1[Banker's Algorithm & Safe State]",
+          "mindmapNodes": [
+            {
+              "id": "root",
+              "label": "Process Synchronization & Deadlocks",
+              "type": "root",
+              "children": [
+                {
+                  "id": "c1",
+                  "label": "Synchronization Primitives",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "Critical Section Problem",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l2",
+                      "label": "Peterson's Algorithm & Semaphores",
+                      "type": "leaf"
+                    }
+                  ]
+                },
+                {
+                  "id": "c2",
+                  "label": "Deadlock Characterization",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l3",
+                      "label": "Coffman Conditions (MHNC)",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l4",
+                      "label": "Resource Allocation Graph (RAG)",
+                      "type": "leaf"
+                    }
+                  ]
+                },
+                {
+                  "id": "c3",
+                  "label": "Deadlock Handling",
+                  "type": "category",
+                  "children": [
+                    {
+                      "id": "l5",
+                      "label": "Banker's Algorithm",
+                      "type": "leaf"
+                    },
+                    {
+                      "id": "l6",
+                      "label": "Safety State Verification",
+                      "type": "leaf"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "mnemonics": [
+            {
+              "term": "Four Coffman Conditions",
+              "acronym": "MHNC",
+              "mnemonic": "Monkeys Hold Nuts Carefully",
+              "explanation": "Stands for Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait; remembering this sequence ensures all four simultaneous conditions are cited in exam definitions."
+            }
+          ],
+          "exam10Marker": {
+            "question": "State and explain the four Coffman conditions necessary for a deadlock. Describe the Banker's Algorithm for deadlock avoidance with its supporting data structures and safety algorithm.",
+            "answerStructure": "1. Deadlock Definition & Coffman Conditions\n2. Deadlock Avoidance Concept vs. Prevention\n3. Banker's Algorithm Data Structures (Available, Max, Allocation, Need)\n4. Safety Algorithm Step-by-Step Execution\n5. Resource-Request Algorithm Specification",
+            "modelAnswerMarkdown": "### 1. Deadlock Definition and Coffman Conditions\nA deadlock is an operating system state where a set of processes are permanently blocked because each process holds resources and waits for resources held by others in the set.\n\nA deadlock occurs if and only if the following **four Coffman conditions** hold simultaneously:\n1. **Mutual Exclusion**: At least one resource is held in a non-shareable mode (only one process can use it at a time).\n2. **Hold and Wait**: A process currently holding at least one resource is waiting to acquire additional resources held by other processes.\n3. **No Preemption**: Resources cannot be forcibly revoked from a process; they can only be released voluntarily after execution.\n4. **Circular Wait**: A closed chain of processes exists: $P_0 \\rightarrow P_1 \\rightarrow \\dots \\rightarrow P_n \\rightarrow P_0$, where each $P_i$ waits for a resource held by $P_{(i+1) \\bmod (n+1)}$.\n\n---\n\n### 2. Banker's Algorithm for Deadlock Avoidance\nDeadlock avoidance dynamically tracks system state to ensure that resources are granted only if the system remains in a **Safe State**—a state where there exists an execution sequence $\\langle P_1, P_2, \\dots, P_n \\rangle$ such that all processes can satisfy their maximum demand.\n\n#### A. Data Structures ($n$ processes, $m$ resource types)\n- **Available[$m$]**: Vector indicating available instances of each resource type.\n- **Max[$n \\times m$]**: Matrix defining the maximum resource demand of each process.\n- **Allocation[$n \\times m$]**: Matrix defining currently allocated resources per process.\n- **Need[$n \\times m$]**: Remaining resource demand calculated as:\n  $$\\text{Need}[i][j] = \\text{Max}[i][j] - \\text{Allocation}[i][j]$$\n\n#### B. Safety Algorithm\n1. Let $\\text{Work} = \\text{Available}$ (vector of length $m$) and $\\text{Finish}[i] = \\text{False}$ for $i = 0, 1, \\dots, n-1$.\n2. Find an index $i$ such that:\n   $$\\text{Finish}[i] == \\text{False} \\quad \\text{and} \\quad \\text{Need}_i \\le \\text{Work}$$\n   If no such $i$ exists, jump to step 4.\n3. Assume process $i$ completes and releases its resources:\n   $$\\text{Work} = \\text{Work} + \\text{Allocation}_i$$\n   $$\\text{Finish}[i] = \\text{True}$$\n   Return to step 2.\n4. If $\\text{Finish}[i] == \\text{True}$ for all $i$, then the system is in a **Safe State**; otherwise, it is in an **Unsafe State**.\n\n#### C. Resource-Request Algorithm\nWhen process $P_i$ issues a request $\\text{Request}_i$:\n1. If $\\text{Request}_i \\le \\text{Need}_i$, continue; else raise error (process exceeded maximum claim).\n2. If $\\text{Request}_i \\le \\text{Available}$, continue; else $P_i$ must wait.\n3. Pretend to allocate requested resources:\n   - $\\text{Available} = \\text{Available} - \\text{Request}_i$\n   - $\\text{Allocation}_i = \\text{Allocation}_i + \\text{Request}_i$\n   - $\\text{Need}_i = \\text{Need}_i - \\text{Request}_i$\n4. Run the Safety Algorithm on this speculative state. If safe, allocate resources; if unsafe, revert state and make $P_i$ wait.",
+            "keyDiagramText": "Flowchart of the Safety Algorithm showing state evaluation with Work and Finish vectors, alongside a circular Resource Allocation Graph (RAG) illustrating Circular Wait."
+          },
+          "keyConcepts": [
+            {
+              "concept": "Coffman Conditions",
+              "explanation": "A set of four simultaneous hardware and resource conditions (Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait) that are necessary and sufficient for deadlocks in multi-programming environments."
+            },
+            {
+              "concept": "Banker's Algorithm",
+              "explanation": "A proactive deadlock avoidance algorithm developed by Edsger Dijkstra that tests for safety by simulating the allocation of predetermined maximum possible amounts of all resources."
+            },
+            {
+              "concept": "Safe State vs Unsafe State",
+              "explanation": "A state is safe if the OS can allocate resources up to the maximum declared claim of each process in some sequence without producing a deadlock. An unsafe state is a state with no safe execution sequence."
+            }
+          ],
+          "importantDefinitions": [
+            {
+              "term": "Deadlock",
+              "definition": "A condition in concurrent computing where two or more processes are unable to proceed because each is waiting for the other to release a mutually held resource."
+            },
+            {
+              "term": "Circular Wait",
+              "definition": "A closed loop condition where process P0 waits for a resource held by P1, P1 waits for P2, and Pn waits for P0."
+            },
+            {
+              "term": "Critical Section",
+              "definition": "A segment of code in which concurrent processes access shared resources that must not be concurrently accessed by more than one process."
+            }
+          ],
+          "examples": [
+            {
+              "title": "Practical Industry Implementation",
+              "scenario": "Enterprise backend utilizing Process Synchronization and Deadlock Management principles for fault tolerance.",
+              "takeaway": "Guarantees reliable execution and optimal resource utilization."
+            }
+          ],
+          "examPoints": [
+            "Deadlock prevention requires invalidating at least one of the four Coffman conditions.",
+            "Deadlock avoidance requires dynamic runtime checks using the Banker's Algorithm, needing advance declaration of maximum resource demands.",
+            "A cyclic Resource Allocation Graph (RAG) guarantees a deadlock only when every resource class contains exactly one instance.",
+            "An unsafe state is a superset of deadlocked states; every deadlocked state is unsafe, but not every unsafe state is deadlocked."
+          ],
+          "flashcards": [
+            {
+              "id": "fc-1792515450904-1",
+              "question": "What is the core role of Process Synchronization and Deadlock Management?",
+              "answer": "Guarantees deterministic correctness and performance."
+            }
+          ],
+          "quiz": [
+            {
+              "id": "q1",
+              "question": "Which of the following is NOT an essential Coffman condition for a deadlock to occur?",
+              "options": [
+                "Mutual Exclusion",
+                "Hold and Wait",
+                "Aging Preemption",
+                "Circular Wait"
+              ],
+              "correctIndex": 2,
+              "explanation": "The four Coffman conditions are Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait. 'Aging Preemption' is an OS scheduling heuristic, not a condition for deadlock."
+            },
+            {
+              "id": "q2",
+              "question": "In the Banker's Algorithm, if the state is 'Unsafe', what does it imply?",
+              "options": [
+                "The system is currently in a deadlock.",
+                "The system has the potential to deadlock if processes request their maximum claims.",
+                "Memory leak has occurred in the kernel space.",
+                "All waiting processes will be terminated immediately."
+              ],
+              "correctIndex": 1,
+              "explanation": "An unsafe state is not necessarily deadlocked; rather, it indicates the OS cannot guarantee the avoidance of a deadlock if all processes simultaneously demand their peak declared resources."
+            },
+            {
+              "id": "q3",
+              "question": "How is the Need matrix computed in Dijkstra's Banker's Algorithm?",
+              "options": [
+                "Need = Max + Allocation",
+                "Need = Allocation - Available",
+                "Need = Max - Allocation",
+                "Need = Available - Need"
+              ],
+              "correctIndex": 2,
+              "explanation": "Need[i][j] represents the remaining resource instances process i may demand, given by Max[i][j] - Allocation[i][j]."
+            }
+          ],
+          "possibleQuestions": [
+            {
+              "marks": 10,
+              "question": "State and explain the four Coffman conditions necessary for a deadlock. Describe the Banker's Algorithm for deadlock avoidance with its supporting data structures and safety algorithm.",
+              "answerOutline": "1. Deadlock Definition & Coffman Conditions\n2. Deadlock Avoidance Concept vs. Prevention\n3. Banker's Algorithm Data Structures (Available, Max, Allocation, Need)\n4. Safety Algorithm Step-by-Step Execution\n5. Resource-Request Algorithm Specification"
+            }
+          ],
+          "relatedPYQs": [
+            {
+              "year": 2024,
+              "marks": 10,
+              "question": "University 10-Marker on Process Synchronization and Deadlock Management"
+            }
+          ]
+        }
       }
     ]
   },
+  "pyqs": {},
   "assignments": [],
   "exams": {},
   "announcements": [],
   "notifications": [],
-  "lastSaved": "2026-10-18T11:37:25.769Z"
+  "lastSaved": "2026-10-20T17:37:20.018Z"
 }

@@ -65,6 +65,9 @@ import {
 } from './db/neonClient.js';
 import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeBank.js';
 import { aiKnowledgeCache } from './ai/aiKnowledgeCache.js';
+import { ragRouter, setDbReference } from './rag/ragRouter.js';
+import { ragEngine } from './rag/ragIndex.js';
+import { attendanceService } from './attendanceService.js';
 
 export const apiRouter = Router();
 
@@ -393,6 +396,10 @@ class MemoryStore {
 
 export const db = new MemoryStore();
 registerDbProvider(() => db);
+setDbReference(db);
+
+// Mount Active Backend RAG Router
+apiRouter.use('/rag', ragRouter);
 
 // 0. Health & Service Status Endpoint
 apiRouter.get('/health', (_req: Request, res: Response) => {
@@ -473,15 +480,37 @@ apiRouter.get('/class/:code', (req: Request, res: Response) => {
 
 // 2. Create or Join Class (Semester Setup Wizard)
 apiRouter.post('/class/create', (req: Request, res: Response) => {
-  const { code, name, university, semester, subjectsList, crVerification } = req.body;
+  const {
+    code,
+    name,
+    university,
+    collegeName,
+    department,
+    universityWebsiteUrl,
+    academicCalendarUrl,
+    circularsNoticeUrl,
+    semester,
+    semesterType,
+    subjectsList,
+    crVerification,
+  } = req.body;
   const cleanCode = (code || `CLASS-${Math.floor(1000 + Math.random() * 9000)}`).toUpperCase().trim();
+
+  // Auto-detect semester type (Odd: Aug–Dec, Even: Jan–Jun) if not provided
+  const detectedSemType = semesterType || attendanceService.getSemesterTypeForDate().semesterType;
 
   const newClass: ClassWorkspace = {
     id: `class-${Date.now()}`,
     code: cleanCode,
     name: name || `${cleanCode} Class Workspace`,
     university: university || 'State University',
+    collegeName: collegeName || '',
+    department: department || '',
+    universityWebsiteUrl: universityWebsiteUrl || '',
+    academicCalendarUrl: academicCalendarUrl || '',
+    circularsNoticeUrl: circularsNoticeUrl || '',
     semester: Number(semester) || 1,
+    semesterType: detectedSemType,
     academicYear: '2026-2027',
     memberCount: 1,
     adminId: 'user-admin-self',
@@ -489,9 +518,22 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
     crName: crVerification?.crName || 'Class Representative (CR)',
     crRollNo: crVerification?.crRollNo || 'CR-VERIFIED',
     crVerifiedAt: new Date().toISOString(),
+    universityLinksLastChecked: new Date().toISOString(),
   };
 
   db.classes[cleanCode] = newClass;
+
+  // Immediately initialize/sync university notices if links were provided
+  if (academicCalendarUrl || circularsNoticeUrl || universityWebsiteUrl) {
+    attendanceService.syncUniversityCalendar(cleanCode, {
+      universityWebsiteUrl,
+      academicCalendarUrl,
+      circularsNoticeUrl,
+      universityName: newClass.university,
+      collegeName: newClass.collegeName,
+      department: newClass.department,
+    });
+  }
 
   // Add system announcement for CR authentication
   db.announcements.unshift({
@@ -500,7 +542,7 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
     authorName: newClass.crName || 'Class Representative (CR)',
     authorRole: 'admin',
     title: `🎓 Semester ${newClass.semester} Setup Authenticated`,
-    content: `Class Representative ${newClass.crName} (Roll: ${newClass.crRollNo}) has officially authenticated and configured the curriculum, folder structure, and subjects for ${cleanCode}.`,
+    content: `Class Representative ${newClass.crName} (Roll: ${newClass.crRollNo}) has officially authenticated and configured the curriculum, folder structure, and university links for ${cleanCode}.`,
     createdAt: new Date().toISOString(),
     badge: 'CR Verified',
   });
@@ -542,6 +584,111 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
     workspace: newClass,
     subjects: createdSubjects,
   });
+});
+
+// 2.1 Monthly Attendance Compilation (75% Rule Engine)
+apiRouter.get('/attendance/monthly/:code', (req: Request, res: Response) => {
+  const code = (req.params.code || 'BCA-2028').toUpperCase();
+  const studentId = (req.query.studentId as string) || 'user-student-current';
+  const studentName = (req.query.studentName as string) || 'Rohit Kumar';
+
+  const summary = attendanceService.getMonthlyAttendance(code, studentId, studentName);
+  res.json(summary);
+});
+
+// 2.2 Get Today's Daily Lecture Pulses (With Robert Greene Persuasion Levers)
+apiRouter.get('/daily-pulse/:code', (req: Request, res: Response) => {
+  const code = (req.params.code || 'BCA-2028').toUpperCase();
+  const cls = db.classes[code] || SEED_CLASS;
+  const rawTt = db.timetable[cls.id];
+  const timetable = Array.isArray(rawTt) && rawTt.length > 0 ? rawTt : SEED_TIMETABLE;
+
+  const pulses = attendanceService.getDailyPulses(code, timetable);
+  res.json({
+    date: new Date().toISOString().split('T')[0],
+    classCode: code,
+    pulses,
+  });
+});
+
+// 2.3 Submit 1-Tap Student / CR Daily Pulse Response
+apiRouter.post('/daily-pulse/vote', (req: Request, res: Response) => {
+  try {
+    const {
+      classCode,
+      pulseId,
+      studentId,
+      studentName,
+      role,
+      isCRorAdmin,
+      isActiveContributor,
+      attended,
+      topicConfirmed,
+      reportedTopic,
+    } = req.body;
+
+    const cleanCode = (classCode || 'BCA-2028').toUpperCase();
+    const result = attendanceService.registerPulseVote({
+      classCode: cleanCode,
+      pulseId: pulseId || `pulse-${cleanCode}-default`,
+      studentId: studentId || 'user-student-current',
+      studentName: studentName || 'Rohit Kumar',
+      role: role || 'student',
+      isCRorAdmin: Boolean(isCRorAdmin),
+      isActiveContributor: Boolean(isActiveContributor),
+      attended: attended ?? true,
+      topicConfirmed: topicConfirmed ?? true,
+      reportedTopic,
+    });
+
+    res.json({
+      status: 'success',
+      ...result,
+    });
+  } catch (err: any) {
+    res.status(400).json({ error: err.message || 'Failed to register pulse vote' });
+  }
+});
+
+// 2.4 University Links & Academic Calendar Sync
+apiRouter.post('/university/sync-links', async (req: Request, res: Response) => {
+  try {
+    const { classCode, universityWebsiteUrl, academicCalendarUrl, circularsNoticeUrl } = req.body;
+    const cleanCode = (classCode || 'BCA-2028').toUpperCase();
+    const cls = db.classes[cleanCode];
+
+    if (cls) {
+      if (universityWebsiteUrl) cls.universityWebsiteUrl = universityWebsiteUrl;
+      if (academicCalendarUrl) cls.academicCalendarUrl = academicCalendarUrl;
+      if (circularsNoticeUrl) cls.circularsNoticeUrl = circularsNoticeUrl;
+      cls.universityLinksLastChecked = new Date().toISOString();
+      db.saveToDisk();
+    }
+
+    const notices = await attendanceService.syncUniversityCalendar(cleanCode, {
+      universityWebsiteUrl,
+      academicCalendarUrl,
+      circularsNoticeUrl,
+      universityName: cls?.university,
+      collegeName: cls?.collegeName,
+      department: cls?.department,
+    });
+
+    res.json({
+      status: 'synced',
+      lastChecked: new Date().toISOString(),
+      notices,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'University sync error' });
+  }
+});
+
+// 2.5 Get University Notices & Gazetted Holidays
+apiRouter.get('/university/notices/:code', (req: Request, res: Response) => {
+  const code = (req.params.code || 'BCA-2028').toUpperCase();
+  const notices = attendanceService.getUniversityNotices(code);
+  res.json({ notices });
 });
 
 // 3. Get Syllabus & Likely Next Topic
@@ -888,11 +1035,28 @@ Teaching Mode: ${modeGuides[tutorMode] || 'Explain very clearly and simply.'}
 Ground your response in authoritative university curricula and standard textbooks (e.g. Galvin for OS, Korth for DBMS, Tanenbaum for Networks).`;
 
   try {
+    // 2. Query Active Backend RAG Documents (300MB+ Uploads)
+    const ragHits = ragEngine.search(lookupKey, { limit: 4 });
+    const ragSources: { title: string; type: string }[] = [];
+    let ragContextSnippet = '';
+
+    if (ragHits.length > 0) {
+      ragContextSnippet = `\n\nAUTHORITATIVE EXCERPTS FROM STUDENT'S ACTIVE BACKEND UPLOADED TEXTBOOK/MATERIAL:\n` +
+        ragHits.map((h, i) => `[Textbook Source ${i + 1}: "${h.docTitle}" | Section: "${h.sectionTitle || 'General'}" | Page ${h.pageNumber || 1}]\n${h.chunk.text}`).join('\n\n');
+      ragHits.forEach((h) => {
+        ragSources.push({
+          title: `${h.docTitle} (Page ${h.pageNumber || 1}, Chunk #${h.chunk.chunkIndex})`,
+          type: 'Active Backend RAG Textbook',
+        });
+      });
+    }
+
+    const enhancedInstruction = systemInstruction + ragContextSnippet;
     const promptToSend = isAllModes
-      ? `Provide the complete 6-section academic study guide for the topic "${topicName || question}" in subject "${subjectName || 'Computer Science'}" with all 6 sections in that exact order.`
+      ? `Provide the complete 6-section academic study guide for the topic "${topicName || question}" in subject "${subjectName || 'Computer Science'}" with all 6 sections in that exact order.${ragHits.length > 0 ? ' Ground the explanation in the provided textbook excerpts and cite them where appropriate.' : ''}`
       : question;
 
-    const responseText = await ai.generateText(promptToSend, systemInstruction);
+    const responseText = await ai.generateText(promptToSend, enhancedInstruction);
     const sections = parseTutorSections(responseText);
 
     // If single mode was requested or sections weren't caught by headers, assign fallback
@@ -921,16 +1085,43 @@ Ground your response in authoritative university curricula and standard textbook
       text: responseText,
       sections,
       modeUsed: tutorMode,
-      modelUsed: ai.name,
+      modelUsed: ragHits.length > 0 ? `${ai.name} + ⚡ Active RAG (${ragHits.length} Citations)` : ai.name,
       cached: false,
       tokensSaved: 0,
       isPersonalKey: hasPersonalKey,
       sourcesUsed: [
-        { title: `${subjectName || 'Class'} Syllabus & Verified PPTs`, type: 'Class Knowledge Base' },
+        ...ragSources,
+        { title: `${subjectName || 'Class'} Syllabus & Verified Notes`, type: 'Class Knowledge Base' },
         { title: 'Past University Question Paper Bank (2020-2025)', type: 'PYQ Database' },
       ],
     });
   } catch (err: any) {
+    // If AI generation failed, check if we have RAG hits to provide an instant grounded answer
+    const ragHits = ragEngine.search(lookupKey, { limit: 3 });
+    if (ragHits.length > 0) {
+      const top = ragHits[0];
+      const fallbackAnswer = `### 📖 Active Backend RAG Grounded Answer\n\n**Source:** *${top.docTitle}* (Page ${top.pageNumber || 1}, ${top.sectionTitle || 'Core Section'})\n\n${top.chunk.text}\n\n*⚡ Directly retrieved from active 300MB textbook chunks on the server.*`;
+      return res.json({
+        answer: fallbackAnswer,
+        text: fallbackAnswer,
+        sections: {
+          simple: fallbackAnswer,
+          eli9: '',
+          hinglish: '',
+          exam_10marker: '',
+          detailed: '',
+          socratic: '',
+        },
+        modeUsed: tutorMode,
+        modelUsed: '⚡ Active Backend RAG Retrieval Engine',
+        cached: false,
+        tokensSaved: 0,
+        sourcesUsed: ragHits.map((h) => ({
+          title: `${h.docTitle} (Page ${h.pageNumber || 1}, Chunk #${h.chunk.chunkIndex})`,
+          type: 'Active Backend RAG Textbook',
+        })),
+      });
+    }
     res.status(500).json({ error: err.message || 'AI tutor service error' });
   }
 });
@@ -2686,7 +2877,20 @@ apiRouter.get('/search', (req: Request, res: Response) => {
 
   const results: any[] = [];
 
-  // Search in subjects
+  // Search in Active RAG Documents (300MB+ backend textbooks)
+  try {
+    const ragHits = ragEngine.search(q, { limit: 6 });
+    ragHits.forEach((r) => {
+      results.push({
+        type: 'Active Textbook RAG',
+        title: `${r.docTitle}${r.sectionTitle ? ' — ' + r.sectionTitle : ''}`,
+        subtitle: `Page ${r.pageNumber || 1} • Chunk #${r.chunk.chunkIndex} • "${r.chunk.text.slice(0, 95)}..."`,
+        id: r.docId,
+      });
+    });
+  } catch (ragErr) {
+    console.warn('[Global Search] RAG search notice:', ragErr);
+  }
   SEED_SUBJECTS.forEach((sub) => {
     if (sub.name.toLowerCase().includes(q) || sub.code.toLowerCase().includes(q)) {
       results.push({ type: 'Subject', title: sub.name, subtitle: `${sub.code} • ${sub.teacherName}`, id: sub.id });

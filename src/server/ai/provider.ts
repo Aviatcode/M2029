@@ -163,56 +163,49 @@ export class UniversalAIProvider implements AIProvider {
       if (this.provider === 'gemini') {
         const model = this.modelName || 'gemini-3.8-flash';
 
-        // Direct REST API for Gemini
+        // Direct REST API for Gemini with 4s timeout & instant fallback
         if (this.apiKey) {
           try {
-            const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
-            const body: any = {
-              contents: [{ parts: [{ text: prompt }] }],
-            };
-            if (systemInstruction) {
-              body.system_instruction = { parts: [{ text: systemInstruction }] };
-            }
+            const timeoutPromise = new Promise<never>((_, reject) =>
+              setTimeout(() => reject(new Error('Gemini API timeout (4s)')), 4000)
+            );
 
-            const res = await fetch(geminiEndpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(body),
-            });
-
-            if (res.ok) {
-              const data: any = await res.json();
-              const parts = data.candidates?.[0]?.content?.parts || [];
-              const text =
-                parts
-                  .filter((p: any) => !p.thought)
-                  .map((p: any) => p.text)
-                  .join('\n')
-                  .trim() || parts[0]?.text;
-              if (text && text.trim().length > 10) {
-                aiKnowledgeCache.set(prompt, '', 'general', text, undefined, this.name);
-                return text;
+            const fetchPromise = (async () => {
+              const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+              const body: any = {
+                contents: [{ parts: [{ text: prompt }] }],
+              };
+              if (systemInstruction) {
+                body.system_instruction = { parts: [{ text: systemInstruction }] };
               }
-            } else {
-              const errData: any = await res.json().catch(() => ({}));
-              console.warn(`Gemini REST returned ${res.status}:`, errData?.error?.message || res.statusText);
-            }
-          } catch (restErr: any) {
-            console.warn(`Gemini REST fetch error:`, restErr.message);
-          }
-        }
 
-        // SDK fallback if REST had issue
-        if (this.geminiClient) {
-          try {
-            const resp = await this.geminiClient.models.generateContent({
-              model,
-              contents: prompt,
-              config: systemInstruction ? { systemInstruction } : undefined,
-            });
-            if (resp.text) return resp.text;
-          } catch (sdkErr: any) {
-            console.warn(`Gemini SDK fallback trigger: ${sdkErr.message}`);
+              const res = await fetch(geminiEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+              });
+
+              if (res.ok) {
+                const data: any = await res.json();
+                const parts = data.candidates?.[0]?.content?.parts || [];
+                const text =
+                  parts
+                    .filter((p: any) => !p.thought)
+                    .map((p: any) => p.text)
+                    .join('\n')
+                    .trim() || parts[0]?.text;
+                if (text && text.trim().length > 10) {
+                  aiKnowledgeCache.set(prompt, '', 'general', text, undefined, this.name);
+                  return text;
+                }
+              }
+              return null;
+            })();
+
+            const result = await Promise.race([fetchPromise, timeoutPromise]);
+            if (result) return result;
+          } catch (restErr: any) {
+            console.warn(`[AI Engine] Gemini API notice, utilizing instant academic fallback:`, restErr.message);
           }
         }
       }
@@ -790,7 +783,7 @@ export class AIProviderFactory {
       modelType: hasKey ? 'custom_ai' : 'basic',
       providerName: hasKey ? provider.name : 'Built-in Basic Academic Model (Free)',
       provider: this.classConfig.provider || 'gemini',
-      modelName: this.classConfig.modelName || 'gemini-2.5-flash',
+      modelName: this.classConfig.modelName || 'gemini-3.8-flash',
       isClassShared: true,
     };
   }

@@ -28,6 +28,7 @@ import {
   History,
   Users,
   Layers,
+  Database,
 } from 'lucide-react';
 import { AIKeyConfigModal } from './AIKeyConfigModal';
 import { CohortIntelligenceModal } from './CohortIntelligenceModal';
@@ -1141,6 +1142,26 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                       )}
                     </div>
                     <p className="text-xs text-slate-400">{studyGuide.subject}</p>
+                    {studyGuide.sourcesUsed && studyGuide.sourcesUsed.length > 0 && (
+                      <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 mr-1">
+                          <Database className="w-3 h-3 text-indigo-400" />
+                          <span>Grounded Citations:</span>
+                        </span>
+                        {studyGuide.sourcesUsed.map((source, sIdx) => (
+                          <span
+                            key={sIdx}
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono flex items-center gap-1 border ${
+                              source.type.includes('RAG')
+                                ? 'bg-indigo-500/15 border-indigo-500/40 text-indigo-300 font-bold'
+                                : 'bg-slate-800/80 border-slate-700/80 text-slate-300'
+                            }`}
+                          >
+                            <span>{source.title}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <button

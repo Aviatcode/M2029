@@ -269,6 +269,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </span>
         </div>
 
+        {/* Daily Update & 75% Monthly Attendance Radar Banner */}
+        <div
+          onClick={() => onNavigateTab('daily-update')}
+          className="p-3.5 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-slate-900/60 to-slate-900 hover:border-emerald-500/50 transition cursor-pointer flex items-center justify-between gap-3 shadow-xs group"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center shrink-0">
+              <Zap className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-white flex items-center gap-1.5">
+                <span>Daily Update · Monthly 75% Attendance Safeguard</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold border border-emerald-500/30">
+                  Safe (84.0%)
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-400">
+                1-tap lecture verification · 3 bunkable classes left this month
+              </div>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-md bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 hover:text-white border border-emerald-500/40 text-xs font-semibold shrink-0 transition cursor-pointer flex items-center gap-1">
+            <span>1-Tap Pulse</span>
+            <ArrowRight className="w-3.5 h-3.5 text-emerald-300" />
+          </span>
+        </div>
+
         {/* Calm Mode Indicator */}
         {calmMode && (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-neutral-900/60 border border-neutral-800 text-xs text-neutral-400">

@@ -16,6 +16,7 @@ import {
   AcademicAssignment,
   SevenMinutePrep,
   TopicStatus,
+  DailyLecturePulse,
 } from './types/index';
 import {
   SEED_CLASS,
@@ -40,6 +41,9 @@ import { ExamModeView } from './components/ExamModeView';
 import { TimetableView } from './components/TimetableView';
 import { AssignmentsView } from './components/AssignmentsView';
 import { SmartDumpView } from './components/SmartDumpView';
+import { ActiveRagVaultView } from './components/ActiveRagVaultView';
+import { DailyUpdateView } from './components/DailyUpdateView';
+import { DailyUpdatePopup } from './components/DailyUpdatePopup';
 import { TomorrowPrepModal } from './components/TomorrowPrepModal';
 import { SemesterSetupModal } from './components/SemesterSetupModal';
 import { SemesterSetupView } from './components/SemesterSetupView';
@@ -108,6 +112,8 @@ export default function App() {
         'landing',
         'dashboard',
         'tomorrow',
+        'dump',
+        'rag',
         'syllabus',
         'timetable',
         'ai-tutor',
@@ -1056,7 +1062,10 @@ export default function App() {
     step4MiniQuiz: [],
   });
 
-  // Fetch live tomorrow prep from server
+  // Daily Lecture Pulses for 1-Tap Attendance & Greene Nudges
+  const [dailyPulses, setDailyPulses] = useState<DailyLecturePulse[]>([]);
+
+  // Fetch live tomorrow prep and daily lecture pulses
   useEffect(() => {
     if (!classCode) return;
     fetch(`/api/tomorrow/${classCode}`)
@@ -1065,7 +1074,47 @@ export default function App() {
         if (data.prep) setTomorrowPrepData(data.prep);
       })
       .catch((err) => console.warn('Using local prep data:', err));
+
+    fetch(`/api/daily-pulse/${classCode}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && Array.isArray(data.pulses)) {
+          setDailyPulses(data.pulses);
+        }
+      })
+      .catch((err) => console.warn('Using local pulses:', err));
   }, [classCode]);
+
+  const handlePulseVoteComplete = async (
+    pulseId: string,
+    attended: boolean,
+    topicConfirmed: boolean
+  ) => {
+    try {
+      const res = await fetch('/api/daily-pulse/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          classCode,
+          pulseId,
+          studentId: currentUser.id || 'user-student-current',
+          studentName: currentUser.name || 'Rohit Kumar',
+          role: currentUser.role || 'student',
+          isCRorAdmin: currentUser.role === 'cr' || currentUser.role === 'admin',
+          attended,
+          topicConfirmed,
+        }),
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        setDailyPulses((prev) => prev.map((p) => (p.id === pulseId ? data.pulse : p)));
+        setShareToast(data.message || '✓ Daily update & attendance logged!');
+        setTimeout(() => setShareToast(''), 4500);
+      }
+    } catch (err) {
+      console.warn('Pulse vote error:', err);
+    }
+  };
 
   const handleUpdateTopicStatus = (subjectId: string, topicId: string, status: TopicStatus) => {
     setUnitsBySubject((prev) => {
@@ -1755,6 +1804,17 @@ export default function App() {
             />
           )}
 
+          {activeTab === 'daily-update' && (
+            <DailyUpdateView
+              classCode={classCode}
+              workspace={workspace}
+              subjects={subjects}
+              timetable={timetable}
+              studentName={currentUser.name}
+              isCR={currentUser.role === 'cr' || currentUser.role === 'admin'}
+            />
+          )}
+
           {activeTab === 'tomorrow' && (
             <div className="space-y-4 max-w-3xl mx-auto py-6">
               <div className="p-5 rounded-xl bg-slate-900/40 border border-slate-800 flex items-center justify-between gap-4">
@@ -1807,6 +1867,13 @@ export default function App() {
               }}
               pendingFiles={pendingIngestFiles}
               onClearPendingFiles={() => setPendingIngestFiles([])}
+            />
+          )}
+
+          {activeTab === 'rag' && (
+            <ActiveRagVaultView
+              classCode={classCode}
+              onMaterialCreated={handleMaterialUploaded}
             />
           )}
 
@@ -1956,6 +2023,17 @@ export default function App() {
         isOpen={isAIKeyModalOpen}
         onClose={() => setIsAIKeyModalOpen(false)}
       />
+
+      {activeTab !== 'daily-update' && dailyPulses.length > 0 && (
+        <DailyUpdatePopup
+          pulses={dailyPulses}
+          classCode={classCode}
+          studentName={currentUser.name}
+          isCR={currentUser.role === 'cr' || currentUser.role === 'admin'}
+          onVoteComplete={handlePulseVoteComplete}
+          onOpenFullTab={() => handleSelectTab('daily-update')}
+        />
+      )}
 
       <LoginModal
         isOpen={isLoginModalOpen}

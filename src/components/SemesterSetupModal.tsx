@@ -37,6 +37,15 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   const [classCode, setClassCode] = useState<string>('BCA-2028');
   const [semester, setSemester] = useState<number>(1);
   const [university, setUniversity] = useState<string>('Affiliated University');
+  const [collegeName, setCollegeName] = useState<string>('');
+  const [department, setDepartment] = useState<string>('Department of Computer Applications & IT');
+  const [universityWebsiteUrl, setUniversityWebsiteUrl] = useState<string>('');
+  const [academicCalendarUrl, setAcademicCalendarUrl] = useState<string>('');
+  const [circularsNoticeUrl, setCircularsNoticeUrl] = useState<string>('');
+  const [semesterType, setSemesterType] = useState<'odd' | 'even'>(() => {
+    const m = new Date().getMonth() + 1;
+    return m >= 8 || m === 7 ? 'odd' : 'even';
+  });
   const [subjects, setSubjects] = useState<string[]>([]);
   const [newSubjectInput, setNewSubjectInput] = useState<string>('');
   const [subjectError, setSubjectError] = useState<string>('');
@@ -50,6 +59,12 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
         setClassCode(initialWorkspace.code || 'BCA-2028');
         setSemester(initialWorkspace.semester || 1);
         setUniversity(initialWorkspace.university || 'Affiliated University');
+        setCollegeName(initialWorkspace.collegeName || '');
+        setDepartment(initialWorkspace.department || 'Department of Computer Applications & IT');
+        setUniversityWebsiteUrl(initialWorkspace.universityWebsiteUrl || '');
+        setAcademicCalendarUrl(initialWorkspace.academicCalendarUrl || '');
+        setCircularsNoticeUrl(initialWorkspace.circularsNoticeUrl || '');
+        setSemesterType(initialWorkspace.semesterType || ((initialWorkspace.semester || 1) % 2 === 1 ? 'odd' : 'even'));
       }
       if (initialSubjects !== undefined && Array.isArray(initialSubjects)) {
         setSubjects(initialSubjects.map((s) => s.name));
@@ -186,7 +201,13 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
       code: finalCode,
       name: finalName,
       university: university.trim() || 'Affiliated University',
+      collegeName: collegeName.trim(),
+      department: department.trim(),
+      universityWebsiteUrl: universityWebsiteUrl.trim(),
+      academicCalendarUrl: academicCalendarUrl.trim(),
+      circularsNoticeUrl: circularsNoticeUrl.trim(),
       semester,
+      semesterType,
       academicYear: '2026-2027',
       memberCount: 1,
       adminId: 'user-admin-self',
@@ -194,6 +215,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
       crName: 'Class Representative',
       crRollNo: 'CR-VERIFIED',
       crVerifiedAt: new Date().toISOString(),
+      universityLinksLastChecked: new Date().toISOString(),
     };
 
     saveClassLocally(localWorkspace, localSubjects);
@@ -206,7 +228,13 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
           code: finalCode,
           name: finalName,
           university: university.trim(),
+          collegeName: collegeName.trim(),
+          department: department.trim(),
+          universityWebsiteUrl: universityWebsiteUrl.trim(),
+          academicCalendarUrl: academicCalendarUrl.trim(),
+          circularsNoticeUrl: circularsNoticeUrl.trim(),
           semester,
+          semesterType,
           subjectsList: subjectNames,
         }),
       }).catch(() => {
@@ -322,6 +350,89 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               required
               className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-white font-mono uppercase tracking-wider outline-none transition font-semibold"
             />
+          </div>
+
+          {/* University, College & Department Section */}
+          <div className="pt-2 border-t border-slate-800/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-semibold text-slate-200 flex items-center gap-1.5">
+                <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+                <span>University & College Monitoring Links</span>
+              </label>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
+                {semesterType === 'odd' ? 'Odd Sem (Aug–Dec)' : 'Even Sem (Jan–Jun)'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-medium text-slate-400 block mb-1">
+                  University Name
+                </label>
+                <input
+                  type="text"
+                  value={university}
+                  onChange={(e) => setUniversity(e.target.value)}
+                  placeholder="e.g. Guru Gobind Singh Indraprastha University (GGSIPU)"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-medium text-slate-400 block mb-1">
+                  Affiliated College / Institute
+                </label>
+                <input
+                  type="text"
+                  value={collegeName}
+                  onChange={(e) => setCollegeName(e.target.value)}
+                  placeholder="e.g. Maharaja Surajmal Institute (MSI)"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-medium text-slate-400 block mb-1">
+                Department
+              </label>
+              <input
+                type="text"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                placeholder="e.g. Department of Computer Applications & IT"
+                className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-medium text-slate-400 block mb-1">
+                  Academic Calendar Link (Auto-Scans Holidays)
+                </label>
+                <input
+                  type="url"
+                  value={academicCalendarUrl}
+                  onChange={(e) => setAcademicCalendarUrl(e.target.value)}
+                  placeholder="https://university.ac.in/academic-calendar"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition font-mono"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-medium text-slate-400 block mb-1">
+                  Official Notices / Circulars Link (75% Defaulter & Exam Alerts)
+                </label>
+                <input
+                  type="url"
+                  value={circularsNoticeUrl}
+                  onChange={(e) => setCircularsNoticeUrl(e.target.value)}
+                  placeholder="https://university.ac.in/circulars"
+                  className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition font-mono"
+                />
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-500 italic">
+              ⚡ SyllabusOS monitors these links monthly for gazetted holiday cancellations, exam dates, and 75% attendance cutoff notices.
+            </p>
           </div>
 
           {/* Enrolled Subjects Section */}

@@ -31,10 +31,13 @@ import {
   Download,
   Laptop,
   Share,
+  Database,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { AcademicMaterial, Subject, Unit, UserRole, TimetableClass } from '../types';
 import { MindmapViewer } from './MindmapViewer';
+import { RagDocumentViewer } from './RagDocumentViewer';
+import { uploadLargeFileToRag } from '../utils/ragService';
 import { getAiRequestPayload } from '../utils/aiModelService';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { checkAndRetrieveSharedFiles } from '../utils/shareTargetService';
@@ -105,7 +108,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     }
     return materials[0] || null;
   });
-  const [activeDetailTab, setActiveDetailTab] = useState<'notes' | 'mnemonics' | 'mindmap' | '10marker' | 'quiz'>('notes');
+  const [activeDetailTab, setActiveDetailTab] = useState<'notes' | 'mnemonics' | 'mindmap' | '10marker' | 'quiz' | 'rag'>('rag');
 
   // Synchronize activeItem when activeMaterialId or materials updates
   useEffect(() => {
@@ -404,13 +407,66 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     }, 1200);
   };
 
-  // 2. Handle File Drop / Select (Supports Single or Multi-File Drops from PC or Phone)
+  // 2. Handle File Drop / Select (Supports 300MB+ large files & multi-file drops)
   const handleFiles = (fileList: FileList | File[] | null) => {
     if (!fileList) return;
     const filesArray = Array.from(fileList);
     if (filesArray.length === 0) return;
 
     filesArray.forEach(async (file) => {
+      // If file is large (> 2MB) or a PDF/DOCX, stream straight to backend RAG storage
+      if (file.size > 2 * 1024 * 1024 || file.name.endsWith('.pdf') || file.name.endsWith('.docx')) {
+        setIsProcessing(true);
+        setProcessingProgress(10);
+        setProcessingStage(`📤 Streaming "${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)} MB) to backend disk...`);
+
+        try {
+          const res = await uploadLargeFileToRag(file, {
+            classId: 'class-bca-2028',
+            title: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
+            uploaderName: currentRole === 'teacher' ? 'Faculty Professor' : currentRole === 'cr' ? 'Class Representative' : 'Classmate',
+            uploaderRole: currentRole,
+            onProgress: (pct) => {
+              setProcessingProgress(Math.max(10, Math.min(92, pct)));
+              if (pct >= 90) {
+                setProcessingStage('⚡ Chunking & Building in-memory BM25 index on backend...');
+              }
+            },
+          });
+
+          setProcessingProgress(100);
+          setProcessingStage(`✅ Active on backend! Indexed ${res.document.chunkCount} searchable chunks.`);
+
+          const finalMat = res.material || buildClientMaterial({
+            fileName: file.name,
+            fileType: res.document.fileType,
+            fileSize: res.document.fileSizeFormatted,
+          });
+
+          finalMat.ragDocId = res.document.id;
+          finalMat.chunkCount = res.document.chunkCount;
+
+          onMaterialUploaded?.(finalMat);
+          setLastUploadedMaterial(finalMat);
+          setActiveItem(finalMat);
+          setActiveDetailTab('rag');
+          if (onSelectActiveMaterialId) onSelectActiveMaterialId(finalMat.id);
+
+          confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+
+          setTimeout(() => {
+            setIsProcessing(false);
+            setProcessingProgress(0);
+            setProcessingStage('');
+            outputSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 1200);
+          return;
+        } catch (uploadErr) {
+          console.warn('[SmartDump] Large file RAG upload fallback notice:', uploadErr);
+        }
+      }
+
+      // Small file / plain text extraction fallback
       try {
         const extracted = await extractTextFromFile(file);
         processAndIngest({
@@ -796,7 +852,28 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                 <FileQuestion className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Quiz & Check</span>
               </button>
-            </div>
+
+              <button
+                onClick={() => setActiveDetailTab('rag')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  activeDetailTab === 'rag'
+                    ? 'bg-indigo-600 text-white border border-indigo-500 shadow-xs ring-1 ring-indigo-400/40'
+                    : 'text-indigo-300 hover:text-white border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20'
+                }`}
+              >
+                  <Database className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>⚡ Fetch Anything (RAG)</span>
+                </button>
+              </div>
+
+            {/* TAB 0: ACTIVE RAG ENGINE */}
+            {activeDetailTab === 'rag' && (
+              <div className="space-y-4">
+                <RagDocumentViewer
+                  docId={activeItem.ragDocId || activeItem.id}
+                />
+              </div>
+            )}
 
             {/* TAB 1: NOTES & SUMMARY */}
             {activeDetailTab === 'notes' && (

@@ -16,7 +16,7 @@ export interface UserProfile {
   name: string;
   email: string;
   rollNumber: string;
-  role: 'student' | 'cr' | 'teacher';
+  role: 'student' | 'cr' | 'teacher' | 'admin';
   avatarUrl?: string;
   classCode: string;
   isLoggedIn: boolean;
@@ -40,7 +40,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [name, setName] = useState(currentUser.name || '');
   const [email, setEmail] = useState(currentUser.email || '');
   const [rollNumber, setRollNumber] = useState(currentUser.rollNumber || '');
-  const [role, setRole] = useState<'student' | 'cr' | 'teacher'>(currentUser.role || 'student');
+  const [role, setRole] = useState<'student' | 'cr' | 'teacher' | 'admin'>(currentUser.role || 'student');
   const [avatarUrl, setAvatarUrl] = useState(currentUser.avatarUrl || '');
 
   useEffect(() => {

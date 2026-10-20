@@ -14,7 +14,13 @@ export interface ClassWorkspace {
   code: string; // e.g. "BCA-2028"
   name: string; // e.g. "BCA Batch of 2028"
   university: string; // e.g. "Delhi University / IPU"
+  collegeName?: string; // e.g. "St. Xavier's / Bharati Vidyapeeth"
+  department?: string; // e.g. "Department of Computer Applications & IT"
+  universityWebsiteUrl?: string; // e.g. "https://university.ac.in"
+  academicCalendarUrl?: string; // e.g. "https://university.ac.in/academic-calendar"
+  circularsNoticeUrl?: string; // e.g. "https://university.ac.in/circulars"
   semester: number; // e.g. 3
+  semesterType?: 'odd' | 'even'; // odd (Aug-Dec), even (Jan-May/Jun)
   academicYear: string; // e.g. "2026-2027"
   memberCount: number;
   adminId: string;
@@ -22,6 +28,8 @@ export interface ClassWorkspace {
   crName?: string;
   crRollNo?: string;
   crVerifiedAt?: string;
+  universityLinksLastChecked?: string;
+  detectedCalendarEvents?: UniversityCalendarNotice[];
 }
 
 export interface Subject {
@@ -148,6 +156,10 @@ export interface AcademicMaterial {
   downloadUrl?: string;
   fileDataUrl?: string;
   rawTextContent?: string;
+  ragDocId?: string;
+  chunkCount?: number;
+  githubUrl?: string;
+  source?: string;
 }
 
 export interface HistoricalPYQ {
@@ -344,4 +356,97 @@ export interface CohortIntelligenceMeta {
   contributorsCount?: number;
   lastRefinedAt?: string;
 }
+
+export interface UniversityCalendarNotice {
+  id: string;
+  title: string;
+  date: string;
+  type: 'holiday' | 'exam' | 'circular' | 'calendar';
+  summary: string;
+  sourceUrl?: string;
+  isNationalHoliday?: boolean;
+}
+
+export interface StudentMonthlyAttendance {
+  studentId: string;
+  studentName: string;
+  month: string; // e.g. "October 2026" or "2026-10"
+  monthName: string; // "October"
+  year: number; // 2026
+  semesterType: 'odd' | 'even';
+  totalClassesHeld: number;
+  classesAttended: number;
+  percentage: number;
+  isDefaulter: boolean; // true if < 75%
+  bunkableClassesLeft: number; // Max additional classes you can skip while staying >= 75%
+  classesNeededFor75: number; // Number of consecutive classes to attend if below 75%
+  subjectBreakdown: {
+    subjectId: string;
+    subjectName: string;
+    held: number;
+    attended: number;
+    percentage: number;
+    safeToMiss: number;
+  }[];
+}
+
+export interface MonthlyAttendanceSummary {
+  currentMonth: StudentMonthlyAttendance;
+  semesterHistory: {
+    month: string;
+    monthName: string;
+    percentage: number;
+    isDefaulter: boolean;
+    totalHeld: number;
+    attended: number;
+  }[];
+  overallSemesterPercentage: number;
+  semesterType: 'odd' | 'even';
+  semesterSpan: string; // e.g. "Odd Semester (August – December)"
+}
+
+export interface GreeneTactic {
+  lawNumber: number;
+  lawName: string; // e.g. "Law of Covetousness & Scarcity", "Law of Social Proof", "Law of Reciprocity"
+  headline: string;
+  persuasiveCopy: string;
+  callToAction: string;
+}
+
+export interface LecturePulseVote {
+  studentId: string;
+  studentName: string;
+  role: UserRole;
+  isCRorAdmin: boolean;
+  isActiveContributor: boolean;
+  weight: number; // 3 for CR/Admin, 2 for Active Contributor, 1 for General Student
+  attended: boolean;
+  topicConfirmed: boolean;
+  reportedTopic?: string;
+  timestamp: string;
+}
+
+export interface DailyLecturePulse {
+  id: string;
+  classId: string;
+  date: string; // YYYY-MM-DD
+  dayOfWeek: string; // e.g. "Thursday"
+  subjectId: string;
+  subjectName: string;
+  subjectCode: string;
+  room: string;
+  timeSlot: string;
+  scheduledTopicId?: string;
+  scheduledTopicTitle: string;
+  unitNumber?: number;
+  confirmedTopicTitle?: string;
+  status: 'pending' | 'verified_by_cr' | 'consensus_reached' | 'cancelled';
+  consensusScore: number;
+  totalVotes: number;
+  crVerified: boolean;
+  votes: LecturePulseVote[];
+  persuasionTactic: GreeneTactic;
+  quizUnlocked?: boolean;
+}
+
 

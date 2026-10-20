@@ -10,6 +10,7 @@ import {
   FileCheck,
   Award,
   Clock,
+  Database,
 } from 'lucide-react';
 
 interface SearchResultItem {
@@ -96,6 +97,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   const getTypeIcon = (type: string) => {
     const t = type.toLowerCase();
+    if (t.includes('rag') || t.includes('textbook') || t.includes('book')) return <Database className="w-4 h-4 text-indigo-400 shrink-0" />;
     if (t.includes('subject')) return <BookOpen className="w-4 h-4 text-slate-400 shrink-0" />;
     if (t.includes('syllabus') || t.includes('topic')) return <Compass className="w-4 h-4 text-slate-400 shrink-0" />;
     if (t.includes('pyq')) return <FileQuestion className="w-4 h-4 text-slate-400 shrink-0" />;
@@ -107,6 +109,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
 
   const cleanBadgeLabel = (type: string) => {
     const t = type.toLowerCase();
+    if (t.includes('rag') || t.includes('textbook')) return 'RAG Book';
     if (t.includes('subject')) return 'Subject';
     if (t.includes('syllabus') || t.includes('topic')) return 'Syllabus';
     if (t.includes('pyq')) return 'PYQ';
@@ -132,7 +135,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search syllabus, notes, past exam questions, or subjects..."
+            placeholder="Search across 300MB textbooks, syllabus, notes, or PYQs..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none font-sans"
