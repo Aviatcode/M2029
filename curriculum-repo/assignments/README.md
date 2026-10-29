@@ -3,6 +3,7 @@
 All cohort coursework, homework sets, laboratory exercises, and seminar presentations are organized **folder-wise by subject**:
 
 ## 📂 Subject Directories & Folders
+- [📁 **Operating Systems Notes** (`SUB-101`)](operating-systems-notes/README.md) — **0 files** (0 completed)
 - [🎤 **Class Representative (CR) Seminars & PPT Roster**](ppt-seminars/README.md) — **Technical Seminar Presentations**
 
 ---
