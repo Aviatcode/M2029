@@ -306,7 +306,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       {/* 1. Academic Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800/60 pb-4">
         <div>
-          <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Notes & Materials
           </h1>
         </div>

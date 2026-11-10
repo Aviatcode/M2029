@@ -2,23 +2,15 @@ import React from 'react';
 import {
   LayoutDashboard,
   Bot,
-  Map,
   FolderOpen,
   Calendar,
   Flame,
-  FileCheck2,
-  Award,
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
-  UploadCloud,
   LogOut,
   LogIn,
-  GraduationCap,
-  Database,
-  Zap,
   Trophy,
-  Sparkles,
 } from 'lucide-react';
 import type { UserProfile } from './LoginModal';
 
@@ -67,19 +59,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout,
   isSetupDone = true,
 }) => {
+  const getEffectiveNavId = (tab: ActiveNavTab): string => {
+    if (tab === 'dump' || tab === 'rag') return 'materials';
+    if (tab === 'syllabus' || tab === 'pyqs') return 'exams';
+    if (tab === 'assignments' || tab === 'daily-update' || tab === 'tomorrow') return 'timetable';
+    if (tab === 'setup') return 'settings';
+    return tab;
+  };
+
+  const effectiveId = getEffectiveNavId(activeTab);
+
+  // Minimized to 6 core essentials matching strict minimalism
   const mainNavItems = [
-    { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard, badge: '3' },
-    { id: 'ai-tutor' as const, label: 'AI Companion', icon: Bot, isAI: true, badge: 'AI' },
+    { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'ai-tutor' as const, label: 'AI Companion', icon: Bot, isAI: true },
+    { id: 'materials' as const, label: 'Materials', icon: FolderOpen },
+    { id: 'exams' as const, label: 'Exams & Syllabus', icon: Flame },
+    { id: 'timetable' as const, label: 'Schedule', icon: Calendar },
     { id: 'knowledge-dashboard' as const, label: 'Class Brain', icon: Trophy },
-    { id: 'materials' as const, label: 'Notes & Slides', icon: FolderOpen },
-    { id: 'syllabus' as const, label: 'Syllabus Map', icon: Map },
-    { id: 'exams' as const, label: 'Exams & Radar', icon: Flame, badge: '1' },
-    { id: 'assignments' as const, label: 'Tasks & Vivas', icon: FileCheck2 },
-    { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
-    { id: 'dump' as const, label: 'Study Drop', icon: UploadCloud },
-    { id: 'daily-update' as const, label: 'Daily Pulse', icon: Zap },
-    ...(isSetupDone !== false ? [{ id: 'setup' as const, label: 'My Class', icon: GraduationCap }] : []),
-    { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
   ];
 
   const isUserLoggedIn = currentUser ? currentUser.isLoggedIn : true;
@@ -138,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <nav className={`flex-1 overflow-y-auto space-y-1.5 no-scrollbar ${isCollapsed ? 'p-2' : 'p-3'}`}>
         {mainNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeTab === item.id;
+          const isActive = effectiveId === item.id;
 
           return (
             <button
@@ -162,17 +159,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {!isCollapsed && (
                 <span className="truncate font-sans-ui flex-1 flex items-center justify-between">
                   <span>{item.label}</span>
-                  {item.badge && (
-                    <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                        isActive
-                          ? 'bg-slate-950 text-white'
-                          : item.id === 'ai-tutor'
-                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                      }`}
-                    >
-                      {item.badge}
+                  {item.isAI && !isActive && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                      AI
                     </span>
                   )}
                 </span>
@@ -182,46 +171,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* 3. Bottom Contributor Promo Card (matching the "Upgrade to Pro" card in screenshot) */}
-      {!isCollapsed && (
-        <div className="p-3 shrink-0">
-          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-cyan-500/30 text-white space-y-2 shadow-lg relative overflow-hidden group">
-            {/* Ambient background glow */}
-            <div className="absolute -right-4 -bottom-4 w-16 h-16 rounded-full bg-cyan-500/20 blur-xl pointer-events-none group-hover:bg-cyan-500/30 transition-all" />
+      {/* 3. Bottom Settings & Auth */}
+      <div className={`border-t border-slate-800/60 shrink-0 space-y-1 ${isCollapsed ? 'p-2' : 'p-3'}`}>
+        <button
+          onClick={() => onSelectTab('settings')}
+          title="Settings"
+          className={`w-full flex items-center rounded-2xl text-xs font-semibold transition cursor-pointer ${
+            isCollapsed ? 'justify-center py-2.5 px-0' : 'gap-3 px-3.5 py-2.5 text-left'
+          } ${
+            effectiveId === 'settings'
+              ? 'bg-white text-slate-950 font-bold shadow-md'
+              : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+          }`}
+        >
+          <SlidersHorizontal className="w-4 h-4 shrink-0" />
+          {!isCollapsed && <span className="truncate font-sans-ui">Settings</span>}
+        </button>
 
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center font-bold text-xs shrink-0">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              </div>
-              <div className="text-xs font-bold text-white tracking-tight">
-                Class Brain Active
-              </div>
-            </div>
-
-            <p className="text-[11px] text-slate-400 font-sans-ui">
-              Zero-token class intelligence.
-            </p>
-
-            <button
-              onClick={() => {
-                if (onOpenAIKeyConfig) onOpenAIKeyConfig();
-                else onSelectTab('knowledge-dashboard');
-              }}
-              className="w-full py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition cursor-pointer shadow-sm shadow-cyan-500/30 flex items-center justify-center gap-1.5"
-            >
-              <span>Explore Brain</span>
-              <span className="text-sm font-bold">›</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 4. Bottom User Auth */}
-      <div className={`border-t border-slate-800/60 shrink-0 ${isCollapsed ? 'p-2' : 'p-3'}`}>
         <button
           onClick={handleAuthAction}
           title={authLabel}
-          className={`w-full flex items-center rounded-xl text-xs font-medium transition cursor-pointer ${
+          className={`w-full flex items-center rounded-2xl text-xs font-medium transition cursor-pointer ${
             isCollapsed ? 'justify-center py-2 px-0' : 'gap-2.5 px-3 py-1.5 text-left'
           } text-slate-400 hover:text-rose-400 hover:bg-slate-900/60`}
         >

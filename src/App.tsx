@@ -1673,8 +1673,8 @@ export default function App() {
         </div>
       ) : (
         <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
-          {/* Top Navbar: On Desktop Dashboard, hidden because Dashboard has its own Lucas Bennett-style header */}
-          <div className={activeTab === 'dashboard' ? 'lg:hidden' : 'block shrink-0'}>
+          {/* Top Navbar: Only shown on mobile/tablet screens for drawer toggle */}
+          <div className="lg:hidden shrink-0">
             <Navbar
               classCode={classCode}
               currentUser={currentUser}
@@ -1708,7 +1708,7 @@ export default function App() {
           </div>
 
           {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT WORKSPACE */}
-          <div className={`flex flex-1 overflow-hidden ${activeTab === 'dashboard' ? 'h-full lg:h-screen' : 'h-[calc(100vh-3.5rem)]'}`}>
+          <div className="flex flex-1 overflow-hidden h-full">
         {/* Desktop Sidebar (Collapsible) */}
         <div className="hidden lg:flex h-full shrink-0">
           <Sidebar
@@ -1804,42 +1804,8 @@ export default function App() {
           </div>
         )}
 
-        {/* Main Content Column with M2028-style Horizontal Sub-Navigation */}
+        {/* Main Content Workspace */}
         <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
-          {/* Horizontal Sub-Navigation Tab Track (Hidden on Desktop Dashboard to match screenshot) */}
-          <nav className={`h-11 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 px-3 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0 z-20 ${
-            activeTab === 'dashboard' ? 'lg:hidden' : ''
-          }`}>
-            {[
-              { id: 'dashboard', label: 'Today', icon: LayoutDashboard },
-              { id: 'ai-tutor', label: 'AI Companion', icon: Bot },
-              { id: 'knowledge-dashboard', label: 'Class Brain', icon: Trophy },
-              { id: 'syllabus', label: 'Syllabus', icon: BookOpen },
-              { id: 'timetable', label: 'Timetable', icon: Calendar },
-              { id: 'exams', label: 'Exams & Radar', icon: Flame },
-              { id: 'assignments', label: 'Tasks', icon: ListTodo },
-              { id: 'dump', label: 'Study Drop', icon: UploadCloud },
-              { id: 'daily-update', label: 'Daily Pulse', icon: Zap },
-            ].map((tab) => {
-              const TabIcon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleSelectTab(tab.id as ActiveNavTab)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer shrink-0 ${
-                    isActive
-                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-transparent'
-                  }`}
-                >
-                  <TabIcon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-
           {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
           <main className="flex-1 h-full overflow-y-auto px-3 sm:px-5 md:px-7 py-4 sm:py-6 w-full max-w-[1580px] mx-auto">
             {activeTab === 'dashboard' && (
