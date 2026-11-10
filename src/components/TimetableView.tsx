@@ -15,6 +15,9 @@ import {
   ListFilter,
   Search,
   UploadCloud,
+  ChevronDown,
+  MoreVertical,
+  Zap,
 } from 'lucide-react';
 
 interface TimetableViewProps {
@@ -24,6 +27,8 @@ interface TimetableViewProps {
   onAddClass?: (newClass: Omit<TimetableClass, 'id'>) => void;
   onDeleteClass?: (classId: string) => void;
   onOpenUploadModal?: () => void;
+  studentName?: string;
+  classCode?: string;
 }
 
 const getInitialDay = (): 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' => {
@@ -57,7 +62,10 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
   onAddClass,
   onDeleteClass,
   onOpenUploadModal,
+  studentName,
+  classCode,
 }) => {
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedDay, setSelectedDay] = useState<
     'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday'
   >(getInitialDay);
@@ -154,259 +162,268 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
 
   const filteredClasses = getFilteredDayClasses(selectedDay);
 
+  const daysList: ('Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday')[] = [
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  ];
+
+  const searchedFilteredClasses = filteredClasses.filter((c) =>
+    !searchQuery.trim() ||
+    c.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.room.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.teacherName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="space-y-6 animate-fade-in pb-8 font-sans-ui text-slate-100">
-      {/* 1. Header & View Mode Switcher */}
-      <div className="border-b border-slate-800/60 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="w-full space-y-5 font-sans-ui text-slate-100 animate-fade-in select-none">
+      {/* 1. TOP HEADER (Matching reference design) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-editorial text-2xl sm:text-3xl font-normal italic text-slate-100">
-              Timetable
-            </h1>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 text-slate-400">
-              {viewMode === 'daily' ? 'Daily Agenda' : 'Notion Weekly Matrix'}
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+              {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
+            </div>
+            <span className="text-xs font-semibold text-slate-300">
+              {studentName || 'Student'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-mono">
+              • {classCode || 'BCA-2028'}
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Weekly class schedule, practical lab sessions & lecture rooms
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Weekly Schedule
+          </h1>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
-          {/* Notion View Switcher */}
-          <div className="flex items-center gap-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          {/* Search Input */}
+          <div className="relative w-40 sm:w-52">
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search classes..."
+              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-500/50 transition"
+            />
+          </div>
+
+          {/* View Mode Toggle Pill */}
+          <div className="flex items-center gap-1 bg-[#141926] p-1 rounded-xl border border-slate-800">
             <button
-              type="button"
               onClick={() => setViewMode('daily')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 viewMode === 'daily'
-                  ? 'bg-slate-800 text-white shadow-xs border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  ? 'bg-slate-800 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Daily</span>
+              Daily
             </button>
             <button
-              type="button"
               onClick={() => setViewMode('matrix')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 viewMode === 'matrix'
-                  ? 'bg-slate-800 text-white shadow-xs border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200 border border-transparent'
+                  ? 'bg-slate-800 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span>Week Matrix</span>
+              Matrix
             </button>
           </div>
 
-          {/* Lab filter */}
+          {/* Lab filter toggle */}
           <button
-            type="button"
             onClick={() => setLabFilter(labFilter === 'all' ? 'labs' : 'all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer border ${
+            className={`h-8 px-3 rounded-xl border text-xs font-semibold transition cursor-pointer ${
               labFilter === 'labs'
                 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+                : 'bg-[#141926] text-slate-400 border-slate-800 hover:text-slate-200'
             }`}
           >
-            {labFilter === 'labs' ? 'Showing Labs Only' : 'Filter: Labs Only'}
+            {labFilter === 'labs' ? 'Labs Only' : 'All Classes'}
           </button>
 
-          {onOpenUploadModal && (
-            <button
-              type="button"
-              onClick={onOpenUploadModal}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-semibold shadow-xs transition cursor-pointer"
-            >
-              <UploadCloud className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Upload Timetable</span>
-            </button>
-          )}
-
+          {/* Add Class Button */}
           {onAddClass && (
             <button
-              type="button"
               onClick={() => handleOpenAddModal()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-200 text-slate-950 text-xs font-semibold shadow-xs transition cursor-pointer"
+              className="h-8 px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm shadow-cyan-500/20"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ Add Class</span>
+              <span>Add Class</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* Empty State Onboarding Prompt */}
-      {timetable.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-cyan-500/30 bg-slate-900/40 p-6 text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto">
-            <Calendar className="w-6 h-6" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="text-sm font-semibold text-white">No Timetable Configured Yet</h3>
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
-              Upload your weekly class timetable or routine document. Our AI will automatically parse your subjects, room numbers, and lecture timings.
-            </p>
-          </div>
-          <div className="pt-1 flex items-center justify-center gap-3">
-            {onOpenUploadModal && (
-              <button
-                type="button"
-                onClick={onOpenUploadModal}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold shadow-md transition cursor-pointer"
-              >
-                <UploadCloud className="w-4 h-4" />
-                <span>Upload Timetable with AI</span>
-              </button>
-            )}
-            {onAddClass && (
-              <button
-                type="button"
-                onClick={() => handleOpenAddModal()}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition cursor-pointer"
-              >
-                + Add Class Manually
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* VIEW 1: DAILY AGENDA VIEW */}
+      {/* VIEW 1: DAILY 3-COLUMN CARDS GRID (Matching reference design) */}
       {viewMode === 'daily' && (
-        <div className="space-y-4">
-          {/* Day Selector Tabs */}
-          <div className="flex items-center gap-1.5 border-b border-slate-800/80 overflow-x-auto no-scrollbar pb-1 text-xs">
-            {days.map((day) => {
-              const isSelected = selectedDay === day;
-              const dayClassCount = timetable.filter((t) => t.day === day).length;
-              const isCurrentToday = getInitialDay() === day;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+          {/* CARD 1: Day Overview & Selectors */}
+          <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-cyan-400" />
+                <h2 className="text-sm font-bold text-slate-100">Schedule Day</h2>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold">
+                {selectedDay}
+              </span>
+            </div>
 
-              return (
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                  {searchedFilteredClasses.length}
+                </span>
+                <span className="text-xs text-slate-400 font-semibold">
+                  Classes on {selectedDay.slice(0, 3)}
+                </span>
+              </div>
+            </div>
+
+            {/* Overlapping Circles */}
+            <div className="relative h-40 flex items-center justify-center my-1">
+              <div className="absolute left-6 top-2 w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10">
+                <span className="text-lg font-extrabold">{timetable.length}</span>
+                <span className="text-[10px] text-violet-200">Total</span>
+              </div>
+              <div className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20">
+                <span className="text-base font-extrabold">{subjects.length}</span>
+                <span className="text-[10px] text-slate-400">Subjects</span>
+              </div>
+              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
+                <span className="text-sm font-black">84%</span>
+                <span className="text-[8px] uppercase tracking-wider">Attend</span>
+              </div>
+            </div>
+
+            {/* Day Selector Pills */}
+            <div className="grid grid-cols-6 gap-1 pt-2 border-t border-slate-800/60">
+              {daysList.map((d) => (
                 <button
-                  key={day}
-                  onClick={() => setSelectedDay(day)}
-                  className={`px-3.5 py-1.5 rounded-xl transition shrink-0 cursor-pointer text-xs flex items-center gap-1.5 ${
-                    isSelected
-                      ? 'bg-slate-900 text-white font-semibold border border-slate-700 shadow-2xs'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40 border border-transparent'
+                  key={d}
+                  onClick={() => setSelectedDay(d)}
+                  className={`py-1.5 rounded-xl text-xs font-mono font-bold transition cursor-pointer text-center ${
+                    selectedDay === d
+                      ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                      : 'bg-slate-900/60 text-slate-400 hover:text-white'
                   }`}
                 >
-                  <span>{day}</span>
-                  {isCurrentToday && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" title="Today" />
-                  )}
-                  {dayClassCount > 0 && (
-                    <span className="text-[10px] text-slate-500 font-mono">
-                      ({dayClassCount})
-                    </span>
-                  )}
+                  {d.slice(0, 1)}
                 </button>
-              );
-            })}
+              ))}
+            </div>
           </div>
 
-          {/* Schedule List */}
-          <div className="space-y-3">
-            {filteredClasses.length === 0 ? (
-              <div className="text-center py-12 rounded-2xl bg-slate-900/30 border border-dashed border-slate-800 text-slate-400 text-xs space-y-3">
-                <Calendar className="w-8 h-8 text-slate-600 mx-auto" />
-                <p className="text-slate-300 font-medium">No classes scheduled for {selectedDay}.</p>
-                <p className="text-[11px] text-slate-500 max-w-sm mx-auto">
-                  Free period or self-study day. Add regular lectures, lab practicals, or tutorial sessions.
-                </p>
-                {onAddClass && (
-                  <button
-                    type="button"
-                    onClick={() => handleOpenAddModal(selectedDay)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium cursor-pointer transition inline-flex items-center gap-1.5 border border-slate-700"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Class for {selectedDay}</span>
-                  </button>
-                )}
+          {/* CARD 2: Daily Agenda Classes */}
+          <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-3 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-cyan-400" />
+                <h2 className="text-sm font-bold text-slate-100">Lectures Agenda</h2>
               </div>
-            ) : (
-              filteredClasses.map((cls) => {
-                const isLab = cls.time.toLowerCase().includes('lab') || cls.room.toLowerCase().includes('lab');
+              <span className="text-xs font-mono text-slate-400">
+                Room & Time
+              </span>
+            </div>
 
-                return (
+            <div className="flex-1 overflow-y-auto space-y-2 max-h-80 pr-1 no-scrollbar">
+              {searchedFilteredClasses.length === 0 ? (
+                <div className="h-48 flex flex-col items-center justify-center text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-2xl gap-2">
+                  <Clock className="w-6 h-6 text-slate-600" />
+                  <span>No lectures on {selectedDay}</span>
+                </div>
+              ) : (
+                searchedFilteredClasses.map((cls) => (
                   <div
                     key={cls.id}
-                    className="p-4 sm:p-5 rounded-xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs group"
+                    className="p-3 rounded-2xl bg-[#0d111a] border border-slate-800/80 hover:border-slate-700 transition text-xs space-y-1.5"
                   >
-                    <div className="space-y-1.5 flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="academic-tag text-[9px] text-neutral-300 bg-neutral-900 border border-neutral-800 px-1.5 py-0.5 rounded font-mono">
-                          {cls.subjectCode}
-                        </span>
-                        {isLab && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                            LAB PRACTICAL
-                          </span>
-                        )}
-                        <h3 className="font-editorial text-base sm:text-lg font-medium text-slate-100 truncate">
-                          {cls.subjectName}
-                        </h3>
-                      </div>
-
-                      <div className="text-slate-400 flex flex-wrap items-center gap-2 text-xs">
-                        <span className="inline-flex items-center gap-1 font-mono text-slate-300">
-                          <Clock className="w-3 h-3 text-slate-500" />
-                          <span>{cls.time}</span>
-                        </span>
-                        <span aria-hidden="true" className="text-slate-700">·</span>
-                        <span className="inline-flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-slate-500" />
-                          <span>{cls.room}</span>
-                        </span>
-                        <span aria-hidden="true" className="text-slate-700">·</span>
-                        <span className="inline-flex items-center gap-1">
-                          <User className="w-3 h-3 text-slate-500" />
-                          <span>Prof. {cls.teacherName}</span>
-                        </span>
-                      </div>
-
-                      {cls.likelyTopic && (
-                        <div className="text-slate-400 pt-0.5 text-xs">
-                          Curriculum focus: <span className="text-slate-200 italic font-editorial">{cls.likelyTopic.title}</span>
-                        </div>
-                      )}
+                    <div className="flex items-center justify-between gap-1.5">
+                      <span className="font-semibold text-white truncate">{cls.subjectName}</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300">
+                        {cls.room}
+                      </span>
                     </div>
-
-                    <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-                      {cls.likelyTopic && (
+                    <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                      <span>{cls.time}</span>
+                      <span>{cls.teacherName}</span>
+                    </div>
+                    {cls.likelyTopic && (
+                      <div className="pt-1 flex items-center justify-between gap-2 border-t border-slate-800/60">
+                        <span className="text-[10px] text-slate-400 truncate">
+                          Focus: {cls.likelyTopic.title}
+                        </span>
                         <button
                           onClick={() => onStudyTopic(cls.likelyTopic!.title, cls.subjectName)}
-                          className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer flex items-center gap-1.5"
+                          className="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold cursor-pointer shrink-0"
                         >
-                          <span>Prep Topic</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          Prep →
                         </button>
-                      )}
-
-                      {onDeleteClass && (
-                        <button
-                          type="button"
-                          onClick={() => onDeleteClass(cls.id)}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-950/30 transition cursor-pointer"
-                          title="Remove lecture from timetable"
-                          aria-label="Remove lecture"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                );
-              })
+                ))
+              )}
+            </div>
+
+            {onAddClass && (
+              <button
+                onClick={() => handleOpenAddModal()}
+                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-bold text-slate-200 transition cursor-pointer text-center"
+              >
+                + Add Class Slot
+              </button>
             )}
+          </div>
+
+          {/* CARD 3: Attendance Buffer (The Dark Accent Card) */}
+          <div className="bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <h2 className="text-sm font-bold text-slate-100">Attendance Buffer</h2>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] font-mono font-bold">
+                Safe
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-2">
+                <div className="w-1 h-8 rounded-full bg-emerald-400 shrink-0" />
+                <div>
+                  <div className="text-xl font-black text-white">84%</div>
+                  <div className="text-[10px] text-slate-400">Class Attendance</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <div className="w-1 h-8 rounded-full bg-cyan-400 shrink-0" />
+                <div>
+                  <div className="text-xl font-black text-white">3 Bunks</div>
+                  <div className="text-[10px] text-slate-400">Allowed Safely</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2 overflow-y-auto max-h-56 pr-1 no-scrollbar text-xs">
+              {subjects.slice(0, 3).map((sub) => (
+                <div key={sub.id} className="p-2.5 rounded-2xl bg-[#121724] border border-slate-800 flex items-center justify-between">
+                  <span className="text-xs text-slate-200 font-semibold truncate">{sub.name}</span>
+                  <span className="text-[10px] font-mono text-cyan-300">85% Safe</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span className="text-slate-500 font-mono text-[10px]">75% Minimum Criteria</span>
+              <span className="text-cyan-400 font-bold text-[10px]">Monitored</span>
+            </div>
           </div>
         </div>
       )}
-
       {/* VIEW 2: NOTION WEEKLY MATRIX VIEW (6-Column Full Week Planner) */}
       {viewMode === 'matrix' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-start">

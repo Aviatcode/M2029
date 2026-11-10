@@ -43,7 +43,7 @@ import {
   SEED_ASSIGNMENTS,
 } from './server/db/seedData';
 import { Navbar } from './components/Navbar';
-import { Sidebar, ActiveNavTab } from './components/Sidebar';
+import { Sidebar, ActiveNavTab, SidebarPosition } from './components/Sidebar';
 import { DashboardView } from './components/DashboardView';
 import { KnowledgeDashboard } from './components/KnowledgeDashboard';
 import { AITutorView } from './components/AITutorView';
@@ -1060,6 +1060,37 @@ export default function App() {
     }
   });
 
+  const [sidebarPosition, setSidebarPosition] = useState<SidebarPosition>(() => {
+    try {
+      const saved = localStorage.getItem('m2029_sidebar_position');
+      if (saved === 'left' || saved === 'right' || saved === 'top' || saved === 'bottom') {
+        return saved;
+      }
+    } catch {}
+    return 'left';
+  });
+
+  const [autoCollapse, setAutoCollapse] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('m2029_sidebar_autocollapse');
+      return saved !== null ? saved === 'true' : true;
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('m2029_sidebar_position', sidebarPosition);
+    } catch {}
+  }, [sidebarPosition]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('m2029_sidebar_autocollapse', String(autoCollapse));
+    } catch {}
+  }, [autoCollapse]);
+
   useEffect(() => {
     try {
       localStorage.setItem('syllabus_sidebar_collapsed', String(isSidebarCollapsed));
@@ -1708,101 +1739,122 @@ export default function App() {
           </div>
 
           {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT WORKSPACE */}
-          <div className="flex flex-1 overflow-hidden h-full">
-        {/* Desktop Sidebar (Collapsible) */}
-        <div className="hidden lg:flex h-full shrink-0">
-          <Sidebar
-            activeTab={activeTab}
-            onSelectTab={handleSelectTab}
-            classCode={classCode}
-            semesterNumber={workspace.semester}
-            isCollapsed={isSidebarCollapsed}
-            onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
-            onOpenClassSetup={() => setIsSetupModalOpen(true)}
-            onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-            isSetupDone={isSemesterSetupDone}
-          />
-        </div>
-
-        {/* Mobile Drawer (Phone & Tablet) */}
-        {mobileMenuOpen && (
           <div
-            className="fixed inset-0 z-50 flex lg:hidden bg-black/80 backdrop-blur-sm cursor-pointer transition-opacity"
-            onClick={() => setMobileMenuOpen(false)}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Navigation Menu"
+            className={`flex flex-1 overflow-hidden h-full ${
+              sidebarPosition === 'top' || sidebarPosition === 'bottom'
+                ? 'flex-col'
+                : 'flex-row'
+            }`}
           >
-            <div
-              className="w-4/5 max-w-xs h-full bg-slate-950 shadow-2xl flex flex-col cursor-default border-r border-slate-850 animate-in slide-in-from-left duration-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Drawer Header with Home link & Close Button */}
-              <div className="h-13 px-3.5 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-950">
-                <button
-                  onClick={() => {
-                    handleSelectTab('dashboard');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2.5 text-left cursor-pointer group focus:outline-none"
-                  title="Return to Today (Home)"
-                >
-                  <img
-                    src="./am-logo.png"
-                    alt="AM Logo"
-                    className="w-7 h-7 rounded-md object-contain border border-slate-800"
-                  />
-                  <div>
-                    <span className="text-xs font-bold text-slate-100 font-sans tracking-tight block">
-                      SyllabusOS
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400 block -mt-0.5">
-                      {classCode} • Sem {workspace.semester}
-                    </span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer"
-                  aria-label="Close menu"
-                  title="Close menu"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Sidebar Content */}
-              <div className="flex-1 overflow-hidden">
+            {/* Navigation Dock (Rendered first when docked to Left or Top) */}
+            {(sidebarPosition === 'left' || sidebarPosition === 'top') && (
+              <div
+                className={`${
+                  sidebarPosition === 'top'
+                    ? 'w-full shrink-0'
+                    : 'hidden lg:flex h-full shrink-0'
+                }`}
+              >
                 <Sidebar
                   activeTab={activeTab}
-                  onSelectTab={(tab) => {
-                    handleSelectTab(tab);
-                    setMobileMenuOpen(false);
-                  }}
+                  onSelectTab={handleSelectTab}
                   classCode={classCode}
                   semesterNumber={workspace.semester}
-                  onOpenClassSetup={() => {
-                    setIsSetupModalOpen(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  onOpenAIKeyConfig={() => {
-                    setIsAIKeyModalOpen(true);
-                    setMobileMenuOpen(false);
-                  }}
+                  position={sidebarPosition}
+                  onChangePosition={setSidebarPosition}
+                  isCollapsed={isSidebarCollapsed}
+                  onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+                  autoCollapse={autoCollapse}
+                  onToggleAutoCollapse={() => setAutoCollapse((prev) => !prev)}
+                  onOpenClassSetup={() => setIsSetupModalOpen(true)}
+                  onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
                   currentUser={currentUser}
-                  onLogout={() => {
-                    handleLogout();
-                    setMobileMenuOpen(false);
-                  }}
+                  onLogout={handleLogout}
                   isSetupDone={isSemesterSetupDone}
                 />
               </div>
-            </div>
-          </div>
-        )}
+            )}
+
+            {/* Mobile Drawer (Phone & Tablet) */}
+            {mobileMenuOpen && (
+              <div
+                className="fixed inset-0 z-50 flex lg:hidden bg-black/80 backdrop-blur-sm cursor-pointer transition-opacity"
+                onClick={() => setMobileMenuOpen(false)}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Navigation Menu"
+              >
+                <div
+                  className="w-4/5 max-w-xs h-full bg-[#0d111a] shadow-2xl flex flex-col cursor-default border-r border-slate-800 animate-in slide-in-from-left duration-200"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Drawer Header with Home link & Close Button */}
+                  <div className="h-16 px-4 border-b border-slate-800/80 flex items-center justify-between shrink-0 bg-[#0d111a]">
+                    <button
+                      onClick={() => {
+                        handleSelectTab('dashboard');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2.5 text-left cursor-pointer group focus:outline-none"
+                      title="Return to Dashboard"
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-cyan-500/20">
+                        ✦
+                      </div>
+                      <div>
+                        <span className="text-base font-extrabold text-white font-sans tracking-tight block">
+                          m2029
+                        </span>
+                        <span className="text-[10px] font-mono text-cyan-400 font-semibold block -mt-0.5">
+                          {classCode} • Sem {workspace.semester}
+                        </span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer"
+                      aria-label="Close menu"
+                      title="Close menu"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Sidebar Content */}
+                  <div className="flex-1 overflow-hidden">
+                    <Sidebar
+                      activeTab={activeTab}
+                      onSelectTab={(tab) => {
+                        handleSelectTab(tab);
+                        setMobileMenuOpen(false);
+                      }}
+                      classCode={classCode}
+                      semesterNumber={workspace.semester}
+                      position={sidebarPosition}
+                      onChangePosition={setSidebarPosition}
+                      isCollapsed={false}
+                      autoCollapse={false}
+                      onOpenClassSetup={() => {
+                        setIsSetupModalOpen(true);
+                        setMobileMenuOpen(false);
+                      }}
+                      onOpenAIKeyConfig={() => {
+                        setIsAIKeyModalOpen(true);
+                        setMobileMenuOpen(false);
+                      }}
+                      currentUser={currentUser}
+                      onLogout={() => {
+                        handleLogout();
+                        setMobileMenuOpen(false);
+                      }}
+                      isSetupDone={isSemesterSetupDone}
+                      isMobileDrawer={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
         {/* Main Content Workspace */}
         <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
@@ -1927,6 +1979,8 @@ export default function App() {
               initialPrompt={initialTutorPrompt}
               unitsBySubject={unitsBySubject}
               currentRole={currentRole}
+              studentName={currentUser.name}
+              classCode={classCode}
             />
           )}
 
@@ -1934,6 +1988,8 @@ export default function App() {
             <KnowledgeDashboard
               subjects={subjects}
               onOpenTopic={(topic, sub) => handleStudyTopic(topic, sub || subjects[0]?.name || 'Operating Systems')}
+              studentName={currentUser.name}
+              classCode={classCode}
             />
           )}
 
@@ -1943,6 +1999,8 @@ export default function App() {
               subjects={subjects}
               currentRole={currentRole}
               onMaterialUploaded={handleMaterialUploaded}
+              studentName={currentUser.name}
+              classCode={classCode}
             />
           )}
 
@@ -1971,6 +2029,8 @@ export default function App() {
               onOpenStudySession={(subName) => handleStudyTopic('End-Term Revision', subName)}
               onAddExam={handleAddExam}
               onDeleteExam={handleDeleteExam}
+              studentName={currentUser.name}
+              classCode={classCode}
             />
           )}
 
@@ -1982,6 +2042,8 @@ export default function App() {
               onAddClass={handleAddTimetableClass}
               onDeleteClass={handleDeleteTimetableClass}
               onOpenUploadModal={() => setIsOnboardingModalOpen(true)}
+              studentName={currentUser.name}
+              classCode={classCode}
             />
           )}
 
@@ -2014,10 +2076,43 @@ export default function App() {
               onOpenClassSetup={() => setIsSetupModalOpen(true)}
               currentUser={currentUser}
               onUpdateUsername={handleUpdateUsername}
+              sidebarPosition={sidebarPosition}
+              onChangeSidebarPosition={setSidebarPosition}
+              autoCollapse={autoCollapse}
+              onToggleAutoCollapse={() => setAutoCollapse((prev) => !prev)}
             />
           )}
         </main>
       </div>
+
+      {/* Navigation Dock (Rendered last when docked to Right or Bottom) */}
+      {(sidebarPosition === 'right' || sidebarPosition === 'bottom') && (
+        <div
+          className={`${
+            sidebarPosition === 'bottom'
+              ? 'w-full shrink-0'
+              : 'hidden lg:flex h-full shrink-0'
+          }`}
+        >
+          <Sidebar
+            activeTab={activeTab}
+            onSelectTab={handleSelectTab}
+            classCode={classCode}
+            semesterNumber={workspace.semester}
+            position={sidebarPosition}
+            onChangePosition={setSidebarPosition}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+            autoCollapse={autoCollapse}
+            onToggleAutoCollapse={() => setAutoCollapse((prev) => !prev)}
+            onOpenClassSetup={() => setIsSetupModalOpen(true)}
+            onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            isSetupDone={isSemesterSetupDone}
+          />
+        </div>
+      )}
       </div>
       </div>
       )}

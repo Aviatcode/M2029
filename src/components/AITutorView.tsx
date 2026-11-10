@@ -56,6 +56,8 @@ interface AITutorViewProps {
   initialSubject?: string;
   unitsBySubject?: Record<string, Unit[]>;
   currentRole?: UserRole;
+  studentName?: string;
+  classCode?: string;
 }
 
 interface SyllabusTrackMeta {
@@ -188,6 +190,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   initialSubject,
   unitsBySubject,
   currentRole = 'student',
+  studentName,
+  classCode,
 }) => {
   // Mode Selection: 'guided' (ChatGPT one-by-one experience) vs 'reference' (6-mode all-in-one guide)
   const [viewMode, setViewMode] = useState<'guided' | 'reference'>('guided');
@@ -686,94 +690,70 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   ];
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-6.5rem)] flex flex-col rounded-xl bg-slate-950 border border-slate-800/80 shadow-2xl overflow-hidden animate-fade-in">
-      {/* 1. Academic Desk Header with Primary Mode Toggle */}
-      <div className="px-3.5 py-2.5 border-b border-slate-800/90 bg-slate-950 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-indigo-600/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400">
-            <Bot className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-semibold text-xs sm:text-sm text-slate-100 leading-tight">
-                Academic AI Companion
-              </h1>
-              <span className="hidden sm:inline-flex text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
-                Gold Standard
-              </span>
+    <div className="w-full space-y-4 font-sans-ui text-slate-100 animate-fade-in select-none">
+      {/* 1. TOP HEADER (Matching Lucas Bennett / fitness reference design) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+              {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <p className="text-[10px] text-slate-400">
-              One-by-one syllabus progression, Hinglish intuition & interactive quick checks
-            </p>
+            <span className="text-xs font-semibold text-slate-300">
+              {studentName || 'Student'}
+            </span>
+            <span className="text-[10px] text-slate-500 font-mono">
+              • {classCode || 'BCA-2028'}
+            </span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            AI Tutor
+          </h1>
         </div>
 
-        {/* Token Savings & View Mode Controls */}
-        <div className="flex items-center gap-2">
-          {cacheStats && (
-            <div
-              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] font-mono shadow-xs"
-              title={`${cacheStats.totalLearnedItems} topics learned & stored in repository. Repeating questions fetch instantly with 0 tokens spent.`}
-            >
-              <Zap className="w-3.5 h-3.5 text-emerald-400" />
-              <span>
-                {cacheStats.estimatedTokensSaved >= 1000
-                  ? `${(cacheStats.estimatedTokensSaved / 1000).toFixed(1)}k`
-                  : cacheStats.estimatedTokensSaved}{' '}
-                Tokens Saved
-              </span>
-              <span className="text-emerald-500/60">•</span>
-              <span className="text-emerald-400 font-semibold">0-Tokens Active</span>
-            </div>
-          )}
-
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
           {/* View Mode Switcher */}
-          <div className="flex items-center rounded-lg bg-slate-900 border border-slate-800 p-0.5 text-xs">
+          <div className="flex items-center gap-1 bg-[#141926] p-1 rounded-xl border border-slate-800">
             <button
               onClick={() => setViewMode('guided')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                 viewMode === 'guided'
-                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-slate-800 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <ListOrdered className="w-3.5 h-3.5" />
-              <span>Guided Syllabus</span>
+              <span>Guided</span>
             </button>
             <button
               onClick={() => setViewMode('reference')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                 viewMode === 'reference'
-                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-slate-800 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <BookMarked className="w-3.5 h-3.5" />
-              <span>Reference Guide</span>
+              <span>Reference</span>
             </button>
           </div>
 
+          {/* Model Keys */}
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs transition cursor-pointer text-slate-300 hover:text-white shadow-xs"
+            className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-amber-300 hover:text-white hover:border-amber-500/40 flex items-center gap-1.5 cursor-pointer font-semibold transition"
             title="Configure Multi-Model Auto-Failover Pool (OpenCode Style)"
           >
-            <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="font-semibold text-slate-200 text-xs truncate max-w-[140px] sm:max-w-[200px]">
-              {activeModel.displayName}
-            </span>
-            <span
-              className={`text-[10px] px-1.5 py-0.2 rounded-full border shrink-0 font-mono ${
-                activeModel.isPersonal
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-semibold'
-                  : 'bg-slate-800 text-slate-400 border-slate-700/60'
-              }`}
-            >
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span className="font-semibold">{activeModel.displayName}</span>
+            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">
               {activeModel.badge}
             </span>
           </button>
         </div>
       </div>
+
+      {/* 2. MAIN AI DESK CONTAINER (Rounded-3xl obsidian card) */}
+      <div className="w-full h-[calc(100vh-11rem)] flex flex-col rounded-3xl bg-[#121724] border border-slate-800/80 shadow-md overflow-hidden">
 
       {/* 2. SUB-HEADER: Syllabus Track & Progress Bar (Guided Mode) */}
       {viewMode === 'guided' && activeTrack && (
@@ -1679,6 +1659,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             <Send className="w-4 h-4" />
           </button>
         </form>
+      </div>
       </div>
 
       {/* AI Key Configuration Modal */}
