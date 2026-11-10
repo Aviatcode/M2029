@@ -152,18 +152,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Menu className="w-4 h-4" />
         </button>
 
-        {/* Minimal AM Brand Identity */}
+        {/* M2028-style Brand Identity */}
         <button
           onClick={onNavigateHome}
-          className="flex items-center group cursor-pointer focus:outline-none"
+          className="flex items-center gap-2 group cursor-pointer focus:outline-none"
           title="Return to Workspace"
           aria-label="Return to Workspace"
         >
           <img
             src="./am-logo.png"
-            alt="AM Logo"
-            className="w-8 h-8 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition border border-neutral-800/80"
+            alt="M2029 Logo"
+            className="w-7 h-7 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition border border-neutral-800/80"
           />
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-bold text-slate-100 tracking-tight font-sans">
+              M2029
+            </span>
+            <span className="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.2 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
+              {classCode || 'CLASS'}
+            </span>
+          </div>
         </button>
       </div>
 
@@ -182,6 +190,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* 3. Right: Alerts & Minimal User DP */}
       <div className="flex items-center gap-2">
+        {/* Failover Model Status Pill */}
+        {onOpenAIKeyConfig && (
+          <button
+            onClick={onOpenAIKeyConfig}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 text-xs font-medium transition cursor-pointer"
+            title="Configure AI API Keys & Multi-Model Failover Pool"
+          >
+            <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="text-[11px] font-mono text-cyan-300 truncate max-w-[120px]">{currentAiModel}</span>
+          </button>
+        )}
+
         {/* Mobile search icon */}
         <button
           onClick={onOpenSearch}

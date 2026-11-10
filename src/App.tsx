@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, UploadCloud, CheckCircle2 } from 'lucide-react';
+import {
+  X,
+  UploadCloud,
+  CheckCircle2,
+  LayoutDashboard,
+  Bot,
+  Trophy,
+  BookOpen,
+  Calendar,
+  Flame,
+  ListTodo,
+  Zap,
+} from 'lucide-react';
 import {
   UserRole,
   ClassWorkspace,
@@ -247,6 +259,104 @@ export default function App() {
   const dragCounterRef = useRef(0);
   const [shareToast, setShareToast] = useState<string>('');
 
+  // Unified File Ingest Handler (used by Global Drag & Drop + Dashboard File Drop Zone Widget)
+  const handleIngestDroppedFiles = async (files: File[]) => {
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    try {
+      setShareToast(`⏳ Analyzing "${file.name}" with AI...`);
+      const extracted = await extractTextFromFile(file);
+      const isTimetable = isTimetableDocument(file.name, extracted.text);
+      const isSyllabus = isSyllabusDocument(file.name, extracted.text);
+
+      if (isTimetable) {
+        setShareToast(`📅 Reading Timetable "${file.name}" with AI...`);
+        const parsed = await parseTimetableWithAi({
+          rawText: extracted.text,
+          fileDataUrl: extracted.dataUrl,
+          fileName: file.name,
+          fileType: extracted.fileExt,
+          classCode: classCode || 'BCA-2028',
+        });
+
+        if (parsed.subjects.length > 0) {
+          setSubjects(parsed.subjects);
+          try {
+            localStorage.setItem('syllabus_subjects', JSON.stringify(parsed.subjects));
+          } catch {}
+        }
+        if (parsed.timetable.length > 0) {
+          setTimetable(parsed.timetable);
+          try {
+            localStorage.setItem('syllabus_timetable', JSON.stringify(parsed.timetable));
+          } catch {}
+        }
+        setIsSemesterSetupDone(true);
+        setIsOnboardingModalOpen(false);
+        setActiveTab('timetable');
+        try {
+          window.location.hash = 'timetable';
+        } catch {}
+        setShareToast(`✓ Timetable Loaded! Configured ${parsed.subjects.length} subjects & ${parsed.timetable.length} class slots.`);
+        setTimeout(() => setShareToast(''), 4500);
+        return;
+      }
+
+      if (isSyllabus) {
+        setShareToast(`📚 Reading Syllabus "${file.name}" with AI...`);
+        const parsed = parseSyllabusClient(extracted.text, file.name.replace(/\.[^/.]+$/, ''));
+        if (parsed.subjects.length > 0) {
+          setSubjects((prev) => {
+            const updated = [...prev];
+            parsed.subjects.forEach((s) => {
+              if (!updated.some((u) => u.name.toLowerCase() === s.name.toLowerCase())) {
+                updated.push(s);
+              }
+            });
+            try {
+              localStorage.setItem('syllabus_subjects', JSON.stringify(updated));
+            } catch {}
+            return updated;
+          });
+        }
+        if (Object.keys(parsed.unitsBySubject).length > 0) {
+          setUnitsBySubject((prev) => {
+            const merged = { ...prev, ...parsed.unitsBySubject };
+            try {
+              localStorage.setItem('syllabus_units', JSON.stringify(merged));
+            } catch {}
+            return merged;
+          });
+        }
+        setIsSemesterSetupDone(true);
+        setIsOnboardingModalOpen(false);
+        setActiveTab('syllabus');
+        try {
+          window.location.hash = 'syllabus';
+        } catch {}
+        setShareToast(`✓ Syllabus Loaded! Added ${parsed.subjects[0]?.name || 'Subject'} and course units.`);
+        setTimeout(() => setShareToast(''), 4500);
+        return;
+      }
+
+      // Normal study note/document: route to smart dump
+      setPendingIngestFiles(files);
+      setActiveTab('dump');
+      try {
+        window.location.hash = 'dump';
+      } catch {}
+      setShareToast(`📥 Dropped ${files.length} file(s). Auto-sorting into syllabus folders with AI...`);
+      setTimeout(() => setShareToast(''), 4500);
+    } catch (err: any) {
+      console.warn('Drop error fallback:', err);
+      setPendingIngestFiles(files);
+      setActiveTab('dump');
+      try {
+        window.location.hash = 'dump';
+      } catch {}
+    }
+  };
+
   // 1. PC Global Drag & Drop: Drag files anywhere on PC to trigger AI auto-sort
   useEffect(() => {
     const handleDragEnter = (e: DragEvent) => {
@@ -283,98 +393,7 @@ export default function App() {
       setIsGlobalDragging(false);
 
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        const file = e.dataTransfer.files[0];
-        extractTextFromFile(file)
-          .then(async (extracted) => {
-            const isTimetable = isTimetableDocument(file.name, extracted.text);
-            const isSyllabus = isSyllabusDocument(file.name, extracted.text);
-
-            if (isTimetable) {
-              setShareToast(`📅 Reading Timetable "${file.name}" with AI...`);
-              const parsed = await parseTimetableWithAi({
-                rawText: extracted.text,
-                fileDataUrl: extracted.dataUrl,
-                fileName: file.name,
-                fileType: extracted.fileExt,
-                classCode: classCode || 'BCA-2028',
-              });
-
-              if (parsed.subjects.length > 0) {
-                setSubjects(parsed.subjects);
-                try {
-                  localStorage.setItem('syllabus_subjects', JSON.stringify(parsed.subjects));
-                } catch {}
-              }
-              if (parsed.timetable.length > 0) {
-                setTimetable(parsed.timetable);
-                try {
-                  localStorage.setItem('syllabus_timetable', JSON.stringify(parsed.timetable));
-                } catch {}
-              }
-              setIsSemesterSetupDone(true);
-              setIsOnboardingModalOpen(false);
-              setActiveTab('timetable');
-              try {
-                window.location.hash = 'timetable';
-              } catch {}
-              setShareToast(`✓ Timetable Loaded! Configured ${parsed.subjects.length} subjects & ${parsed.timetable.length} class slots.`);
-              setTimeout(() => setShareToast(''), 4500);
-              return;
-            }
-
-            if (isSyllabus) {
-              setShareToast(`📚 Reading Syllabus "${file.name}" with AI...`);
-              const parsed = parseSyllabusClient(extracted.text, file.name.replace(/\.[^/.]+$/, ''));
-              if (parsed.subjects.length > 0) {
-                setSubjects((prev) => {
-                  const updated = [...prev];
-                  parsed.subjects.forEach((s) => {
-                    if (!updated.some((u) => u.name.toLowerCase() === s.name.toLowerCase())) {
-                      updated.push(s);
-                    }
-                  });
-                  try {
-                    localStorage.setItem('syllabus_subjects', JSON.stringify(updated));
-                  } catch {}
-                  return updated;
-                });
-              }
-              if (Object.keys(parsed.unitsBySubject).length > 0) {
-                setUnitsBySubject((prev) => {
-                  const merged = { ...prev, ...parsed.unitsBySubject };
-                  try {
-                    localStorage.setItem('syllabus_units', JSON.stringify(merged));
-                  } catch {}
-                  return merged;
-                });
-              }
-              setIsSemesterSetupDone(true);
-              setIsOnboardingModalOpen(false);
-              setActiveTab('syllabus');
-              try {
-                window.location.hash = 'syllabus';
-              } catch {}
-              setShareToast(`✓ Syllabus Loaded! Added ${parsed.subjects[0]?.name || 'Subject'} and course units.`);
-              setTimeout(() => setShareToast(''), 4500);
-              return;
-            }
-
-            // Normal study note/document: route to smart dump
-            const filesArray = Array.from(e.dataTransfer!.files);
-            setPendingIngestFiles(filesArray);
-            setActiveTab('dump');
-            try {
-              window.location.hash = 'dump';
-            } catch {}
-            setShareToast(`📥 Dropped ${filesArray.length} file(s). Auto-sorting into syllabus folders...`);
-            setTimeout(() => setShareToast(''), 4500);
-          })
-          .catch((err) => {
-            console.warn('Drop error fallback:', err);
-            const filesArray = Array.from(e.dataTransfer!.files);
-            setPendingIngestFiles(filesArray);
-            setActiveTab('dump');
-          });
+        handleIngestDroppedFiles(Array.from(e.dataTransfer.files));
       }
     };
 
@@ -1782,29 +1801,68 @@ export default function App() {
           </div>
         )}
 
-        {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
-        <main className="flex-1 h-full overflow-y-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 max-w-5xl xl:max-w-6xl mx-auto w-full">
-          {activeTab === 'dashboard' && (
-            <DashboardView
-              studentName={currentUser.name}
-              classCode={classCode}
-              semesterNumber={workspace.semester}
-              todayClasses={timetable.filter((t) => t.day === 'Wednesday')}
-              tomorrowClasses={timetable.filter((t) => t.day === 'Thursday')}
-              upcomingExams={exams}
-              recentMaterials={materials}
-              announcements={announcements}
-              subjects={subjects}
-              assignments={assignments}
-              onOpenTomorrowPrep={() => setIsTomorrowModalOpen(true)}
-              onNavigateTab={handleSelectTab}
-              onTriggerQuickAIAction={handleQuickAIAction}
-              onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
-              onOpenMaterial={handleOpenMaterial}
-              onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
-              calmMode={calmMode}
-            />
-          )}
+        {/* Main Content Column with M2028-style Horizontal Sub-Navigation */}
+        <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+          {/* M2028 Horizontal Sub-Navigation Tab Track (.tnb) */}
+          <nav className="h-11 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 px-3 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0 z-20">
+            {[
+              { id: 'dashboard', label: 'Today', icon: LayoutDashboard },
+              { id: 'ai-tutor', label: 'AI Companion', icon: Bot },
+              { id: 'knowledge-dashboard', label: 'Class Brain', icon: Trophy },
+              { id: 'syllabus', label: 'Syllabus', icon: BookOpen },
+              { id: 'timetable', label: 'Timetable', icon: Calendar },
+              { id: 'exams', label: 'Exams & Radar', icon: Flame },
+              { id: 'assignments', label: 'Tasks', icon: ListTodo },
+              { id: 'dump', label: 'Study Drop', icon: UploadCloud },
+              { id: 'daily-update', label: 'Daily Pulse', icon: Zap },
+            ].map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleSelectTab(tab.id as ActiveNavTab)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                    isActive
+                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-transparent'
+                  }`}
+                >
+                  <TabIcon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
+          <main className="flex-1 h-full overflow-y-auto px-3 sm:px-5 md:px-7 py-4 sm:py-6 w-full max-w-[1580px] mx-auto">
+            {activeTab === 'dashboard' && (
+              <DashboardView
+                studentName={currentUser.name}
+                classCode={classCode}
+                semesterNumber={workspace.semester}
+                todayClasses={timetable.filter((t) => t.day === 'Wednesday')}
+                tomorrowClasses={timetable.filter((t) => t.day === 'Thursday')}
+                upcomingExams={exams}
+                recentMaterials={materials}
+                announcements={announcements}
+                subjects={subjects}
+                assignments={assignments}
+                onOpenTomorrowPrep={() => setIsTomorrowModalOpen(true)}
+                onNavigateTab={handleSelectTab}
+                onTriggerQuickAIAction={handleQuickAIAction}
+                onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+                onOpenMaterial={handleOpenMaterial}
+                onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
+                calmMode={calmMode}
+                onAskAI={(prompt) => {
+                  setInitialTutorPrompt(prompt);
+                  setActiveTab('ai-tutor');
+                }}
+                onFilesDropped={handleIngestDroppedFiles}
+              />
+            )}
 
           {activeTab === 'daily-update' && (
             <DailyUpdateView
@@ -1988,6 +2046,7 @@ export default function App() {
             />
           )}
         </main>
+      </div>
       </div>
       </div>
       )}
