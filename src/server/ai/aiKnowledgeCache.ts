@@ -39,6 +39,8 @@ export interface CachedAIResponse {
   negativeVotes?: number;
   needsRefinement?: boolean;
   isTeacherCurated?: boolean;
+  /** Models contributed by premium-key students (e.g. ["GPT-4o", "Claude 3.5 Sonnet"]) */
+  contributingModels?: string[];
 }
 
 export interface CacheStats {
@@ -398,6 +400,7 @@ class AIKnowledgeCacheManager {
     answer: string,
     sections?: Record<string, string>,
     modelUsed = 'AI Model',
+    contributingModels?: string[],
     iterationCount = 1,
     isCohortPerfected = false,
     customEvolution?: EvolutionStep[]
@@ -456,6 +459,10 @@ class AIKnowledgeCacheManager {
       needsRefinement: false,
       isTeacherCurated: false,
     };
+
+    if (contributingModels) {
+      entry.contributingModels = contributingModels;
+    }
 
     this.cache.set(id, entry);
     this.saveToDisk();
@@ -528,6 +535,7 @@ class AIKnowledgeCacheManager {
       improvedAnswer,
       improvedSections,
       'Cohort Compounding Engine',
+      undefined,
       nextIter,
       isPerfect,
       updatedHistory
@@ -571,6 +579,7 @@ class AIKnowledgeCacheManager {
       masterAnswer,
       masterSections,
       'Cohort Compounding Master Engine (60th Student)',
+      undefined,
       60,
       true,
       milestones
@@ -620,6 +629,7 @@ class AIKnowledgeCacheManager {
       teacherEditedAnswer,
       undefined,
       `Teacher Verified (${teacherName || 'Faculty'})`,
+      undefined,
       60,
       true,
       [step]

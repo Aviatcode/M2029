@@ -135,6 +135,29 @@ export class UniversalAIProvider implements AIProvider {
     return this.apiKey.length > 5 || this.baseUrl.length > 5;
   }
 
+  /**
+   * Returns the tier of this AI provider:
+   *   'premium'  — GPT-4-class, Claude 3.5/3.7, Gemini Pro/Ultra, DeepSeek R1
+   *   'standard' — Gemini Flash, Groq Llama, DeepSeek Chat, OpenRouter mid-tier
+   *   'basic'    — offline / sandbox / no-key fallback
+   */
+  getTier(): 'premium' | 'standard' | 'basic' {
+    if (this.provider === 'basic' || this.provider === 'sandbox') return 'basic';
+    const m = (this.modelName || '').toLowerCase();
+    if (
+      m.includes('gpt-4') ||
+      m.includes('claude-3-5') ||
+      m.includes('claude-3-7') ||
+      m.includes('claude-3-opus') ||
+      m.includes('gemini-pro') ||
+      m.includes('gemini-ultra') ||
+      m.includes('deepseek-r1') ||
+      m.includes('o1') ||
+      m.includes('o3')
+    ) return 'premium';
+    return 'standard';
+  }
+
   async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
     const isTestPrompt = prompt.includes('operational for M2029') || prompt.includes('confirming connection');
 

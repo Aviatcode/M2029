@@ -1222,8 +1222,10 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const hasPersonalKey = Boolean(userAiConfig && (userAiConfig.apiKey?.trim() || userAiConfig.baseUrl?.trim()));
 
   // 1. FAST ZERO-TOKEN COHORT-PERFECTED CACHE LOOKUP
-  // Checks if a previous student in the cohort has explored, refined, or perfected this topic!
-  if (!forceLive && !hasPersonalKey) {
+  // Cache is ALWAYS checked first — even for personal-key students.
+  // Students with premium keys still get instant cache hits (0 tokens, 0 rate limits).
+  // Only a cache MISS triggers their personal AI, which then contributes back to the class.
+  if (!forceLive) {
     const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
     if (cached) {
       // Trigger non-blocking background refinement check (Milestones 15, 30, 45, 60 or flagged)
@@ -1242,6 +1244,7 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
         positiveVotes: cached.positiveVotes || 0,
         negativeVotes: cached.negativeVotes || 0,
         isTeacherCurated: cached.isTeacherCurated || false,
+        contributingModels: cached.contributingModels || [],
         // 60-Student Compounding Intelligence Metadata
         iterationCount: cached.iterationCount || 60,
         targetCohortSize: cached.targetCohortSize || 60,
