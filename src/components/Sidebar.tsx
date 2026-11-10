@@ -72,9 +72,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Minimized to 6 core essentials matching strict minimalism
   const mainNavItems = [
     { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'ai-tutor' as const, label: 'AI Companion', icon: Bot, isAI: true },
+    { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot, isAI: true },
     { id: 'materials' as const, label: 'Materials', icon: FolderOpen },
-    { id: 'exams' as const, label: 'Exams & Syllabus', icon: Flame },
+    { id: 'exams' as const, label: 'Exams', icon: Flame },
     { id: 'timetable' as const, label: 'Schedule', icon: Calendar },
     { id: 'knowledge-dashboard' as const, label: 'Class Brain', icon: Trophy },
   ];

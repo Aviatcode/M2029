@@ -1276,8 +1276,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                             {studyGuide.perfectionTier || 'Class Gold Standard'}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                          Refined sequentially across 60 student peers: Student 1 draft → Student 2 terminology → Student 5 ELI9 analogies → Student 15 diagrams → Student 30 10-marker → Student 60 golden master.
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Class-perfected exam solution (0 tokens spent).
                         </p>
                       </div>
                     </div>
@@ -1573,7 +1573,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                     <div className="flex items-center gap-2.5 text-indigo-200">
                       <span className="text-base">🔑</span>
                       <span>
-                        Have a Gemini, OpenAI, Claude, or Groq API key? Connect your personal key to enrich the shared class cache with premium intelligence!
+                        Add your personal API key (Gemini, Claude, GPT) to contribute premium answers to class.
                       </span>
                     </div>
                     <button

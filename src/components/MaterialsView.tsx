@@ -358,26 +358,43 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       </div>
 
       {/* 3. Main Reading Pane: File Index & Scholar Notes */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Files Column */}
-        <div className="space-y-2.5">
-          <h2 className="academic-tag text-[10px] text-slate-400">
-            Document Archive ({filteredMaterials.length})
-          </h2>
+      {materials.length === 0 ? (
+        <div
+          onClick={() => setIsUploading(true)}
+          className="p-12 rounded-3xl bg-[#121724] border border-dashed border-slate-800 hover:border-cyan-500/50 flex flex-col items-center justify-center text-center gap-3 cursor-pointer transition group select-none"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
+            <UploadCloud className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-white">No materials uploaded yet</h3>
+            <p className="text-xs text-slate-400 mt-1">Drop lecture notes, syllabus PPTs, or PDFs to generate summaries & answers</p>
+          </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsUploading(true);
+            }}
+            className="mt-1 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
+          >
+            Upload First Document
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Files Column */}
+          <div className="space-y-2.5">
+            <h2 className="academic-tag text-[10px] text-slate-400">
+              Document Archive ({filteredMaterials.length})
+            </h2>
 
-          <div className="space-y-1.5">
-            {filteredMaterials.length === 0 ? (
-              <div className="py-8 text-center text-xs text-slate-500 rounded-md border border-dashed border-slate-800 bg-slate-900/20 space-y-2">
-                <FileText className="w-6 h-6 text-slate-600 mx-auto" />
-                <p>No documents uploaded yet.</p>
-                <button
-                  onClick={() => setIsUploading(true)}
-                  className="text-xs text-slate-400 hover:text-white underline underline-offset-4 cursor-pointer"
-                >
-                  Upload notes or PDF →
-                </button>
-              </div>
-            ) : (
+            <div className="space-y-1.5">
+              {filteredMaterials.length === 0 ? (
+                <div className="py-8 text-center text-xs text-slate-500 rounded-md border border-dashed border-slate-800 bg-slate-900/20 space-y-2">
+                  <FileText className="w-6 h-6 text-slate-600 mx-auto" />
+                  <p>No documents for this subject.</p>
+                </div>
+              ) : (
               filteredMaterials.map((mat) => {
               const isSelected = selectedMaterial?.id === mat.id;
 
@@ -571,28 +588,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               )}
             </div>
           ) : (
-            <div className="rounded-xl bg-slate-900/30 border border-dashed border-slate-800 p-12 text-center space-y-3">
-              <UploadCloud className="w-10 h-10 text-slate-600 mx-auto" />
-              <h3 className="text-sm font-medium text-slate-300">
-                {materials.length === 0 ? 'Document vault is empty' : 'Select a file to inspect'}
-              </h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                {materials.length === 0
-                  ? 'Upload course lecture notes, PPTs, or scanned papers. AI will generate summaries, mnemonics, and exam answers.'
-                  : 'Click any document on the left to read its summary and study outline.'}
-              </p>
-              {materials.length === 0 && (
-                <button
-                  onClick={() => setIsUploading(true)}
-                  className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 font-medium text-xs transition cursor-pointer"
-                >
-                  Upload First Document
-                </button>
-              )}
+            <div className="rounded-xl bg-[#121724] border border-slate-800/80 p-12 text-center space-y-2">
+              <FileText className="w-8 h-8 text-slate-500 mx-auto" />
+              <h3 className="text-sm font-bold text-slate-300">Select a file to inspect</h3>
+              <p className="text-xs text-slate-500">Click any document on the left to read its summary and study outline.</p>
             </div>
           )}
         </div>
       </div>
+    )}
 
       {/* Upload Modal with Real File Drag & Drop */}
       {isUploading && (

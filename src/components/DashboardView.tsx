@@ -19,7 +19,7 @@ import {
   ChevronDown,
   Search,
   MoreVertical,
-  Moon,
+  TrendingUp,
 } from 'lucide-react';
 import { ActiveNavTab } from './Sidebar';
 
@@ -335,7 +335,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-violet-400" />
-              <h2 className="text-sm font-bold text-slate-100">Wellness Index</h2>
+              <h2 className="text-sm font-bold text-slate-100">Syllabus Progress</h2>
             </div>
             <button className="text-slate-600 hover:text-slate-400">
               <MoreVertical className="w-3.5 h-3.5" />
@@ -447,8 +447,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="col-span-1 lg:col-span-2 bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Moon className="w-4 h-4 text-amber-400" />
-              <h2 className="text-sm font-bold text-slate-100">Sleep Analysis</h2>
+              <TrendingUp className="w-4 h-4 text-cyan-400" />
+              <h2 className="text-sm font-bold text-slate-100">Study Activity</h2>
             </div>
 
             <div className="relative">
@@ -478,21 +478,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          {/* Sub-Metrics: 85% | 7h 15m */}
+          {/* Sub-Metrics: 85% | 14h */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-start gap-2">
               <div className="w-1 h-8 rounded-full bg-amber-400 shrink-0" />
               <div>
                 <div className="text-xl font-black text-white">85%</div>
-                <div className="text-[10px] text-slate-400">Sleep Efficiency</div>
+                <div className="text-[10px] text-slate-400">Exam Readiness</div>
               </div>
             </div>
 
             <div className="flex items-start gap-2">
               <div className="w-1 h-8 rounded-full bg-cyan-400 shrink-0" />
               <div>
-                <div className="text-xl font-black text-white">7h 15m</div>
-                <div className="text-[10px] text-slate-400">Sleep Duration</div>
+                <div className="text-xl font-black text-white">14h</div>
+                <div className="text-[10px] text-slate-400">Weekly Study</div>
               </div>
             </div>
           </div>
