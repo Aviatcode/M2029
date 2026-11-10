@@ -4,6 +4,8 @@ import path from 'path';
 import fs from 'fs';
 import { ragEngine } from './ragIndex.js';
 import { AcademicMaterial } from '../../types/index.js';
+import { aiKnowledgeCache } from '../ai/aiKnowledgeCache.js';
+import { AIProviderFactory } from '../ai/provider.js';
 import {
   fetchAndIngestFromGitHub,
   uploadDocToGitHubRelease,
@@ -133,6 +135,9 @@ ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Respo
       }
     }
 
+    // Trigger proactive background cache warm-up (fire & forget)
+    triggerCacheWarmUpForDocument(ragDoc, subjectName || 'Core Curriculum');
+
     res.json({
       status: 'success',
       message: `⚡ Document indexed successfully! ${ragDoc.chunkCount} chunks are now active on the backend.`,
@@ -144,6 +149,62 @@ ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Respo
     res.status(500).json({ error: err?.message || 'Failed to upload and index document.' });
   }
 });
+
+/**
+ * Background warm-up engine: Proactively predicts exam questions from uploaded textbook
+ * and seeds the collective knowledge cache with 60th-student perfected answers!
+ */
+function triggerCacheWarmUpForDocument(ragDoc: any, subjectName: string) {
+  setImmediate(async () => {
+    try {
+      console.log(`[Cache Warm-Up] 🚀 Proactively warming cache for newly uploaded: "${ragDoc.title}"...`);
+      const ai = AIProviderFactory.getClassProvider();
+      if (!ai || !ai.isAvailable()) return;
+
+      const prompt = `You are an AI for Indian university CS/CE students.
+Based on this document summary: """${ragDoc.summary || ragDoc.title}"""
+Table of contents: ${JSON.stringify(ragDoc.tableOfContents || [])}
+Generate the 8 most likely university exam questions (10-marker level) from this document.
+Return ONLY valid JSON array with no extra markdown formatting:
+[
+  { "question": "What is...", "topicKey": "Deadlock Handling" }
+]`;
+
+      const questionsJson = await ai.generateText(prompt, 'Return strict JSON array of 8 exam questions.');
+      let parsedQuestions: { question: string; topicKey?: string }[] = [];
+      try {
+        const clean = questionsJson.replace(/```json/gi, '').replace(/```/gi, '').trim();
+        parsedQuestions = JSON.parse(clean);
+      } catch {
+        const lines = questionsJson.split('\n').filter((l) => l.includes('?'));
+        parsedQuestions = lines.slice(0, 8).map((l) => ({ question: l.replace(/^[\d.-]+\s*/, '').trim() }));
+      }
+
+      if (!Array.isArray(parsedQuestions) || parsedQuestions.length === 0) return;
+
+      console.log(`[Cache Warm-Up] Generating ${parsedQuestions.length} pre-seeded answers for "${ragDoc.title}"...`);
+
+      for (const item of parsedQuestions.slice(0, 8)) {
+        const qText = item.question;
+        const topicKey = item.topicKey || qText;
+        if (!qText || qText.length < 5) continue;
+
+        if (aiKnowledgeCache.get(qText, subjectName, 'all')) continue;
+
+        const answerPrompt = `Provide a comprehensive university exam Section-C 10-marker master answer for:
+"${qText}" in subject "${subjectName || 'Computer Science'}". Include Definition, Diagram description / ASCII schematic, Step-by-Step mechanism, Code or Algorithm, and Gotchas.`;
+
+        const answer = await ai.generateText(answerPrompt, 'Provide complete exam-ready master answer.');
+        if (answer && answer.length > 100) {
+          aiKnowledgeCache.elevateTo60(topicKey, subjectName || 'Computer Science', 'all', answer);
+        }
+      }
+      console.log(`[Cache Warm-Up] ✅ Finished pre-seeding knowledge cache for "${ragDoc.title}"!`);
+    } catch (err: any) {
+      console.warn('[Cache Warm-Up] Warning during document warm-up:', err?.message || err);
+    }
+  });
+}
 
 /**
  * 2. Get All Active RAG Documents

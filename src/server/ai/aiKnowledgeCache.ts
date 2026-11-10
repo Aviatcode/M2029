@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { isNeonConfigured, getNeonSql } from '../db/neonClient.js';
 
 export interface EvolutionStep {
   iteration: number;
@@ -27,8 +28,17 @@ export interface CachedAIResponse {
   targetCohortSize: number; // 60
   isCohortPerfected: boolean; // true when iterationCount >= 60 or marked Master
   perfectionScore: number; // 0 - 100%
-  perfectionTier: 'Draft (Student 1)' | 'Peer-Enhanced (Students 2-10)' | 'Exam-Hardened (Students 11-40)' | 'Master Gold Standard (60th Student)';
+  perfectionTier:
+    | 'Draft (Student 1)'
+    | 'Peer-Enhanced (Students 2-10)'
+    | 'Exam-Hardened (Students 11-40)'
+    | 'Master Gold Standard (60th Student)'
+    | 'Teacher-Verified Gold Standard';
   evolutionHistory: EvolutionStep[];
+  positiveVotes?: number;
+  negativeVotes?: number;
+  needsRefinement?: boolean;
+  isTeacherCurated?: boolean;
 }
 
 export interface CacheStats {
@@ -36,10 +46,38 @@ export interface CacheStats {
   cohortPerfectedCount: number;
   totalHits: number;
   estimatedTokensSaved: number;
+  topTopics: { query: string; hitCount: number; perfectionTier: string }[];
+  subjectBreakdown: { subjectName: string; topicCount: number; totalHits: number }[];
+  recentlyPerfected: { query: string; perfectedAt: string }[];
+  estimatedMoneySaved: number;
   lastUpdated: string;
 }
 
 const CACHE_FILE = path.resolve(process.cwd(), 'curriculum-repo', '.ai_knowledge_cache.json');
+
+// Canonical synonyms & abbreviation expansion map for academic questions
+export const TOPIC_SYNONYMS: Record<string, string> = {
+  fcfs: 'first come first served',
+  sjf: 'shortest job first',
+  srtf: 'shortest remaining time first',
+  rr: 'round robin',
+  os: 'operating system',
+  dbms: 'database management system',
+  rdbms: 'relational database',
+  cpu: 'processor',
+  ram: 'memory',
+  normalization: 'normal form',
+  '1nf': 'first normal form',
+  '2nf': 'second normal form',
+  '3nf': 'third normal form',
+  bcnf: 'boyce codd normal form',
+  acid: 'atomicity consistency isolation durability',
+  pcb: 'process control block',
+  tlb: 'translation lookaside buffer',
+  vm: 'virtual memory',
+  lru: 'least recently used',
+  fifo: 'first in first out',
+};
 
 // Stop words for academic semantic normalization
 const STOP_WORDS = new Set([
@@ -94,13 +132,43 @@ export function normalizeAcademicQuery(rawQuery: string): string {
   const words = cleaned
     .split(/\s+/)
     .map((w) => w.trim())
-    .filter((w) => w.length > 1 && !STOP_WORDS.has(w));
+    .filter((w) => w.length > 0);
 
-  if (words.length === 0) {
+  // Expand abbreviations and filter stop words
+  const expandedWords: string[] = [];
+  for (const w of words) {
+    if (TOPIC_SYNONYMS[w]) {
+      const synTokens = TOPIC_SYNONYMS[w].split(/\s+/);
+      for (const st of synTokens) {
+        if (!STOP_WORDS.has(st) && st.length > 1) {
+          expandedWords.push(st);
+        }
+      }
+    } else if (!STOP_WORDS.has(w) && w.length > 1) {
+      expandedWords.push(w);
+    }
+  }
+
+  if (expandedWords.length === 0) {
     return cleaned.replace(/\s+/g, ' ').slice(0, 80);
   }
 
-  return Array.from(new Set(words)).join(' ');
+  return Array.from(new Set(expandedWords)).join(' ');
+}
+
+// Jaccard similarity for tokenized fuzzy search
+export function calculateJaccardSimilarity(strA: string, strB: string): number {
+  if (!strA || !strB) return 0;
+  const setA = new Set(strA.toLowerCase().split(/\s+/).filter((w) => w.length > 1));
+  const setB = new Set(strB.toLowerCase().split(/\s+/).filter((w) => w.length > 1));
+  if (setA.size === 0 || setB.size === 0) return 0;
+
+  let intersectionCount = 0;
+  for (const item of setA) {
+    if (setB.has(item)) intersectionCount++;
+  }
+  const unionCount = new Set([...setA, ...setB]).size;
+  return unionCount === 0 ? 0 : intersectionCount / unionCount;
 }
 
 // Generate the 60-Student Evolution Milestones Trajectory
@@ -287,6 +355,27 @@ class AIKnowledgeCacheManager {
       }
     }
 
+    // 3. Fuzzy Jaccard similarity check (>= 0.75 threshold)
+    if (normalized.length >= 3) {
+      let bestMatch: CachedAIResponse | null = null;
+      let highestSimilarity = 0;
+
+      for (const entry of this.cache.values()) {
+        if (entry.mode === cleanMode || cleanMode === 'all') {
+          const sim = calculateJaccardSimilarity(normalized, entry.normalizedKey);
+          if (sim >= 0.75 && sim > highestSimilarity) {
+            highestSimilarity = sim;
+            bestMatch = entry;
+          }
+        }
+      }
+
+      if (bestMatch) {
+        this.registerHit(bestMatch);
+        return bestMatch;
+      }
+    }
+
     return null;
   }
 
@@ -296,7 +385,10 @@ class AIKnowledgeCacheManager {
     this.totalHits += 1;
     const saved = entry.tokensEstimated || 1500;
     this.totalTokensSaved += saved;
-    setTimeout(() => this.saveToDisk(), 100);
+    setTimeout(() => {
+      this.saveToDisk();
+      this.syncToNeon(entry).catch(() => {});
+    }, 100);
   }
 
   public set(
@@ -359,10 +451,15 @@ class AIKnowledgeCacheManager {
       perfectionScore,
       perfectionTier,
       evolutionHistory,
+      positiveVotes: 0,
+      negativeVotes: 0,
+      needsRefinement: false,
+      isTeacherCurated: false,
     };
 
     this.cache.set(id, entry);
     this.saveToDisk();
+    this.syncToNeon(entry).catch(() => {});
     console.log(
       `[AI Knowledge Cache] 🧠 Stored topic: "${query}" (Iter: ${iterationCount}/60, Perfected: ${isPerfect})`
     );
@@ -383,6 +480,11 @@ class AIKnowledgeCacheManager {
     studentFeedback?: string
   ): CachedAIResponse {
     const existing = this.get(query, subjectName, mode);
+    // Never allow automated milestone refinement to overwrite a teacher-curated answer
+    if (existing?.isTeacherCurated) {
+      return existing;
+    }
+
     const nextIter = (existing?.iterationCount || 1) + 1;
     const isPerfect = nextIter >= 60;
     const perfectionScore = isPerfect ? 99 : Math.min(98, Math.round(55 + (nextIter / 60) * 43));
@@ -412,12 +514,14 @@ class AIKnowledgeCacheManager {
       existing.perfectionScore = perfectionScore;
       existing.perfectionTier = perfectionTier;
       existing.evolutionHistory = updatedHistory;
+      existing.needsRefinement = false;
       existing.lastAccessedAt = new Date().toISOString();
       this.saveToDisk();
+      this.syncToNeon(existing).catch(() => {});
       return existing;
     }
 
-    return this.set(
+    const created = this.set(
       query,
       subjectName,
       mode,
@@ -428,6 +532,8 @@ class AIKnowledgeCacheManager {
       isPerfect,
       updatedHistory
     );
+    this.syncToNeon(created).catch(() => {});
+    return created;
   }
 
   /**
@@ -451,12 +557,14 @@ class AIKnowledgeCacheManager {
       existing.perfectionScore = 99;
       existing.perfectionTier = 'Master Gold Standard (60th Student)';
       existing.evolutionHistory = milestones;
+      existing.needsRefinement = false;
       existing.lastAccessedAt = new Date().toISOString();
       this.saveToDisk();
+      this.syncToNeon(existing).catch(() => {});
       return existing;
     }
 
-    return this.set(
+    const created = this.set(
       query,
       subjectName,
       mode,
@@ -467,16 +575,282 @@ class AIKnowledgeCacheManager {
       true,
       milestones
     );
+    this.syncToNeon(created).catch(() => {});
+    return created;
+  }
+
+  /**
+   * Teacher / CR manual curation override: Locks answer as permanent Master Gold Standard
+   */
+  public curateByTeacher(
+    query: string,
+    subjectName: string,
+    mode: string,
+    teacherEditedAnswer: string,
+    teacherName: string
+  ): CachedAIResponse {
+    const existing = this.get(query, subjectName, mode);
+    const step: EvolutionStep = {
+      iteration: 60,
+      studentLabel: teacherName || 'Faculty In-Charge',
+      improvedAt: new Date().toISOString(),
+      focus: 'Teacher Manual Curation',
+      summary: `Verified, edited, and approved by faculty (${teacherName || 'Faculty'}). Locked as permanent Master Gold Standard.`,
+    };
+
+    if (existing) {
+      existing.answer = teacherEditedAnswer.trim();
+      existing.iterationCount = 60;
+      existing.isCohortPerfected = true;
+      existing.perfectionScore = 100;
+      existing.perfectionTier = 'Teacher-Verified Gold Standard';
+      existing.isTeacherCurated = true;
+      existing.needsRefinement = false;
+      existing.evolutionHistory = [...(existing.evolutionHistory || []), step];
+      existing.lastAccessedAt = new Date().toISOString();
+      this.saveToDisk();
+      this.syncToNeon(existing).catch(() => {});
+      return existing;
+    }
+
+    const entry = this.set(
+      query,
+      subjectName,
+      mode,
+      teacherEditedAnswer,
+      undefined,
+      `Teacher Verified (${teacherName || 'Faculty'})`,
+      60,
+      true,
+      [step]
+    );
+    entry.perfectionTier = 'Teacher-Verified Gold Standard';
+    entry.perfectionScore = 100;
+    entry.isTeacherCurated = true;
+    this.saveToDisk();
+    this.syncToNeon(entry).catch(() => {});
+    return entry;
+  }
+
+  /**
+   * Student answer rating feedback loop (Thumbs Up / Thumbs Down)
+   */
+  public vote(
+    query: string,
+    subjectName = '',
+    mode = 'all',
+    vote: 'up' | 'down',
+    reason?: string
+  ): { entry: CachedAIResponse | null; shouldRefine: boolean } {
+    const entry = this.get(query, subjectName, mode);
+    if (!entry) return { entry: null, shouldRefine: false };
+
+    if (vote === 'up') {
+      entry.positiveVotes = (entry.positiveVotes || 0) + 1;
+      if (entry.positiveVotes >= 10 && entry.perfectionScore < 100) {
+        entry.perfectionScore = Math.min(100, (entry.perfectionScore || 50) + 5);
+      }
+    } else {
+      entry.negativeVotes = (entry.negativeVotes || 0) + 1;
+      if (entry.negativeVotes >= 3) {
+        entry.needsRefinement = true;
+      }
+    }
+
+    if (reason && reason.trim()) {
+      entry.evolutionHistory.push({
+        iteration: entry.iterationCount,
+        studentLabel: 'Student Feedback',
+        improvedAt: new Date().toISOString(),
+        focus: vote === 'up' ? 'Positive Student Endorsement' : 'Student Issue Flagged',
+        summary: `Feedback (${vote}): "${reason.trim().slice(0, 150)}"`,
+      });
+    }
+
+    this.saveToDisk();
+    this.syncToNeon(entry).catch(() => {});
+    return { entry, shouldRefine: Boolean(entry.needsRefinement) };
+  }
+
+  /**
+   * Asynchronously synchronize one cache entry to Neon PostgreSQL (optional-safe)
+   */
+  public async syncToNeon(entry: CachedAIResponse): Promise<void> {
+    if (!isNeonConfigured()) return;
+    try {
+      const sql = getNeonSql();
+      if (!sql) return;
+      await sql`
+        INSERT INTO ai_knowledge_cache (
+          id, normalized_key, query, subject_name, mode, answer, sections, model_used,
+          created_at, last_accessed_at, hit_count, tokens_estimated, iteration_count,
+          target_cohort_size, is_cohort_perfected, perfection_score, perfection_tier,
+          evolution_history, positive_votes, negative_votes, needs_refinement, is_teacher_curated
+        ) VALUES (
+          ${entry.id}, ${entry.normalizedKey}, ${entry.query}, ${entry.subjectName},
+          ${entry.mode}, ${entry.answer}, ${JSON.stringify(entry.sections || {})}::jsonb,
+          ${entry.modelUsed || 'AI Engine'}, ${entry.createdAt}, ${entry.lastAccessedAt},
+          ${entry.hitCount || 1}, ${entry.tokensEstimated || 1500}, ${entry.iterationCount || 1},
+          ${entry.targetCohortSize || 60}, ${entry.isCohortPerfected || false},
+          ${entry.perfectionScore || 15}, ${entry.perfectionTier},
+          ${JSON.stringify(entry.evolutionHistory || [])}::jsonb,
+          ${entry.positiveVotes || 0}, ${entry.negativeVotes || 0},
+          ${entry.needsRefinement || false}, ${entry.isTeacherCurated || false}
+        )
+        ON CONFLICT (id) DO UPDATE SET
+          answer = EXCLUDED.answer,
+          sections = EXCLUDED.sections,
+          last_accessed_at = EXCLUDED.last_accessed_at,
+          hit_count = EXCLUDED.hit_count,
+          tokens_estimated = EXCLUDED.tokens_estimated,
+          iteration_count = EXCLUDED.iteration_count,
+          is_cohort_perfected = EXCLUDED.is_cohort_perfected,
+          perfection_score = EXCLUDED.perfection_score,
+          perfection_tier = EXCLUDED.perfection_tier,
+          evolution_history = EXCLUDED.evolution_history,
+          positive_votes = EXCLUDED.positive_votes,
+          negative_votes = EXCLUDED.negative_votes,
+          needs_refinement = EXCLUDED.needs_refinement,
+          is_teacher_curated = EXCLUDED.is_teacher_curated;
+      `;
+    } catch (err: any) {
+      console.warn('[AI Knowledge Cache] Neon sync notice:', err?.message || err);
+    }
+  }
+
+  /**
+   * Hydrate in-memory cache from Neon PostgreSQL on server startup (survives Vercel/restart)
+   */
+  public async hydrateFromNeon(): Promise<number> {
+    if (!isNeonConfigured()) return 0;
+    try {
+      const sql = getNeonSql();
+      if (!sql) return 0;
+
+      // Ensure table exists
+      await sql`
+        CREATE TABLE IF NOT EXISTS ai_knowledge_cache (
+          id TEXT PRIMARY KEY,
+          normalized_key TEXT NOT NULL,
+          query TEXT NOT NULL,
+          subject_name TEXT NOT NULL,
+          mode TEXT NOT NULL,
+          answer TEXT NOT NULL,
+          sections JSONB,
+          model_used TEXT,
+          created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          last_accessed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          hit_count INTEGER NOT NULL DEFAULT 0,
+          tokens_estimated INTEGER NOT NULL DEFAULT 0,
+          iteration_count INTEGER NOT NULL DEFAULT 1,
+          target_cohort_size INTEGER NOT NULL DEFAULT 60,
+          is_cohort_perfected BOOLEAN NOT NULL DEFAULT FALSE,
+          perfection_score INTEGER NOT NULL DEFAULT 15,
+          perfection_tier TEXT NOT NULL,
+          evolution_history JSONB NOT NULL DEFAULT '[]'::jsonb,
+          positive_votes INTEGER NOT NULL DEFAULT 0,
+          negative_votes INTEGER NOT NULL DEFAULT 0,
+          needs_refinement BOOLEAN NOT NULL DEFAULT FALSE,
+          is_teacher_curated BOOLEAN NOT NULL DEFAULT FALSE
+        );
+      `;
+
+      const rows = await sql`
+        SELECT * FROM ai_knowledge_cache ORDER BY hit_count DESC;
+      `;
+
+      if (rows && rows.length > 0) {
+        let hydratedCount = 0;
+        for (const r of rows) {
+          const entry: CachedAIResponse = {
+            id: r.id,
+            query: r.query,
+            normalizedKey: r.normalized_key,
+            subjectName: r.subject_name,
+            mode: r.mode,
+            answer: r.answer,
+            sections: typeof r.sections === 'string' ? JSON.parse(r.sections) : (r.sections || undefined),
+            modelUsed: r.model_used,
+            createdAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
+            lastAccessedAt: r.last_accessed_at ? new Date(r.last_accessed_at).toISOString() : new Date().toISOString(),
+            hitCount: Number(r.hit_count) || 1,
+            tokensEstimated: Number(r.tokens_estimated) || 1500,
+            iterationCount: Number(r.iteration_count) || 1,
+            targetCohortSize: Number(r.target_cohort_size) || 60,
+            isCohortPerfected: Boolean(r.is_cohort_perfected),
+            perfectionScore: Number(r.perfection_score) || 15,
+            perfectionTier: r.perfection_tier || 'Draft (Student 1)',
+            evolutionHistory: Array.isArray(r.evolution_history)
+              ? r.evolution_history
+              : (typeof r.evolution_history === 'string' ? JSON.parse(r.evolution_history) : []),
+            positiveVotes: Number(r.positive_votes) || 0,
+            negativeVotes: Number(r.negative_votes) || 0,
+            needsRefinement: Boolean(r.needs_refinement),
+            isTeacherCurated: Boolean(r.is_teacher_curated),
+          };
+          this.cache.set(entry.id, entry);
+          hydratedCount++;
+        }
+        console.log(`[AI Knowledge Cache] ☁️ Hydrated ${hydratedCount} entries from Neon PostgreSQL into active memory!`);
+        this.saveToDisk();
+        return hydratedCount;
+      }
+    } catch (err: any) {
+      console.warn('[AI Knowledge Cache] Neon hydration warning:', err?.message || err);
+    }
+    return 0;
   }
 
   public getStats(): CacheStats {
     const entries = Array.from(this.cache.values());
     const cohortPerfectedCount = entries.filter((e) => e.isCohortPerfected).length;
+
+    // Top 10 by hitCount
+    const sortedByHits = [...entries].sort((a, b) => (b.hitCount || 0) - (a.hitCount || 0));
+    const topTopics = sortedByHits.slice(0, 10).map((e) => ({
+      query: e.query,
+      hitCount: e.hitCount || 1,
+      perfectionTier: e.perfectionTier,
+    }));
+
+    // Subject breakdown
+    const subjectMap: Record<string, { topicCount: number; totalHits: number }> = {};
+    for (const e of entries) {
+      const sub = e.subjectName || 'General';
+      if (!subjectMap[sub]) {
+        subjectMap[sub] = { topicCount: 0, totalHits: 0 };
+      }
+      subjectMap[sub].topicCount += 1;
+      subjectMap[sub].totalHits += e.hitCount || 1;
+    }
+    const subjectBreakdown = Object.entries(subjectMap).map(([subjectName, data]) => ({
+      subjectName,
+      topicCount: data.topicCount,
+      totalHits: data.totalHits,
+    }));
+
+    // Recently perfected
+    const recentlyPerfected = entries
+      .filter((e) => e.isCohortPerfected)
+      .sort((a, b) => new Date(b.lastAccessedAt || 0).getTime() - new Date(a.lastAccessedAt || 0).getTime())
+      .slice(0, 5)
+      .map((e) => ({
+        query: e.query,
+        perfectedAt: e.lastAccessedAt || e.createdAt,
+      }));
+
+    // Estimated money saved in USD: $0.75 per 1M tokens for Gemini 3.8 Flash
+    const estimatedMoneySaved = Number(((this.totalTokensSaved / 1_000_000) * 0.75).toFixed(4));
+
     return {
       totalLearnedItems: this.cache.size,
       cohortPerfectedCount,
       totalHits: this.totalHits,
       estimatedTokensSaved: this.totalTokensSaved,
+      topTopics,
+      subjectBreakdown,
+      recentlyPerfected,
+      estimatedMoneySaved,
       lastUpdated: new Date().toISOString(),
     };
   }

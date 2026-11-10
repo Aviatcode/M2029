@@ -26,6 +26,7 @@ const classroomsStore: Record<string, Classroom> = {};
 
 import { apiRouter } from './src/server/routes.js';
 import { initDailyAutoSyncScheduler } from './src/server/autoSyncService.js';
+import { aiKnowledgeCache } from './src/server/ai/aiKnowledgeCache.js';
 import {
   isNeonConfigured,
   testNeonConnection,
@@ -716,11 +717,12 @@ Evaluate the answer. Return STRICT JSON only:
     if (isNeonConfigured()) {
       console.log('⚡ Neon PostgreSQL is configured. Verifying cloud connection...');
       testNeonConnection()
-        .then((res) => {
+        .then(async (res) => {
           if (res.ok) {
             console.log(
               `✅ Connected to Neon PostgreSQL database: ${res.database} (${res.tableCount} tables, ${res.latencyMs}ms latency)`
             );
+            await aiKnowledgeCache.hydrateFromNeon();
           } else {
             console.warn(`⚠️ Neon connection warning: ${res.message}`);
           }

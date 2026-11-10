@@ -33,6 +33,7 @@ import {
 import { Navbar } from './components/Navbar';
 import { Sidebar, ActiveNavTab } from './components/Sidebar';
 import { DashboardView } from './components/DashboardView';
+import { KnowledgeDashboard } from './components/KnowledgeDashboard';
 import { AITutorView } from './components/AITutorView';
 import { SyllabusMapView } from './components/SyllabusMapView';
 import { MaterialsView } from './components/MaterialsView';
@@ -111,6 +112,7 @@ export default function App() {
       const validTabs: ActiveNavTab[] = [
         'landing',
         'dashboard',
+        'knowledge-dashboard',
         'tomorrow',
         'dump',
         'rag',
@@ -1895,6 +1897,14 @@ export default function App() {
               subjects={subjects}
               initialPrompt={initialTutorPrompt}
               unitsBySubject={unitsBySubject}
+              currentRole={currentRole}
+            />
+          )}
+
+          {activeTab === 'knowledge-dashboard' && (
+            <KnowledgeDashboard
+              subjects={subjects}
+              onOpenTopic={(topic, sub) => handleStudyTopic(topic, sub || subjects[0]?.name || 'Operating Systems')}
             />
           )}
 

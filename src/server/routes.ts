@@ -64,7 +64,7 @@ import {
   initializeNeonSchema,
 } from './db/neonClient.js';
 import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeBank.js';
-import { aiKnowledgeCache } from './ai/aiKnowledgeCache.js';
+import { aiKnowledgeCache, calculateJaccardSimilarity, CachedAIResponse } from './ai/aiKnowledgeCache.js';
 import { ragRouter, setDbReference } from './rag/ragRouter.js';
 import { ragEngine } from './rag/ragIndex.js';
 import { attendanceService } from './attendanceService.js';
@@ -935,9 +935,281 @@ function parseTutorSections(text: string): Record<string, string> {
   return sections;
 }
 
+/**
+ * Broadcast notification to class when a topic reaches 60-Student Master Perfection
+ */
+function broadcastPerfectionNotification(topicTitle: string, subjectName: string) {
+  try {
+    const classId = 'class-bca-2028';
+    const newAnnouncement: ClassAnnouncement = {
+      id: `ann-perfect-${Date.now()}`,
+      classId,
+      authorName: 'M2029 Knowledge Engine',
+      authorRole: 'ai' as any,
+      title: `🏆 New Gold Standard Unlocked: "${topicTitle}"`,
+      content: `The class collectively perfected the answer to "${topicTitle}" in ${subjectName || 'Curriculum'}. It is now the definitive exam-ready answer for all future students with 0 tokens consumed.`,
+      createdAt: new Date().toISOString(),
+      badge: 'Class Achievement',
+    };
+
+    if (!db.announcements) db.announcements = [];
+    db.announcements.unshift(newAnnouncement);
+
+    const newNotification: AppNotification = {
+      id: `notif-perfect-${Date.now()}`,
+      title: `🏆 Gold Standard: ${topicTitle}`,
+      message: `Answer perfected by 60 classmates! Tap to revise anytime with 0 tokens.`,
+      time: 'Just now',
+      read: false,
+      type: 'broadcast',
+      actionUrl: '#ai-tutor',
+    };
+    if (!db.notifications) db.notifications = [];
+    db.notifications.unshift(newNotification);
+
+    db.saveToDisk();
+  } catch (err) {
+    console.warn('[Broadcast Notification] Error:', err);
+  }
+}
+
+/**
+ * Non-blocking active background refinement trigger (Milestones: 15, 30, 45, 60 or flagged issues)
+ */
+function checkAndTriggerBackgroundRefinement(
+  cached: CachedAIResponse,
+  subjectName: string,
+  tutorMode: string,
+  userAiConfig?: UniversalKeyConfig
+) {
+  if (cached.isTeacherCurated) return;
+
+  const hitCount = cached.hitCount;
+  const isMilestone15 = hitCount === 15;
+  const isMilestone30 = hitCount === 30;
+  const isMilestone45 = hitCount === 45;
+  const isMilestone60 = hitCount >= 60 && !cached.isCohortPerfected;
+  const isFlagged = Boolean(cached.needsRefinement);
+
+  if (!isMilestone15 && !isMilestone30 && !isMilestone45 && !isMilestone60 && !isFlagged) {
+    return;
+  }
+
+  setImmediate(async () => {
+    try {
+      if (isMilestone60) {
+        cached.isCohortPerfected = true;
+        cached.perfectionScore = 100;
+        cached.perfectionTier = 'Master Gold Standard (60th Student)';
+        cached.evolutionHistory.push({
+          iteration: 60,
+          studentLabel: 'Student 60',
+          improvedAt: new Date().toISOString(),
+          focus: 'Cohort Master Perfection (Class Gold Standard)',
+          summary: `Distilled across all 60 students in the cohort into a flawless, verified master answer.`,
+        });
+        aiKnowledgeCache.saveToDisk();
+        aiKnowledgeCache.syncToNeon(cached).catch(() => {});
+        broadcastPerfectionNotification(cached.query, subjectName);
+        return;
+      }
+
+      let milestoneTask = '';
+      let improvementFocus = '';
+      if (isFlagged) {
+        milestoneTask = 'Review, fix, and improve this answer addressing issues flagged by student peer reviews. Ensure absolute technical accuracy, clear explanations, and no confusing errors.';
+        improvementFocus = 'Peer Diagnostic Review & Correction';
+      } else if (isMilestone15) {
+        milestoneTask = 'Add a clean, clear ASCII architecture flowchart / system diagram and a numbered step-by-step working mechanism to the answer.';
+        improvementFocus = 'ASCII Architecture Diagram & Working Mechanism';
+      } else if (isMilestone30) {
+        milestoneTask = 'Reformat the answer strictly to the university 10-marker Section C exam blueprint (Definition -> ASCII Diagram -> Step-by-Step Mechanism -> Code/Algorithm -> Gotchas & Exam Scoring Points).';
+        improvementFocus = 'University 10-Marker Section C Blueprint';
+      } else if (isMilestone45) {
+        milestoneTask = 'Inject one complete, clean, executable code snippet with clear inline comments + 3 common student exam traps/pitfalls to avoid.';
+        improvementFocus = 'Executable Code Blueprint & Exam Trap Warnings';
+      }
+
+      const prompt = `You are upgrading a cached academic answer that ${hitCount} students have already read.
+Current answer: """${cached.answer}"""
+Task: ${milestoneTask}
+Rules:
+- Keep all existing correct content. Only ADD, not replace.
+- Use plain text + markdown. No HTML.
+- Keep the total answer under 1800 words.
+- Format for an Indian university CS/CE exam student.
+Return ONLY the improved full answer text, no preamble.`;
+
+      const ai = AIProviderFactory.getProvider(userAiConfig);
+      const improvedText = await ai.generateText(prompt, 'You are an expert university professor upgrading class notes for top exam scores.');
+      if (improvedText && improvedText.length > 50) {
+        const parsed = parseTutorSections(improvedText);
+        aiKnowledgeCache.compoundRefine(
+          cached.query,
+          cached.subjectName || subjectName,
+          cached.mode || tutorMode,
+          improvedText,
+          parsed,
+          improvementFocus
+        );
+        console.log(`[Collective Refinement] ⚡ Refined topic "${cached.query}" at milestone ${hitCount} students!`);
+      }
+    } catch (err: any) {
+      console.warn('[Collective Refinement] Background refinement notice:', err?.message || err);
+    }
+  });
+}
+
 // 6.0 AI Knowledge Cache Statistics & Inspection Endpoint
 apiRouter.get('/ai/cache/stats', (_req: Request, res: Response) => {
   res.json(aiKnowledgeCache.getStats());
+});
+
+// 6.01 Student Answer Voting Endpoint (👍 / 👎)
+apiRouter.post('/ai-tutor/vote', (req: Request, res: Response) => {
+  const { cacheKey, subjectName, mode, vote, reason } = req.body;
+  if (!cacheKey || !vote || (vote !== 'up' && vote !== 'down')) {
+    return res.status(400).json({ error: 'Valid cacheKey and vote ("up" | "down") are required.' });
+  }
+
+  const result = aiKnowledgeCache.vote(cacheKey, subjectName, mode || 'all', vote, reason);
+  if (!result.entry) {
+    return res.status(404).json({ error: 'Topic not found in cache to vote on.' });
+  }
+
+  if (result.shouldRefine) {
+    checkAndTriggerBackgroundRefinement(result.entry, subjectName || 'Computer Science', mode || 'all');
+  }
+
+  res.json({
+    status: 'success',
+    message: vote === 'up' ? 'Thanks for upvoting! Positive reinforcement saved.' : 'Feedback recorded. Collective refinement triggered for the class.',
+    positiveVotes: result.entry.positiveVotes || 0,
+    negativeVotes: result.entry.negativeVotes || 0,
+    perfectionScore: result.entry.perfectionScore,
+  });
+});
+
+// 6.02 Teacher / CR Curator Endpoint
+apiRouter.patch('/ai/cache/curate', (req: Request, res: Response) => {
+  const { cacheKey, subjectName, mode, teacherEditedAnswer, teacherName } = req.body;
+  if (!cacheKey || !teacherEditedAnswer || !teacherEditedAnswer.trim()) {
+    return res.status(400).json({ error: 'cacheKey and teacherEditedAnswer are required.' });
+  }
+
+  const updated = aiKnowledgeCache.curateByTeacher(
+    cacheKey,
+    subjectName || 'Computer Science',
+    mode || 'all',
+    teacherEditedAnswer,
+    teacherName || 'Faculty In-Charge'
+  );
+
+  broadcastPerfectionNotification(updated.query, updated.subjectName);
+
+  res.json({
+    status: 'success',
+    message: 'Teacher curation saved! Topic is now locked as permanent Master Gold Standard for the class.',
+    entry: updated,
+  });
+});
+
+// 6.03 Exam Prediction Engine: High student inquiry count + Historical PYQs = Exam Radar!
+apiRouter.get('/ai/exam-predict', (req: Request, res: Response) => {
+  const subjectId = (req.query.subjectId as string) || '';
+  const subjectName = (req.query.subjectName as string) || '';
+
+  const pyqList: HistoricalPYQ[] = (subjectId && db.pyqs[subjectId]) ? db.pyqs[subjectId] : SEED_PYQS;
+  const allEntries = aiKnowledgeCache.getAllEntries();
+  const subjectEntries = allEntries.filter((e) => {
+    if (!subjectName && !subjectId) return true;
+    return (
+      (subjectName && e.subjectName.toLowerCase().includes(subjectName.toLowerCase())) ||
+      (subjectId && e.subjectName.toLowerCase().includes(subjectId.toLowerCase()))
+    );
+  });
+
+  subjectEntries.sort((a, b) => (b.hitCount || 0) - (a.hitCount || 0));
+
+  const predictions = subjectEntries.slice(0, 15).map((e) => {
+    const matchingPyqs = pyqList.filter((p) =>
+      p.topicTitle.toLowerCase().includes(e.normalizedKey) ||
+      e.normalizedKey.includes(p.topicTitle.toLowerCase()) ||
+      calculateJaccardSimilarity(e.normalizedKey, p.topicTitle) >= 0.4
+    );
+
+    const hitCount = e.hitCount || 1;
+    const pyqCount = matchingPyqs.length;
+
+    let probability: 'High' | 'Medium' | 'Watch' = 'Watch';
+    let reasoning = '';
+
+    if (pyqCount >= 2 && hitCount >= 10) {
+      probability = 'High';
+      reasoning = `🔥 High Probability: Queried by ${hitCount} classmates AND appeared in ${pyqCount} past university question papers.`;
+    } else if (pyqCount >= 1 || hitCount >= 5) {
+      probability = 'Medium';
+      reasoning = pyqCount >= 1
+        ? `Appeared in ${pyqCount} past university papers, queried by ${hitCount} students.`
+        : `Hot topic: Queried by ${hitCount} classmates recently.`;
+    } else {
+      probability = 'Watch';
+      reasoning = `Emerging concept in class syllabus. Perfected answer available.`;
+    }
+
+    return {
+      topic: e.query,
+      subjectName: e.subjectName,
+      probability,
+      reasoning,
+      hitCount,
+      pyqCount,
+      perfectionScore: e.perfectionScore,
+      perfectionTier: e.perfectionTier,
+      suggestedAnswer: e.answer.slice(0, 240) + '...',
+    };
+  });
+
+  const priorityOrder = { High: 0, Medium: 1, Watch: 2 };
+  predictions.sort((a, b) => priorityOrder[a.probability] - priorityOrder[b.probability]);
+
+  res.json({
+    status: 'success',
+    subjectName: subjectName || 'All Subjects',
+    count: predictions.length,
+    predictions,
+  });
+});
+
+// 6.04 Offline Study Pack Generator: Export all perfected class notes as clean Markdown
+apiRouter.get('/ai/cache/export', (req: Request, res: Response) => {
+  const subjectName = (req.query.subjectName as string) || '';
+  const entries = aiKnowledgeCache.getAllEntries().filter((e) => {
+    if (subjectName && !e.subjectName.toLowerCase().includes(subjectName.toLowerCase())) {
+      return false;
+    }
+    return e.isCohortPerfected || (e.hitCount || 0) >= 10;
+  });
+
+  if (entries.length === 0) {
+    return res.status(404).json({ error: 'No perfected class topics found for this subject yet.' });
+  }
+
+  let md = `# 🎓 ${subjectName || 'Class Curriculum'} — Collective Intelligence Study Pack\n`;
+  md += `> **M2029 Cohort Knowledge Engine** · Master Gold Standard Answers\n`;
+  md += `> Compiled from ${entries.length} perfected topics across 60 university students.\n\n---\n\n`;
+
+  entries.forEach((entry, idx) => {
+    md += `## Topic ${idx + 1}: ${entry.query}\n`;
+    md += `*Subject:* **${entry.subjectName}** | *Perfection Tier:* **${entry.perfectionTier}** | *Student Iterations:* **${entry.iterationCount}/60**\n\n`;
+    md += `${entry.answer}\n\n`;
+    md += `---\n\n`;
+  });
+
+  const sanitizedFilename = (subjectName || 'Cohort-Curriculum').replace(/[^a-zA-Z0-9_-]/g, '_');
+  res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFilename}-Class-Study-Pack.md"`);
+  res.send(md);
 });
 
 // 6. AI Tutor with Ordered Pedagogical Breakdown (Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me)
@@ -954,6 +1226,9 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   if (!forceLive && !hasPersonalKey) {
     const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
     if (cached) {
+      // Trigger non-blocking background refinement check (Milestones 15, 30, 45, 60 or flagged)
+      checkAndTriggerBackgroundRefinement(cached, subjectName || 'Computer Science', tutorMode, userAiConfig);
+
       const sections = cached.sections || parseTutorSections(cached.answer);
       return res.json({
         answer: cached.answer,
@@ -964,6 +1239,9 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
         cached: true,
         tokensSaved: cached.tokensEstimated || 1500,
         hitCount: cached.hitCount,
+        positiveVotes: cached.positiveVotes || 0,
+        negativeVotes: cached.negativeVotes || 0,
+        isTeacherCurated: cached.isTeacherCurated || false,
         // 60-Student Compounding Intelligence Metadata
         iterationCount: cached.iterationCount || 60,
         targetCohortSize: cached.targetCohortSize || 60,

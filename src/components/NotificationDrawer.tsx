@@ -12,6 +12,7 @@ import {
   Flame,
   ShieldCheck,
   AlertTriangle,
+  Sparkles,
 } from 'lucide-react';
 import {
   getNotificationPermission,
@@ -71,6 +72,8 @@ export const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
         return <Flame className="w-3.5 h-3.5 text-rose-400" />;
       case 'class_reminder':
         return <Clock className="w-3.5 h-3.5 text-neutral-400" />;
+      case 'broadcast':
+        return <Sparkles className="w-3.5 h-3.5 text-amber-400" />;
       default:
         return <Bell className="w-3.5 h-3.5 text-neutral-400" />;
     }

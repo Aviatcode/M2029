@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'teacher' | 'student' | 'cr';
+export type UserRole = 'admin' | 'teacher' | 'student' | 'cr' | 'ai';
 
 export interface User {
   id: string;
@@ -245,7 +245,7 @@ export interface AppNotification {
   id: string;
   title: string;
   message: string;
-  type: 'class_reminder' | 'prep_reminder' | 'exam_alert' | 'material_uploaded';
+  type: 'class_reminder' | 'prep_reminder' | 'exam_alert' | 'material_uploaded' | 'broadcast';
   time: string;
   read: boolean;
   actionUrl?: string;
@@ -351,10 +351,14 @@ export interface CohortIntelligenceMeta {
   targetCohortSize: number; // 60
   isCohortPerfected: boolean;
   perfectionScore: number;
-  perfectionTier: 'Draft (Student 1)' | 'Peer-Enhanced (Students 2-10)' | 'Exam-Hardened (Students 11-40)' | 'Master Gold Standard (60th Student)';
+  perfectionTier: 'Draft (Student 1)' | 'Peer-Enhanced (Students 2-10)' | 'Exam-Hardened (Students 11-40)' | 'Master Gold Standard (60th Student)' | 'Teacher-Verified Gold Standard';
   evolutionHistory: EvolutionStep[];
   contributorsCount?: number;
   lastRefinedAt?: string;
+  positiveVotes?: number;
+  negativeVotes?: number;
+  needsRefinement?: boolean;
+  isTeacherCurated?: boolean;
 }
 
 export interface UniversityCalendarNotice {

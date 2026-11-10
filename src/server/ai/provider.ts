@@ -163,17 +163,29 @@ export class UniversalAIProvider implements AIProvider {
       if (this.provider === 'gemini') {
         const model = this.modelName || 'gemini-3.8-flash';
 
-        // Direct REST API for Gemini with 4s timeout & instant fallback
+        // Direct REST API for Gemini with adaptive thinking budget & instant fallback
         if (this.apiKey) {
           try {
+            const isDeepRequest =
+              (systemInstruction || '').includes('10-marker') ||
+              (systemInstruction || '').includes('university exam') ||
+              (systemInstruction || '').includes('Section C') ||
+              prompt.length > 500;
+
+            const timeoutMs = isDeepRequest ? 12000 : 5000;
             const timeoutPromise = new Promise<never>((_, reject) =>
-              setTimeout(() => reject(new Error('Gemini API timeout (4s)')), 4000)
+              setTimeout(() => reject(new Error(`Gemini API timeout (${timeoutMs / 1000}s)`)), timeoutMs)
             );
 
             const fetchPromise = (async () => {
               const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
               const body: any = {
                 contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  thinkingConfig: {
+                    thinkingBudget: isDeepRequest ? 8192 : 1024,
+                  },
+                },
               };
               if (systemInstruction) {
                 body.system_instruction = { parts: [{ text: systemInstruction }] };
@@ -309,6 +321,39 @@ export class UniversalAIProvider implements AIProvider {
     const fullPrompt = `${prompt}
 ${schemaDescription ? `\nStrict Schema:\n${schemaDescription}` : ''}
 Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
+
+    // Native Gemini structured JSON mode
+    if (this.provider === 'gemini' && this.apiKey) {
+      try {
+        const model = this.modelName || 'gemini-3.8-flash';
+        const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+        const body: any = {
+          contents: [{ parts: [{ text: fullPrompt }] }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            thinkingConfig: {
+              thinkingBudget: 1024,
+            },
+          },
+        };
+        const res = await fetch(geminiEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        if (res.ok) {
+          const data: any = await res.json();
+          const parts = data.candidates?.[0]?.content?.parts || [];
+          const text = parts.filter((p: any) => !p.thought).map((p: any) => p.text).join('\n').trim() || parts[0]?.text;
+          if (text) {
+            const clean = text.replace(/```json/gi, '').replace(/```/gi, '').trim();
+            return JSON.parse(clean) as T;
+          }
+        }
+      } catch {
+        // Fall back to general generateText
+      }
+    }
 
     try {
       const rawText = await this.generateText(fullPrompt);

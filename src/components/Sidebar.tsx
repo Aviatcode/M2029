@@ -17,12 +17,14 @@ import {
   GraduationCap,
   Database,
   Zap,
+  Trophy,
 } from 'lucide-react';
 import type { UserProfile } from './LoginModal';
 
 export type ActiveNavTab =
   | 'landing'
   | 'dashboard'
+  | 'knowledge-dashboard'
   | 'daily-update'
   | 'tomorrow'
   | 'dump'
@@ -70,6 +72,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'dump' as const, label: 'Study Drop', icon: UploadCloud },
     { id: 'rag' as const, label: 'RAG Vault', icon: Database },
     { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot },
+    { id: 'knowledge-dashboard' as const, label: 'Class Intel', icon: Trophy },
     { id: 'syllabus' as const, label: 'Syllabus', icon: Map },
     { id: 'materials' as const, label: 'Notes', icon: FolderOpen },
     { id: 'exams' as const, label: 'Exams', icon: Flame },

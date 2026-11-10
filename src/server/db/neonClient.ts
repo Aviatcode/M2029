@@ -332,6 +332,38 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     );
   `;
 
+  // 13. AI Knowledge Cache (Cohort Compounding Intelligence)
+  await sql`
+    CREATE TABLE IF NOT EXISTS ai_knowledge_cache (
+      id TEXT PRIMARY KEY,
+      normalized_key TEXT NOT NULL,
+      query TEXT NOT NULL,
+      subject_name TEXT NOT NULL,
+      mode TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      sections JSONB,
+      model_used TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_accessed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      hit_count INTEGER NOT NULL DEFAULT 0,
+      tokens_estimated INTEGER NOT NULL DEFAULT 0,
+      iteration_count INTEGER NOT NULL DEFAULT 1,
+      target_cohort_size INTEGER NOT NULL DEFAULT 60,
+      is_cohort_perfected BOOLEAN NOT NULL DEFAULT FALSE,
+      perfection_score INTEGER NOT NULL DEFAULT 15,
+      perfection_tier TEXT NOT NULL,
+      evolution_history JSONB NOT NULL DEFAULT '[]'::jsonb,
+      positive_votes INTEGER NOT NULL DEFAULT 0,
+      negative_votes INTEGER NOT NULL DEFAULT 0,
+      needs_refinement BOOLEAN NOT NULL DEFAULT FALSE,
+      is_teacher_curated BOOLEAN NOT NULL DEFAULT FALSE
+    );
+  `;
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_cache_key_subject_mode 
+      ON ai_knowledge_cache(normalized_key, subject_name, mode);
+  `;
+
   const tablesCreated = [
     'class_workspaces',
     'subjects',
@@ -345,6 +377,7 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     'academic_assignments',
     'classroom_doubts',
     'cached_lessons',
+    'ai_knowledge_cache',
   ];
 
   let seededCounts: Record<string, number> = {};

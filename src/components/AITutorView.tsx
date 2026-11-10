@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TutorResponseMode, Subject, Unit } from '../types';
+import { TutorResponseMode, Subject, Unit, UserRole } from '../types';
 import {
   Bot,
   Send,
@@ -29,6 +29,12 @@ import {
   Users,
   Layers,
   Database,
+  ThumbsUp,
+  ThumbsDown,
+  Flame,
+  Edit3,
+  Save,
+  X,
 } from 'lucide-react';
 import { AIKeyConfigModal } from './AIKeyConfigModal';
 import { CohortIntelligenceModal } from './CohortIntelligenceModal';
@@ -49,6 +55,7 @@ interface AITutorViewProps {
   initialTopic?: string;
   initialSubject?: string;
   unitsBySubject?: Record<string, Unit[]>;
+  currentRole?: UserRole;
 }
 
 interface SyllabusTrackMeta {
@@ -98,6 +105,10 @@ interface StudyGuideData {
   cached?: boolean;
   modelUsed?: string;
   tokensSaved?: number;
+  hitCount?: number;
+  positiveVotes?: number;
+  negativeVotes?: number;
+  isTeacherCurated?: boolean;
   sections: {
     simple: string;
     eli9: string;
@@ -172,6 +183,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   initialTopic,
   initialSubject,
   unitsBySubject,
+  currentRole = 'student',
 }) => {
   // Mode Selection: 'guided' (ChatGPT one-by-one experience) vs 'reference' (6-mode all-in-one guide)
   const [viewMode, setViewMode] = useState<'guided' | 'reference'>('guided');
@@ -200,6 +212,12 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   // 60-Student Compounding Intelligence State
   const [isCohortModalOpen, setIsCohortModalOpen] = useState<boolean>(false);
   const [isElevatingTo60, setIsElevatingTo60] = useState<boolean>(false);
+
+  // Social Proof, Voting & Teacher Curation State
+  const [votedMap, setVotedMap] = useState<Record<string, 'up' | 'down'>>({});
+  const [voteToast, setVoteToast] = useState<string | null>(null);
+  const [isCurating, setIsCurating] = useState<boolean>(false);
+  const [curationText, setCurationText] = useState<string>('');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -422,6 +440,10 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         cached: data.cached,
         modelUsed: data.modelUsed,
         tokensSaved: data.tokensSaved,
+        hitCount: data.hitCount || 1,
+        positiveVotes: data.positiveVotes || 0,
+        negativeVotes: data.negativeVotes || 0,
+        isTeacherCurated: data.isTeacherCurated || false,
         sections: {
           simple: parsed.simple || rawText,
           eli9: parsed.eli9 || '',
@@ -535,6 +557,91 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       }
     } catch (e) {
       console.error('Error refining iteration:', e);
+    }
+  };
+
+  const handleVote = async (topicTitle: string, vote: 'up' | 'down') => {
+    try {
+      setVotedMap((prev) => ({ ...prev, [topicTitle]: vote }));
+      setVoteToast(
+        vote === 'up'
+          ? 'Thanks for upvoting! Collective intelligence boosted 👍'
+          : 'Feedback noted! Triggered background peer refinement ⚡'
+      );
+      setTimeout(() => setVoteToast(null), 3000);
+
+      const res = await fetch('/api/ai-tutor/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cacheKey: topicTitle,
+          subjectName: studyGuide?.subject || selectedSubject,
+          mode: 'all',
+          vote,
+        }),
+      });
+      const data = await res.json();
+      if (data.positiveVotes !== undefined && studyGuide) {
+        setStudyGuide((prev) =>
+          prev
+            ? {
+                ...prev,
+                positiveVotes: data.positiveVotes,
+                negativeVotes: data.negativeVotes,
+                perfectionScore: data.perfectionScore ?? prev.perfectionScore,
+              }
+            : null
+        );
+      }
+    } catch (e) {
+      console.warn('Voting error:', e);
+    }
+  };
+
+  const handleOpenCurator = () => {
+    if (!studyGuide) return;
+    const currentText = studyGuide.sections.exam_10marker || studyGuide.sections.simple || '';
+    setCurationText(currentText);
+    setIsCurating(true);
+  };
+
+  const handleSaveCurator = async () => {
+    if (!studyGuide || !curationText.trim()) return;
+    try {
+      const res = await fetch('/api/ai/cache/curate', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cacheKey: studyGuide.topic,
+          subjectName: studyGuide.subject,
+          mode: 'all',
+          teacherEditedAnswer: curationText.trim(),
+          teacherName: currentRole === 'teacher' ? 'Faculty In-Charge' : 'Class Representative (CR)',
+        }),
+      });
+      if (res.ok) {
+        setStudyGuide((prev) =>
+          prev
+            ? {
+                ...prev,
+                sections: {
+                  ...prev.sections,
+                  simple: curationText.trim(),
+                  exam_10marker: curationText.trim(),
+                },
+                isCohortPerfected: true,
+                perfectionScore: 100,
+                perfectionTier: 'Teacher-Verified Gold Standard',
+                isTeacherCurated: true,
+              }
+            : null
+        );
+        setIsCurating(false);
+        setVoteToast('🏆 Locked as permanent Teacher-Verified Gold Standard!');
+        setTimeout(() => setVoteToast(null), 3500);
+      }
+    } catch (e) {
+      console.warn('Curation save error:', e);
     }
   };
 
@@ -1164,6 +1271,16 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                     )}
                   </div>
                   <div className="flex items-center gap-2">
+                    {(currentRole === 'teacher' || currentRole === 'cr') && (
+                      <button
+                        onClick={handleOpenCurator}
+                        className="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
+                        title="Manually curate and lock answer as Master Gold Standard"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Curate Answer</span>
+                      </button>
+                    )}
                     <button
                       onClick={() => loadTopicGuide(studyGuide.topic, studyGuide.subject, true)}
                       disabled={isLoading}
@@ -1180,6 +1297,78 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                       <Copy className="w-3.5 h-3.5" />
                       <span>Copy Full Guide</span>
                     </button>
+                  </div>
+                </div>
+
+                {/* Feature 5: Social Proof & Feature 1: Voting Bar */}
+                <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {(studyGuide.hitCount || 1) >= 30 ? (
+                      <Flame className="w-4 h-4 text-amber-400 shrink-0" />
+                    ) : studyGuide.isCohortPerfected ? (
+                      <Trophy className="w-4 h-4 text-amber-300 shrink-0" />
+                    ) : (
+                      <Users className="w-4 h-4 text-indigo-400 shrink-0" />
+                    )}
+                    <span className="text-xs text-slate-200 font-medium">
+                      {(studyGuide.hitCount || 1) < 10
+                        ? "💡 You're one of the first to explore this topic"
+                        : (studyGuide.hitCount || 1) < 30
+                        ? `👥 ${studyGuide.hitCount || 1} classmates have asked this — answers improving`
+                        : !studyGuide.isCohortPerfected
+                        ? `🔥 ${studyGuide.hitCount || 1} students strong — answer almost perfected`
+                        : `🏆 Perfected by ${studyGuide.iterationCount || 60} students — Class Gold Standard`}
+                    </span>
+                    {studyGuide.isTeacherCurated && (
+                      <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-bold">
+                        🏆 Teacher-Verified
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3 shrink-0">
+                    {/* 60-Student Perfection Progress Meter */}
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-20 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div
+                          className="bg-gradient-to-r from-indigo-500 to-emerald-400 h-1.5 rounded-full transition-all duration-700 ease-out"
+                          style={{
+                            width: `${Math.min(100, Math.round(((studyGuide.hitCount || 1) / 60) * 100))}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        {Math.min(60, studyGuide.hitCount || 1)}/60
+                      </span>
+                    </div>
+
+                    {/* Upvote & Downvote Buttons */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleVote(studyGuide.topic, 'up')}
+                        className={`px-2 py-1 rounded-md text-xs font-mono flex items-center gap-1 transition cursor-pointer ${
+                          votedMap[studyGuide.topic] === 'up'
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                            : 'bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 border border-slate-700/60'
+                        }`}
+                        title="Helpful topic — Upvote for whole class"
+                      >
+                        <ThumbsUp className="w-3 h-3" />
+                        <span>{studyGuide.positiveVotes || 0}</span>
+                      </button>
+                      <button
+                        onClick={() => handleVote(studyGuide.topic, 'down')}
+                        className={`px-2 py-1 rounded-md text-xs font-mono flex items-center gap-1 transition cursor-pointer ${
+                          votedMap[studyGuide.topic] === 'down'
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                            : 'bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-slate-200 border border-slate-700/60'
+                        }`}
+                        title="Needs improvement — Downvote to trigger refinement"
+                      >
+                        <ThumbsDown className="w-3 h-3" />
+                        <span>{studyGuide.negativeVotes || 0}</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -1325,6 +1514,76 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         onTriggerRefineNext={handleRefineNext}
         isElevating={isElevatingTo60}
       />
+      {/* Vote Feedback Toast */}
+      {voteToast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl bg-slate-900 border border-emerald-500/40 text-emerald-300 text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <Sparkles className="w-4 h-4 text-emerald-400" />
+          <span>{voteToast}</span>
+        </div>
+      )}
+
+      {/* Feature 4: Teacher Curator Modal */}
+      {isCurating && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-3xl rounded-2xl bg-slate-950 border border-amber-500/40 p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+                  <Edit3 className="w-4 h-4 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-100">
+                    Faculty Curator Mode: {studyGuide?.topic}
+                  </h3>
+                  <p className="text-xs text-amber-300">
+                    Save as official Master Gold Standard (Locks answer across all 60 students)
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsCurating(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 flex flex-col min-h-0 space-y-1">
+              <label className="text-xs font-mono text-slate-400">
+                Master Answer Content (Markdown / Section C Layout):
+              </label>
+              <textarea
+                value={curationText}
+                onChange={(e) => setCurationText(e.target.value)}
+                className="w-full flex-1 min-h-[300px] p-3 rounded-xl bg-slate-900 border border-slate-800 focus:border-amber-500 text-xs text-slate-200 font-mono leading-relaxed outline-hidden resize-none"
+                placeholder="Write or edit master answer text here..."
+              />
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+              <span className="text-[11px] text-slate-400 font-mono">
+                Author Role: {currentRole === 'teacher' ? 'Faculty In-Charge' : 'Class Representative'}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsCurating(false)}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-300 text-xs font-medium transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveCurator}
+                  disabled={!curationText.trim()}
+                  className="px-4 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Lock as Gold Standard</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,6 +11,9 @@ import {
   X,
   Flame,
   Sparkles,
+  Target,
+  Zap,
+  TrendingUp,
 } from 'lucide-react';
 
 interface ExamModeViewProps {
@@ -39,7 +42,26 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
   const [examTime, setExamTime] = useState('10:00 AM - 01:00 PM');
   const [examType, setExamType] = useState<'Mid-Term' | 'End-Term' | 'Practical'>('End-Term');
 
+  // Exam Radar Prediction State
+  const [isRadarOpen, setIsRadarOpen] = useState(false);
+  const [radarPredictions, setRadarPredictions] = useState<any[]>([]);
+  const [isRadarLoading, setIsRadarLoading] = useState(false);
+
   const activeExam = exams.find((e) => e.id === selectedExamId) || exams[0];
+
+  const handleOpenRadar = async (subjectName = activeExam?.subjectName || '') => {
+    setIsRadarOpen(true);
+    setIsRadarLoading(true);
+    try {
+      const res = await fetch(`/api/ai/exam-predict?subjectName=${encodeURIComponent(subjectName)}`);
+      const data = await res.json();
+      setRadarPredictions(data.predictions || []);
+    } catch (err) {
+      console.warn('Exam predict fetch error:', err);
+    } finally {
+      setIsRadarLoading(false);
+    }
+  };
 
   const calculateDaysLeft = (dateStr: string) => {
     const today = new Date();
@@ -113,16 +135,28 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
           </p>
         </div>
 
-        {onAddExam && (
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             type="button"
-            onClick={handleOpenAddModal}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-semibold shadow-xs transition cursor-pointer self-start sm:self-auto"
+            onClick={() => handleOpenRadar(activeExam?.subjectName || '')}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-rose-500/20 border border-amber-500/40 hover:border-amber-400 text-amber-200 text-xs font-semibold shadow-xs transition cursor-pointer"
+            title="Predict upcoming exam questions using collective class query volume + past PYQs"
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>+ Add Exam Paper</span>
+            <Target className="w-3.5 h-3.5 text-amber-400" />
+            <span>Exam Radar 🎯</span>
           </button>
-        )}
+
+          {onAddExam && (
+            <button
+              type="button"
+              onClick={handleOpenAddModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-white text-slate-950 text-xs font-semibold shadow-xs transition cursor-pointer self-start sm:self-auto"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Add Exam Paper</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 2. Exam Selection Cards */}
@@ -420,6 +454,115 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* 4. Exam Radar Prediction Modal */}
+      {isRadarOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-3xl rounded-2xl bg-slate-950 border border-amber-500/40 p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+                  <Target className="w-4 h-4 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <span>Exam Radar 🎯</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">
+                      {activeExam?.subjectName || 'All Subjects'}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Calculated by cross-referencing classroom inquiry frequency with historical university PYQs
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsRadarOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {isRadarLoading ? (
+                <div className="py-12 text-center space-y-2">
+                  <Sparkles className="w-6 h-6 text-amber-400 animate-spin mx-auto" />
+                  <p className="text-xs text-slate-400">Correlating classroom inquiries with past 5-year exam trends...</p>
+                </div>
+              ) : radarPredictions.length > 0 ? (
+                radarPredictions.map((pred, pIdx) => {
+                  const isHigh = pred.probability === 'High';
+                  const isMedium = pred.probability === 'Medium';
+                  return (
+                    <div
+                      key={pIdx}
+                      className={`p-4 rounded-xl border space-y-2 transition ${
+                        isHigh
+                          ? 'bg-rose-950/20 border-rose-500/40 hover:border-rose-400'
+                          : isMedium
+                          ? 'bg-amber-950/20 border-amber-500/40 hover:border-amber-400'
+                          : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider ${
+                                isHigh
+                                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                                  : isMedium
+                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                                  : 'bg-slate-800 text-slate-400 border border-slate-700'
+                              }`}
+                            >
+                              {pred.probability} Probability
+                            </span>
+                            <span className="text-[10px] font-mono text-slate-400">
+                              {pred.hitCount} asks · {pred.pyqCount} past PYQs
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-bold text-slate-100 font-sans-ui">
+                            {pred.topic}
+                          </h4>
+                          <p className="text-xs text-slate-300 leading-relaxed">
+                            {pred.reasoning}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsRadarOpen(false);
+                            onOpenStudySession(pred.topic);
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-xs transition flex items-center gap-1 shrink-0 cursor-pointer"
+                        >
+                          <span>Study this now</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {pred.suggestedAnswer && (
+                        <div className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800/80 text-[11px] text-slate-400 font-mono leading-relaxed line-clamp-2">
+                          <span className="text-slate-500 font-bold mr-1">Preview:</span>
+                          {pred.suggestedAnswer}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="py-12 text-center text-xs text-slate-400 space-y-2">
+                  <p>No specific high-priority predictions found yet for this subject.</p>
+                  <p className="text-slate-500">Ask more questions in AI Tutor to train the class radar!</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
