@@ -18,6 +18,7 @@ import {
   Database,
   Zap,
   Trophy,
+  Sparkles,
 } from 'lucide-react';
 import type { UserProfile } from './LoginModal';
 
@@ -66,24 +67,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout,
   isSetupDone = true,
 }) => {
-  const studyHubItems = [
-    { id: 'ai-tutor' as const, label: 'AI Companion', icon: Bot, isPrimary: true },
-    { id: 'dashboard' as const, label: "Today's Classes", icon: LayoutDashboard },
-    { id: 'knowledge-dashboard' as const, label: 'Class Knowledge', icon: Trophy },
-  ];
-
-  const academicItems = [
+  const mainNavItems = [
+    { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard, badge: '3' },
+    { id: 'ai-tutor' as const, label: 'AI Companion', icon: Bot, isAI: true, badge: 'AI' },
+    { id: 'knowledge-dashboard' as const, label: 'Class Brain', icon: Trophy },
     { id: 'materials' as const, label: 'Notes & Slides', icon: FolderOpen },
     { id: 'syllabus' as const, label: 'Syllabus Map', icon: Map },
-    { id: 'exams' as const, label: 'Exams & Radar', icon: Flame },
-    { id: 'pyqs' as const, label: 'PYQ Bank', icon: Award },
-    { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
+    { id: 'exams' as const, label: 'Exams & Radar', icon: Flame, badge: '1' },
+    { id: 'assignments' as const, label: 'Tasks & Vivas', icon: FileCheck2 },
     { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
-  ];
-
-  const toolsItems = [
-    { id: 'dump' as const, label: 'Study Drop (Upload)', icon: UploadCloud },
-    { id: 'rag' as const, label: 'Textbook Vault', icon: Database },
+    { id: 'dump' as const, label: 'Study Drop', icon: UploadCloud },
     { id: 'daily-update' as const, label: 'Daily Pulse', icon: Zap },
     ...(isSetupDone !== false ? [{ id: 'setup' as const, label: 'My Class', icon: GraduationCap }] : []),
     { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
@@ -103,172 +96,136 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`bg-slate-950 border-r border-slate-800/80 flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out ${
-        isCollapsed ? 'w-16' : 'w-56'
+      className={`bg-[#0d111a] border-r border-slate-800/70 flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none ${
+        isCollapsed ? 'w-18' : 'w-60'
       }`}
     >
-      {/* Top Header: Collapse Toggle */}
-      {onToggleCollapse && (
-        <div
-          className={`border-b border-slate-800/60 flex items-center ${
-            isCollapsed ? 'justify-center p-2.5' : 'justify-end px-3.5 py-2.5'
-          }`}
+      {/* 1. Brand Logo Header */}
+      <div className="h-16 px-4 flex items-center justify-between border-b border-slate-800/60 shrink-0">
+        <button
+          onClick={() => onSelectTab('dashboard')}
+          className="flex items-center gap-2.5 cursor-pointer focus:outline-none group text-left"
+          title="M2029 Academic OS"
         >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            ✦
+          </div>
+          {!isCollapsed && (
+            <div className="leading-tight">
+              <span className="text-base font-extrabold text-white tracking-tight font-sans block">
+                m2029
+              </span>
+              <span className="text-[10px] font-mono text-cyan-400 font-semibold block -mt-0.5">
+                {classCode || 'BCA-2028'}
+              </span>
+            </div>
+          )}
+        </button>
+
+        {onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-900 border border-transparent hover:border-slate-800 transition cursor-pointer shrink-0"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-850 border border-transparent hover:border-slate-800 transition cursor-pointer shrink-0"
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
+        )}
+      </div>
+
+      {/* 2. Navigation Links */}
+      <nav className={`flex-1 overflow-y-auto space-y-1.5 no-scrollbar ${isCollapsed ? 'p-2' : 'p-3'}`}>
+        {mainNavItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+
+          return (
+            <button
+              key={item.id}
+              onClick={() => onSelectTab(item.id)}
+              title={item.label}
+              className={`relative w-full flex items-center rounded-2xl text-xs font-semibold transition cursor-pointer ${
+                isCollapsed ? 'justify-center py-3 px-0' : 'gap-3 px-3.5 py-2.5 text-left'
+              } ${
+                isActive
+                  ? 'bg-white text-slate-950 font-bold shadow-lg shadow-white/10 ring-1 ring-white/20'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent'
+              }`}
+            >
+              <Icon
+                className={`shrink-0 w-4.5 h-4.5 transition-colors ${
+                  isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
+                }`}
+              />
+
+              {!isCollapsed && (
+                <span className="truncate font-sans-ui flex-1 flex items-center justify-between">
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                        isActive
+                          ? 'bg-slate-950 text-white'
+                          : item.id === 'ai-tutor'
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                          : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* 3. Bottom Contributor Promo Card (matching the "Upgrade to Pro" card in screenshot) */}
+      {!isCollapsed && (
+        <div className="p-3 shrink-0">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/40 to-slate-900 border border-cyan-500/30 text-white space-y-2 shadow-lg relative overflow-hidden group">
+            {/* Ambient background glow */}
+            <div className="absolute -right-4 -bottom-4 w-16 h-16 rounded-full bg-cyan-500/20 blur-xl pointer-events-none group-hover:bg-cyan-500/30 transition-all" />
+
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 flex items-center justify-center font-bold text-xs shrink-0">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              </div>
+              <div className="text-xs font-bold text-white tracking-tight">
+                Class Brain Active
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-300 leading-relaxed font-sans-ui">
+              60 students pooling zero-token knowledge. Perfected to Section C exam blueprint.
+            </p>
+
+            <button
+              onClick={() => {
+                if (onOpenAIKeyConfig) onOpenAIKeyConfig();
+                else onSelectTab('knowledge-dashboard');
+              }}
+              className="w-full py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition cursor-pointer shadow-sm shadow-cyan-500/30 flex items-center justify-center gap-1.5"
+            >
+              <span>Explore Brain</span>
+              <span className="text-sm font-bold">›</span>
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Navigation Links */}
-      <nav className={`flex-1 overflow-y-auto space-y-4 ${isCollapsed ? 'p-2' : 'p-3'}`}>
-        {/* 1. Study Hub */}
-        <div className="space-y-1">
-          {!isCollapsed && (
-            <div className="px-2.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
-              Study Hub
-            </div>
-          )}
-          {studyHubItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            const isAI = Boolean((item as any).isPrimary);
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                title={item.label}
-                className={`relative w-full flex items-center rounded-lg text-xs font-medium transition cursor-pointer ${
-                  isCollapsed ? 'justify-center py-2.5 px-0' : 'gap-2.5 px-2.5 py-2 text-left'
-                } ${
-                  isActive
-                    ? isAI
-                      ? 'bg-indigo-600/20 text-indigo-200 font-semibold border border-indigo-500/40 shadow-xs'
-                      : 'bg-slate-900 text-slate-100 font-semibold border border-slate-800 shadow-xs'
-                    : isAI
-                    ? 'text-indigo-300 hover:text-indigo-100 hover:bg-indigo-950/30 border border-indigo-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
-                }`}
-              >
-                {isActive && isCollapsed && (
-                  <span className={`absolute left-0 w-1 h-5 rounded-r ${isAI ? 'bg-indigo-400' : 'bg-slate-200'}`} />
-                )}
-
-                <Icon
-                  className={`shrink-0 w-4 h-4 ${
-                    isActive ? (isAI ? 'text-indigo-300' : 'text-white') : isAI ? 'text-indigo-400' : 'text-slate-400'
-                  }`}
-                />
-                {!isCollapsed && (
-                  <span className="truncate font-sans-ui flex-1 flex items-center justify-between">
-                    <span>{item.label}</span>
-                    {isAI && (
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">
-                        AI
-                      </span>
-                    )}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 2. Academics */}
-        <div className="space-y-1 pt-2 border-t border-slate-800/60">
-          {!isCollapsed && (
-            <div className="px-2.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
-              Academics
-            </div>
-          )}
-          {academicItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                title={item.label}
-                className={`relative w-full flex items-center rounded-lg text-xs font-medium transition cursor-pointer ${
-                  isCollapsed ? 'justify-center py-2 px-0' : 'gap-2.5 px-2.5 py-1.5 text-left'
-                } ${
-                  isActive
-                    ? 'bg-slate-900 text-slate-100 font-semibold border border-slate-800 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
-                }`}
-              >
-                {isActive && isCollapsed && <span className="absolute left-0 w-1 h-4 bg-slate-200 rounded-r" />}
-
-                <Icon className={`shrink-0 w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                {!isCollapsed && <span className="truncate font-sans-ui">{item.label}</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 3. Class Tools */}
-        <div className="space-y-1 pt-2 border-t border-slate-800/60">
-          {!isCollapsed && (
-            <div className="px-2.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
-              Class Tools
-            </div>
-          )}
-          {toolsItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                title={item.label}
-                className={`relative w-full flex items-center rounded-lg text-xs font-medium transition cursor-pointer ${
-                  isCollapsed ? 'justify-center py-2 px-0' : 'gap-2.5 px-2.5 py-1.5 text-left'
-                } ${
-                  isActive
-                    ? 'bg-slate-900 text-slate-100 font-semibold border border-slate-800 shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
-                }`}
-              >
-                {isActive && isCollapsed && <span className="absolute left-0 w-1 h-4 bg-slate-200 rounded-r" />}
-
-                <Icon className={`shrink-0 w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                {!isCollapsed && <span className="truncate font-sans-ui">{item.label}</span>}
-              </button>
-            );
-          })}
-        </div>
-      </nav>
-
-      {/* Pinned Bottom Left Footer: Sign Out / In */}
+      {/* 4. Bottom User Auth */}
       <div className={`border-t border-slate-800/60 shrink-0 ${isCollapsed ? 'p-2' : 'p-3'}`}>
         <button
           onClick={handleAuthAction}
           title={authLabel}
-          className={`group w-full flex items-center rounded-md text-xs font-medium transition cursor-pointer ${
-            isCollapsed
-              ? 'justify-center py-2 px-0'
-              : 'gap-2.5 px-2.5 py-1.5 text-left'
-          } ${
-            isUserLoggedIn
-              ? 'text-slate-400 hover:text-rose-400 hover:bg-slate-900/60 border border-transparent'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60 border border-transparent'
-          }`}
+          className={`w-full flex items-center rounded-xl text-xs font-medium transition cursor-pointer ${
+            isCollapsed ? 'justify-center py-2 px-0' : 'gap-2.5 px-3 py-1.5 text-left'
+          } text-slate-400 hover:text-rose-400 hover:bg-slate-900/60`}
         >
-          <AuthIcon
-            className={`w-4 h-4 shrink-0 transition-colors ${
-              isUserLoggedIn
-                ? 'text-slate-400 group-hover:text-rose-400'
-                : 'text-slate-400 group-hover:text-slate-200'
-            }`}
-          />
+          <AuthIcon className="w-4 h-4 shrink-0" />
           {!isCollapsed && <span className="truncate font-sans-ui">{authLabel}</span>}
         </button>
       </div>

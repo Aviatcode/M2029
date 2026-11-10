@@ -1673,39 +1673,42 @@ export default function App() {
         </div>
       ) : (
         <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
-          <Navbar
-            classCode={classCode}
-            currentUser={currentUser}
-            onUpdateUsername={handleUpdateUsername}
-            onNavigateHome={() => setActiveTab('dashboard')}
-            onNavigateLanding={() => {
-              setActiveTab('landing');
-              try {
-                window.location.hash = 'landing';
-              } catch {
-                // ignore
-              }
-            }}
-            onOpenSearch={() => setIsSearchModalOpen(true)}
-            onOpenNotifications={() => {
-              setIsNotificationsOpen(true);
-              handleMarkAllRead();
-            }}
-            onOpenClassSetup={() => setIsSetupModalOpen(true)}
-            onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
-            onOpenLogin={() => setIsLoginModalOpen(true)}
-            onLogout={handleLogout}
-            onNavigateSettings={() => handleSelectTab('settings')}
-            unreadNotificationsCount={unreadNotificationsCount}
-            totalNotificationsCount={notifications.length}
-            onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
-            calmMode={calmMode}
-            onToggleCalmMode={() => setCalmMode((prev) => !prev)}
-            onOpenThemeSelector={() => setIsThemeModalOpen(true)}
-          />
+          {/* Top Navbar: On Desktop Dashboard, hidden because Dashboard has its own Lucas Bennett-style header */}
+          <div className={activeTab === 'dashboard' ? 'lg:hidden' : 'block shrink-0'}>
+            <Navbar
+              classCode={classCode}
+              currentUser={currentUser}
+              onUpdateUsername={handleUpdateUsername}
+              onNavigateHome={() => setActiveTab('dashboard')}
+              onNavigateLanding={() => {
+                setActiveTab('landing');
+                try {
+                  window.location.hash = 'landing';
+                } catch {
+                  // ignore
+                }
+              }}
+              onOpenSearch={() => setIsSearchModalOpen(true)}
+              onOpenNotifications={() => {
+                setIsNotificationsOpen(true);
+                handleMarkAllRead();
+              }}
+              onOpenClassSetup={() => setIsSetupModalOpen(true)}
+              onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+              onOpenLogin={() => setIsLoginModalOpen(true)}
+              onLogout={handleLogout}
+              onNavigateSettings={() => handleSelectTab('settings')}
+              unreadNotificationsCount={unreadNotificationsCount}
+              totalNotificationsCount={notifications.length}
+              onToggleMobileMenu={() => setMobileMenuOpen((prev) => !prev)}
+              calmMode={calmMode}
+              onToggleCalmMode={() => setCalmMode((prev) => !prev)}
+              onOpenThemeSelector={() => setIsThemeModalOpen(true)}
+            />
+          </div>
 
           {/* 2. MAIN LAYOUT: SIDEBAR + CONTENT WORKSPACE */}
-          <div className="flex flex-1 h-[calc(100vh-3.5rem)] overflow-hidden">
+          <div className={`flex flex-1 overflow-hidden ${activeTab === 'dashboard' ? 'h-full lg:h-screen' : 'h-[calc(100vh-3.5rem)]'}`}>
         {/* Desktop Sidebar (Collapsible) */}
         <div className="hidden lg:flex h-full shrink-0">
           <Sidebar
@@ -1803,8 +1806,10 @@ export default function App() {
 
         {/* Main Content Column with M2028-style Horizontal Sub-Navigation */}
         <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
-          {/* M2028 Horizontal Sub-Navigation Tab Track (.tnb) */}
-          <nav className="h-11 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 px-3 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0 z-20">
+          {/* Horizontal Sub-Navigation Tab Track (Hidden on Desktop Dashboard to match screenshot) */}
+          <nav className={`h-11 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 px-3 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0 z-20 ${
+            activeTab === 'dashboard' ? 'lg:hidden' : ''
+          }`}>
             {[
               { id: 'dashboard', label: 'Today', icon: LayoutDashboard },
               { id: 'ai-tutor', label: 'AI Companion', icon: Bot },
