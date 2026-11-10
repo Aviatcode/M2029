@@ -1349,17 +1349,18 @@ Ground your response in authoritative university curricula and standard textbook
       }
     }
 
-    // LEARN ONCE & STORE FOREVER: Persist to shared disk so repeating questions NEVER spend tokens again!
-    if (!hasPersonalKey) {
-      aiKnowledgeCache.set(
-        lookupKey,
-        subjectName || 'Computer Science',
-        tutorMode,
-        responseText,
-        sections,
-        ai.name
-      );
-    }
+    // LEARN ONCE & STORE FOREVER: Persist to shared class cache.
+    // Personal-key students also contribute their answers to the class library
+    // so subsequent students get the enriched answer for 0 tokens!
+    aiKnowledgeCache.set(
+      lookupKey,
+      subjectName || 'Computer Science',
+      tutorMode,
+      responseText,
+      sections,
+      ai.name,
+      hasPersonalKey ? [ai.name] : undefined
+    );
 
     res.json({
       answer: responseText,
@@ -1370,6 +1371,8 @@ Ground your response in authoritative university curricula and standard textbook
       cached: false,
       tokensSaved: 0,
       isPersonalKey: hasPersonalKey,
+      contributedToClass: hasPersonalKey,
+      contributedModelName: hasPersonalKey ? ai.name : undefined,
       sourcesUsed: [
         ...ragSources,
         { title: `${subjectName || 'Class'} Syllabus & Verified Notes`, type: 'Class Knowledge Base' },
@@ -1720,7 +1723,7 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
 
     // If student asked a custom doubt
     if (action === 'custom_question' && customQuery) {
-      if (!hasPersonalKey && !forceLive) {
+      if (!forceLive) {
         const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
         if (cachedDoubt) {
           return res.json({
@@ -1752,9 +1755,15 @@ Respond as the gold-standard academic tutor:
 4. Keep it focused and conversational.`;
 
       const responseText = await ai.generateText(prompt);
-      if (!hasPersonalKey) {
-        aiKnowledgeCache.set(customQuery, track.name, 'doubt', responseText, undefined, ai.name);
-      }
+      aiKnowledgeCache.set(
+        customQuery,
+        track.name,
+        'doubt',
+        responseText,
+        undefined,
+        ai.name,
+        hasPersonalKey ? [ai.name] : undefined
+      );
 
       return res.json({
         evaluation: null,

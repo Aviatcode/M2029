@@ -109,6 +109,8 @@ interface StudyGuideData {
   positiveVotes?: number;
   negativeVotes?: number;
   isTeacherCurated?: boolean;
+  isPersonalKey?: boolean;
+  contributingModels?: string[];
   sections: {
     simple: string;
     eli9: string;
@@ -218,6 +220,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   const [voteToast, setVoteToast] = useState<string | null>(null);
   const [isCurating, setIsCurating] = useState<boolean>(false);
   const [curationText, setCurationText] = useState<string>('');
+  const [contributedToClass, setContributedToClass] = useState<boolean>(false);
+  const [contributedModelName, setContributedModelName] = useState<string | undefined>(undefined);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -434,6 +438,12 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       const rawText = data.answer || data.text || '';
       const parsed = data.sections || parseSectionsFromText(rawText);
 
+      if (data.contributedToClass) {
+        setContributedToClass(true);
+        setContributedModelName(data.contributedModelName);
+        setTimeout(() => setContributedToClass(false), 6000);
+      }
+
       setStudyGuide({
         topic: cleanTopic,
         subject: subjectName,
@@ -444,6 +454,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         positiveVotes: data.positiveVotes || 0,
         negativeVotes: data.negativeVotes || 0,
         isTeacherCurated: data.isTeacherCurated || false,
+        isPersonalKey: data.isPersonalKey,
+        contributingModels: data.contributingModels || [],
         sections: {
           simple: parsed.simple || rawText,
           eli9: parsed.eli9 || '',
@@ -1176,6 +1188,29 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
             {studyGuide && !isLoading && (
               <div className="space-y-5">
+                {/* Premium Contributor Celebration Banner */}
+                {contributedToClass && (
+                  <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-emerald-950/60 border border-indigo-500/50 shadow-lg flex items-start justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">⚡</span>
+                      <div>
+                        <p className="font-bold text-sm text-indigo-200">
+                          Your {contributedModelName || 'Premium AI'} answer was contributed to the class library!
+                        </p>
+                        <p className="text-xs text-slate-300 mt-0.5">
+                          Saved to shared class knowledge. All 60 classmates can now access this answer instantly for free (0 tokens spent).
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setContributedToClass(false)}
+                      className="text-slate-400 hover:text-white text-xs px-2 py-1 rounded cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+
                 {/* 60-Student Compounded Gold Standard Master Banner */}
                 <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-indigo-950/30 to-emerald-950/20 border border-amber-500/30 shadow-md space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1245,6 +1280,15 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                         >
                           <Zap className="w-3 h-3 text-emerald-400" />
                           <span>0 Tokens • Stored Recall</span>
+                        </span>
+                      )}
+                      {studyGuide.contributingModels && studyGuide.contributingModels.length > 0 && (
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-[10px]"
+                          title={`Class-contributed by student model: ${studyGuide.contributingModels.join(', ')}`}
+                        >
+                          <span>🌟</span>
+                          <span>Contributed by {studyGuide.contributingModels[0]}</span>
                         </span>
                       )}
                     </div>
@@ -1390,6 +1434,24 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                     </div>
                   );
                 })}
+
+                {/* Community Contribution CTA for students without personal keys */}
+                {studyGuide && !studyGuide.cached && !studyGuide.isPersonalKey && (
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-indigo-500/30 bg-indigo-950/20 text-xs">
+                    <div className="flex items-center gap-2.5 text-indigo-200">
+                      <span className="text-base">🔑</span>
+                      <span>
+                        Have a Gemini, OpenAI, Claude, or Groq API key? Connect your personal key to enrich the shared class cache with premium intelligence!
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setIsKeyModalOpen(true)}
+                      className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shrink-0 transition cursor-pointer shadow-xs"
+                    >
+                      Connect Key →
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1510,6 +1572,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         currentIteration={studyGuide?.iterationCount || 60}
         perfectionScore={studyGuide?.perfectionScore || 100}
         evolutionHistory={studyGuide?.evolutionHistory}
+        contributingModels={studyGuide?.contributingModels}
         onTriggerElevateTo60={handleElevateTo60}
         onTriggerRefineNext={handleRefineNext}
         isElevating={isElevatingTo60}

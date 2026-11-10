@@ -24,6 +24,7 @@ interface CohortIntelligenceModalProps {
   currentIteration?: number;
   perfectionScore?: number;
   evolutionHistory?: EvolutionStep[];
+  contributingModels?: string[];
   onTriggerElevateTo60?: () => void;
   onTriggerRefineNext?: (feedback: string) => void;
   isElevating?: boolean;
@@ -37,6 +38,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
   currentIteration = 60,
   perfectionScore = 99,
   evolutionHistory = [],
+  contributingModels = [],
   onTriggerElevateTo60,
   onTriggerRefineNext,
   isElevating = false,
@@ -92,6 +94,19 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
               <h2 className="text-base sm:text-lg font-bold text-white mt-0.5 font-sans-ui">
                 {topicTitle} · <span className="text-slate-400 font-normal">{subjectName}</span>
               </h2>
+              {contributingModels && contributingModels.length > 0 && (
+                <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-mono text-slate-400">Class Model Contributors:</span>
+                  {contributingModels.map((m, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-mono"
+                    >
+                      ⚡ {m}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
