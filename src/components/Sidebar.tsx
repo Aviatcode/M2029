@@ -198,8 +198,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-300 leading-relaxed font-sans-ui">
-              60 students pooling zero-token knowledge. Perfected to Section C exam blueprint.
+            <p className="text-[11px] text-slate-400 font-sans-ui">
+              Zero-token class intelligence.
             </p>
 
             <button
