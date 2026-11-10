@@ -24,12 +24,25 @@ export interface ModelPreset {
   baseUrl?: string;
 }
 
+export interface KeyPoolAccount {
+  id: string;
+  label: string; // e.g. "Personal Account (Gemini)", "College Account (Gemini)", "Groq Cloud (Fast)"
+  provider: ModelProviderType;
+  modelName: string;
+  apiKey: string;
+  baseUrl?: string;
+  isActive: boolean;
+  status?: 'ready' | 'cooldown' | 'exhausted';
+  lastUsedAt?: string;
+}
+
 export interface StoredAiSettings {
   mode: AIMode;
   personalProvider: ModelProviderType;
   personalModel: string;
   personalApiKey: string;
   personalBaseUrl: string;
+  keyPool?: KeyPoolAccount[];
 }
 
 export const PROVIDER_PORTALS: Record<
@@ -309,14 +322,45 @@ export function getStoredAiSettings(): StoredAiSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const data: StoredAiSettings = JSON.parse(raw);
+      if (!Array.isArray(data.keyPool)) {
+        data.keyPool = [];
+        if (data.personalApiKey?.trim()) {
+          data.keyPool.push({
+            id: 'account-1',
+            label: 'Primary Account (Gemini)',
+            provider: data.personalProvider || 'gemini',
+            modelName: data.personalModel || 'gemini-3.8-flash',
+            apiKey: data.personalApiKey,
+            baseUrl: data.personalBaseUrl,
+            isActive: true,
+            status: 'ready',
+          });
+        }
+      }
+      return data;
     }
 
     // Migration from old keys
     const oldKey = localStorage.getItem('syllabus_ai_api_key') || localStorage.getItem('syllabus_gemini_key') || '';
     const oldProvider = (localStorage.getItem('syllabus_ai_provider') as ModelProviderType) || 'gemini';
-    const oldModel = localStorage.getItem('syllabus_ai_model') || 'gemini-2.5-flash';
+    const oldModel = localStorage.getItem('syllabus_ai_model') || 'gemini-3.8-flash';
     const oldBaseUrl = localStorage.getItem('syllabus_ai_base_url') || '';
+
+    const initialPool: KeyPoolAccount[] = oldKey
+      ? [
+          {
+            id: 'account-1',
+            label: 'Primary Account',
+            provider: oldProvider,
+            modelName: oldModel,
+            apiKey: oldKey,
+            baseUrl: oldBaseUrl,
+            isActive: true,
+            status: 'ready',
+          },
+        ]
+      : [];
 
     return {
       mode: oldKey ? 'personal' : 'class',
@@ -324,14 +368,16 @@ export function getStoredAiSettings(): StoredAiSettings {
       personalModel: oldModel,
       personalApiKey: oldKey,
       personalBaseUrl: oldBaseUrl,
+      keyPool: initialPool,
     };
   } catch {
     return {
       mode: 'class',
       personalProvider: 'gemini',
-      personalModel: 'gemini-2.5-flash',
+      personalModel: 'gemini-3.8-flash',
       personalApiKey: '',
       personalBaseUrl: '',
+      keyPool: [],
     };
   }
 }
@@ -342,12 +388,55 @@ export function saveStoredAiSettings(settings: StoredAiSettings): void {
     // Keep old keys synced for backward compatibility
     localStorage.setItem('syllabus_ai_api_key', settings.personalApiKey || '');
     localStorage.setItem('syllabus_ai_provider', settings.personalProvider || 'gemini');
-    localStorage.setItem('syllabus_ai_model', settings.personalModel || 'gemini-2.5-flash');
+    localStorage.setItem('syllabus_ai_model', settings.personalModel || 'gemini-3.8-flash');
     localStorage.setItem('syllabus_ai_base_url', settings.personalBaseUrl || '');
     window.dispatchEvent(new Event(EVENT_NAME));
   } catch {
     // storage unavailable
   }
+}
+
+export function addKeyToPool(account: Omit<KeyPoolAccount, 'id'>): KeyPoolAccount {
+  const current = getStoredAiSettings();
+  const pool = Array.isArray(current.keyPool) ? [...current.keyPool] : [];
+  const newAccount: KeyPoolAccount = {
+    ...account,
+    id: `acc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+  };
+  pool.push(newAccount);
+
+  const updated: StoredAiSettings = {
+    ...current,
+    mode: 'personal',
+    keyPool: pool,
+    personalApiKey: pool[0]?.apiKey || current.personalApiKey,
+    personalProvider: pool[0]?.provider || current.personalProvider,
+    personalModel: pool[0]?.modelName || current.personalModel,
+    personalBaseUrl: pool[0]?.baseUrl || current.personalBaseUrl,
+  };
+  saveStoredAiSettings(updated);
+  return newAccount;
+}
+
+export function removeKeyFromPool(id: string): void {
+  const current = getStoredAiSettings();
+  const pool = (current.keyPool || []).filter((k) => k.id !== id);
+  const updated: StoredAiSettings = {
+    ...current,
+    keyPool: pool,
+    personalApiKey: pool[0]?.apiKey || '',
+    personalProvider: pool[0]?.provider || 'gemini',
+    personalModel: pool[0]?.modelName || 'gemini-3.8-flash',
+    personalBaseUrl: pool[0]?.baseUrl || '',
+    mode: pool.length > 0 ? 'personal' : 'class',
+  };
+  saveStoredAiSettings(updated);
+}
+
+export function toggleKeyInPool(id: string): void {
+  const current = getStoredAiSettings();
+  const pool = (current.keyPool || []).map((k) => (k.id === id ? { ...k, isActive: !k.isActive } : k));
+  saveStoredAiSettings({ ...current, keyPool: pool });
 }
 
 export function subscribeToAiSettings(callback: (settings: StoredAiSettings) => void): () => void {
@@ -364,8 +453,7 @@ export function subscribeToAiSettings(callback: (settings: StoredAiSettings) => 
 
 /**
  * Returns payload object to merge into fetch requests for AI endpoints.
- * If user configured a personal API key or endpoint, passes userAiConfig to invoke that exact model.
- * If in Class Mode with no personal key, returns empty object (server uses class shared key).
+ * Supports OpenCode-style multi-account failover pool!
  */
 export function getAiRequestPayload(): {
   userAiConfig?: {
@@ -373,20 +461,23 @@ export function getAiRequestPayload(): {
     provider: ModelProviderType;
     modelName: string;
     baseUrl: string;
+    keyPool?: KeyPoolAccount[];
   };
 } {
   const settings = getStoredAiSettings();
+  const pool = (settings.keyPool || []).filter((k) => k.isActive && (k.apiKey?.trim() || k.baseUrl?.trim()));
   const hasKey = Boolean(settings.personalApiKey && settings.personalApiKey.trim());
   const hasBaseUrl = Boolean(settings.personalBaseUrl && settings.personalBaseUrl.trim());
 
-  // If user entered a key or URL, or mode is personal, pass userAiConfig
-  if ((settings.mode === 'personal' || hasKey || hasBaseUrl) && (hasKey || hasBaseUrl)) {
+  if (pool.length > 0 || hasKey || hasBaseUrl) {
+    const firstAcc = pool[0];
     return {
       userAiConfig: {
-        apiKey: (settings.personalApiKey || '').trim(),
-        provider: settings.personalProvider || 'auto',
-        modelName: settings.personalModel || 'gemini-3.8-flash',
-        baseUrl: (settings.personalBaseUrl || '').trim(),
+        apiKey: (settings.personalApiKey || firstAcc?.apiKey || '').trim(),
+        provider: settings.personalProvider || firstAcc?.provider || 'auto',
+        modelName: settings.personalModel || firstAcc?.modelName || 'gemini-3.8-flash',
+        baseUrl: (settings.personalBaseUrl || firstAcc?.baseUrl || '').trim(),
+        keyPool: pool,
       },
     };
   }
@@ -399,25 +490,44 @@ export function getActiveModelInfo(): {
   modelName: string;
   displayName: string;
   badge: string;
+  poolCount: number;
 } {
   const settings = getStoredAiSettings();
+  const pool = (settings.keyPool || []).filter((k) => k.isActive && (k.apiKey?.trim() || k.baseUrl?.trim()));
   const hasKey = Boolean(settings.personalApiKey && settings.personalApiKey.trim());
   const hasBaseUrl = Boolean(settings.personalBaseUrl && settings.personalBaseUrl.trim());
-  const isPersonal = (settings.mode === 'personal' || hasKey || hasBaseUrl) && (hasKey || hasBaseUrl);
+  const isPersonal = pool.length > 0 || hasKey || hasBaseUrl;
+
+  if (pool.length > 1) {
+    return {
+      isPersonal: true,
+      provider: pool[0].provider,
+      modelName: pool[0].modelName,
+      displayName: `Auto-Failover Pool (${pool.length} Accounts)`,
+      badge: `${pool.length} Free Keys Active 🟢`,
+      poolCount: pool.length,
+    };
+  }
+
+  if (pool.length === 1) {
+    return {
+      isPersonal: true,
+      provider: pool[0].provider,
+      modelName: pool[0].modelName,
+      displayName: pool[0].label || 'Personal Free Key',
+      badge: '1 Account (Auto-Failover Ready)',
+      poolCount: 1,
+    };
+  }
 
   if (isPersonal) {
-    const preset = MODEL_PRESETS.find(
-      (p) => p.id === settings.personalModel || (p.provider === settings.personalProvider && p.id.includes(settings.personalModel))
-    );
-    const portal = PROVIDER_PORTALS[settings.personalProvider];
-    const providerName = portal ? portal.name : settings.personalProvider;
-    const modelName = settings.personalModel || 'Custom';
     return {
       isPersonal: true,
       provider: settings.personalProvider,
-      modelName,
-      displayName: preset ? preset.name : `${providerName} (${modelName})`,
-      badge: 'Personal Key',
+      modelName: settings.personalModel,
+      displayName: 'Personal Key',
+      badge: 'Active',
+      poolCount: 1,
     };
   }
 
@@ -425,8 +535,9 @@ export function getActiveModelInfo(): {
     isPersonal: false,
     provider: 'gemini',
     modelName: 'gemini-3.8-flash',
-    displayName: 'Academic Engine',
+    displayName: 'Academic Engine (Free)',
     badge: 'Class Shared',
+    poolCount: 0,
   };
 }
 

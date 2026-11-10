@@ -111,6 +111,8 @@ interface StudyGuideData {
   isTeacherCurated?: boolean;
   isPersonalKey?: boolean;
   contributingModels?: string[];
+  failoverOccurred?: boolean;
+  failoverHistory?: string[];
   sections: {
     simple: string;
     eli9: string;
@@ -222,6 +224,9 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   const [curationText, setCurationText] = useState<string>('');
   const [contributedToClass, setContributedToClass] = useState<boolean>(false);
   const [contributedModelName, setContributedModelName] = useState<string | undefined>(undefined);
+  const [activeDisplayMode, setActiveDisplayMode] = useState<TutorResponseMode | 'all'>('exam_10marker');
+  const [copiedFeedback, setCopiedFeedback] = useState<boolean>(false);
+  const [preferredSearchMode, setPreferredSearchMode] = useState<TutorResponseMode>('exam_10marker');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -456,6 +461,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         isTeacherCurated: data.isTeacherCurated || false,
         isPersonalKey: data.isPersonalKey,
         contributingModels: data.contributingModels || [],
+        failoverOccurred: data.failoverOccurred,
+        failoverHistory: data.failoverHistory || [],
         sections: {
           simple: parsed.simple || rawText,
           eli9: parsed.eli9 || '',
@@ -748,18 +755,17 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-mono transition cursor-pointer text-slate-300 hover:text-white"
-            title="Configure Academic AI Model or Change API Key"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs transition cursor-pointer text-slate-300 hover:text-white shadow-xs"
+            title="Configure Multi-Model Auto-Failover Pool (OpenCode Style)"
           >
-            <Cpu className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-            <span className="hidden sm:inline text-slate-400 font-sans-ui text-[11px]">Model:</span>
-            <span className="font-semibold text-slate-200 text-[11px] truncate max-w-[110px] sm:max-w-[150px]">
+            <Zap className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="font-semibold text-slate-200 text-xs truncate max-w-[140px] sm:max-w-[200px]">
               {activeModel.displayName}
             </span>
             <span
-              className={`text-[9px] px-1.5 py-0.2 rounded border shrink-0 ${
+              className={`text-[10px] px-1.5 py-0.2 rounded-full border shrink-0 font-mono ${
                 activeModel.isPersonal
-                  ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-semibold'
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-semibold'
                   : 'bg-slate-800 text-slate-400 border-slate-700/60'
               }`}
             >
@@ -1148,31 +1154,71 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         {viewMode === 'reference' && (
           <div className="space-y-6">
             {!studyGuide && !isLoading && (
-              <div className="rounded-xl bg-slate-900/30 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-base font-semibold text-slate-100">
-                  Comprehensive 6-Stage Reference Guide
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Select or enter any topic to view its entire 6-part academic breakdown: Simple, ELI9 Analogies, Hinglish Mental Model, 10-Marker University Exam Format, Deep Dive Edge Cases, and Quiz Me.
-                </p>
-                <div className="flex flex-wrap gap-2 pt-2">
+              <div className="rounded-2xl bg-gradient-to-b from-slate-900/60 via-slate-950/80 to-slate-950 border border-slate-800/80 p-6 sm:p-8 space-y-6 text-center max-w-2xl mx-auto my-4 shadow-xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-medium">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>College Exam Prep & Concept Master</span>
+                </div>
+
+                <div className="space-y-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight font-sans-ui">
+                    What are we mastering today?
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed font-sans-ui">
+                    Ask any university syllabus concept, 10-marker exam question, or algorithm. Answers are cached for all 60 classmates with zero token waste!
+                  </p>
+                </div>
+
+                {/* Preferred Mode Selector Pills */}
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                  <span className="text-[11px] text-slate-500 font-mono">Format:</span>
                   {[
-                    'FCFS CPU Scheduling',
-                    'Process States & PCB',
-                    'Preemptive vs Non-Preemptive',
-                    'Semaphores & Critical Section',
-                    'Deadlocks & Coffman Conditions',
-                    'Banker Algorithm',
-                  ].map((tp) => (
+                    { mode: 'exam_10marker' as const, label: '📝 10-Marker Exam Note' },
+                    { mode: 'hinglish' as const, label: '🗣️ Hinglish Intuition' },
+                    { mode: 'simple' as const, label: '🎯 Simple Overview' },
+                    { mode: 'eli9' as const, label: '💡 ELI9 Analogy' },
+                  ].map((m) => (
                     <button
-                      key={tp}
-                      onClick={() => loadTopicGuide(tp)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5"
+                      key={m.mode}
+                      onClick={() => setPreferredSearchMode(m.mode)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                        preferredSearchMode === m.mode
+                          ? 'bg-indigo-600 text-white shadow-xs font-semibold'
+                          : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                      }`}
                     >
-                      <span>{tp}</span>
-                      <ArrowRight className="w-3 h-3 text-slate-500" />
+                      {m.label}
                     </button>
                   ))}
+                </div>
+
+                {/* Popular University Exam Topics */}
+                <div className="pt-3 border-t border-slate-850 space-y-2 text-left">
+                  <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
+                    ⚡ Frequently Asked in University Exams:
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { title: 'FCFS vs SJF CPU Scheduling', sub: 'Operating Systems' },
+                      { title: 'Process States & PCB Diagram', sub: 'Operating Systems' },
+                      { title: 'Deadlock 4 Conditions & Banker Algorithm', sub: 'Operating Systems' },
+                      { title: 'Normalization 1NF to BCNF', sub: 'DBMS' },
+                      { title: 'TCP 3-Way Handshake Protocol', sub: 'Computer Networks' },
+                      { title: 'Dijkstra Shortest Path Algorithm', sub: 'DSA' },
+                    ].map((tp) => (
+                      <button
+                        key={tp.title}
+                        onClick={() => {
+                          setSelectedSubject(tp.sub);
+                          loadTopicGuide(tp.title, tp.sub);
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5 shadow-2xs group"
+                      >
+                        <span>{tp.title}</span>
+                        <ArrowRight className="w-3 h-3 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -1416,24 +1462,110 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                   </div>
                 </div>
 
-                {primaryModes.map((m) => {
-                  const content = studyGuide.sections[m.mode as keyof typeof studyGuide.sections];
-                  if (!content) return null;
-                  return (
-                    <div
-                      key={m.mode}
-                      className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 space-y-3"
+                {/* Single-Click Mode Switcher Bar & Copy Button */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800 text-xs scrollbar-none">
+                  {[
+                    { mode: 'exam_10marker' as const, label: '📝 10-Marker Format' },
+                    { mode: 'hinglish' as const, label: '🗣️ Hinglish Intuition' },
+                    { mode: 'eli9' as const, label: '💡 ELI9 Analogy' },
+                    { mode: 'simple' as const, label: '🎯 Simple Concept' },
+                    { mode: 'detailed' as const, label: '⚡ Deep Dive' },
+                    { mode: 'socratic' as const, label: '❓ Quiz Me' },
+                    { mode: 'all' as const, label: '📑 View All' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.mode}
+                      onClick={() => setActiveDisplayMode(tab.mode)}
+                      className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer shrink-0 ${
+                        activeDisplayMode === tab.mode
+                          ? 'bg-indigo-600 text-white shadow-xs font-semibold'
+                          : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-slate-800'
+                      }`}
                     >
-                      <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs font-mono">
-                        <m.icon className="w-4 h-4" />
-                        <span>{m.label}</span>
+                      {tab.label}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => {
+                      const textToCopy =
+                        activeDisplayMode === 'all'
+                          ? Object.entries(studyGuide.sections)
+                              .map(([k, v]) => `## ${k.toUpperCase()}\n${v}`)
+                              .join('\n\n')
+                          : studyGuide.sections[activeDisplayMode as keyof typeof studyGuide.sections] ||
+                            studyGuide.sections.exam_10marker ||
+                            studyGuide.sections.simple;
+                      navigator.clipboard.writeText(textToCopy);
+                      setCopiedFeedback(true);
+                      setTimeout(() => setCopiedFeedback(false), 2000);
+                    }}
+                    className="ml-auto px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-mono text-slate-300 hover:text-white transition cursor-pointer flex items-center gap-1.5 shrink-0"
+                    title="Copy note to clipboard"
+                  >
+                    {copiedFeedback ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-400">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileCode className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Copy Note</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* OpenCode Auto-Failover Recovery Notice */}
+                {studyGuide.failoverOccurred && (
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/40 text-xs flex items-center gap-2.5 text-emerald-300">
+                    <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>
+                      <strong>OpenCode Auto-Failover Handled:</strong> Primary account hit quota limit. Answer was seamlessly generated by backup account (<strong>{studyGuide.modelUsed}</strong>) with 0 errors!
+                    </span>
+                  </div>
+                )}
+
+                {/* Active Section Display */}
+                {activeDisplayMode === 'all' ? (
+                  primaryModes.map((m) => {
+                    const content = studyGuide.sections[m.mode as keyof typeof studyGuide.sections];
+                    if (!content) return null;
+                    return (
+                      <div
+                        key={m.mode}
+                        className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 sm:p-5 space-y-3"
+                      >
+                        <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs font-mono">
+                          <m.icon className="w-4 h-4" />
+                          <span>{m.label}</span>
+                        </div>
+                        <div className="prose prose-invert max-w-none text-xs sm:text-sm text-slate-300 whitespace-pre-line leading-relaxed font-sans-ui">
+                          {content}
+                        </div>
                       </div>
-                      <div className="prose prose-invert max-w-none text-xs sm:text-sm text-slate-300 whitespace-pre-line leading-relaxed">
-                        {content}
-                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="rounded-2xl border border-slate-800/80 bg-slate-900/30 p-5 sm:p-6 space-y-4 shadow-xl">
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 text-xs">
+                      <span className="font-semibold text-indigo-300 font-mono flex items-center gap-2">
+                        <span>{primaryModes.find((p) => p.mode === activeDisplayMode)?.label || 'Study Note'}</span>
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono">
+                        {studyGuide.subject} • {studyGuide.topic}
+                      </span>
                     </div>
-                  );
-                })}
+
+                    <div className="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 whitespace-pre-line leading-relaxed font-sans-ui">
+                      {studyGuide.sections[activeDisplayMode as keyof typeof studyGuide.sections] ||
+                        studyGuide.sections.exam_10marker ||
+                        studyGuide.sections.simple ||
+                        'No content available for this section.'}
+                    </div>
+                  </div>
+                )}
 
                 {/* Community Contribution CTA for students without personal keys */}
                 {studyGuide && !studyGuide.cached && !studyGuide.isPersonalKey && (
@@ -1534,7 +1666,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             placeholder={
               viewMode === 'guided'
                 ? 'Ask any doubt (e.g. "Did not understand preemptive", "So what is first start time?")...'
-                : `Enter topic to view full 6-stage reference guide...`
+                : 'Ask any syllabus doubt, 10-marker exam question, or algorithm...'
             }
             className="flex-1 bg-slate-900/80 border border-slate-800 focus:border-indigo-500 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none transition font-sans-ui"
           />

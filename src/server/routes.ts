@@ -4,7 +4,12 @@ import { Router, Request, Response } from 'express';
 import { AIProviderFactory, UniversalKeyConfig, UniversalAIProvider } from './ai/provider.js';
 
 export function extractAiConfig(req: Request): UniversalKeyConfig | undefined {
-  if (req.body?.userAiConfig && (req.body.userAiConfig.apiKey?.trim() || req.body.userAiConfig.baseUrl?.trim())) {
+  if (
+    req.body?.userAiConfig &&
+    (req.body.userAiConfig.apiKey?.trim() ||
+      req.body.userAiConfig.baseUrl?.trim() ||
+      (Array.isArray(req.body.userAiConfig.keyPool) && req.body.userAiConfig.keyPool.length > 0))
+  ) {
     return req.body.userAiConfig;
   }
   const headerKey = req.headers['x-ai-key'] as string;
@@ -1219,7 +1224,12 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const tutorMode: TutorResponseMode = mode || 'all';
   const lookupKey = topicName || question;
   const userAiConfig = extractAiConfig(req);
-  const hasPersonalKey = Boolean(userAiConfig && (userAiConfig.apiKey?.trim() || userAiConfig.baseUrl?.trim()));
+  const hasPersonalKey = Boolean(
+    userAiConfig &&
+      (userAiConfig.apiKey?.trim() ||
+        userAiConfig.baseUrl?.trim() ||
+        (Array.isArray(userAiConfig.keyPool) && userAiConfig.keyPool.length > 0))
+  );
 
   // 1. FAST ZERO-TOKEN COHORT-PERFECTED CACHE LOOKUP
   // Cache is ALWAYS checked first — even for personal-key students.
@@ -1352,14 +1362,18 @@ Ground your response in authoritative university curricula and standard textbook
     // LEARN ONCE & STORE FOREVER: Persist to shared class cache.
     // Personal-key students also contribute their answers to the class library
     // so subsequent students get the enriched answer for 0 tokens!
+    const activeModelName = (ai as any).lastUsedProviderName || ai.name;
+    const failoverHistory = (ai as any).failoverHistory || [];
+    const failoverOccurred = Boolean((ai as any).failoverOccurred);
+
     aiKnowledgeCache.set(
       lookupKey,
       subjectName || 'Computer Science',
       tutorMode,
       responseText,
       sections,
-      ai.name,
-      hasPersonalKey ? [ai.name] : undefined
+      activeModelName,
+      hasPersonalKey ? [activeModelName] : undefined
     );
 
     res.json({
@@ -1367,12 +1381,14 @@ Ground your response in authoritative university curricula and standard textbook
       text: responseText,
       sections,
       modeUsed: tutorMode,
-      modelUsed: ragHits.length > 0 ? `${ai.name} + ⚡ Active RAG (${ragHits.length} Citations)` : ai.name,
+      modelUsed: ragHits.length > 0 ? `${activeModelName} + ⚡ Active RAG (${ragHits.length} Citations)` : activeModelName,
       cached: false,
       tokensSaved: 0,
       isPersonalKey: hasPersonalKey,
       contributedToClass: hasPersonalKey,
-      contributedModelName: hasPersonalKey ? ai.name : undefined,
+      contributedModelName: hasPersonalKey ? activeModelName : undefined,
+      failoverOccurred,
+      failoverHistory,
       sourcesUsed: [
         ...ragSources,
         { title: `${subjectName || 'Class'} Syllabus & Verified Notes`, type: 'Class Knowledge Base' },

@@ -66,25 +66,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout,
   isSetupDone = true,
 }) => {
-  const primaryItems = [
-    { id: 'dashboard' as const, label: 'Today', icon: LayoutDashboard },
-    { id: 'daily-update' as const, label: 'Daily Update', icon: Zap },
-    { id: 'dump' as const, label: 'Study Drop', icon: UploadCloud },
-    { id: 'rag' as const, label: 'RAG Vault', icon: Database },
-    { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot },
-    { id: 'knowledge-dashboard' as const, label: 'Class Intel', icon: Trophy },
-    { id: 'syllabus' as const, label: 'Syllabus', icon: Map },
-    { id: 'materials' as const, label: 'Notes', icon: FolderOpen },
-    { id: 'exams' as const, label: 'Exams', icon: Flame },
-    { id: 'pyqs' as const, label: 'PYQs', icon: Award },
+  const studyHubItems = [
+    { id: 'ai-tutor' as const, label: 'AI Companion', icon: Bot, isPrimary: true },
+    { id: 'dashboard' as const, label: "Today's Classes", icon: LayoutDashboard },
+    { id: 'knowledge-dashboard' as const, label: 'Class Knowledge', icon: Trophy },
   ];
 
-  const secondaryItems = [
-    { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
+  const academicItems = [
+    { id: 'materials' as const, label: 'Notes & Slides', icon: FolderOpen },
+    { id: 'syllabus' as const, label: 'Syllabus Map', icon: Map },
+    { id: 'exams' as const, label: 'Exams & Radar', icon: Flame },
+    { id: 'pyqs' as const, label: 'PYQ Bank', icon: Award },
     { id: 'assignments' as const, label: 'Assignments', icon: FileCheck2 },
-    ...(isSetupDone !== false
-      ? [{ id: 'setup' as const, label: 'My Class', icon: GraduationCap }]
-      : []),
+    { id: 'timetable' as const, label: 'Timetable', icon: Calendar },
+  ];
+
+  const toolsItems = [
+    { id: 'dump' as const, label: 'Study Drop (Upload)', icon: UploadCloud },
+    { id: 'rag' as const, label: 'Textbook Vault', icon: Database },
+    { id: 'daily-update' as const, label: 'Daily Pulse', icon: Zap },
+    ...(isSetupDone !== false ? [{ id: 'setup' as const, label: 'My Class', icon: GraduationCap }] : []),
     { id: 'settings' as const, label: 'Settings', icon: SlidersHorizontal },
   ];
 
@@ -126,9 +127,67 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation Links */}
       <nav className={`flex-1 overflow-y-auto space-y-4 ${isCollapsed ? 'p-2' : 'p-3'}`}>
-        {/* Primary Items */}
-        <div className="space-y-0.5">
-          {primaryItems.map((item) => {
+        {/* 1. Study Hub */}
+        <div className="space-y-1">
+          {!isCollapsed && (
+            <div className="px-2.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
+              Study Hub
+            </div>
+          )}
+          {studyHubItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            const isAI = Boolean((item as any).isPrimary);
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => onSelectTab(item.id)}
+                title={item.label}
+                className={`relative w-full flex items-center rounded-lg text-xs font-medium transition cursor-pointer ${
+                  isCollapsed ? 'justify-center py-2.5 px-0' : 'gap-2.5 px-2.5 py-2 text-left'
+                } ${
+                  isActive
+                    ? isAI
+                      ? 'bg-indigo-600/20 text-indigo-200 font-semibold border border-indigo-500/40 shadow-xs'
+                      : 'bg-slate-900 text-slate-100 font-semibold border border-slate-800 shadow-xs'
+                    : isAI
+                    ? 'text-indigo-300 hover:text-indigo-100 hover:bg-indigo-950/30 border border-indigo-500/20'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
+                }`}
+              >
+                {isActive && isCollapsed && (
+                  <span className={`absolute left-0 w-1 h-5 rounded-r ${isAI ? 'bg-indigo-400' : 'bg-slate-200'}`} />
+                )}
+
+                <Icon
+                  className={`shrink-0 w-4 h-4 ${
+                    isActive ? (isAI ? 'text-indigo-300' : 'text-white') : isAI ? 'text-indigo-400' : 'text-slate-400'
+                  }`}
+                />
+                {!isCollapsed && (
+                  <span className="truncate font-sans-ui flex-1 flex items-center justify-between">
+                    <span>{item.label}</span>
+                    {isAI && (
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">
+                        AI
+                      </span>
+                    )}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* 2. Academics */}
+        <div className="space-y-1 pt-2 border-t border-slate-800/60">
+          {!isCollapsed && (
+            <div className="px-2.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
+              Academics
+            </div>
+          )}
+          {academicItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
 
@@ -137,39 +196,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
                 title={item.label}
-                className={`relative w-full flex items-center rounded-md text-xs font-medium transition cursor-pointer ${
-                  isCollapsed
-                    ? 'justify-center py-2 px-0'
-                    : 'gap-2.5 px-2.5 py-1.5 text-left'
+                className={`relative w-full flex items-center rounded-lg text-xs font-medium transition cursor-pointer ${
+                  isCollapsed ? 'justify-center py-2 px-0' : 'gap-2.5 px-2.5 py-1.5 text-left'
                 } ${
                   isActive
-                    ? 'bg-slate-900 text-slate-100 font-semibold border border-slate-800/90 shadow-2xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40 border border-transparent'
+                    ? 'bg-slate-900 text-slate-100 font-semibold border border-slate-800 shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
                 }`}
               >
-                {/* Active Indicator bar when collapsed */}
-                {isActive && isCollapsed && (
-                  <span className="absolute left-0 w-0.5 h-4 bg-neutral-200 rounded-r" />
-                )}
+                {isActive && isCollapsed && <span className="absolute left-0 w-1 h-4 bg-slate-200 rounded-r" />}
 
-                <Icon
-                  className={`shrink-0 ${
-                    isCollapsed ? 'w-4 h-4' : 'w-4 h-4'
-                  } ${isActive ? 'text-white' : 'text-slate-400'}`}
-                />
+                <Icon className={`shrink-0 w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 {!isCollapsed && <span className="truncate font-sans-ui">{item.label}</span>}
               </button>
             );
           })}
         </div>
 
-        {/* Secondary Items */}
-        <div
-          className={`space-y-0.5 pt-2.5 border-t border-slate-800/60 ${
-            isCollapsed ? 'text-center' : ''
-          }`}
-        >
-          {secondaryItems.map((item) => {
+        {/* 3. Class Tools */}
+        <div className="space-y-1 pt-2 border-t border-slate-800/60">
+          {!isCollapsed && (
+            <div className="px-2.5 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
+              Class Tools
+            </div>
+          )}
+          {toolsItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
 
@@ -178,25 +229,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
                 title={item.label}
-                className={`relative w-full flex items-center rounded-md text-xs font-medium transition cursor-pointer ${
-                  isCollapsed
-                    ? 'justify-center py-2 px-0'
-                    : 'gap-2.5 px-2.5 py-1.5 text-left'
+                className={`relative w-full flex items-center rounded-lg text-xs font-medium transition cursor-pointer ${
+                  isCollapsed ? 'justify-center py-2 px-0' : 'gap-2.5 px-2.5 py-1.5 text-left'
                 } ${
                   isActive
-                    ? 'bg-slate-900 text-slate-100 font-semibold border border-slate-800/90 shadow-2xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/40 border border-transparent'
+                    ? 'bg-slate-900 text-slate-100 font-semibold border border-slate-800 shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
                 }`}
               >
-                {isActive && isCollapsed && (
-                  <span className="absolute left-0 w-0.5 h-4 bg-neutral-200 rounded-r" />
-                )}
+                {isActive && isCollapsed && <span className="absolute left-0 w-1 h-4 bg-slate-200 rounded-r" />}
 
-                <Icon
-                  className={`shrink-0 ${
-                    isCollapsed ? 'w-4 h-4' : 'w-4 h-4'
-                  } ${isActive ? 'text-white' : 'text-slate-400'}`}
-                />
+                <Icon className={`shrink-0 w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 {!isCollapsed && <span className="truncate font-sans-ui">{item.label}</span>}
               </button>
             );

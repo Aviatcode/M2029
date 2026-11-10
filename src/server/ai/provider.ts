@@ -20,11 +20,22 @@ export interface AIProvider {
   generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T>;
 }
 
+export interface KeyPoolEntry {
+  id?: string;
+  label?: string;
+  provider?: ModelProviderType;
+  apiKey: string;
+  modelName?: string;
+  baseUrl?: string;
+  isActive?: boolean;
+}
+
 export interface UniversalKeyConfig {
   apiKey?: string;
   provider?: ModelProviderType;
   modelName?: string;
   baseUrl?: string;
+  keyPool?: KeyPoolEntry[];
 }
 
 export class UniversalAIProvider implements AIProvider {
@@ -158,11 +169,14 @@ export class UniversalAIProvider implements AIProvider {
     return 'standard';
   }
 
-  async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
+  async generateText(prompt: string = '', systemInstruction?: string, throwOnError = false): Promise<string> {
     const isTestPrompt = prompt.includes('operational for M2029') || prompt.includes('confirming connection');
 
     // If not available (no personal key/custom endpoint), fall back to cached/mock academic engine
     if (!this.isAvailable()) {
+      if (throwOnError) {
+        throw new Error(`Provider ${this.name} is not available (missing key or endpoint)`);
+      }
       if (!isTestPrompt) {
         const cached = aiKnowledgeCache.get(prompt, '', 'general');
         if (cached && cached.answer) {
@@ -220,27 +234,31 @@ export class UniversalAIProvider implements AIProvider {
                 body: JSON.stringify(body),
               });
 
-              if (res.ok) {
-                const data: any = await res.json();
-                const parts = data.candidates?.[0]?.content?.parts || [];
-                const text =
-                  parts
-                    .filter((p: any) => !p.thought)
-                    .map((p: any) => p.text)
-                    .join('\n')
-                    .trim() || parts[0]?.text;
-                if (text && text.trim().length > 10) {
-                  aiKnowledgeCache.set(prompt, '', 'general', text, undefined, this.name);
-                  return text;
-                }
+              if (!res.ok) {
+                const errText = await res.text();
+                throw new Error(`Gemini API returned ${res.status}: ${errText.slice(0, 150)}`);
               }
-              return null;
+
+              const data: any = await res.json();
+              const parts = data.candidates?.[0]?.content?.parts || [];
+              const text =
+                parts
+                  .filter((p: any) => !p.thought)
+                  .map((p: any) => p.text)
+                  .join('\n')
+                  .trim() || parts[0]?.text;
+              if (text && text.trim().length > 10) {
+                aiKnowledgeCache.set(prompt, '', 'general', text, undefined, this.name);
+                return text;
+              }
+              throw new Error('Gemini API returned empty text response');
             })();
 
             const result = await Promise.race([fetchPromise, timeoutPromise]);
             if (result) return result;
           } catch (restErr: any) {
-            console.warn(`[AI Engine] Gemini API notice, utilizing instant academic fallback:`, restErr.message);
+            console.warn(`[AI Engine] Gemini API notice:`, restErr.message);
+            if (throwOnError) throw restErr;
           }
         }
       }
@@ -329,6 +347,9 @@ export class UniversalAIProvider implements AIProvider {
         if (text) return text;
       }
     } catch (err: any) {
+      if (throwOnError) {
+        throw err;
+      }
       console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, err.message);
       return `[⚠️ Notice: ${this.name} connection notice (${err.message}). Showing Academic Curriculum Fallback:]\n\n${await new MockAIProvider().generateText(prompt, systemInstruction)}`;
     }
@@ -767,18 +788,184 @@ A formal computational or structural paradigm designed to guarantee consistency,
   }
 }
 
+/**
+ * OpenCode-Style Multi-Model Auto-Failover Pool
+ * Supports cascading across multiple free accounts (Gemini Account 1 -> Gemini Account 2 -> Groq Free -> Server Key -> Academic Engine).
+ * When an account hits 429 / RESOURCE_EXHAUSTED / quota limits, it seamlessly fails over to the next available account.
+ */
+export class FailoverAIPoolProvider implements AIProvider {
+  name: string;
+  public pool: Array<{ provider: UniversalAIProvider; label: string; id: string }>;
+  private fallbackProvider: AIProvider;
+  public lastUsedProviderName: string = '';
+  public failoverHistory: string[] = [];
+  public failoverOccurred: boolean = false;
+
+  constructor(config: UniversalKeyConfig) {
+    this.pool = [];
+    const seen = new Set<string>();
+
+    // 1. Process keyPool accounts
+    if (config.keyPool && Array.isArray(config.keyPool)) {
+      for (const entry of config.keyPool) {
+        if (entry.isActive === false) continue;
+        const key = (entry.apiKey || '').trim();
+        const base = (entry.baseUrl || '').trim();
+        if (!key && !base) continue;
+
+        const sig = `${entry.provider || 'auto'}-${key.slice(-8)}-${base}`;
+        if (seen.has(sig)) continue;
+        seen.add(sig);
+
+        const provider = new UniversalAIProvider({
+          apiKey: key,
+          provider: entry.provider || 'auto',
+          modelName: entry.modelName,
+          baseUrl: base,
+        });
+
+        this.pool.push({
+          provider,
+          label: entry.label || provider.name,
+          id: entry.id || `account-${this.pool.length + 1}`,
+        });
+      }
+    }
+
+    // 2. Include single personal key if provided and not duplicate
+    const singleKey = (config.apiKey || '').trim();
+    const singleBase = (config.baseUrl || '').trim();
+    if (singleKey || singleBase) {
+      const sig = `${config.provider || 'auto'}-${singleKey.slice(-8)}-${singleBase}`;
+      if (!seen.has(sig)) {
+        seen.add(sig);
+        const provider = new UniversalAIProvider({
+          apiKey: singleKey,
+          provider: config.provider || 'auto',
+          modelName: config.modelName,
+          baseUrl: singleBase,
+        });
+        this.pool.unshift({
+          provider,
+          label: provider.name,
+          id: 'primary-key',
+        });
+      }
+    }
+
+    this.fallbackProvider = AIProviderFactory.getClassProvider();
+
+    if (this.pool.length > 1) {
+      this.name = `⚡ Auto-Failover Pool (${this.pool.length} Accounts: ${this.pool.map((p) => p.label).join(' ➔ ')})`;
+    } else if (this.pool.length === 1) {
+      this.name = this.pool[0].label;
+    } else {
+      this.name = this.fallbackProvider.name;
+    }
+  }
+
+  isAvailable(): boolean {
+    return this.pool.some((p) => p.provider.isAvailable()) || this.fallbackProvider.isAvailable();
+  }
+
+  getTier(): 'premium' | 'standard' | 'basic' {
+    for (const item of this.pool) {
+      if (item.provider.getTier() === 'premium') return 'premium';
+    }
+    return this.fallbackProvider instanceof UniversalAIProvider ? this.fallbackProvider.getTier() : 'basic';
+  }
+
+  async generateText(prompt: string, systemInstruction?: string): Promise<string> {
+    this.failoverHistory = [];
+    this.failoverOccurred = false;
+
+    // Try candidates in pool sequentially
+    for (let i = 0; i < this.pool.length; i++) {
+      const item = this.pool[i];
+      try {
+        const result = await item.provider.generateText(prompt, systemInstruction, true);
+        if (result && result.trim().length > 10) {
+          this.lastUsedProviderName = item.label;
+          if (i > 0) {
+            this.failoverOccurred = true;
+            console.log(`[Auto-Failover Pool] 🟢 Recovered via Account #${i + 1} (${item.label}) after previous quota limit.`);
+          }
+          return result;
+        }
+      } catch (err: any) {
+        const msg = err.message || '';
+        const isQuota =
+          msg.includes('429') ||
+          msg.includes('RESOURCE_EXHAUSTED') ||
+          msg.includes('quota') ||
+          msg.includes('rate limit') ||
+          msg.includes('RateLimit') ||
+          msg.includes('overloaded') ||
+          msg.includes('timeout') ||
+          msg.includes('503');
+
+        console.warn(`[Auto-Failover Pool] ⚠️ Account #${i + 1} (${item.label}) exhausted${isQuota ? ' [QUOTA 429]' : ''}: ${msg}`);
+        this.failoverHistory.push(`${item.label} (${isQuota ? 'Quota Exceeded' : 'Error'})`);
+
+        if (i < this.pool.length - 1) {
+          console.log(`[Auto-Failover Pool] 🔄 OpenCode Auto-Switch: Switching to Account #${i + 2} (${this.pool[i + 1].label})...`);
+        }
+      }
+    }
+
+    // If pool empty or all pool accounts exhausted, try server-shared classroom AI
+    try {
+      console.log(`[Auto-Failover Pool] All personal keys exhausted. Falling back to server class AI...`);
+      const fallbackResult = await this.fallbackProvider.generateText(prompt, systemInstruction);
+      if (fallbackResult && fallbackResult.trim().length > 10) {
+        this.lastUsedProviderName = `${this.fallbackProvider.name} (Class Backup)`;
+        this.failoverOccurred = true;
+        return fallbackResult;
+      }
+    } catch (err: any) {
+      console.warn(`[Auto-Failover Pool] Server fallback error:`, err.message);
+    }
+
+    // Ultimate safe academic curriculum bank
+    const mock = await new MockAIProvider().generateText(prompt, systemInstruction);
+    this.lastUsedProviderName = 'Academic Knowledge Bank (Offline Verified)';
+    return mock;
+  }
+
+  async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
+    for (let i = 0; i < this.pool.length; i++) {
+      const item = this.pool[i];
+      try {
+        const res = await item.provider.generateStructuredJson<T>(prompt, schemaDescription);
+        if (res && typeof res === 'object' && Object.keys(res as object).length > 0) {
+          this.lastUsedProviderName = item.label;
+          return res;
+        }
+      } catch (err: any) {
+        console.warn(`[Auto-Failover Pool] Account #${i + 1} (${item.label}) JSON fail:`, err.message);
+      }
+    }
+    return this.fallbackProvider.generateStructuredJson<T>(prompt, schemaDescription);
+  }
+}
+
 export class AIProviderFactory {
   private static classInstance: AIProvider | null = null;
   private static classConfig: UniversalKeyConfig = {};
 
   /**
    * Returns a provider:
-   * 1. If userConfig provides a valid personal API key or custom endpoint, returns a personal request-scoped provider.
+   * 1. If userConfig provides a valid personal API key, custom endpoint, or key pool, returns an auto-failover provider.
    * 2. Otherwise returns the shared classroom server provider.
    */
   static getProvider(userConfig?: UniversalKeyConfig): AIProvider {
-    if (userConfig && (userConfig.apiKey?.trim() || userConfig.baseUrl?.trim())) {
-      return new UniversalAIProvider(userConfig);
+    if (
+      userConfig &&
+      (userConfig.apiKey?.trim() ||
+        userConfig.baseUrl?.trim() ||
+        (Array.isArray(userConfig.keyPool) && userConfig.keyPool.length > 0))
+    ) {
+      return new FailoverAIPoolProvider(userConfig);
     }
     return this.getClassProvider();
   }

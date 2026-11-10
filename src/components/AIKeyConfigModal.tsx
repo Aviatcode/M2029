@@ -13,6 +13,13 @@ import {
   Check,
   RotateCcw,
   SlidersHorizontal,
+  Plus,
+  Trash2,
+  Zap,
+  ShieldCheck,
+  Layers,
+  Cpu,
+  Sparkles,
 } from 'lucide-react';
 import {
   ModelProviderType,
@@ -22,6 +29,10 @@ import {
   saveStoredAiSettings,
   testAiConnection,
   StoredAiSettings,
+  KeyPoolAccount,
+  addKeyToPool,
+  removeKeyFromPool,
+  toggleKeyInPool,
 } from '../utils/aiModelService';
 
 interface AIKeyConfigModalProps {
@@ -81,6 +92,93 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     ok: false,
     message: 'Checking database...',
   });
+
+  // Multi-Account Failover Pool State (OpenCode Style)
+  const [newLabel, setNewLabel] = useState<string>('');
+  const [newProvider, setNewProvider] = useState<ModelProviderType>('gemini');
+  const [newModelName, setNewModelName] = useState<string>('gemini-3.8-flash');
+  const [newApiKey, setNewApiKey] = useState<string>('');
+  const [newBaseUrl, setNewBaseUrl] = useState<string>('');
+  const [showNewKey, setShowNewKey] = useState<boolean>(false);
+  const [isAddingOpen, setIsAddingOpen] = useState<boolean>(false);
+  const [accountTestingMap, setAccountTestingMap] = useState<
+    Record<string, { isLoading: boolean; ok?: boolean; message?: string }>
+  >({});
+
+  const handleTestAccount = async (account: KeyPoolAccount) => {
+    setAccountTestingMap((prev) => ({
+      ...prev,
+      [account.id]: { isLoading: true },
+    }));
+
+    const res = await testAiConnection({
+      apiKey: account.apiKey,
+      provider: account.provider,
+      modelName: account.modelName,
+      baseUrl: account.baseUrl,
+    });
+
+    setAccountTestingMap((prev) => ({
+      ...prev,
+      [account.id]: {
+        isLoading: false,
+        ok: res.ok,
+        message: res.ok ? `✓ Active (${res.latencyMs}ms latency)` : `✗ ${res.error || 'Connection Failed'}`,
+      },
+    }));
+  };
+
+  const handleAddAccountToPool = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newApiKey.trim() && !newBaseUrl.trim()) return;
+
+    const portal = PROVIDER_PORTALS[newProvider];
+    const defaultLabel = `${portal ? portal.name : newProvider} Account ${(settings.keyPool || []).length + 1}`;
+
+    const added = addKeyToPool({
+      label: newLabel.trim() || defaultLabel,
+      provider: newProvider,
+      modelName: newModelName.trim() || (newProvider === 'gemini' ? 'gemini-3.8-flash' : 'gpt-4o-mini'),
+      apiKey: newApiKey.trim(),
+      baseUrl: newBaseUrl.trim() || undefined,
+      isActive: true,
+      status: 'ready',
+    });
+
+    const updated = getStoredAiSettings();
+    setSettings(updated);
+    setNewLabel('');
+    setNewApiKey('');
+    setNewBaseUrl('');
+    setIsAddingOpen(false);
+
+    if (onConfigUpdated) {
+      onConfigUpdated({
+        hasCustomKey: true,
+        modelType: 'personal_ai',
+        providerName: added.label,
+      });
+    }
+  };
+
+  const handleRemoveAccount = (id: string) => {
+    removeKeyFromPool(id);
+    const updated = getStoredAiSettings();
+    setSettings(updated);
+    if (onConfigUpdated) {
+      const remaining = (updated.keyPool || []).filter((k) => k.isActive);
+      onConfigUpdated({
+        hasCustomKey: remaining.length > 0,
+        modelType: remaining.length > 0 ? 'personal_ai' : 'class_ai',
+        providerName: remaining[0]?.label || classStatus.providerName,
+      });
+    }
+  };
+
+  const handleToggleAccount = (id: string) => {
+    toggleKeyInPool(id);
+    setSettings(getStoredAiSettings());
+  };
 
   // Sync state on open
   useEffect(() => {
@@ -327,10 +425,12 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <User className="w-3.5 h-3.5" />
-            <span>Personal Key</span>
-            {settings.mode === 'personal' && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-0.5" />
+            <Zap className="w-3.5 h-3.5 text-amber-400" />
+            <span>Failover Pool</span>
+            {(settings.keyPool || []).length > 0 && (
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-indigo-500/30 text-indigo-300 font-mono">
+                {(settings.keyPool || []).length}
+              </span>
             )}
           </button>
 
@@ -364,142 +464,258 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
           </button>
         </div>
 
-        {/* TAB 1: PERSONAL STUDY KEY */}
+        {/* TAB 1: MULTI-ACCOUNT FAILOVER POOL (OPENCODE STYLE) */}
         {activeTab === 'personal' && (
           <div className="space-y-4">
-            {/* Active Mode Banner */}
-            <div className="p-3 rounded-xl bg-slate-900/40 border border-slate-800/80 flex items-center justify-between text-xs">
-              <div className="space-y-0.5">
-                <span className="text-slate-400 text-[11px] block">Current Browser Mode:</span>
-                <span className="font-medium text-slate-200 block">
-                  {settings.mode === 'personal'
-                    ? `Personal Key (${currentPreset.name})`
-                    : `Class Shared Key (${classStatus.providerName})`}
-                </span>
+            {/* OpenCode Auto-Failover Guarantee Banner */}
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-indigo-950/60 via-slate-900/80 to-emerald-950/40 border border-indigo-500/30 text-xs space-y-1.5">
+              <div className="flex items-center gap-2 text-indigo-300 font-semibold">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>OpenCode-Style Zero Quota Lockout</span>
               </div>
-              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => handleToggleMode('class')}
-                  className={`px-2 py-1 rounded text-[11px] font-medium transition cursor-pointer ${
-                    settings.mode === 'class'
-                      ? 'bg-slate-800 text-white shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Class Key
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleToggleMode('personal')}
-                  className={`px-2 py-1 rounded text-[11px] font-medium transition cursor-pointer ${
-                    settings.mode === 'personal'
-                      ? 'bg-slate-800 text-white shadow-xs'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  My Key
-                </button>
-              </div>
-            </div>
-
-            {/* Provider Selector: Clean Native Select */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300 block">Model Provider</label>
-              <select
-                value={selectedPresetId}
-                onChange={(e) => {
-                  const preset = MODEL_PRESETS.find((p) => p.id === e.target.value);
-                  if (preset) handleSelectPreset(preset);
-                }}
-                className="w-full px-3 py-2 text-xs rounded-xl bg-slate-900 border border-slate-800 text-slate-200 focus:outline-none focus:border-slate-600 transition"
-              >
-                {MODEL_PRESETS.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} — {p.badge} {p.freeTierAvailable ? '(Free Tier Available)' : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* API Key Input */}
-            <div className="space-y-2 bg-slate-900/40 p-3.5 rounded-xl border border-slate-800/80">
-              <div className="flex items-center justify-between text-xs">
-                <label className="font-medium text-slate-300">{currentPortal.name} API Key</label>
-                {currentPortal.url && (
-                  <a
-                    href={currentPortal.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 transition underline"
-                  >
-                    <span>Get Free Key</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </div>
-
-              <div className="relative">
-                <input
-                  type={showPersonalKey ? 'text' : 'password'}
-                  value={settings.personalApiKey}
-                  onChange={(e) => handleSavePersonalKey(e.target.value)}
-                  placeholder={currentPortal.placeholder}
-                  className="w-full px-3 py-2 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none focus:border-slate-600 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPersonalKey(!showPersonalKey)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition cursor-pointer"
-                  aria-label="Toggle key visibility"
-                >
-                  {showPersonalKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-
-              {settings.personalProvider === 'custom' && (
-                <div className="pt-2 space-y-1 text-xs">
-                  <label className="text-[11px] text-slate-400">Endpoint Base URL</label>
-                  <input
-                    type="text"
-                    value={settings.personalBaseUrl}
-                    onChange={(e) => {
-                      const updated = { ...settings, personalBaseUrl: e.target.value };
-                      setSettings(updated);
-                      saveStoredAiSettings(updated);
-                    }}
-                    placeholder="http://localhost:11434/v1"
-                    className="w-full px-3 py-1.5 text-xs rounded-lg bg-slate-950 border border-slate-800 text-slate-100 font-mono focus:outline-none focus:border-slate-600"
-                  />
-                </div>
-              )}
-
-              <p className="text-[11px] text-slate-500 pt-0.5">
-                Saved locally in your browser. Never uploaded or shared with classmates.
+              <p className="text-[11px] text-slate-300 leading-relaxed">
+                Add 2 or more free accounts (e.g. Gemini Account 1 + Gemini Account 2 + Groq Free). When an account exhausts its free quota (429 RESOURCE_EXHAUSTED), M2029 automatically rotates to the next account with zero downtime!
               </p>
             </div>
 
-            {/* Test Connection & Status */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-              <button
-                type="button"
-                onClick={handleTestConnection}
-                disabled={testingStatus.isLoading || (!settings.personalApiKey && settings.personalProvider !== 'custom')}
-                className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 text-slate-300 hover:text-white border border-slate-800 text-xs font-medium transition cursor-pointer disabled:opacity-40"
-              >
-                {testingStatus.isLoading ? 'Testing...' : 'Test Connection'}
-              </button>
-
-              {testingStatus.result && (
-                <span
-                  className={`text-xs font-medium ${
-                    testingStatus.result.ok ? 'text-emerald-400' : 'text-rose-400'
-                  }`}
-                >
-                  {testingStatus.result.message}
+            {/* Active Accounts in Pool */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-slate-200 flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Configured Accounts ({settings.keyPool?.length || 0})</span>
                 </span>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingOpen(!isAddingOpen)}
+                  className="px-2.5 py-1 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs font-semibold flex items-center gap-1 transition cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Free Account</span>
+                </button>
+              </div>
+
+              {(!settings.keyPool || settings.keyPool.length === 0) ? (
+                <div className="p-5 rounded-xl border border-dashed border-slate-800 bg-slate-900/20 text-center space-y-2">
+                  <p className="text-xs text-slate-400">
+                    No personal accounts in failover pool yet. Currently using the shared classroom model.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingOpen(true)}
+                    className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-xs transition cursor-pointer inline-flex items-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add First Free Gemini Account</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                  {settings.keyPool.map((account, idx) => {
+                    const testState = accountTestingMap[account.id];
+                    return (
+                      <div
+                        key={account.id}
+                        className={`p-3 rounded-xl border transition flex flex-col gap-2 ${
+                          account.isActive
+                            ? 'bg-slate-900/60 border-slate-800 hover:border-slate-700'
+                            : 'bg-slate-950/60 border-slate-900 opacity-60'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-5 h-5 rounded-md bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-[10px] font-mono text-indigo-300 font-bold shrink-0">
+                              #{idx + 1}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-slate-200 truncate">
+                                {account.label}
+                              </p>
+                              <p className="text-[10px] font-mono text-slate-400">
+                                {account.provider.toUpperCase()} • {account.modelName}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleAccount(account.id)}
+                              className={`text-[10px] px-2 py-0.5 rounded-full border transition cursor-pointer ${
+                                account.isActive
+                                  ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                                  : 'bg-slate-800 border-slate-700 text-slate-400'
+                              }`}
+                            >
+                              {account.isActive ? 'Active 🟢' : 'Paused ⏸️'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveAccount(account.id)}
+                              className="p-1 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition cursor-pointer"
+                              title="Remove from pool"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/60">
+                          <span className="font-mono text-slate-500 text-[10px]">
+                            {account.apiKey
+                              ? `${account.apiKey.slice(0, 6)}••••••••${account.apiKey.slice(-4)}`
+                              : account.baseUrl || 'Endpoint'}
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            {testState && (
+                              <span
+                                className={`text-[10px] font-mono ${
+                                  testState.ok ? 'text-emerald-400' : 'text-rose-400'
+                                }`}
+                              >
+                                {testState.message}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              disabled={testState?.isLoading}
+                              onClick={() => handleTestAccount(account)}
+                              className="text-[10px] text-slate-400 hover:text-slate-200 underline font-mono cursor-pointer"
+                            >
+                              {testState?.isLoading ? 'Testing...' : 'Test'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </div>
+
+            {/* Add New Account Form Modal / Accordion */}
+            {isAddingOpen && (
+              <form
+                onSubmit={handleAddAccountToPool}
+                className="p-4 rounded-xl border border-indigo-500/40 bg-slate-900/80 space-y-3 animate-in fade-in duration-200"
+              >
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-indigo-200 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Add Free Account to Failover Pool</span>
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingOpen(false)}
+                    className="text-slate-400 hover:text-white text-xs cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="text-[10px] font-medium text-slate-400 block mb-1">Provider</label>
+                    <select
+                      value={newProvider}
+                      onChange={(e) => {
+                        const prov = e.target.value as ModelProviderType;
+                        setNewProvider(prov);
+                        if (prov === 'gemini') setNewModelName('gemini-3.8-flash');
+                        else if (prov === 'groq') setNewModelName('llama-3.3-70b-versatile');
+                        else if (prov === 'deepseek') setNewModelName('deepseek-chat');
+                        else if (prov === 'openai') setNewModelName('gpt-4o-mini');
+                      }}
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="gemini">Google Gemini (Free Tier)</option>
+                      <option value="groq">Groq Cloud (Free Llama 3.3)</option>
+                      <option value="deepseek">DeepSeek AI (Low Cost)</option>
+                      <option value="openai">OpenAI (GPT-4o Mini)</option>
+                      <option value="openrouter">OpenRouter (Multi-model)</option>
+                      <option value="custom">Ollama / Local (Port 11434)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-medium text-slate-400 block mb-1">Account Nickname</label>
+                    <input
+                      type="text"
+                      value={newLabel}
+                      onChange={(e) => setNewLabel(e.target.value)}
+                      placeholder="e.g. College Gmail, Personal"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1 text-xs">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-medium text-slate-400">
+                      API Key ({PROVIDER_PORTALS[newProvider]?.prefix || 'key'})
+                    </label>
+                    {PROVIDER_PORTALS[newProvider]?.url && (
+                      <a
+                        href={PROVIDER_PORTALS[newProvider].url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5 underline"
+                      >
+                        <span>Get Free Key</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showNewKey ? 'text' : 'password'}
+                      value={newApiKey}
+                      onChange={(e) => setNewApiKey(e.target.value)}
+                      placeholder={PROVIDER_PORTALS[newProvider]?.placeholder || 'Paste key here...'}
+                      required={newProvider !== 'custom'}
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-100 font-mono focus:outline-none focus:border-indigo-500 pr-8"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewKey(!showNewKey)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
+                    >
+                      {showNewKey ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                    </button>
+                  </div>
+                </div>
+
+                {newProvider === 'custom' && (
+                  <div className="space-y-1 text-xs">
+                    <label className="text-[10px] font-medium text-slate-400">Endpoint Base URL</label>
+                    <input
+                      type="text"
+                      value={newBaseUrl}
+                      onChange={(e) => setNewBaseUrl(e.target.value)}
+                      placeholder="http://localhost:11434/v1"
+                      className="w-full px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-100 font-mono focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                )}
+
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingOpen(false)}
+                    className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-xs cursor-pointer"
+                  >
+                    Save & Add to Pool
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         )}
 
