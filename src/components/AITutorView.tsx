@@ -126,6 +126,7 @@ interface StudyGuideData {
     socratic: string;
   };
   sourcesUsed?: { title: string; type: string }[];
+  reasoningSteps?: Array<{ step: string; detail: string; timestamp: string }>;
   iterationCount?: number;
   isCohortPerfected?: boolean;
   perfectionScore?: number;
@@ -219,6 +220,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   const [studyGuide, setStudyGuide] = useState<StudyGuideData | null>(null);
   const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [showReasoningTrace, setShowReasoningTrace] = useState<boolean>(false);
 
   // 60-Student Compounding Intelligence State
   const [isCohortModalOpen, setIsCohortModalOpen] = useState<boolean>(false);
@@ -482,6 +484,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           { title: `${subjectName} Verified Syllabus`, type: 'Curriculum' },
           { title: 'University PYQ Database (2020-2025)', type: 'Exam Bank' },
         ],
+        reasoningSteps: data.reasoningSteps || [],
         iterationCount: data.iterationCount ?? 60,
         isCohortPerfected: data.isCohortPerfected ?? true,
         perfectionScore: data.perfectionScore ?? 100,
@@ -1324,6 +1327,44 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                             <span>{source.title}</span>
                           </span>
                         ))}
+                      </div>
+                    )}
+                    {studyGuide.reasoningSteps && studyGuide.reasoningSteps.length > 0 && (
+                      <div className="mt-2.5 pt-2 border-t border-slate-800/60">
+                        <button
+                          type="button"
+                          onClick={() => setShowReasoningTrace((prev) => !prev)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-[11px] font-mono transition cursor-pointer"
+                        >
+                          <Sparkles className="w-3 h-3 text-indigo-400" />
+                          <span className="font-semibold">✦ LangGraph Academic Agent Trace ({studyGuide.reasoningSteps.length} Steps)</span>
+                          <ChevronDown
+                            className={`w-3 h-3 text-indigo-400 transition-transform ${showReasoningTrace ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+
+                        {showReasoningTrace && (
+                          <div className="mt-2.5 p-3 rounded-xl bg-slate-950/90 border border-indigo-500/20 space-y-2 text-xs">
+                            <div className="text-[10px] font-mono uppercase tracking-wider text-indigo-400 font-bold flex items-center gap-1.5">
+                              <span>LangChain + LangGraph StateGraph Execution Trace</span>
+                            </div>
+                            <div className="space-y-1.5 pt-1">
+                              {studyGuide.reasoningSteps.map((step, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-start gap-2 text-slate-300 font-mono text-[11px] bg-slate-900/60 p-2 rounded-lg border border-slate-800/60"
+                                >
+                                  <span className="text-emerald-400 shrink-0 font-bold">✓</span>
+                                  <div className="flex-1 min-w-0">
+                                    <span className="text-indigo-300 font-semibold">{step.step}: </span>
+                                    <span className="text-slate-200">{step.detail}</span>
+                                  </div>
+                                  <span className="text-slate-500 text-[9px] shrink-0">{step.timestamp}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
