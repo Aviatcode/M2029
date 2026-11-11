@@ -144,3 +144,4 @@ export async function fetchRealWorldAnalogies(topic: string, subject?: string): 
 
   return response.items.map((item) => `${item.title}: ${item.snippet}`);
 }
+
