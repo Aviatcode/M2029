@@ -1,6 +1,7 @@
 import { DynamicTool } from '@langchain/core/tools';
 import { ragEngine } from '../rag/ragIndex.js';
 import { GOLD_TOPICS, SYLLABUS_TRACKS } from './academicKnowledgeBank.js';
+import { fetchGoogleSearch } from './googleFetchService.js';
 
 export interface RagHit {
   docTitle: string;
@@ -73,42 +74,18 @@ export const retrieveLocalRagTool = new DynamicTool({
 
 /**
  * Executes targeted internet search to simplify dense jargon and find intuitive real-world analogies
+ * Uses the under-the-hood zero-token fetcher (0 AI models, 0 tokens spent)
  */
 export async function executeAcademicWeb(input: string): Promise<string> {
   try {
     const query = `${input} real world analogy easy explanation simplify in simple words`;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const searchRes = await fetchGoogleSearch(query, { limit: 3 });
 
-    const res = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        Accept: 'text/html,application/xhtml+xml',
-      },
-    });
-    clearTimeout(timeoutId);
-
-    const html = await res.text();
-    const hits: WebHit[] = [];
-    const snippetRegex = /<a class="result__snippet[^>]*>(.*?)<\/a>/gs;
-    const titleRegex = /<h2 class="result__title[^>]*>.*?<a[^>]*>(.*?)<\/a>/gs;
-
-    let sMatch;
-    let tMatch;
-    while ((sMatch = snippetRegex.exec(html)) !== null && hits.length < 3) {
-      const snippet = sMatch[1].replace(/<[^>]+>/g, '').trim();
-      tMatch = titleRegex.exec(html);
-      const title = tMatch ? tMatch[1].replace(/<[^>]+>/g, '').trim() : `Analogy & Simplification #${hits.length + 1}`;
-      if (snippet) {
-        hits.push({
-          title,
-          snippet,
-          source: 'Google / Web Real-World Analogy & Simplification',
-        });
-      }
-    }
+    const hits: WebHit[] = searchRes.items.map((item) => ({
+      title: item.title,
+      snippet: item.snippet,
+      source: item.source,
+    }));
 
     if (hits.length === 0) {
       return JSON.stringify({
@@ -121,7 +98,8 @@ export async function executeAcademicWeb(input: string): Promise<string> {
     return JSON.stringify({
       hitsCount: hits.length,
       hits,
-      summary: `Retrieved ${hits.length} real-world analogies and intuitive simplifications from the web to demystify complex terms.`,
+      suggestions: searchRes.suggestions,
+      summary: `Retrieved ${hits.length} real-world analogies and intuitive simplifications under the hood (0 tokens spent).`,
     });
   } catch (err: any) {
     return JSON.stringify({

@@ -74,6 +74,7 @@ import { ragRouter, setDbReference } from './rag/ragRouter.js';
 import { ragEngine } from './rag/ragIndex.js';
 import { attendanceService } from './attendanceService.js';
 import { runAcademicAgent } from './ai/academicAgentGraph.js';
+import { fetchGoogleSearch } from './ai/googleFetchService.js';
 
 export const apiRouter = Router();
 
@@ -1383,6 +1384,23 @@ apiRouter.all('/ai/agent-graph/run', async (req: Request, res: Response) => {
     res.json(result);
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Graph execution failed' });
+  }
+});
+
+// Zero-Token Under-the-Hood Google & Web Search Fetcher
+// Operates silently in the backend without AI models or tokens.
+apiRouter.all('/search/google-fetch', async (req: Request, res: Response) => {
+  const query = req.body?.query || req.query?.query || req.body?.q || req.query?.q;
+  if (!query || typeof query !== 'string' || !query.trim()) {
+    return res.status(400).json({ error: 'Search query is required' });
+  }
+
+  const limit = Number(req.body?.limit || req.query?.limit) || 4;
+  try {
+    const data = await fetchGoogleSearch(query.trim(), { limit });
+    res.json(data);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Search fetch failed' });
   }
 });
 
