@@ -1134,19 +1134,11 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         {viewMode === 'reference' && (
           <div className="space-y-6">
             {!studyGuide && !isLoading && (
-              <div className="rounded-2xl bg-gradient-to-b from-slate-900/60 via-slate-950/80 to-slate-950 border border-slate-800/80 p-6 sm:p-8 space-y-6 text-center max-w-2xl mx-auto my-4 shadow-xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-medium">
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>College Exam Prep & Concept Master</span>
-                </div>
-
-                <div className="space-y-2">
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight font-sans-ui">
+              <div className="rounded-2xl bg-gradient-to-b from-slate-900/60 via-slate-950/80 to-slate-950 border border-slate-800/80 p-6 space-y-4 text-center max-w-xl mx-auto my-4 shadow-xl">
+                <div className="space-y-1">
+                  <h2 className="text-xl font-bold text-white tracking-tight">
                     What are we mastering today?
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed font-sans-ui">
-                    Ask any university syllabus concept, 10-marker exam question, or algorithm. Answers are cached for all 60 classmates with zero token waste!
-                  </p>
                 </div>
 
                 {/* Preferred Mode Selector Pills */}
@@ -1216,18 +1208,10 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
               <div className="space-y-5">
                 {/* Premium Contributor Celebration Banner */}
                 {contributedToClass && (
-                  <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-950/80 via-purple-950/60 to-emerald-950/60 border border-indigo-500/50 shadow-lg flex items-start justify-between gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl">⚡</span>
-                      <div>
-                        <p className="font-bold text-sm text-indigo-200">
-                          Your {contributedModelName || 'Premium AI'} answer was contributed to the class library!
-                        </p>
-                        <p className="text-xs text-slate-300 mt-0.5">
-                          Saved to shared class knowledge. All 60 classmates can now access this answer instantly for free (0 tokens spent).
-                        </p>
-                      </div>
-                    </div>
+                  <div className="p-3 rounded-xl bg-indigo-950/60 border border-indigo-500/40 shadow-sm flex items-center justify-between gap-3 animate-in fade-in">
+                    <span className="text-xs font-semibold text-indigo-200">
+                      ⚡ Answer contributed to class library ({contributedModelName || 'Premium AI'})
+                    </span>
                     <button
                       onClick={() => setContributedToClass(false)}
                       className="text-slate-400 hover:text-white text-xs px-2 py-1 rounded cursor-pointer"
@@ -1238,37 +1222,32 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                 )}
 
                 {/* 60-Student Compounded Gold Standard Master Banner */}
-                <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-indigo-950/30 to-emerald-950/20 border border-amber-500/30 shadow-md space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
-                        <Trophy className="w-5 h-5 text-amber-400" />
+                <div className="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-indigo-950/30 to-emerald-950/20 border border-amber-500/30 shadow-md space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
+                        <Trophy className="w-4 h-4 text-amber-400" />
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-bold text-sm sm:text-base text-amber-200 font-sans-ui">
-                            Cohort Master Solution • Student {studyGuide.iterationCount || 60}/60 Perfected
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-semibold">
-                            {studyGuide.perfectionScore || 100}% Exam Aligned
-                          </span>
-                          <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[10px] font-mono">
-                            {studyGuide.perfectionTier || 'Class Gold Standard'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-400 mt-0.5">
-                          Class-perfected exam solution (0 tokens spent).
-                        </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-xs sm:text-sm text-amber-200 font-sans-ui">
+                          Student {studyGuide.iterationCount || 60}/60 Perfected
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[9px] font-mono font-semibold">
+                          {studyGuide.perfectionScore || 100}%
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-[9px] font-mono">
+                          {studyGuide.perfectionTier || 'Gold Standard'}
+                        </span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => setIsCohortModalOpen(true)}
-                        className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 shadow-xs"
+                        className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold transition cursor-pointer flex items-center gap-1 shadow-xs"
                       >
-                        <History className="w-3.5 h-3.5 text-amber-300" />
-                        <span>View 60-Student Evolution Journey</span>
+                        <History className="w-3 h-3 text-amber-300" />
+                        <span>Evolution</span>
                       </button>
                       {(!studyGuide.isCohortPerfected || (studyGuide.iterationCount || 60) < 60) && (
                         <button

@@ -302,17 +302,17 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
 
           <div className="space-y-2 overflow-y-auto max-h-56 pr-1 no-scrollbar text-xs">
             <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1">
-              <span className="text-[10px] font-mono text-cyan-400 uppercase">Compounding Model</span>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                1st query drafts definitions → 15th injects diagrams → 30th refines 10-marker → 60th locks Master Gold Standard.
-              </p>
+              <span className="text-[10px] font-mono text-cyan-400 uppercase">Architecture</span>
+              <div className="text-xs text-slate-300 font-medium">
+                60-Student Compounded Cache
+              </div>
             </div>
 
             <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1">
-              <span className="text-[10px] font-mono text-amber-400 uppercase">Multi-Model Cache</span>
-              <p className="text-xs text-slate-300">
-                Gemini 3.8 Flash · Claude 3.7 · GPT-4o · DeepSeek R1
-              </p>
+              <span className="text-[10px] font-mono text-amber-400 uppercase">Multi-Model Failover</span>
+              <div className="text-xs text-slate-300">
+                Gemini · Claude · GPT-4o · DeepSeek
+              </div>
             </div>
           </div>
 

@@ -26,8 +26,6 @@ import {
   PanelRight,
   PanelTop,
   PanelBottom,
-  Pin,
-  PinOff,
 } from 'lucide-react';
 import { Subject } from '../types';
 import { UserProfile } from './LoginModal';
@@ -41,8 +39,6 @@ interface SettingsViewProps {
   onUpdateUsername?: (newName: string) => void;
   sidebarPosition?: 'left' | 'right' | 'top' | 'bottom';
   onChangeSidebarPosition?: (pos: 'left' | 'right' | 'top' | 'bottom') => void;
-  autoCollapse?: boolean;
-  onToggleAutoCollapse?: () => void;
 }
 
 export type SupportedProvider =
@@ -87,8 +83,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onUpdateUsername,
   sidebarPosition = 'left',
   onChangeSidebarPosition,
-  autoCollapse = true,
-  onToggleAutoCollapse,
 }) => {
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [editedUsername, setEditedUsername] = useState(currentUser?.name || '');
@@ -550,15 +544,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#141926] border border-slate-800 space-y-1">
+          <div className="p-3 rounded-2xl bg-[#141926] border border-slate-800">
             <h4 className="text-sm font-bold text-white">
               {aiStatus.hasCustomKey ? aiStatus.providerName : 'Built-in Academic AI'}
             </h4>
-            <p className="text-[11px] text-slate-400">
-              {aiStatus.hasCustomKey
-                ? 'Using your custom personal model key for answers.'
-                : 'Free zero-token class cache active.'}
-            </p>
           </div>
 
           {/* Provider Selection */}
@@ -671,29 +660,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </button>
               ))}
             </div>
-
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
-              <div>
-                <span className="text-slate-300 font-medium block text-xs">Auto-collapse on idle</span>
-                <span className="text-[10px] text-slate-500">Expands on hover, collapses away</span>
-              </div>
-              <button
-                onClick={onToggleAutoCollapse}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
-                  autoCollapse
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                    : 'bg-slate-800 text-slate-400 border border-slate-700'
-                }`}
-              >
-                {autoCollapse ? <PinOff className="w-3 h-3" /> : <Pin className="w-3 h-3" />}
-                <span>{autoCollapse ? 'Enabled' : 'Disabled'}</span>
-              </button>
-            </div>
           </div>
-
-          <p className="text-xs text-slate-400">
-            Local browser cache maintains instant offline access for notes, syllabus, and schedules.
-          </p>
 
           <button
             onClick={() => {
