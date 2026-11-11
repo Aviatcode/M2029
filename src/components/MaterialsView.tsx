@@ -730,7 +730,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
               {selectedMaterial.resources.importantDefinitions?.length > 0 && (
                 <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1.5">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase">Key Definitions (Tap to Ask AI)</span>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase">Key Definitions</span>
                   {selectedMaterial.resources.importantDefinitions.slice(0, 2).map((d, i) => (
                     <button
                       key={i}

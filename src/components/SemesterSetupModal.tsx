@@ -430,9 +430,6 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 />
               </div>
             </div>
-            <p className="text-[10px] text-slate-500 italic">
-              SyllabusOS monitors these links monthly for gazetted holiday cancellations, exam dates, and 75% attendance cutoff notices.
-            </p>
           </div>
 
           {/* Enrolled Subjects Section */}

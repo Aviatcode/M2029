@@ -569,7 +569,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
                 >
-                  Syllabus Guide
+                  Syllabus Blueprint
                 </button>
                 <button
                   type="button"

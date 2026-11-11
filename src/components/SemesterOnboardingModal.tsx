@@ -252,15 +252,11 @@ Friday:
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-slate-800">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-[11px] font-semibold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Step 1: Setup Your Semester</span>
-            </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Upload Your Timetable or Syllabus First
+              Upload Timetable or Syllabus
             </h2>
-            <p className="text-xs text-slate-400 leading-relaxed max-w-xl">
-              Drop your class schedule or syllabus document. Our AI reads it to automatically generate your subjects, lecture rooms, and semester curriculum folders.
+            <p className="text-xs text-slate-400">
+              Auto-configures subjects and weekly schedule.
             </p>
           </div>
           <button

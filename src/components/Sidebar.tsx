@@ -13,6 +13,7 @@ import {
   PanelRight,
   PanelTop,
   PanelBottom,
+  Play,
 } from 'lucide-react';
 import type { UserProfile } from './LoginModal';
 
@@ -45,6 +46,7 @@ interface SidebarProps {
   onChangePosition?: (pos: SidebarPosition) => void;
   currentUser?: UserProfile;
   onLogout?: () => void;
+  onOpenVideoTutorial?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -55,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onChangePosition,
   currentUser,
   onLogout,
+  onOpenVideoTutorial,
 }) => {
   // Built-in auto-collapse: collapsed by default, expands on hover/interaction, auto-collapses on leave or selection
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -237,6 +240,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </button>
                 </div>
               </>
+            )}
+
+            {/* Video Tutorial */}
+            {onOpenVideoTutorial && (
+              <button
+                onClick={onOpenVideoTutorial}
+                title="Video Tutorial"
+                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/35 text-cyan-300 text-xs font-bold transition cursor-pointer shadow-xs shadow-cyan-500/10"
+              >
+                <Play className="w-3 h-3 text-cyan-400 fill-cyan-400" />
+                <span className="hidden md:inline text-[11px]">Tutorial</span>
+              </button>
             )}
 
             {/* Settings */}
@@ -439,6 +454,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             </div>
           </>
+        )}
+
+        {/* Video Tutorial Button */}
+        {onOpenVideoTutorial && (
+          <button
+            onClick={onOpenVideoTutorial}
+            title="Video Tutorial"
+            className={`w-full flex items-center rounded-2xl text-xs font-bold transition cursor-pointer ${
+              isHovered ? 'gap-3 px-3 py-2 text-left' : 'justify-center py-2 px-0'
+            } bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/35 shadow-xs shadow-cyan-500/10`}
+          >
+            <Play className="w-4 h-4 shrink-0 text-cyan-400 fill-cyan-400" />
+            {isHovered && <span className="truncate font-sans-ui">Video Tutorial</span>}
+          </button>
         )}
 
         {/* Settings Button */}

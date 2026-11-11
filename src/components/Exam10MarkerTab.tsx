@@ -117,9 +117,6 @@ ${exam.examinerTraps.join('\n')}
             {exam.architectureDiagramText}
           </pre>
         </div>
-        <p className="text-[11px] text-slate-400 mt-2 italic">
-          Tip: Draw this block diagram neatly using pencil and ruler in the first 3 minutes of answering Section C questions.
-        </p>
       </div>
 
       {/* 3. Step-by-Step Execution Mechanism */}
@@ -197,7 +194,7 @@ ${exam.examinerTraps.join('\n')}
       <div className="rounded-2xl bg-amber-950/30 border border-amber-500/40 p-5 md:p-6 shadow-xl">
         <div className="flex items-center gap-2 text-amber-300 font-bold text-sm mb-3">
           <AlertTriangle className="w-5 h-5 text-amber-400" />
-          <span>Examiner Traps & Common Gotchas (Where Students Lose Marks)</span>
+          <span>Examiner Traps & Common Gotchas</span>
         </div>
         <div className="space-y-2.5">
           {exam.examinerTraps.map((trap, idx) => (

@@ -122,14 +122,11 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs uppercase tracking-wider">
                 <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span>1. Core Definition in 2 Sentences</span>
+                <span>1. Core Definition</span>
               </div>
               <p className="text-base md:text-lg text-slate-200 leading-relaxed font-medium bg-slate-950/70 p-5 rounded-xl border border-slate-800">
                 {prep.step1WhatIsIt}
               </p>
-              <div className="p-3.5 rounded-xl bg-blue-950/30 border border-blue-500/20 text-xs text-blue-200">
-                <strong>Pre-class insight:</strong> When your professor walks into Room {prep.room} tomorrow at {prep.time}, you will already understand what this keyword represents!
-              </div>
             </div>
           )}
 
@@ -138,14 +135,11 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs uppercase tracking-wider">
                 <Sparkles className="w-4 h-4 text-indigo-400" />
-                <span>2. Why Do Software Engineers & Professors Care?</span>
+                <span>2. Significance & Engineering Use Case</span>
               </div>
               <p className="text-base md:text-lg text-slate-200 leading-relaxed font-medium bg-slate-950/70 p-5 rounded-xl border border-slate-800">
                 {prep.step2WhyUsed}
               </p>
-              <div className="p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs text-indigo-200">
-                <strong>Exam Value:</strong> University theory questions almost always ask "Explain advantages and real-world necessity of this mechanism".
-              </div>
             </div>
           )}
 
@@ -239,8 +233,8 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                   Verify My 7-Minute Answers
                 </button>
               ) : (
-                <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs text-center font-medium">
-                  Pre-lecture prep complete! You are ready to ace tomorrow's lecture in Room {prep.room}.
+                <div className="p-3 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs text-center font-medium">
+                  Pre-lecture prep complete.
                 </div>
               )}
             </div>

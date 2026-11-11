@@ -70,6 +70,7 @@ import { LoginModal, UserProfile } from './components/LoginModal';
 import { LandingPageView } from './components/LandingPageView';
 import { ShareInviteModal } from './components/ShareInviteModal';
 import { SemesterOnboardingModal } from './components/SemesterOnboardingModal';
+import { VideoTutorialModal } from './components/VideoTutorialModal';
 import {
   extractTextFromFile,
   isTimetableDocument,
@@ -547,6 +548,15 @@ export default function App() {
       }
     } catch {}
     return false;
+  });
+
+  // One-time video game-style tutorial popup on first load
+  const [isVideoTutorialOpen, setIsVideoTutorialOpen] = useState<boolean>(() => {
+    try {
+      return !localStorage.getItem('m2028_tutorial_seen');
+    } catch {
+      return false;
+    }
   });
 
   const handleOpenShareModal = (code?: string, name?: string) => {
@@ -1717,6 +1727,7 @@ export default function App() {
                   onChangePosition={setSidebarPosition}
                   currentUser={currentUser}
                   onLogout={handleLogout}
+                  onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
                 />
               </div>
             )}
@@ -1752,6 +1763,7 @@ export default function App() {
                   onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
                   onOpenMaterial={handleOpenMaterial}
                   onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
+                  onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
                   calmMode={calmMode}
                   onAskAI={(prompt) => {
                     setInitialTutorPrompt(prompt);
@@ -1926,6 +1938,7 @@ export default function App() {
             onChangePosition={setSidebarPosition}
             currentUser={currentUser}
             onLogout={handleLogout}
+            onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
           />
         </div>
       )}
@@ -1934,6 +1947,12 @@ export default function App() {
       )}
 
       {/* 3. MODALS & DRAWERS */}
+      <VideoTutorialModal
+        isOpen={isVideoTutorialOpen}
+        onClose={() => setIsVideoTutorialOpen(false)}
+        onNavigateTab={handleSelectTab}
+      />
+
       <SemesterOnboardingModal
         isOpen={isOnboardingModalOpen}
         onClose={() => setIsOnboardingModalOpen(false)}

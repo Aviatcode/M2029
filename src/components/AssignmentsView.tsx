@@ -1641,7 +1641,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 leading-relaxed">
-                <strong className="text-slate-300 block mb-0.5">Instructions & Requirements:</strong>
+                <strong className="text-slate-300 block mb-0.5">Details:</strong>
                 {activeModalItem.instructions}
               </div>
             </div>
@@ -2000,14 +2000,14 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                 </div>
               )}
 
-              {/* Instructions */}
+              {/* Notes */}
               <div>
                 <label className="block text-slate-300 font-medium text-[11px] mb-1">
-                  Instructions / Notes (Optional)
+                  Notes (Optional)
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Teacher instructions, requirements, slide count..."
+                  placeholder="Topic details, slide count, deadlines..."
                   value={newInstructions}
                   onChange={(e) => setNewInstructions(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl p-3 text-xs text-slate-100 placeholder:text-slate-500 outline-none resize-none transition"

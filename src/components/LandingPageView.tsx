@@ -198,11 +198,11 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <header className="relative z-20 border-b border-neutral-850/60 bg-neutral-950/70 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <img
-            src="./am-logo.png"
-            alt="AM Logo"
+            src="./icon-192.png"
+            alt="M2028 Logo"
             className="w-7 h-7 rounded-lg shrink-0 object-contain shadow-xs border border-neutral-800"
           />
-          <span className="font-semibold text-sm tracking-tight text-white">M2029</span>
+          <span className="font-semibold text-sm tracking-tight text-white">M2028</span>
         </div>
 
         <div>
@@ -222,8 +222,8 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-10 max-w-xl mx-auto w-full">
         <div className="text-center space-y-2 mb-6 flex flex-col items-center">
           <img
-            src="./am-logo.png"
-            alt="AM Logo"
+            src="./icon-192.png"
+            alt="M2028 Logo"
             className="w-12 h-12 rounded-2xl object-contain shadow-lg mb-1 border border-neutral-800"
           />
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">

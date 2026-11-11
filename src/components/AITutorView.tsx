@@ -1383,7 +1383,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                       onClick={() => loadTopicGuide(studyGuide.topic, studyGuide.subject, true)}
                       disabled={isLoading}
                       className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 disabled:opacity-50 text-slate-300 hover:text-white text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
-                      title={`Regenerate full 6-stage guide using active model (${activeModel.displayName})`}
+                      title="Regenerate live"
                     >
                       <RefreshCw className={`w-3.5 h-3.5 text-indigo-400 ${isLoading ? 'animate-spin' : ''}`} />
                       <span>Regenerate Live</span>
@@ -1393,7 +1393,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                       className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white text-xs font-mono transition cursor-pointer flex items-center gap-1.5"
                     >
                       <Copy className="w-3.5 h-3.5" />
-                      <span>Copy Full Guide</span>
+                      <span>Copy All</span>
                     </button>
                   </div>
                 </div>
