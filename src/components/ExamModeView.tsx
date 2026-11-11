@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ExamDateSheetItem, Subject } from '../types';
+import { ActiveNavTab } from './Sidebar';
 import {
   Calendar,
   Clock,
@@ -27,6 +28,7 @@ interface ExamModeViewProps {
   onDeleteExam?: (examId: string) => void;
   studentName?: string;
   classCode?: string;
+  onNavigateTab?: (tab: ActiveNavTab) => void;
 }
 
 export const ExamModeView: React.FC<ExamModeViewProps> = ({
@@ -38,6 +40,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
   onDeleteExam,
   studentName,
   classCode,
+  onNavigateTab,
 }) => {
   const [selectedExamId, setSelectedExamId] = useState<string>(exams[0]?.id || '');
   const [searchQuery, setSearchQuery] = useState('');
@@ -151,17 +154,22 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
       {/* 1. TOP HEADER (Matching reference design) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+          <button
+            type="button"
+            onClick={() => onNavigateTab ? onNavigateTab('settings') : undefined}
+            className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
+            title="Manage Profile & Settings"
+          >
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300">
+            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
               • {classCode || 'BCA-2028'}
             </span>
-          </div>
+          </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Exams & Datesheet
           </h1>
@@ -170,7 +178,14 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
           {/* Search Input */}
           <div className="relative w-40 sm:w-52">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-500 hover:text-cyan-400 cursor-pointer transition"
+              title="Search Exams"
+            >
+              <Search className="w-3.5 h-3.5" />
+            </button>
             <input
               type="text"
               value={searchQuery}
@@ -232,27 +247,48 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
           </div>
 
           {/* Overlapping Circles */}
-          <div className="relative h-40 flex items-center justify-center my-1">
-            <div className="absolute left-6 top-2 w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10">
+          <div className="relative h-40 flex items-center justify-center my-1 select-none">
+            <button
+              type="button"
+              onClick={handleOpenAddModal}
+              title="Add Exam Paper"
+              className="absolute left-6 top-2 w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+            >
               <span className="text-lg font-extrabold">{exams.length}</span>
               <span className="text-[10px] text-violet-200">Papers</span>
-            </div>
-            <div className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20">
+            </button>
+
+            <button
+              type="button"
+              onClick={() => activeExam && onOpenStudySession(activeExam.subjectName)}
+              title="Start Revision Session"
+              className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+            >
               <span className="text-base font-extrabold">{activeExam?.revisionDaysPlan?.length || 0}</span>
               <span className="text-[10px] text-slate-400">Days Plan</span>
-            </div>
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleOpenRadar(activeExam?.subjectName || '')}
+              title="Open Exam Radar 🎯"
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+            >
               <span className="text-sm font-black">{revisionPercent}%</span>
               <span className="text-[8px] uppercase tracking-wider">Sync</span>
-            </div>
+            </button>
           </div>
 
           {/* Progress Bars */}
           <div className="space-y-2 pt-2 border-t border-slate-800/60 text-xs">
-            <div className="space-y-1">
+            <div
+              onClick={() => activeExam && onOpenStudySession(activeExam.subjectName)}
+              className="space-y-1 cursor-pointer hover:opacity-85 transition group"
+              title="Click to start revision session"
+            >
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono">10-Marker Readiness</span>
-                <span className="text-slate-400">{revisionPercent}%</span>
+                <span className="font-bold text-white font-mono group-hover:text-cyan-300 transition-colors">10-Marker Readiness</span>
+                <span className="text-slate-400 group-hover:text-slate-200 transition-colors">{revisionPercent}%</span>
               </div>
               <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                 <div className="h-full bg-cyan-400 rounded-full transition-all duration-300" style={{ width: `${revisionPercent}%` }} />
@@ -380,12 +416,18 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                       {step.topics && step.topics.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1.5 pl-6">
                           {step.topics.map((topic, idx) => (
-                            <span
+                            <button
                               key={idx}
-                              className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900/90 text-cyan-300 border border-slate-800/80"
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenStudySession(topic);
+                              }}
+                              className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900/90 text-cyan-300 hover:text-white hover:bg-slate-800 border border-slate-800/80 hover:border-cyan-500/40 transition cursor-pointer"
+                              title={`Revise ${topic} with AI Tutor`}
                             >
-                              {topic}
-                            </span>
+                              {topic} →
+                            </button>
                           ))}
                         </div>
                       )}

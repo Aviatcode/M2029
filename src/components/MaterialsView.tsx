@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { RagDocumentViewer } from './RagDocumentViewer';
 import { uploadLargeFileToRag, fetchFromGitHubUrl } from '../utils/ragService';
+import { ActiveNavTab } from './Sidebar';
 
 interface MaterialsViewProps {
   materials: AcademicMaterial[];
@@ -35,6 +36,7 @@ interface MaterialsViewProps {
   studentName?: string;
   classCode?: string;
   onAskAI?: (prompt: string) => void;
+  onNavigateTab?: (tab: ActiveNavTab) => void;
 }
 
 export const MaterialsView: React.FC<MaterialsViewProps> = ({
@@ -45,6 +47,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   studentName,
   classCode,
   onAskAI,
+  onNavigateTab,
 }) => {
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
   const [selectedMaterial, setSelectedMaterial] = useState<AcademicMaterial | null>(materials[0] || null);
@@ -375,17 +378,22 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       {/* 1. TOP HEADER (Matching Lucas Bennett / fitness reference design) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+          <button
+            type="button"
+            onClick={() => onNavigateTab ? onNavigateTab('settings') : undefined}
+            className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
+            title="Manage Profile & Settings"
+          >
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300">
+            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
               • {classCode || 'BCA-2028'}
             </span>
-          </div>
+          </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Study Materials
           </h1>
@@ -394,7 +402,14 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
           {/* Search Input */}
           <div className="relative w-40 sm:w-52">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-500 hover:text-cyan-400 cursor-pointer transition"
+              title="Search Materials"
+            >
+              <Search className="w-3.5 h-3.5" />
+            </button>
             <input
               type="text"
               value={searchQuery}
@@ -442,7 +457,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                     setSelectedSubjectFilter('all');
                     setIsFilterDropdownOpen(false);
                   }}
-                  className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300"
+                  className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 cursor-pointer"
                 >
                   All Subjects ({materials.length})
                 </button>
@@ -453,7 +468,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                       setSelectedSubjectFilter(sub.id);
                       setIsFilterDropdownOpen(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 truncate"
+                    className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 truncate cursor-pointer"
                   >
                     {sub.name}
                   </button>
@@ -493,19 +508,39 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           </div>
 
           {/* Overlapping Circles */}
-          <div className="relative h-40 flex items-center justify-center my-1">
-            <div className="absolute left-6 top-2 w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10">
+          <div className="relative h-40 flex items-center justify-center my-1 select-none">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedSubjectFilter('all');
+                setSearchQuery('');
+              }}
+              title="Show All Documents"
+              className="absolute left-6 top-2 w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+            >
               <span className="text-lg font-extrabold">{materials.length}</span>
               <span className="text-[10px] text-violet-200">Docs</span>
-            </div>
-            <div className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20">
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsFilterDropdownOpen((prev) => !prev)}
+              title="Filter by Subject"
+              className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+            >
               <span className="text-base font-extrabold">{subjects.length}</span>
               <span className="text-[10px] text-slate-400">Subjects</span>
-            </div>
-            <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowRagModal(true)}
+              title="Open Class RAG Vector Engine"
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+            >
               <span className="text-sm font-black">100%</span>
               <span className="text-[8px] uppercase tracking-wider">Sync</span>
-            </div>
+            </button>
           </div>
 
           {/* Quick Dropzone Widget */}
@@ -681,12 +716,18 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
               {selectedMaterial.resources.importantDefinitions?.length > 0 && (
                 <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1.5">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase">Key Definitions</span>
+                  <span className="text-[10px] font-mono text-slate-400 uppercase">Key Definitions (Tap to Ask AI)</span>
                   {selectedMaterial.resources.importantDefinitions.slice(0, 2).map((d, i) => (
-                    <div key={i} className="text-xs">
-                      <span className="text-amber-300 font-bold">{d.term}: </span>
-                      <span className="text-slate-300">{d.definition}</span>
-                    </div>
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => onAskAI && onAskAI(`Explain this key definition: "${d.term}: ${d.definition}" in detail with real-world examples and examination gotchas.`)}
+                      className="w-full text-left text-xs p-1.5 rounded-xl hover:bg-slate-800/80 transition cursor-pointer group"
+                      title="Click to ask AI about this term"
+                    >
+                      <span className="text-amber-300 font-bold group-hover:text-amber-200">{d.term}: </span>
+                      <span className="text-slate-300 group-hover:text-white">{d.definition}</span>
+                    </button>
                   ))}
                 </div>
               )}
@@ -698,9 +739,13 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
             </div>
           )}
 
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+          <div
+            onClick={() => setShowRagModal(true)}
+            className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs cursor-pointer hover:opacity-85 transition"
+            title="Open RAG status"
+          >
             <span className="text-slate-500 font-mono text-[10px]">Indexed for Class AI</span>
-            <span className="text-emerald-400 font-bold text-[10px]">Ready</span>
+            <span className="text-emerald-400 font-bold text-[10px]">Ready ⚡</span>
           </div>
         </div>
       </div>

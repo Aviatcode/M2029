@@ -1714,33 +1714,43 @@ export default function App() {
         <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
           {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
           <main className="flex-1 h-full overflow-y-auto px-3 sm:px-5 md:px-7 py-4 sm:py-6 w-full max-w-[1580px] mx-auto">
-            {activeTab === 'dashboard' && (
-              <DashboardView
-                studentName={currentUser.name}
-                classCode={classCode}
-                semesterNumber={workspace.semester}
-                todayClasses={timetable.filter((t) => t.day === 'Wednesday')}
-                tomorrowClasses={timetable.filter((t) => t.day === 'Thursday')}
-                upcomingExams={exams}
-                recentMaterials={materials}
-                announcements={announcements}
-                subjects={subjects}
-                assignments={assignments}
-                onOpenTomorrowPrep={() => setIsTomorrowModalOpen(true)}
-                onNavigateTab={handleSelectTab}
-                onTriggerQuickAIAction={handleQuickAIAction}
-                onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
-                onOpenMaterial={handleOpenMaterial}
-                onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
-                calmMode={calmMode}
-                onAskAI={(prompt) => {
-                  setInitialTutorPrompt(prompt);
-                  setActiveTab('ai-tutor');
-                }}
-                onFilesDropped={handleIngestDroppedFiles}
-                onOpenNotifications={() => setIsNotificationsOpen(true)}
-              />
-            )}
+            {activeTab === 'dashboard' && (() => {
+              const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+              const nowDayIdx = new Date().getDay();
+              const todayDayName = daysMap[nowDayIdx];
+              const tomorrowDayName = daysMap[(nowDayIdx + 1) % 7];
+              const todayClassesList = timetable.filter((t) => t.day === todayDayName);
+              const tomorrowClassesList = timetable.filter((t) => t.day === tomorrowDayName);
+
+              return (
+                <DashboardView
+                  studentName={currentUser.name}
+                  classCode={classCode}
+                  semesterNumber={workspace.semester}
+                  todayClasses={todayClassesList.length > 0 ? todayClassesList : timetable.slice(0, 3)}
+                  tomorrowClasses={tomorrowClassesList.length > 0 ? tomorrowClassesList : timetable.slice(3, 6)}
+                  timetable={timetable}
+                  upcomingExams={exams}
+                  recentMaterials={materials}
+                  announcements={announcements}
+                  subjects={subjects}
+                  assignments={assignments}
+                  onOpenTomorrowPrep={() => setIsTomorrowModalOpen(true)}
+                  onNavigateTab={handleSelectTab}
+                  onTriggerQuickAIAction={handleQuickAIAction}
+                  onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
+                  onOpenMaterial={handleOpenMaterial}
+                  onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
+                  calmMode={calmMode}
+                  onAskAI={(prompt) => {
+                    setInitialTutorPrompt(prompt);
+                    setActiveTab('ai-tutor');
+                  }}
+                  onFilesDropped={handleIngestDroppedFiles}
+                  onOpenNotifications={() => setIsNotificationsOpen(true)}
+                />
+              );
+            })()}
 
           {activeTab === 'daily-update' && (
             <DailyUpdateView
@@ -1788,6 +1798,7 @@ export default function App() {
               currentRole={currentRole}
               studentName={currentUser.name}
               classCode={classCode}
+              onNavigateTab={handleSelectTab}
             />
           )}
 
@@ -1797,6 +1808,7 @@ export default function App() {
               onOpenTopic={(topic, sub) => handleStudyTopic(topic, sub || subjects[0]?.name || 'Operating Systems')}
               studentName={currentUser.name}
               classCode={classCode}
+              onNavigateTab={handleSelectTab}
             />
           )}
 
@@ -1808,6 +1820,7 @@ export default function App() {
               onMaterialUploaded={handleMaterialUploaded}
               studentName={currentUser.name}
               classCode={classCode}
+              onNavigateTab={handleSelectTab}
               onAskAI={(prompt) => {
                 setInitialTutorPrompt(prompt);
                 setActiveTab('ai-tutor');
@@ -1828,6 +1841,7 @@ export default function App() {
               onDeleteExam={handleDeleteExam}
               studentName={currentUser.name}
               classCode={classCode}
+              onNavigateTab={handleSelectTab}
             />
           )}
 
@@ -1841,6 +1855,7 @@ export default function App() {
               onOpenUploadModal={() => setIsOnboardingModalOpen(true)}
               studentName={currentUser.name}
               classCode={classCode}
+              onNavigateTab={handleSelectTab}
             />
           )}
 

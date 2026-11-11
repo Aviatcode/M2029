@@ -1155,6 +1155,20 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         {/* Checkbox */}
                         <td className="py-2.5 px-3 text-center" onClick={(e) => handleToggleDone(item.id, e)}>
                           <div
+                            role="checkbox"
+                            aria-checked={item.completed}
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleDone(item.id, e);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === ' ' || e.key === 'Enter') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleToggleDone(item.id);
+                              }
+                            }}
                             className={`w-4 h-4 rounded border mx-auto flex items-center justify-center transition cursor-pointer ${
                               item.completed
                                 ? 'bg-emerald-500 border-emerald-400 text-slate-950'

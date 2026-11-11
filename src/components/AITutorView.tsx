@@ -48,6 +48,7 @@ import {
 } from '../utils/aiModelService';
 import { GanttChartWidget } from './tutor/GanttChartWidget';
 import { QuickCheckCard } from './tutor/QuickCheckCard';
+import { ActiveNavTab } from './Sidebar';
 
 interface AITutorViewProps {
   subjects: Subject[];
@@ -58,6 +59,7 @@ interface AITutorViewProps {
   currentRole?: UserRole;
   studentName?: string;
   classCode?: string;
+  onNavigateTab?: (tab: ActiveNavTab) => void;
 }
 
 interface SyllabusTrackMeta {
@@ -192,6 +194,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
   currentRole = 'student',
   studentName,
   classCode,
+  onNavigateTab,
 }) => {
   // Mode Selection: 'guided' (ChatGPT one-by-one experience) vs 'reference' (6-mode all-in-one guide)
   const [viewMode, setViewMode] = useState<'guided' | 'reference'>('guided');
@@ -694,17 +697,22 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       {/* 1. TOP HEADER (Matching Lucas Bennett / fitness reference design) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+          <button
+            type="button"
+            onClick={() => onNavigateTab ? onNavigateTab('settings') : undefined}
+            className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
+            title="Manage Profile & Settings"
+          >
+            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300">
+            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
               • {classCode || 'BCA-2028'}
             </span>
-          </div>
+          </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             AI Tutor
           </h1>
