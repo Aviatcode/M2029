@@ -596,11 +596,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                       setSelectedMaterial(mat);
                       setShowFullAnswer(false);
                     }}
-                    className={`p-3 rounded-2xl border cursor-pointer transition text-xs space-y-1 ${
-                      isSelected
-                        ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md'
-                        : 'bg-[#0d111a] border-slate-800/80 hover:border-slate-700 text-slate-300'
-                    }`}
+                    className={`p-3 rounded-2xl border cursor-pointer transition text-xs space-y-1 ${isSelected
+                      ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md'
+                      : 'bg-[#0d111a] border-slate-800/80 hover:border-slate-700 text-slate-300'
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-1.5">
                       <span className="font-semibold truncate">{mat.title}</span>
@@ -868,13 +867,12 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                       handleFileSelected(e.dataTransfer.files[0]);
                     }
                   }}
-                  className={`p-6 rounded-2xl border-2 border-dashed transition cursor-pointer flex flex-col items-center justify-center text-center gap-2 ${
-                    isDragOver
-                      ? 'border-cyan-400 bg-cyan-950/20'
-                      : uploadFileName
+                  className={`p-6 rounded-2xl border-2 border-dashed transition cursor-pointer flex flex-col items-center justify-center text-center gap-2 ${isDragOver
+                    ? 'border-cyan-400 bg-cyan-950/20'
+                    : uploadFileName
                       ? 'border-emerald-500/50 bg-emerald-950/15'
                       : 'border-slate-800 hover:border-slate-700 bg-[#0d111a]'
-                  }`}
+                    }`}
                 >
                   {uploadFileName ? (
                     <>
