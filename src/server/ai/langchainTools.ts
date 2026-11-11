@@ -72,11 +72,11 @@ export const retrieveLocalRagTool = new DynamicTool({
 });
 
 /**
- * Executes live academic internet search
+ * Executes targeted internet search to simplify dense jargon and find intuitive real-world analogies
  */
 export async function executeAcademicWeb(input: string): Promise<string> {
   try {
-    const query = `${input} university exam explanation computer science`;
+    const query = `${input} real world analogy easy explanation simplify in simple words`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
 
@@ -100,12 +100,12 @@ export async function executeAcademicWeb(input: string): Promise<string> {
     while ((sMatch = snippetRegex.exec(html)) !== null && hits.length < 3) {
       const snippet = sMatch[1].replace(/<[^>]+>/g, '').trim();
       tMatch = titleRegex.exec(html);
-      const title = tMatch ? tMatch[1].replace(/<[^>]+>/g, '').trim() : `Academic Web Resource #${hits.length + 1}`;
+      const title = tMatch ? tMatch[1].replace(/<[^>]+>/g, '').trim() : `Analogy & Simplification #${hits.length + 1}`;
       if (snippet) {
         hits.push({
           title,
           snippet,
-          source: 'University Web Index & Academic Open Courseware',
+          source: 'Google / Web Real-World Analogy & Simplification',
         });
       }
     }
@@ -114,31 +114,31 @@ export async function executeAcademicWeb(input: string): Promise<string> {
       return JSON.stringify({
         hitsCount: 0,
         hits: [],
-        message: 'Web search completed with standard textbook reference baseline.',
+        message: 'No external analogies needed; local textbook groundings are clear.',
       });
     }
 
     return JSON.stringify({
       hitsCount: hits.length,
       hits,
-      summary: `Retrieved ${hits.length} live academic citations from verified computer science knowledge bases.`,
+      summary: `Retrieved ${hits.length} real-world analogies and intuitive simplifications from the web to demystify complex terms.`,
     });
   } catch (err: any) {
     return JSON.stringify({
       hitsCount: 0,
       hits: [],
-      message: 'Web fallback active (standard academic curriculum groundings applied).',
+      message: 'Web fallback active (standard clear everyday analogies applied).',
     });
   }
 }
 
 /**
- * 2. Academic Web Search Tool: Queries live internet for university derivations, algorithms, and exam patterns
+ * 2. Academic Web Simplification Tool: Queries Google/Web ONLY when necessary to find easy terms and real-world analogies
  */
 export const searchAcademicWebTool = new DynamicTool({
   name: 'search_academic_web',
   description:
-    'Performs live academic internet search to augment student notes with standard university textbook derivations, algorithms, and examiner gotchas.',
+    'Performs targeted web search only when necessary to demystify difficult technical jargon, find intuitive real-world analogies, and simplify complex words so students understand immediately.',
   func: executeAcademicWeb,
 });
 

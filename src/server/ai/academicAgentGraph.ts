@@ -83,6 +83,26 @@ function parseTutorSections(text: string): Record<string, string> {
   return sections;
 }
 
+// Complex jargon & concepts where students struggle unless terms are simplified with real-world analogies
+const COMPLEX_JARGON_TERMS = [
+  'semaphore', 'mutex', 'deadlock', 'starvation', 'thrashing', 'paging', 'virtual memory',
+  'belady', 'banker', 'race condition', 'critical section', 'context switch', 'atomic',
+  'dining philosopher', 'readers-writers', 'producer-consumer', 'tlb', 'buddy system',
+  '2-phase', 'two phase', 'acid', 'serializability', 'phantom', 'dirty read', 'b+ tree',
+  'normalization', 'bcnf', 'wal', 'write-ahead', 'sharding',
+  '3-way handshake', 'sliding window', 'subnetting', 'cidr', 'csma', 'byzantine',
+  'amortized', 'dynamic programming', 'avl', 'red-black', 'np-complete', 'dag',
+  'polymorphism', 'reflection', 'garbage collection', 'deadlock prevention',
+  'inversion of control', 'dependency injection', 'round robin', 'srtf', 'preemptive'
+];
+
+// Student triggers explicitly requesting simpler terms / analogies
+const SIMPLIFICATION_REQUEST_TRIGGERS = [
+  'simplify', 'analogy', 'easy words', 'simple terms', 'eli9', 'what actually is',
+  'confusing', 'real world', 'real-world', 'in simple words', 'explain like',
+  'hard to understand', 'intuitive', 'easy to remember', 'hindi', 'hinglish', 'metaphor'
+];
+
 // -------------------------------------------------------------
 // LangGraph State Schema Definition
 // -------------------------------------------------------------
@@ -102,13 +122,13 @@ export const AcademicAgentState = Annotation.Root({
   isCached: Annotation<boolean>(),
   cachedEntry: Annotation<any>(),
 
-  // AI Agent Autonomous Decisions
-  toolsToRun: Annotation<string[]>(), // e.g. ['rag'], ['web'], ['rag', 'web']
-  agentDecisionReason: Annotation<string>(),
-
-  // Retrieved Contexts
+  // Retrieved Contexts (Local Student Vault first)
   ragHits: Annotation<RagHit[]>(),
   webHits: Annotation<WebHit[]>(),
+
+  // AI Agent Autonomous Decisions
+  toolsToRun: Annotation<string[]>(), // e.g. ['rag'], ['rag', 'web']
+  agentDecisionReason: Annotation<string>(),
 
   // Output Synthesis & Reflection
   finalResponse: Annotation<string>(),
@@ -188,7 +208,7 @@ async function cacheCheckNode(state: StateType): Promise<Partial<StateType>> {
 
   steps.push({
     step: '2. Cohort Collective Intelligence Cache',
-    detail: 'Cache miss. Dispatching AI Agent to inspect student vault & academic web.',
+    detail: 'Cache miss. Inspecting local student vault notes before deciding on external search.',
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -199,47 +219,7 @@ async function cacheCheckNode(state: StateType): Promise<Partial<StateType>> {
 }
 
 // -------------------------------------------------------------
-// LangGraph Node 3: AI Agent Autonomous Tool Selection
-// -------------------------------------------------------------
-async function agentDecideNode(state: StateType): Promise<Partial<StateType>> {
-  const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
-  const query = state.topicName || state.question;
-
-  // Autonomous decision:
-  // If the query contains algorithmic, proof, or question keywords -> use both RAG and Web.
-  // Otherwise, default to RAG with web fallback to ensure maximum grounding.
-  const tools: string[] = ['rag'];
-  const needsWebSearch =
-    query.length > 5 ||
-    query.toLowerCase().includes('algorithm') ||
-    query.toLowerCase().includes('proof') ||
-    query.toLowerCase().includes('pyq') ||
-    query.toLowerCase().includes('compare') ||
-    query.toLowerCase().includes('difference') ||
-    query.toLowerCase().includes('scheduling') ||
-    query.toLowerCase().includes('tree') ||
-    query.toLowerCase().includes('protocol');
-
-  if (needsWebSearch) {
-    tools.push('web');
-  }
-
-  const reason = `Autonomous Decision: Query requires ${tools.join(' + ').toUpperCase()} retrieval for syllabus grounding.`;
-  steps.push({
-    step: '3. AI Agent Autonomous Action Decision',
-    detail: reason,
-    timestamp: new Date().toLocaleTimeString(),
-  });
-
-  return {
-    toolsToRun: tools,
-    agentDecisionReason: reason,
-    reasoningSteps: steps,
-  };
-}
-
-// -------------------------------------------------------------
-// LangGraph Node 4: Execute RAG Retrieval Tool
+// LangGraph Node 3: Execute Local RAG Retrieval Tool
 // -------------------------------------------------------------
 async function executeRagNode(state: StateType): Promise<Partial<StateType>> {
   const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
@@ -253,11 +233,11 @@ async function executeRagNode(state: StateType): Promise<Partial<StateType>> {
   } catch {}
 
   steps.push({
-    step: '4. Local RAG Retrieval Execution',
+    step: '3. Local RAG Retrieval Execution',
     detail:
       parsedHits.length > 0
-        ? `Retrieved ${parsedHits.length} high-yield textbook excerpts from uploaded class documents.`
-        : 'Student vault has no direct textbook chunk on this topic. Utilizing academic web + foundational curriculum.',
+        ? `Retrieved ${parsedHits.length} textbook excerpts from student vault (Pages ${parsedHits.map((h) => h.pageNumber).join(', ')}).`
+        : 'Student vault has no direct notes for this topic. Foundational retrieval required.',
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -268,7 +248,63 @@ async function executeRagNode(state: StateType): Promise<Partial<StateType>> {
 }
 
 // -------------------------------------------------------------
-// LangGraph Node 5: Execute Web Search Tool
+// LangGraph Node 4: AI Agent Autonomous Action Decision
+// "Not every time — only when necessary like when we can't think of easy terms for the words
+// as we have to teach them and simplify every word and make sense, so we use Google."
+// -------------------------------------------------------------
+async function agentDecideNode(state: StateType): Promise<Partial<StateType>> {
+  const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
+  const query = (state.topicName || state.question).toLowerCase();
+  const ragHits = state.ragHits || [];
+  const hasLocalNotes = ragHits.length > 0;
+
+  // Check 1: Did the student explicitly ask for simpler terms, real-world analogies, or ELI9?
+  const studentAskedSimplification =
+    SIMPLIFICATION_REQUEST_TRIGGERS.some((t) => query.includes(t)) ||
+    state.mode === 'eli9' ||
+    state.mode === 'hinglish';
+
+  // Check 2: Does the topic contain dense/confusing jargon where we must simplify words with analogies?
+  const matchedJargon = COMPLEX_JARGON_TERMS.find((term) => query.includes(term));
+
+  // Check 3: Does student vault lack notes?
+  const lacksLocalNotes = !hasLocalNotes;
+
+  const tools: string[] = ['rag'];
+  let reason = '';
+
+  if (studentAskedSimplification) {
+    tools.push('web');
+    reason = 'Autonomous Decision: Student requested simplified terms and everyday analogies. Google search activated to find intuitive metaphors to teach effortlessly.';
+  } else if (matchedJargon && lacksLocalNotes) {
+    tools.push('web');
+    reason = `Autonomous Decision: Difficult jargon ('${matchedJargon}') with no local notes. Google search activated to simplify complex words and build crystal-clear analogies.`;
+  } else if (matchedJargon && (state.mode === 'all' || !state.mode)) {
+    tools.push('web');
+    reason = `Autonomous Decision: Dense technical jargon detected ('${matchedJargon}'). Google search activated only to find intuitive real-world analogies so every word makes sense.`;
+  } else if (lacksLocalNotes) {
+    tools.push('web');
+    reason = 'Autonomous Decision: Topic missing from local vault notes. Google search activated to pull verified syllabus foundations.';
+  } else {
+    // NOT EVERY TIME: If local notes are already clear and no confusing jargon requires web analogies, SKIP Google!
+    reason = 'Autonomous Decision: Local textbook notes are clear and sufficient. Google search skipped to avoid latency (0 unnecessary external calls).';
+  }
+
+  steps.push({
+    step: '4. AI Agent Autonomous Web Decision',
+    detail: reason,
+    timestamp: new Date().toLocaleTimeString(),
+  });
+
+  return {
+    toolsToRun: tools,
+    agentDecisionReason: reason,
+    reasoningSteps: steps,
+  };
+}
+
+// -------------------------------------------------------------
+// LangGraph Node 5: Execute Web Simplification Tool (Conditional)
 // -------------------------------------------------------------
 async function executeWebNode(state: StateType): Promise<Partial<StateType>> {
   const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
@@ -282,11 +318,11 @@ async function executeWebNode(state: StateType): Promise<Partial<StateType>> {
   } catch {}
 
   steps.push({
-    step: '5. Academic Web Search Retrieval Execution',
+    step: '5. Google Web Simplification Tool',
     detail:
       parsedHits.length > 0
-        ? `Retrieved ${parsedHits.length} live citations from university courseware & academic open indexes.`
-        : 'Web search baseline completed.',
+        ? `Retrieved ${parsedHits.length} real-world analogies and everyday simplifications from the web.`
+        : 'Web baseline completed; standard everyday analogies applied.',
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -313,7 +349,7 @@ async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
 
   if (ragHits.length > 0) {
     evidenceContext += `\n\n=== EVIDENCE FROM STUDENT UPLOADED VAULT (RAG CHUNKS) ===\n` +
-      ragHits.map((h, i) => `[Source ${i + 1}: "${h.docTitle}" | Page ${h.pageNumber} | ${h.sectionTitle}]\n${h.text}`).join('\n\n');
+      ragHits.map((h, i) => `[Textbook Source ${i + 1}: "${h.docTitle}" | Page ${h.pageNumber} | ${h.sectionTitle}]\n${h.text}`).join('\n\n');
 
     ragHits.forEach((h) => {
       sourcesUsed.push({
@@ -324,13 +360,13 @@ async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
   }
 
   if (webHits.length > 0) {
-    evidenceContext += `\n\n=== EVIDENCE FROM ACADEMIC INTERNET SEARCH ===\n` +
-      webHits.map((w, i) => `[Web Source ${i + 1}: "${w.title}"]\n${w.snippet}`).join('\n\n');
+    evidenceContext += `\n\n=== REAL-WORLD ANALOGIES & SIMPLIFICATIONS FROM GOOGLE/WEB ===\n` +
+      webHits.map((w, i) => `[Analogy Source ${i + 1}: "${w.title}"]\n${w.snippet}`).join('\n\n');
 
     webHits.forEach((w) => {
       sourcesUsed.push({
         title: w.title,
-        type: 'Academic Web & University Index',
+        type: 'Google / Web Real-World Analogy',
       });
     });
   }
@@ -346,13 +382,16 @@ async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
 Target Subject: ${state.subjectName || 'Computer Science'}
 Target Topic: ${state.topicName || state.question}
 
+PEDAGOGICAL TEACHING MANDATE:
+Whenever introducing technical jargon, acronyms, or complex terms, simplify every word and explain what it actually means using real-world analogies (e.g. everyday items, cafeteria, tokens, traffic) so that any student can understand effortlessly.
+
 You MUST structure your entire response with EXACTLY the following 6 sections in THIS PRECISE ORDER. Use these exact markdown headers:
 
 ### 1. Simple Overview
-[Clear, conceptual summary in 2-3 readable paragraphs explaining what it is and why it exists.]
+[Clear, conceptual summary in 2-3 readable paragraphs explaining what it is, why it exists, and the everyday problem it solves. Demystify all jargon.]
 
 ### 2. ELI9 (Analogies)
-[A vivid everyday real-world analogy (cafeteria, traffic lights, pizza, bicycles) connecting directly to technical concepts.]
+[A vivid everyday real-world analogy (cafeteria, traffic lights, pizza, bicycles, hospital triage) connecting directly to technical concepts so students get the intuition instantly.]
 
 ### 3. Hinglish Breakdown
 [Authentic conversational Indian college student Hinglish (e.g. "Dekho bhai, seedhi baat hai..."). Highlight the exact mental model to remember during exams.]
@@ -374,13 +413,12 @@ You MUST structure your entire response with EXACTLY the following 6 sections in
 EVIDENCE GATHERED BY LANGCHAIN AGENT (GROUND YOUR EXPLANATION IN THESE EXCERPTS):
 ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Tanenbaum).'}`;
 
-  const userPrompt = `Synthesize the complete 6-section academic study guide for "${state.topicName || state.question}" in ${state.subjectName || 'Computer Science'}. Ground explanation in the retrieved RAG and Web evidence.`;
+  const userPrompt = `Synthesize the complete 6-section academic study guide for "${state.topicName || state.question}" in ${state.subjectName || 'Computer Science'}. Make sure difficult words are simplified with clear real-world analogies so every concept makes intuitive sense.`;
 
   let responseText = '';
   try {
     responseText = await ai.generateText(userPrompt, systemPrompt);
   } catch (err: any) {
-    // If generation error, formulate safe grounded response from RAG
     if (ragHits.length > 0) {
       responseText = `### 1. Simple Overview\n${ragHits[0].text}\n\n### 4. 10-Marker University Exam Format\n*Directly retrieved from ${ragHits[0].docTitle} (Page ${ragHits[0].pageNumber})*`;
     } else {
@@ -393,9 +431,10 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
     sections.simple = responseText;
   }
 
+  const webNote = webHits.length > 0 ? ` + Google Web Analogies (${webHits.length})` : '';
   steps.push({
     step: '6. LangChain Academic Synthesis',
-    detail: `Synthesized unified 6-part study guide utilizing ${ragHits.length} RAG chunks and ${webHits.length} web search citations.`,
+    detail: `Synthesized unified 6-part study guide utilizing ${ragHits.length} textbook excerpts${webHits.length > 0 ? ` and ${webHits.length} web analogies` : ''}.`,
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -403,7 +442,7 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
     finalResponse: responseText,
     sections,
     sourcesUsed,
-    modelUsed: `${activeModelName} · LangGraph Agent + RAG (${ragHits.length}) + Web (${webHits.length})`,
+    modelUsed: `${activeModelName} · LangGraph Agent + RAG (${ragHits.length})${webNote}`,
     reasoningSteps: steps,
   };
 }
@@ -441,21 +480,26 @@ async function reflectAndCacheNode(state: StateType): Promise<Partial<StateType>
 
 // -------------------------------------------------------------
 // Build and Compile the LangGraph StateGraph
+// Conditional Routing:
+// If Web is not needed (local notes are clear, no confusing jargon),
+// the graph routes straight from agent_decide to synthesize!
 // -------------------------------------------------------------
 function buildAcademicGraph() {
   const workflow = new StateGraph(AcademicAgentState)
     .addNode('guardrail', guardrailNode)
     .addNode('cache_check', cacheCheckNode)
-    .addNode('agent_decide', agentDecideNode)
     .addNode('execute_rag', executeRagNode)
+    .addNode('agent_decide', agentDecideNode)
     .addNode('execute_web', executeWebNode)
     .addNode('synthesize', synthesisNode)
     .addNode('reflect_and_cache', reflectAndCacheNode)
     .addEdge(START, 'guardrail')
     .addEdge('guardrail', 'cache_check')
-    .addConditionalEdges('cache_check', (state) => (state.isCached ? 'reflect_and_cache' : 'agent_decide'))
-    .addEdge('agent_decide', 'execute_rag')
-    .addEdge('execute_rag', 'execute_web')
+    .addConditionalEdges('cache_check', (state) => (state.isCached ? 'reflect_and_cache' : 'execute_rag'))
+    .addEdge('execute_rag', 'agent_decide')
+    .addConditionalEdges('agent_decide', (state) =>
+      state.toolsToRun && state.toolsToRun.includes('web') ? 'execute_web' : 'synthesize'
+    )
     .addEdge('execute_web', 'synthesize')
     .addEdge('synthesize', 'reflect_and_cache')
     .addEdge('reflect_and_cache', END);
@@ -480,10 +524,10 @@ export async function runAcademicAgent(input: AcademicAgentInput): Promise<Acade
     guardrailFeedback: '',
     isCached: false,
     cachedEntry: null,
-    toolsToRun: ['rag', 'web'],
-    agentDecisionReason: '',
     ragHits: [],
     webHits: [],
+    toolsToRun: ['rag'],
+    agentDecisionReason: '',
     finalResponse: '',
     sections: {
       simple: '',
