@@ -43,6 +43,12 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  React.useEffect(() => {
+    if (!selectedExamId && exams.length > 0) {
+      setSelectedExamId(exams[0].id);
+    }
+  }, [exams, selectedExamId]);
+
   // New Exam Form
   const [examSubName, setExamSubName] = useState('');
   const [examDate, setExamDate] = useState('');
@@ -205,7 +211,11 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
               <Flame className="w-4 h-4 text-amber-400" />
               <h2 className="text-sm font-bold text-slate-100">Next Countdown</h2>
             </div>
-            <button className="text-slate-600 hover:text-slate-400">
+            <button
+              onClick={handleOpenAddModal}
+              className="text-slate-600 hover:text-amber-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+              title="Add Exam Paper"
+            >
               <MoreVertical className="w-3.5 h-3.5" />
             </button>
           </div>

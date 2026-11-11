@@ -43,6 +43,7 @@ export interface DashboardViewProps {
   onOpenOnboardingUpload?: () => void;
   onAskAI?: (prompt: string) => void;
   onFilesDropped?: (files: File[]) => void;
+  onOpenNotifications?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -58,6 +59,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigateTab,
   onOpenMaterial,
   onFilesDropped,
+  onOpenNotifications,
 }) => {
   const [timePeriod, setTimePeriod] = useState<'today' | 'tomorrow' | 'week'>('today');
   const [isPeriodDropdownOpen, setIsPeriodDropdownOpen] = useState(false);
@@ -177,7 +179,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           <button
-            onClick={() => onNavigateTab('daily-update')}
+            onClick={() => {
+              if (onOpenNotifications) onOpenNotifications();
+              else onNavigateTab('daily-update');
+            }}
+            title="Notifications"
             className="w-8 h-8 rounded-xl bg-[#141926] border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center relative cursor-pointer"
           >
             <Bell className="w-3.5 h-3.5" />
@@ -221,7 +227,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Zap className="w-4 h-4 text-cyan-400" />
               <h2 className="text-sm font-bold text-slate-100">Attendance</h2>
             </div>
-            <button className="text-slate-600 hover:text-slate-400">
+            <button
+              onClick={() => onNavigateTab('timetable')}
+              className="text-slate-600 hover:text-cyan-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+              title="View Attendance in Timetable"
+            >
               <MoreVertical className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -314,7 +324,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <Flame className="w-4 h-4 text-amber-400" />
                 <h2 className="text-sm font-bold text-slate-100">Study Streak</h2>
               </div>
-              <button className="text-slate-600 hover:text-slate-400">
+              <button
+                onClick={() => onNavigateTab('ai-tutor')}
+                className="text-slate-600 hover:text-amber-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+                title="Open AI Tutor"
+              >
                 <MoreVertical className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -335,7 +349,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <Clock className="w-4 h-4 text-cyan-400" />
                 <h2 className="text-sm font-bold text-slate-100">Next Lecture</h2>
               </div>
-              <button className="text-slate-600 hover:text-slate-400">
+              <button
+                onClick={() => onNavigateTab('timetable')}
+                className="text-slate-600 hover:text-cyan-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+                title="View Weekly Schedule"
+              >
                 <MoreVertical className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -367,7 +385,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Trophy className="w-4 h-4 text-violet-400" />
               <h2 className="text-sm font-bold text-slate-100">Syllabus Progress</h2>
             </div>
-            <button className="text-slate-600 hover:text-slate-400">
+            <button
+              onClick={() => onNavigateTab('knowledge-dashboard')}
+              className="text-slate-600 hover:text-violet-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+              title="Explore Class Brain"
+            >
               <MoreVertical className="w-3.5 h-3.5" />
             </button>
           </div>

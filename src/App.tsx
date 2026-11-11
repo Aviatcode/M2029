@@ -1738,6 +1738,7 @@ export default function App() {
                   setActiveTab('ai-tutor');
                 }}
                 onFilesDropped={handleIngestDroppedFiles}
+                onOpenNotifications={() => setIsNotificationsOpen(true)}
               />
             )}
 

@@ -58,7 +58,14 @@ export const MindmapViewer: React.FC<MindmapViewerProps> = ({ nodes, mermaidSynt
           }`}
         >
           {hasChildren && (
-            <button className="mt-0.5 text-slate-400 hover:text-white shrink-0">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleNode(node.id);
+              }}
+              className="mt-0.5 text-slate-400 hover:text-white shrink-0 cursor-pointer"
+            >
               {isExpanded ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
             </button>
           )}

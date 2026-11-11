@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         onMouseLeave={() => setIsHovered(false)}
         className={`w-full bg-[#0d111a]/95 backdrop-blur-md shrink-0 transition-all duration-200 select-none z-40 ${
           isTop ? 'border-b border-slate-800/80 shadow-sm' : 'border-t border-slate-800/80 shadow-2xl'
-        } h-14 sm:h-15 py-1 px-2.5 sm:px-4`}
+        } h-14 sm:h-15 py-1 px-2.5 sm:px-4 ${!isTop ? 'pb-[env(safe-area-inset-bottom)]' : ''}`}
       >
         <div className="max-w-[1580px] mx-auto h-full flex items-center justify-between gap-2 sm:gap-3">
           {/* 1. Brand Logo */}
@@ -361,58 +361,80 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 3. Position Switcher & Controls */}
       <div className={`border-t border-slate-800/60 shrink-0 space-y-1.5 ${isHovered ? 'p-2.5 sm:p-3' : 'p-1.5 sm:p-2'}`}>
-        {/* 4-Position Switcher */}
+        {/* Position Switcher: Single Tap-to-Cycle on Phone, 4-Way pill on Tablet/PC */}
         {onChangePosition && (
-          <div
-            className={`flex items-center justify-center rounded-xl bg-[#141926] border border-slate-800 p-1 ${
-              isHovered ? 'gap-1' : 'flex-col gap-1'
-            }`}
-          >
+          <>
             <button
-              onClick={() => onChangePosition('left')}
-              title="Dock Left"
-              className={`p-1 rounded-md transition cursor-pointer ${
-                (position as SidebarPosition) === 'left'
-                  ? 'bg-cyan-500/20 text-cyan-300'
-                  : 'text-slate-500 hover:text-slate-300'
+              onClick={() => {
+                const cycle: Record<SidebarPosition, SidebarPosition> = {
+                  left: 'top',
+                  top: 'right',
+                  right: 'bottom',
+                  bottom: 'left',
+                };
+                onChangePosition(cycle[position]);
+              }}
+              title={`Docked ${position} (Tap to change)`}
+              className="sm:hidden w-full flex items-center justify-center p-2 rounded-xl bg-[#141926] border border-slate-800 text-cyan-300 hover:text-white transition cursor-pointer"
+            >
+              {position === 'left' ? (
+                <PanelLeft className="w-4 h-4" />
+              ) : (
+                <PanelRight className="w-4 h-4" />
+              )}
+            </button>
+
+            <div
+              className={`hidden sm:flex items-center justify-center rounded-xl bg-[#141926] border border-slate-800 p-1 ${
+                isHovered ? 'gap-1' : 'flex-col gap-1'
               }`}
             >
-              <PanelLeft className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => onChangePosition('top')}
-              title="Dock Top"
-              className={`p-1 rounded-md transition cursor-pointer ${
-                (position as SidebarPosition) === 'top'
-                  ? 'bg-cyan-500/20 text-cyan-300'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              <PanelTop className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => onChangePosition('right')}
-              title="Dock Right"
-              className={`p-1 rounded-md transition cursor-pointer ${
-                (position as SidebarPosition) === 'right'
-                  ? 'bg-cyan-500/20 text-cyan-300'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              <PanelRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => onChangePosition('bottom')}
-              title="Dock Bottom"
-              className={`p-1 rounded-md transition cursor-pointer ${
-                (position as SidebarPosition) === 'bottom'
-                  ? 'bg-cyan-500/20 text-cyan-300'
-                  : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              <PanelBottom className="w-3.5 h-3.5" />
-            </button>
-          </div>
+              <button
+                onClick={() => onChangePosition('left')}
+                title="Dock Left"
+                className={`p-1 rounded-md transition cursor-pointer ${
+                  (position as SidebarPosition) === 'left'
+                    ? 'bg-cyan-500/20 text-cyan-300'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <PanelLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onChangePosition('top')}
+                title="Dock Top"
+                className={`p-1 rounded-md transition cursor-pointer ${
+                  (position as SidebarPosition) === 'top'
+                    ? 'bg-cyan-500/20 text-cyan-300'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <PanelTop className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onChangePosition('right')}
+                title="Dock Right"
+                className={`p-1 rounded-md transition cursor-pointer ${
+                  (position as SidebarPosition) === 'right'
+                    ? 'bg-cyan-500/20 text-cyan-300'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <PanelRight className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onChangePosition('bottom')}
+                title="Dock Bottom"
+                className={`p-1 rounded-md transition cursor-pointer ${
+                  (position as SidebarPosition) === 'bottom'
+                    ? 'bg-cyan-500/20 text-cyan-300'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                <PanelBottom className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </>
         )}
 
         {/* Settings Button */}

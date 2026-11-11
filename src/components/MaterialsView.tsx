@@ -76,6 +76,23 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Auto-select first material when materials array updates
+  useEffect(() => {
+    if (!selectedMaterial && materials.length > 0) {
+      setSelectedMaterial(materials[0]);
+    }
+  }, [materials, selectedMaterial]);
+
+  // Auto-sync subject IDs when subjects load
+  useEffect(() => {
+    if (!uploadSubjectId && subjects.length > 0) {
+      setUploadSubjectId(subjects[0].id);
+    }
+    if (!githubFetchSubjectId && subjects.length > 0) {
+      setGithubFetchSubjectId(subjects[0].id);
+    }
+  }, [subjects, uploadSubjectId, githubFetchSubjectId]);
+
   // Close upload modal on Escape key if idle
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

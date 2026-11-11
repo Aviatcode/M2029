@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Search,
   MoreVertical,
+  ChevronDown,
 } from 'lucide-react';
 
 interface KnowledgeDashboardProps {
@@ -49,6 +50,7 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
   const fetchStats = async () => {
     try {
@@ -76,13 +78,30 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
         ? `/api/ai/cache/export?subjectName=${encodeURIComponent(subjectName)}`
         : `/api/ai/cache/export`;
       
-      const res = await fetch(url);
-      if (!res.ok) {
-        alert('No perfected topics available to export yet. Keep learning!');
-        return;
+      let markdownContent = '';
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          markdownContent = await res.text();
+        }
+      } catch {}
+
+      if (!markdownContent || markdownContent.includes('{"error"')) {
+        // Safe offline generation fallback
+        const targetSubjects = subjectName && subjectName !== 'all'
+          ? subjects.filter(s => s.name.toLowerCase().includes(subjectName.toLowerCase()))
+          : subjects;
+        markdownContent = `# 🎓 ${subjectName || classCode || 'M2029'} — Study Pack & Class Intelligence\n\n`;
+        markdownContent += `> Generated for ${studentName || 'Student'} · ${new Date().toLocaleDateString()}\n\n---\n\n`;
+        targetSubjects.forEach((sub, sIdx) => {
+          markdownContent += `## ${sIdx + 1}. ${sub.name} (${sub.code})\n`;
+          markdownContent += `- **Faculty Professor:** ${sub.teacherName || 'Faculty In-Charge'}\n`;
+          markdownContent += `- **Total Units:** ${sub.totalUnits || 4} Units\n`;
+          markdownContent += `- **Mastery Progress:** ${sub.completedTopicsCount || 0}/${sub.totalTopicsCount || 0} Topics (${sub.totalTopicsCount ? Math.round(((sub.completedTopicsCount || 0) / sub.totalTopicsCount) * 100) : 0}%)\n\n`;
+        });
       }
 
-      const blob = await res.blob();
+      const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = downloadUrl;
@@ -93,7 +112,6 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
       window.URL.revokeObjectURL(downloadUrl);
     } catch (err) {
       console.error('Export failed:', err);
-      alert('Failed to export study pack.');
     } finally {
       setIsExporting(null);
     }
@@ -112,11 +130,13 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
   // INR equivalent (approx 85 INR per USD)
   const inrSaved = stats ? Math.round(stats.estimatedMoneySaved * 85) : 0;
 
-  const filteredTopics = (stats?.topTopics || []).filter((t) =>
-    !searchQuery.trim() ||
-    t.query.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.perfectionTier.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredTopics = (stats?.topTopics || []).filter((t) => {
+    const matchesSubject = selectedSubject === 'all' || (t as any).subjectName?.toLowerCase().includes(selectedSubject.toLowerCase());
+    const matchesSearch = !searchQuery.trim() ||
+      t.query.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.perfectionTier.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSubject && matchesSearch;
+  });
 
   return (
     <div className="w-full space-y-5 font-sans-ui text-slate-100 animate-fade-in select-none">
@@ -151,6 +171,48 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
               className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-500/50 transition"
             />
           </div>
+
+          {/* Subject Filter Dropdown */}
+          {subjects.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={() => setIsFilterDropdownOpen((prev) => !prev)}
+                className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-300 hover:text-white flex items-center gap-1.5 cursor-pointer font-semibold"
+              >
+                <span className="max-w-[100px] truncate">
+                  {selectedSubject === 'all'
+                    ? 'All Subjects'
+                    : subjects.find((s) => s.name === selectedSubject)?.name || selectedSubject}
+                </span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
+              {isFilterDropdownOpen && (
+                <div className="absolute right-0 top-full mt-1 w-44 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1 z-30 text-xs max-h-60 overflow-y-auto">
+                  <button
+                    onClick={() => {
+                      setSelectedSubject('all');
+                      setIsFilterDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 cursor-pointer"
+                  >
+                    All Subjects
+                  </button>
+                  {subjects.map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => {
+                        setSelectedSubject(sub.name);
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 truncate cursor-pointer"
+                    >
+                      {sub.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Refresh Button */}
           <button

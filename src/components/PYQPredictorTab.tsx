@@ -68,7 +68,12 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
                   </div>
                 </div>
 
-                <button className="text-slate-400 hover:text-white p-1 rounded-lg bg-slate-950 border border-slate-800 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setExpandedIndex(isExpanded ? null : idx)}
+                  className="text-slate-400 hover:text-white p-1 rounded-lg bg-slate-950 border border-slate-800 shrink-0 cursor-pointer"
+                  title={isExpanded ? 'Collapse' : 'Expand'}
+                >
                   {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
               </div>

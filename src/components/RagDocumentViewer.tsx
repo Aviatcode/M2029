@@ -554,14 +554,14 @@ export const RagDocumentViewer: React.FC<RagDocumentViewerProps> = ({
               <button
                 disabled={currentPage <= 1 || isBrowseLoading}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 transition-all"
+                className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 transition-all cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 disabled={currentPage >= totalPages || isBrowseLoading}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 transition-all"
+                className="p-1.5 rounded bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 transition-all cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

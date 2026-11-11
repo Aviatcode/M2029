@@ -491,7 +491,11 @@ Friday:
                           </div>
                           <button
                             type="button"
-                            className="px-3.5 py-1.5 rounded-lg bg-slate-800 border border-slate-750 text-xs font-semibold text-slate-200 hover:bg-slate-750 transition"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              fileInputRef.current?.click();
+                            }}
+                            className="px-3.5 py-1.5 rounded-lg bg-slate-800 border border-slate-750 text-xs font-semibold text-slate-200 hover:bg-slate-750 transition cursor-pointer"
                           >
                             Browse Computer / Phone
                           </button>
