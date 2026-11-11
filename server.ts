@@ -14,6 +14,9 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+if (typeof (globalThis as any).__dirname !== 'string' || (globalThis as any).__dirname === '.') {
+  (globalThis as any).__dirname = __dirname;
+}
 const isProd = process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -804,6 +807,8 @@ Evaluate the answer. Return STRICT JSON only:
   // Vite Integration
   if (!isProd) {
     const vite = await createViteServer({
+      root: __dirname,
+      configFile: path.resolve(__dirname, 'vite.config.ts'),
       server: {
         middlewareMode: true,
         hmr: {
@@ -825,6 +830,8 @@ Evaluate the answer. Return STRICT JSON only:
     if (!fs.existsSync(distIndex)) {
       console.log('⚡ dist/index.html not found, starting Vite middleware fallback in production...');
       const vite = await createViteServer({
+        root: __dirname,
+        configFile: path.resolve(__dirname, 'vite.config.ts'),
         server: { middlewareMode: true },
         appType: 'spa',
       });
@@ -857,8 +864,8 @@ Evaluate the answer. Return STRICT JSON only:
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         try {
           let html = fs.readFileSync(distIndex, 'utf-8');
-          html = html.replace(/<title>.*?<\/title>/i, '<title>SyllabusOS</title>');
-          html = html.replace(/<meta property="og:title" content=".*?" \/>/i, '<meta property="og:title" content="SyllabusOS" />');
+          html = html.replace(/<title>.*?<\/title>/i, '<title>M2028</title>');
+          html = html.replace(/<meta property="og:title" content=".*?" \/>/i, '<meta property="og:title" content="M2028" />');
           res.send(html);
         } catch {
           res.sendFile(distIndex);

@@ -93,7 +93,8 @@ export class RagKnowledgeEngine {
     try {
       if (fs.existsSync(this.registryFile)) {
         const raw = fs.readFileSync(this.registryFile, 'utf-8');
-        const docs: RagDocument[] = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        const docs: RagDocument[] = Array.isArray(parsed) ? parsed : (parsed && typeof parsed === 'object') ? Object.values(parsed) : [];
         for (const doc of docs) {
           this.documents.set(doc.id, doc);
           // Load chunks for active documents
@@ -717,8 +718,9 @@ ${
       this.documents.clear();
       this.chunksCache.clear();
       this.invertedIndex.clear();
-      this.totalIndexedWords = 0;
-      this.avgChunkLength = 0;
+      this.totalChunksIndexed = 0;
+      this.totalChunkLength = 0;
+      this.avgChunkLength = 200;
 
       if (fs.existsSync(this.baseDir)) {
         const files = fs.readdirSync(this.baseDir);

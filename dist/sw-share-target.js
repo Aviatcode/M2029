@@ -85,8 +85,8 @@ self.addEventListener('fetch', (event) => {
           console.warn('PWA Share Target worker error:', err);
         }
 
-        // Redirect user directly into the Study Drop & Auto-Sort tab
-        const redirectUrl = new URL('./#dump?from_share=1', event.request.url).href;
+        // Redirect user directly into the Study Vault tab
+        const redirectUrl = new URL('./#materials?from_share=1', event.request.url).href;
         return Response.redirect(redirectUrl, 303);
       })()
     );
