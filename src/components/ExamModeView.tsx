@@ -343,27 +343,41 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                   <div
                     key={step.dayNumber}
                     onClick={() => onToggleRevisionDay(activeExam.id, step.dayNumber)}
-                    className={`p-2.5 rounded-2xl border transition flex items-center justify-between gap-2.5 cursor-pointer ${
+                    className={`p-2.5 rounded-2xl border transition flex items-start justify-between gap-2.5 cursor-pointer ${
                       step.completed
                         ? 'bg-[#121724]/50 border-slate-850 opacity-60'
                         : 'bg-[#121724] border-slate-800 hover:border-slate-700'
                     }`}
                   >
-                    <div className="flex items-center gap-2 truncate">
-                      <div
-                        className={`w-4 h-4 rounded-md flex items-center justify-center text-xs shrink-0 border ${
-                          step.completed
-                            ? 'bg-emerald-600 text-white border-emerald-500'
-                            : 'border-slate-700 bg-slate-900 text-transparent'
-                        }`}
-                      >
-                        <Check className="w-3 h-3" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`w-4 h-4 rounded-md flex items-center justify-center text-xs shrink-0 border ${
+                            step.completed
+                              ? 'bg-emerald-600 text-white border-emerald-500'
+                              : 'border-slate-700 bg-slate-900 text-transparent'
+                          }`}
+                        >
+                          <Check className="w-3 h-3" />
+                        </div>
+                        <span className="text-xs font-semibold text-slate-200 truncate">
+                          Day {step.dayNumber}: {step.title}
+                        </span>
                       </div>
-                      <span className="text-xs font-medium text-slate-200 truncate">
-                        Day {step.dayNumber}: {step.title}
-                      </span>
+                      {step.topics && step.topics.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5 pl-6">
+                          {step.topics.map((topic, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900/90 text-cyan-300 border border-slate-800/80"
+                            >
+                              {topic}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <span className="text-[9px] font-mono text-slate-500 shrink-0">
+                    <span className="text-[9px] font-mono text-slate-500 shrink-0 pt-0.5">
                       {step.completed ? 'Done' : 'Pending'}
                     </span>
                   </div>

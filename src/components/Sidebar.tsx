@@ -165,54 +165,76 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* 3. Position Switcher & Controls */}
           <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-            {/* 4-Position Switcher (Left, Top, Right, Bottom) */}
+            {/* Position Switcher: Single Cycle button on mobile, 4-Way pill on tablet/desktop */}
             {onChangePosition && (
-              <div className="flex items-center bg-[#141926] p-0.5 rounded-lg border border-slate-800">
+              <>
                 <button
-                  onClick={() => onChangePosition('left')}
-                  title="Dock Left"
-                  className={`p-1 rounded-md transition cursor-pointer ${
-                    (position as SidebarPosition) === 'left'
-                      ? 'bg-cyan-500/20 text-cyan-300'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
+                  onClick={() => {
+                    const cycle: Record<SidebarPosition, SidebarPosition> = {
+                      left: 'top',
+                      top: 'right',
+                      right: 'bottom',
+                      bottom: 'left',
+                    };
+                    onChangePosition(cycle[position]);
+                  }}
+                  title={`Docked ${position} (Tap to change)`}
+                  className="sm:hidden p-1.5 rounded-lg bg-[#141926] border border-slate-800 text-cyan-300 hover:text-white transition cursor-pointer"
                 >
-                  <PanelLeft className="w-3.5 h-3.5" />
+                  {position === 'top' ? (
+                    <PanelTop className="w-3.5 h-3.5" />
+                  ) : (
+                    <PanelBottom className="w-3.5 h-3.5" />
+                  )}
                 </button>
-                <button
-                  onClick={() => onChangePosition('top')}
-                  title="Dock Top"
-                  className={`p-1 rounded-md transition cursor-pointer ${
-                    (position as SidebarPosition) === 'top'
-                      ? 'bg-cyan-500/20 text-cyan-300'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
-                >
-                  <PanelTop className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => onChangePosition('right')}
-                  title="Dock Right"
-                  className={`p-1 rounded-md transition cursor-pointer ${
-                    (position as SidebarPosition) === 'right'
-                      ? 'bg-cyan-500/20 text-cyan-300'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
-                >
-                  <PanelRight className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => onChangePosition('bottom')}
-                  title="Dock Bottom"
-                  className={`p-1 rounded-md transition cursor-pointer ${
-                    (position as SidebarPosition) === 'bottom'
-                      ? 'bg-cyan-500/20 text-cyan-300'
-                      : 'text-slate-500 hover:text-slate-300'
-                  }`}
-                >
-                  <PanelBottom className="w-3.5 h-3.5" />
-                </button>
-              </div>
+
+                <div className="hidden sm:flex items-center bg-[#141926] p-0.5 rounded-lg border border-slate-800">
+                  <button
+                    onClick={() => onChangePosition('left')}
+                    title="Dock Left"
+                    className={`p-1 rounded-md transition cursor-pointer ${
+                      (position as SidebarPosition) === 'left'
+                        ? 'bg-cyan-500/20 text-cyan-300'
+                        : 'text-slate-500 hover:text-slate-300'
+                    }`}
+                  >
+                    <PanelLeft className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onChangePosition('top')}
+                    title="Dock Top"
+                    className={`p-1 rounded-md transition cursor-pointer ${
+                      (position as SidebarPosition) === 'top'
+                        ? 'bg-cyan-500/20 text-cyan-300'
+                        : 'text-slate-500 hover:text-slate-300'
+                    }`}
+                  >
+                    <PanelTop className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onChangePosition('right')}
+                    title="Dock Right"
+                    className={`p-1 rounded-md transition cursor-pointer ${
+                      (position as SidebarPosition) === 'right'
+                        ? 'bg-cyan-500/20 text-cyan-300'
+                        : 'text-slate-500 hover:text-slate-300'
+                    }`}
+                  >
+                    <PanelRight className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onChangePosition('bottom')}
+                    title="Dock Bottom"
+                    className={`p-1 rounded-md transition cursor-pointer ${
+                      (position as SidebarPosition) === 'bottom'
+                        ? 'bg-cyan-500/20 text-cyan-300'
+                        : 'text-slate-500 hover:text-slate-300'
+                    }`}
+                  >
+                    <PanelBottom className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </>
             )}
 
             {/* Settings */}
@@ -248,35 +270,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const isRight = position === 'right';
 
   return (
-    <aside
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`bg-[#0d111a] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-40 ${
-        isRight ? 'border-l border-slate-800/70' : 'border-r border-slate-800/70'
-      } ${isHovered ? 'w-52 sm:w-56 lg:w-60' : 'w-14 sm:w-16 lg:w-18'}`}
-    >
-      {/* 1. Brand Logo Header */}
-      <div className="h-14 sm:h-16 px-3 sm:px-4 flex items-center justify-between border-b border-slate-800/60 shrink-0">
-        <button
-          onClick={() => handleTabClick('dashboard')}
-          className="flex items-center gap-2 cursor-pointer focus:outline-none group text-left"
-          title="M2029 Academic OS"
-        >
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform shrink-0">
-            ✦
-          </div>
-          {isHovered && (
-            <div className="leading-tight overflow-hidden">
-              <span className="text-sm sm:text-base font-extrabold text-white tracking-tight font-sans block truncate">
-                m2029
-              </span>
-              <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5 truncate">
-                {classCode || 'BCA-2028'}
-              </span>
+    <>
+      {/* Mobile Backdrop when expanded */}
+      {isHovered && (
+        <div
+          onClick={() => setIsHovered(false)}
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-30 sm:hidden"
+        />
+      )}
+
+      <aside
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`bg-[#0d111a] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-40 ${
+          isRight ? 'border-l border-slate-800/70' : 'border-r border-slate-800/70'
+        } ${isHovered ? 'w-52 sm:w-56 lg:w-60' : 'w-14 sm:w-16 lg:w-18'}`}
+      >
+        {/* 1. Brand Logo Header */}
+        <div className="h-14 sm:h-16 px-3 sm:px-4 flex items-center justify-between border-b border-slate-800/60 shrink-0">
+          <button
+            onClick={() => {
+              if (window.innerWidth < 640) {
+                setIsHovered((prev) => !prev);
+              } else {
+                handleTabClick('dashboard');
+              }
+            }}
+            className="flex items-center gap-2 cursor-pointer focus:outline-none group text-left w-full"
+            title="M2029 Academic OS"
+          >
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform shrink-0">
+              ✦
             </div>
-          )}
-        </button>
-      </div>
+            {isHovered && (
+              <div className="leading-tight overflow-hidden">
+                <span className="text-sm sm:text-base font-extrabold text-white tracking-tight font-sans block truncate">
+                  m2029
+                </span>
+                <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5 truncate">
+                  {classCode || 'BCA-2028'}
+                </span>
+              </div>
+            )}
+          </button>
+        </div>
 
       {/* 2. Navigation Links */}
       <nav
@@ -407,5 +444,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
     </aside>
+    </>
   );
 };

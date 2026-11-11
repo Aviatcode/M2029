@@ -89,19 +89,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       setIsProcessingFile(true);
       setTimeout(() => setIsProcessingFile(false), 2000);
       if (onFilesDropped) onFilesDropped(files);
-      else onNavigateTab('dump');
+      else onNavigateTab('materials');
     }
   };
 
   const totalCompletedTopics = subjects.reduce((acc, s) => acc + (s.completedTopicsCount || 0), 0);
   const totalTopics = subjects.reduce((acc, s) => acc + (s.totalTopicsCount || 0), 0);
-  const overallProgressPercent = totalTopics > 0 ? Math.round((totalCompletedTopics / totalTopics) * 100) : 78;
+  const overallProgressPercent = totalTopics > 0 ? Math.round((totalCompletedTopics / totalTopics) * 100) : 0;
 
   const nextClass = todayClasses[0] || tomorrowClasses[0] || {
-    id: 'c-default',
-    subjectName: 'Operating Systems',
-    time: '10:00 AM',
-    room: '302',
+    id: 'c-none',
+    subjectName: 'No upcoming class',
+    time: '--:--',
+    room: '--',
   };
 
   // Dot matrix heatmap (7 days x 4 tracks)
@@ -212,26 +212,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">84%</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold">+5%</span>
+              <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                {overallProgressPercent > 0 ? `${overallProgressPercent}%` : subjects.length > 0 ? `${subjects.length} Subs` : '0%'}
+              </span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold">
+                {subjects.length > 0 ? 'Active' : 'Empty'}
+              </span>
             </div>
           </div>
 
           {/* Overlapping Circles */}
           <div className="relative h-44 flex items-center justify-center my-1">
             <div className="absolute left-6 top-3 w-28 h-28 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10">
-              <span className="text-xl font-extrabold">48</span>
+              <span className="text-xl font-extrabold">{totalCompletedTopics}</span>
               <span className="text-[10px] text-violet-200">Topics</span>
             </div>
 
             <div className="absolute right-6 top-5 w-24 h-24 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20">
-              <span className="text-lg font-extrabold">12</span>
-              <span className="text-[10px] text-slate-400">Active</span>
+              <span className="text-lg font-extrabold">{subjects.length}</span>
+              <span className="text-[10px] text-slate-400">Subjects</span>
             </div>
 
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
-              <span className="text-base font-black">3</span>
-              <span className="text-[9px] uppercase tracking-wider">Bunks</span>
+              <span className="text-base font-black">{recentMaterials.length}</span>
+              <span className="text-[9px] uppercase tracking-wider">Docs</span>
             </div>
           </div>
 
@@ -239,37 +243,47 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div className="space-y-2.5 pt-2 border-t border-slate-800/60 text-xs">
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono">45%</span>
+                <span className="font-bold text-white font-mono">{overallProgressPercent}%</span>
                 <span className="text-slate-400 flex items-center gap-1.5">
-                  Classes <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+                  Syllabus <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
                 </span>
               </div>
               <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-violet-500 rounded-full" style={{ width: '45%' }} />
+                <div className="h-full bg-violet-500 rounded-full" style={{ width: `${overallProgressPercent}%` }} />
               </div>
             </div>
 
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono">30%</span>
+                <span className="font-bold text-white font-mono">
+                  {recentMaterials.length > 0 ? `${Math.min(100, recentMaterials.length * 15)}%` : '0%'}
+                </span>
                 <span className="text-slate-400 flex items-center gap-1.5">
-                  Labs <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                  Materials <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                 </span>
               </div>
               <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-500 rounded-full" style={{ width: '30%' }} />
+                <div
+                  className="h-full bg-slate-500 rounded-full"
+                  style={{ width: `${Math.min(100, recentMaterials.length * 15)}%` }}
+                />
               </div>
             </div>
 
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono">25%</span>
+                <span className="font-bold text-white font-mono">
+                  {upcomingExams.length > 0 ? `${upcomingExams.length} Exams` : '0 Exams'}
+                </span>
                 <span className="text-slate-400 flex items-center gap-1.5">
-                  Study <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  Exam Radar <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                 </span>
               </div>
               <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-amber-400 rounded-full" style={{ width: '25%' }} />
+                <div
+                  className="h-full bg-amber-400 rounded-full"
+                  style={{ width: `${Math.min(100, upcomingExams.length * 33)}%` }}
+                />
               </div>
             </div>
           </div>
@@ -403,7 +417,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <h2 className="text-sm font-bold text-slate-100">Files Vault</h2>
             </div>
             <button
-              onClick={() => onNavigateTab('dump')}
+              onClick={() => onNavigateTab('materials')}
               className="text-xs text-cyan-400 hover:text-cyan-300 cursor-pointer"
             >
               Open →
@@ -432,7 +446,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {recentMaterials.slice(0, 2).map((mat) => (
                 <div
                   key={mat.id}
-                  onClick={() => (onOpenMaterial ? onOpenMaterial(mat) : onNavigateTab('dump'))}
+                  onClick={() => (onOpenMaterial ? onOpenMaterial(mat) : onNavigateTab('materials'))}
                   className="p-1.5 rounded-lg bg-slate-900 text-xs flex items-center justify-between gap-2 cursor-pointer"
                 >
                   <span className="truncate text-[11px] text-slate-300">{mat.title}</span>
@@ -478,12 +492,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          {/* Sub-Metrics: 85% | 14h */}
+          {/* Sub-Metrics: Exam Readiness | Study Volume */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-start gap-2">
               <div className="w-1 h-8 rounded-full bg-amber-400 shrink-0" />
               <div>
-                <div className="text-xl font-black text-white">85%</div>
+                <div className="text-xl font-black text-white">
+                  {upcomingExams.length > 0 ? `${overallProgressPercent}%` : subjects.length > 0 ? '100%' : '0%'}
+                </div>
                 <div className="text-[10px] text-slate-400">Exam Readiness</div>
               </div>
             </div>
@@ -491,7 +507,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-start gap-2">
               <div className="w-1 h-8 rounded-full bg-cyan-400 shrink-0" />
               <div>
-                <div className="text-xl font-black text-white">14h</div>
+                <div className="text-xl font-black text-white">
+                  {totalCompletedTopics > 0 ? `${Math.round(totalCompletedTopics * 1.5)}h` : '0h'}
+                </div>
                 <div className="text-[10px] text-slate-400">Weekly Study</div>
               </div>
             </div>

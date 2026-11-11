@@ -17,6 +17,7 @@ export interface RagDocumentClient {
   createdAt: string;
   updatedAt: string;
   summary?: string;
+  keyConcepts?: string[];
   tableOfContents?: { title: string; chunkIndex: number; page?: number }[];
   materialId?: string;
   source?: 'local_upload' | 'github_raw' | 'github_release';

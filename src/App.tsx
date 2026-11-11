@@ -244,9 +244,15 @@ export default function App() {
   }, [activeTab, classCode]);
 
   const handleSelectTab = (tab: ActiveNavTab) => {
-    setActiveTab(tab);
+    let target = tab;
+    if (tab === 'dump' || tab === 'rag') target = 'materials';
+    if (tab === 'syllabus' || tab === 'pyqs') target = 'exams';
+    if (tab === 'assignments' || tab === 'daily-update' || tab === 'tomorrow') target = 'timetable';
+    if (tab === 'setup') target = 'settings';
+
+    setActiveTab(target);
     try {
-      window.location.hash = tab;
+      window.location.hash = target;
     } catch {
       // ignore
     }
@@ -338,20 +344,20 @@ export default function App() {
         return;
       }
 
-      // Normal study note/document: route to smart dump
+      // Normal study note/document: route to materials vault
       setPendingIngestFiles(files);
-      setActiveTab('dump');
+      setActiveTab('materials');
       try {
-        window.location.hash = 'dump';
+        window.location.hash = 'materials';
       } catch {}
-      setShareToast(`📥 Dropped ${files.length} file(s). Auto-sorting into syllabus folders with AI...`);
+      setShareToast(`📥 Dropped ${files.length} file(s). Added to Materials Vault.`);
       setTimeout(() => setShareToast(''), 4500);
     } catch (err: any) {
       console.warn('Drop error fallback:', err);
       setPendingIngestFiles(files);
-      setActiveTab('dump');
+      setActiveTab('materials');
       try {
-        window.location.hash = 'dump';
+        window.location.hash = 'materials';
       } catch {}
     }
   };
@@ -491,7 +497,7 @@ export default function App() {
       const saved = localStorage.getItem('syllabus_subjects');
       if (saved !== null) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           // If cached subjects are legacy built-in defaults (e.g. "Programming Principles & C Language"), purge them!
           const isLegacyBuiltIn = parsed.some(
             (s: any) =>
@@ -504,14 +510,13 @@ export default function App() {
             localStorage.removeItem('syllabus_subjects');
             localStorage.removeItem('syllabus_units');
             localStorage.removeItem('syllabus_timetable');
-            return [];
+            return SEED_SUBJECTS;
           }
           return parsed;
         }
       }
     } catch {}
-    // Pure clean state: NO built-in subjects!
-    return [];
+    return SEED_SUBJECTS;
   });
 
   // Google Classroom Style Share Modal
@@ -521,7 +526,7 @@ export default function App() {
     name: 'BCA 2028',
   });
 
-  // Onboarding Upload Modal: Ask user to upload timetable/syllabus first before proceeding!
+  // Onboarding Upload Modal: Only open if explicitly triggered or no subjects exist
   const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem('syllabus_subjects');
@@ -530,7 +535,7 @@ export default function App() {
         if (Array.isArray(parsed) && parsed.length > 0) return false;
       }
     } catch {}
-    return true;
+    return false;
   });
 
   const handleOpenShareModal = (code?: string, name?: string) => {
@@ -543,9 +548,12 @@ export default function App() {
   const [unitsBySubject, setUnitsBySubject] = useState<Record<string, any>>(() => {
     try {
       const saved = localStorage.getItem('syllabus_units');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && Object.keys(parsed).length > 0) return parsed;
+      }
     } catch {}
-    return {};
+    return SEED_UNITS;
   });
 
   const [timetable, setTimetable] = useState<TimetableClass[]>(() => {
@@ -553,10 +561,10 @@ export default function App() {
       const saved = localStorage.getItem('syllabus_timetable');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch {}
-    return [];
+    return SEED_TIMETABLE;
   });
 
   const [materials, setMaterials] = useState<AcademicMaterial[]>(() => {
@@ -564,16 +572,16 @@ export default function App() {
       const saved = localStorage.getItem('syllabus_materials');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           // Purge any old materials mistakenly placed into legacy C Language folder
           const clean = parsed.filter(
             (m: any) => !m.subjectName?.includes('Programming Principles & C')
           );
-          return clean;
+          if (clean.length > 0) return clean;
         }
       }
     } catch {}
-    return [];
+    return SEED_MATERIALS;
   });
 
   const handleOnboardingSetupComplete = (data: {
@@ -645,9 +653,9 @@ export default function App() {
     try {
       const stored = localStorage.getItem('syllabus_semester_setup_done');
       if (stored !== null) return stored === 'true';
-      return false;
+      return true;
     } catch {
-      return false;
+      return true;
     }
   });
 
@@ -1771,54 +1779,6 @@ export default function App() {
             </div>
           )}
 
-          {activeTab === 'dump' && (
-            <SmartDumpView
-              materials={materials}
-              subjects={subjects}
-              unitsBySubject={unitsBySubject}
-              currentRole={currentRole}
-              classCode={classCode}
-              activeMaterialId={activeMaterialId}
-              onSelectActiveMaterialId={setActiveMaterialId}
-              onMaterialUploaded={handleMaterialUploaded}
-              onNavigateToTab={(tab) => setActiveTab(tab as any)}
-              onUpdateSubjects={(newSubs) => {
-                setSubjects(newSubs);
-                try {
-                  localStorage.setItem('syllabus_subjects', JSON.stringify(newSubs));
-                } catch {}
-              }}
-              onUpdateTimetable={(newSlots) => {
-                setTimetable(newSlots);
-                try {
-                  localStorage.setItem('syllabus_timetable', JSON.stringify(newSlots));
-                } catch {}
-              }}
-              pendingFiles={pendingIngestFiles}
-              onClearPendingFiles={() => setPendingIngestFiles([])}
-            />
-          )}
-
-          {activeTab === 'rag' && (
-            <ActiveRagVaultView
-              classCode={classCode}
-              onMaterialCreated={handleMaterialUploaded}
-            />
-          )}
-
-          {activeTab === 'syllabus' && (
-            <SyllabusMapView
-              subjects={subjects}
-              unitsBySubject={unitsBySubject}
-              onUpdateTopicStatus={handleUpdateTopicStatus}
-              onStudyTopic={handleStudyTopic}
-              onAddUnit={handleAddUnit}
-              onDeleteUnit={handleDeleteUnit}
-              onAddTopicToUnit={handleAddTopicToUnit}
-              onGenerateUnits={handleGenerateUnits}
-            />
-          )}
-
           {activeTab === 'ai-tutor' && (
             <AITutorView
               subjects={subjects}
@@ -1830,7 +1790,7 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'knowledge-dashboard' && (
+          {(activeTab === 'knowledge-dashboard' || activeTab === 'syllabus') && (
             <KnowledgeDashboard
               subjects={subjects}
               onOpenTopic={(topic, sub) => handleStudyTopic(topic, sub || subjects[0]?.name || 'Operating Systems')}
@@ -1839,7 +1799,7 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'materials' && (
+          {(activeTab === 'materials' || activeTab === 'dump' || activeTab === 'rag') && (
             <MaterialsView
               materials={materials}
               subjects={subjects}
@@ -1847,32 +1807,22 @@ export default function App() {
               onMaterialUploaded={handleMaterialUploaded}
               studentName={currentUser.name}
               classCode={classCode}
+              onAskAI={(prompt) => {
+                setInitialTutorPrompt(prompt);
+                setActiveTab('ai-tutor');
+              }}
             />
           )}
 
-          {activeTab === 'pyqs' && (
-            <PYQLibraryView
-              pyqs={pyqs}
-              analysisItems={pyqs.map((p) => ({
-                topicTitle: p.topicTitle,
-                subjectName: p.subjectName,
-                frequency: p.frequencyCount || 1,
-                yearsAsked: [p.year],
-                highestMarks: p.marks,
-                importanceTier: (p.frequencyCount || 1) >= 3 ? 'Very High (Must Prepare)' : 'High',
-              }))}
-              subjects={subjects}
-              onAddPYQ={handleAddPYQ}
-              onDeletePYQ={handleDeletePYQ}
-            />
-          )}
-
-          {activeTab === 'exams' && (
+          {(activeTab === 'exams' || activeTab === 'pyqs') && (
             <ExamModeView
               exams={exams}
               subjects={subjects}
               onToggleRevisionDay={handleToggleRevisionDay}
-              onOpenStudySession={(subName) => handleStudyTopic('End-Term Revision', subName)}
+              onOpenStudySession={(subName) => {
+                setInitialTutorPrompt(`Please give me an intensive revision summary and high-probability exam questions for ${subName}.`);
+                setActiveTab('ai-tutor');
+              }}
               onAddExam={handleAddExam}
               onDeleteExam={handleDeleteExam}
               studentName={currentUser.name}
@@ -2058,11 +2008,11 @@ export default function App() {
             if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
               const filesArray = Array.from(e.dataTransfer.files);
               setPendingIngestFiles(filesArray);
-              setActiveTab('dump');
+              setActiveTab('materials');
               try {
-                window.location.hash = 'dump';
+                window.location.hash = 'materials';
               } catch {}
-              setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. AI auto-sorting into syllabus folders...`);
+              setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. Added to Materials Vault.`);
               setTimeout(() => setShareToast(''), 4500);
             }
           }}

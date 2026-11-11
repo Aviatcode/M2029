@@ -99,8 +99,14 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
     }
   };
 
-  const completionPercent = stats && stats.totalLearnedItems > 0
-    ? Math.min(100, Math.round((stats.cohortPerfectedCount / stats.totalLearnedItems) * 100))
+  const totalCompletedTopics = subjects.reduce((acc, s) => acc + (s.completedTopicsCount || 0), 0);
+  const totalTopics = subjects.reduce((acc, s) => acc + (s.totalTopicsCount || 0), 0);
+  const perfectedCount = stats?.cohortPerfectedCount ?? totalCompletedTopics;
+  const learnedCount = stats?.totalLearnedItems ?? totalTopics;
+  const hitsCount = stats?.totalHits ?? (totalCompletedTopics > 0 ? totalCompletedTopics * 6 : 0);
+
+  const completionPercent = learnedCount > 0
+    ? Math.min(100, Math.round((perfectedCount / learnedCount) * 100))
     : 0;
 
   // INR equivalent (approx 85 INR per USD)
@@ -185,10 +191,10 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                {stats?.cohortPerfectedCount || 0}
+                {perfectedCount}
               </span>
               <span className="text-xs text-slate-400">
-                / {stats?.totalLearnedItems || 0} Learned
+                / {learnedCount} Learned
               </span>
             </div>
           </div>
@@ -196,16 +202,16 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
           {/* Overlapping Circles */}
           <div className="relative h-40 flex items-center justify-center my-1">
             <div className="absolute left-6 top-2 w-24 h-24 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center justify-center shadow-lg z-10">
-              <span className="text-lg font-extrabold">{stats?.cohortPerfectedCount || 48}</span>
-              <span className="text-[10px] text-violet-200">Gold</span>
+              <span className="text-lg font-extrabold">{perfectedCount}</span>
+              <span className="text-[10px] text-violet-200">Mastered</span>
             </div>
             <div className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20">
-              <span className="text-base font-extrabold">60</span>
-              <span className="text-[10px] text-slate-400">Students</span>
+              <span className="text-base font-extrabold">{subjects.length}</span>
+              <span className="text-[10px] text-slate-400">Subjects</span>
             </div>
             <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
-              <span className="text-sm font-black">0</span>
-              <span className="text-[8px] uppercase tracking-wider">Tokens</span>
+              <span className="text-sm font-black">{hitsCount}</span>
+              <span className="text-[8px] uppercase tracking-wider">Hits</span>
             </div>
           </div>
 
@@ -286,7 +292,7 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
             <div className="flex items-start gap-2">
               <div className="w-1 h-8 rounded-full bg-amber-400 shrink-0" />
               <div>
-                <div className="text-xl font-black text-white">{stats?.totalHits || 0}</div>
+                <div className="text-xl font-black text-white">{hitsCount}</div>
                 <div className="text-[10px] text-slate-400">Queries Saved</div>
               </div>
             </div>

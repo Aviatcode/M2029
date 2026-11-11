@@ -22,6 +22,7 @@ import {
   ChevronDown,
   FolderOpen,
   MoreVertical,
+  ExternalLink,
 } from 'lucide-react';
 import { RagDocumentViewer } from './RagDocumentViewer';
 import { uploadLargeFileToRag, fetchFromGitHubUrl } from '../utils/ragService';
@@ -33,6 +34,7 @@ interface MaterialsViewProps {
   onMaterialUploaded: (newMat: AcademicMaterial) => void;
   studentName?: string;
   classCode?: string;
+  onAskAI?: (prompt: string) => void;
 }
 
 export const MaterialsView: React.FC<MaterialsViewProps> = ({
@@ -42,9 +44,11 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   onMaterialUploaded,
   studentName,
   classCode,
+  onAskAI,
 }) => {
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
   const [selectedMaterial, setSelectedMaterial] = useState<AcademicMaterial | null>(materials[0] || null);
+  const [showFullAnswer, setShowFullAnswer] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   // Upload Modal State
@@ -488,7 +492,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 return (
                   <div
                     key={mat.id}
-                    onClick={() => setSelectedMaterial(mat)}
+                    onClick={() => {
+                      setSelectedMaterial(mat);
+                      setShowFullAnswer(false);
+                    }}
                     className={`p-3 rounded-2xl border cursor-pointer transition text-xs space-y-1 ${
                       isSelected
                         ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md'
@@ -497,9 +504,23 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                   >
                     <div className="flex items-center justify-between gap-1.5">
                       <span className="font-semibold truncate">{mat.title}</span>
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
-                        {mat.fileType || 'PDF'}
-                      </span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {mat.downloadUrl && (
+                          <a
+                            href={mat.downloadUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="p-1 rounded hover:bg-slate-700 text-slate-400 hover:text-cyan-300 transition"
+                            title="Open original question paper PDF"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
+                          {mat.fileType || 'PDF'}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
                       <span className="truncate">{mat.subjectName}</span>
@@ -519,7 +540,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           </button>
         </div>
 
-        {/* CARD 3: Document Intel & RAG (The Dark Accent Card) */}
+        {/* CARD 3: Document Intel & RAG */}
         <div className="bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -527,12 +548,35 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               <h2 className="text-sm font-bold text-slate-100">Document Intel</h2>
             </div>
             {selectedMaterial && (
-              <button
-                onClick={() => setShowRagModal(true)}
-                className="px-2.5 py-1 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition cursor-pointer flex items-center gap-1"
-              >
-                <span>⚡ RAG</span>
-              </button>
+              <div className="flex items-center gap-1.5">
+                {selectedMaterial.downloadUrl && (
+                  <a
+                    href={selectedMaterial.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                    title="Open original question paper PDF"
+                  >
+                    <ExternalLink className="w-3 h-3 text-cyan-400" />
+                    <span>View PDF</span>
+                  </a>
+                )}
+                {onAskAI && selectedMaterial.resources.exam10Marker && (
+                  <button
+                    onClick={() => onAskAI(`Explain this GGSIPU 10-Marker Question from ${selectedMaterial.title}: "${selectedMaterial.resources.exam10Marker?.question}". Provide full derivation and university grading gotchas.`)}
+                    className="px-2.5 py-1 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition cursor-pointer flex items-center gap-1"
+                    title="Ask AI Companion"
+                  >
+                    <span>Ask AI</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowRagModal(true)}
+                  className="px-2.5 py-1 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition cursor-pointer flex items-center gap-1"
+                >
+                  <span>⚡ RAG</span>
+                </button>
+              </div>
             )}
           </div>
 
@@ -553,6 +597,36 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                   {selectedMaterial.resources.summary}
                 </p>
               </div>
+
+              {selectedMaterial.resources.exam10Marker && (
+                <div className="p-3 rounded-2xl bg-[#141926] border border-amber-500/30 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-amber-400 font-bold uppercase">10-Marker Model Question</span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300">GGSIPU Pattern</span>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-100">
+                    {selectedMaterial.resources.exam10Marker.question}
+                  </p>
+                  <div className="text-[11px] text-slate-300 font-mono whitespace-pre-line bg-slate-950/60 p-2.5 rounded-xl border border-slate-800">
+                    {selectedMaterial.resources.exam10Marker.answerStructure}
+                  </div>
+                  {selectedMaterial.resources.exam10Marker.modelAnswerMarkdown && (
+                    <div className="pt-1 border-t border-slate-800/60">
+                      <button
+                        onClick={() => setShowFullAnswer((prev) => !prev)}
+                        className="text-[10px] font-mono font-semibold text-amber-400 hover:text-amber-300 cursor-pointer flex items-center gap-1"
+                      >
+                        <span>{showFullAnswer ? '▲ Hide Full Model Answer' : '▼ View Full Model Answer'}</span>
+                      </button>
+                      {showFullAnswer && (
+                        <div className="mt-2 p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 text-[11px] text-slate-200 whitespace-pre-line font-mono leading-relaxed">
+                          {selectedMaterial.resources.exam10Marker.modelAnswerMarkdown}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {selectedMaterial.resources.importantDefinitions?.length > 0 && (
                 <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1.5">
@@ -579,6 +653,35 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* RAG Document Viewer Modal */}
+      {showRagModal && selectedMaterial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+          <div className="w-full max-w-4xl max-h-[90vh] bg-[#0c101d] border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col">
+            <RagDocumentViewer
+              docId={selectedMaterial.id}
+              initialDocument={{
+                id: selectedMaterial.id,
+                classId: selectedMaterial.classId,
+                subjectId: selectedMaterial.subjectId,
+                subjectName: selectedMaterial.subjectName,
+                title: selectedMaterial.title,
+                fileName: selectedMaterial.fileName,
+                fileType: selectedMaterial.fileType,
+                fileSize: selectedMaterial.fileSize,
+                storageUrl: selectedMaterial.downloadUrl || '',
+                totalChunks: 8,
+                processedChunks: 8,
+                status: 'ready',
+                createdAt: selectedMaterial.createdAt,
+                keyConcepts: selectedMaterial.resources.keyConcepts?.map((k: any) => k.concept || k.term || '') || [],
+                summary: selectedMaterial.resources.summary
+              } as any}
+              onClose={() => setShowRagModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
