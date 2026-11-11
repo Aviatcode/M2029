@@ -70,10 +70,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const effectiveId = getEffectiveNavId(activeTab);
 
   const mainNavItems = [
-    { id: 'dashboard' as const, label: 'Home', icon: LayoutDashboard },
+    { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot, isAI: true },
-    { id: 'materials' as const, label: 'Study Vault', icon: FolderOpen },
-    { id: 'exams' as const, label: 'Exam Radar', icon: Flame },
+    { id: 'materials' as const, label: 'Materials', icon: FolderOpen },
+    { id: 'exams' as const, label: 'Exams', icon: Flame },
     { id: 'timetable' as const, label: 'Schedule', icon: Calendar },
     { id: 'knowledge-dashboard' as const, label: 'Class Brain', icon: Trophy },
   ];
