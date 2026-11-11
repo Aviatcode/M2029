@@ -300,6 +300,40 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     setUploadFileSize('');
     setUploadFileDataUrl('');
     setUploadTextSnippet('');
+    setSelectedRawFile(null);
+  };
+
+  const handleGitHubFetch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!githubFetchUrl.trim()) return;
+
+    setIsGithubFetching(true);
+    setGithubFetchError(null);
+    try {
+      const targetSub = subjects.find((s) => s.id === githubFetchSubjectId);
+      const subName = targetSub?.name || 'Academic Notes';
+      const result = await fetchFromGitHubUrl({
+        url: githubFetchUrl.trim(),
+        subjectId: githubFetchSubjectId,
+        subjectName: subName,
+        title: githubFetchTitle.trim() || undefined,
+        uploaderName: currentRole === 'cr' ? 'Class Representative (CR)' : 'Student Contributor',
+      });
+
+      if (result.material) {
+        onMaterialUploaded(result.material);
+        setSelectedMaterial(result.material);
+        setShowGithubModal(false);
+        setGithubFetchUrl('');
+        setGithubFetchTitle('');
+      } else {
+        throw new Error(result.message || 'Failed to fetch GitHub resource');
+      }
+    } catch (err: any) {
+      setGithubFetchError(err.message || 'GitHub fetch failed. Please check the URL.');
+    } finally {
+      setIsGithubFetching(false);
+    }
   };
 
   const getFormatBadge = (type: string) => {
@@ -654,6 +688,19 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
         </div>
       </div>
 
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,image/*"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleFileSelected(e.target.files[0]);
+          }
+        }}
+      />
+
       {/* RAG Document Viewer Modal */}
       {showRagModal && selectedMaterial && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
@@ -679,6 +726,250 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               } as any}
               onClose={() => setShowRagModal(false)}
             />
+          </div>
+        </div>
+      )}
+
+      {/* Upload Material Modal */}
+      {isUploading && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => {
+            if (processingStage === 'idle') setIsUploading(false);
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-[#121724] border border-slate-800 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+              <div className="flex items-center gap-2">
+                <UploadCloud className="w-4 h-4 text-cyan-400" />
+                <h3 className="font-bold text-sm text-white">Upload Material & Notes</h3>
+              </div>
+              {processingStage === 'idle' && (
+                <button
+                  type="button"
+                  onClick={() => setIsUploading(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {processingStage !== 'idle' ? (
+              <div className="py-8 flex flex-col items-center justify-center gap-3 text-center">
+                <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+                <div>
+                  <span className="text-sm font-bold text-white block capitalize">
+                    {processingStage === 'uploading' ? 'Uploading & Streaming...' : processingStage === 'generating' ? 'Generating Class Intel...' : 'Indexing with AI...'}
+                  </span>
+                  <span className="text-xs text-slate-400 mt-1 block">
+                    Extracting 10-markers, formulas, and syllabus linkages.
+                  </span>
+                </div>
+                <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-2">
+                  <div className="h-full bg-cyan-400 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleStartProcessing} className="space-y-3.5 text-xs">
+                {/* File Dropzone */}
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(true);
+                  }}
+                  onDragLeave={() => setIsDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                      handleFileSelected(e.dataTransfer.files[0]);
+                    }
+                  }}
+                  className={`p-6 rounded-2xl border-2 border-dashed transition cursor-pointer flex flex-col items-center justify-center text-center gap-2 ${
+                    isDragOver
+                      ? 'border-cyan-400 bg-cyan-950/20'
+                      : uploadFileName
+                      ? 'border-emerald-500/50 bg-emerald-950/15'
+                      : 'border-slate-800 hover:border-slate-700 bg-[#0d111a]'
+                  }`}
+                >
+                  {uploadFileName ? (
+                    <>
+                      <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                      <div>
+                        <span className="font-bold text-emerald-300 block truncate max-w-xs">{uploadFileName}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{uploadFileSize} • {uploadFileType.toUpperCase()}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500">Tap to choose a different file</span>
+                    </>
+                  ) : (
+                    <>
+                      <UploadCloud className="w-6 h-6 text-cyan-400" />
+                      <span className="font-semibold text-slate-200">Drag & drop paper or tap to browse</span>
+                      <span className="text-[10px] text-slate-500 font-mono">PDF • DOCX • PPTX • IMAGES • TXT</span>
+                    </>
+                  )}
+                </div>
+
+                {/* Subject Selection */}
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Subject *</label>
+                  <select
+                    value={uploadSubjectId}
+                    onChange={(e) => setUploadSubjectId(e.target.value)}
+                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                  >
+                    {subjects.map((sub) => (
+                      <option key={sub.id} value={sub.id}>
+                        {sub.name} ({sub.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Title Input */}
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Document Title *</label>
+                  <input
+                    type="text"
+                    value={uploadTitle}
+                    onChange={(e) => setUploadTitle(e.target.value)}
+                    placeholder="e.g. DBMS Unit 1 Question Bank 2024"
+                    required
+                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-2 border-t border-slate-800/80">
+                  <button
+                    type="button"
+                    onClick={() => setIsUploading(false)}
+                    className="px-3 py-2 rounded-xl border border-slate-800 hover:bg-slate-800 text-slate-300 transition text-xs font-semibold cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!uploadTitle.trim()}
+                    className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 font-bold transition text-xs cursor-pointer shadow-sm shadow-cyan-500/20"
+                  >
+                    Add Document to Vault
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* GitHub Fetch Modal */}
+      {showGithubModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => {
+            if (!isGithubFetching) setShowGithubModal(false);
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-[#121724] border border-slate-800 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+              <div className="flex items-center gap-2">
+                <Github className="w-4 h-4 text-indigo-400" />
+                <h3 className="font-bold text-sm text-white">Import from GitHub</h3>
+              </div>
+              {!isGithubFetching && (
+                <button
+                  type="button"
+                  onClick={() => setShowGithubModal(false)}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {githubFetchError && (
+              <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{githubFetchError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleGitHubFetch} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">GitHub File / Raw URL *</label>
+                <input
+                  type="url"
+                  value={githubFetchUrl}
+                  onChange={(e) => setGithubFetchUrl(e.target.value)}
+                  placeholder="https://raw.githubusercontent.com/.../lecture_notes.pdf"
+                  required
+                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Subject *</label>
+                <select
+                  value={githubFetchSubjectId}
+                  onChange={(e) => setGithubFetchSubjectId(e.target.value)}
+                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                >
+                  {subjects.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name} ({sub.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Custom Title (Optional)</label>
+                <input
+                  type="text"
+                  value={githubFetchTitle}
+                  onChange={(e) => setGithubFetchTitle(e.target.value)}
+                  placeholder="Auto-derived from file if left blank"
+                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2 border-t border-slate-800/80">
+                <button
+                  type="button"
+                  disabled={isGithubFetching}
+                  onClick={() => setShowGithubModal(false)}
+                  className="px-3 py-2 rounded-xl border border-slate-800 hover:bg-slate-800 text-slate-300 transition text-xs font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isGithubFetching || !githubFetchUrl.trim()}
+                  className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-bold transition text-xs cursor-pointer flex items-center gap-1.5 shadow-sm"
+                >
+                  {isGithubFetching ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Fetching...</span>
+                    </>
+                  ) : (
+                    <span>Fetch & Index</span>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

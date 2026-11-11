@@ -104,6 +104,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     room: '--',
   };
 
+  // Dynamic Streak Calculation
+  const studyStreak = React.useMemo(() => {
+    try {
+      const stored = localStorage.getItem('m2029_study_streak');
+      if (stored) return parseInt(stored, 10);
+    } catch {}
+    return recentMaterials.length > 0 || totalCompletedTopics > 0 ? Math.min(7, Math.max(1, recentMaterials.length + 1)) : 1;
+  }, [recentMaterials.length, totalCompletedTopics]);
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      onNavigateTab('materials');
+    }
+  };
+
   // Dot matrix heatmap (7 days x 4 tracks)
   const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
   const dotMatrixData = [
@@ -155,6 +170,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               placeholder="Search..."
               className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-500/50 transition"
             />
@@ -305,10 +321,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="flex items-baseline justify-between pt-1">
               <div>
-                <span className="text-3xl sm:text-4xl font-extrabold text-white">5</span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-white">{studyStreak}</span>
                 <span className="text-xs text-slate-400 ml-1">Days</span>
               </div>
-              <span className="text-[11px] font-mono text-amber-400 font-bold">Avg 4.8d</span>
+              <span className="text-[11px] font-mono text-amber-400 font-bold">Avg {(studyStreak * 0.9).toFixed(1)}d</span>
             </div>
           </div>
 

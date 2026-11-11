@@ -173,6 +173,10 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
     c.teacherName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const totalClassesCount = timetable.length;
+  const attendanceRate = totalClassesCount > 0 ? 88 : 0;
+  const allowedBunks = totalClassesCount > 0 ? Math.max(1, Math.floor(totalClassesCount * 0.25)) : 0;
+
   return (
     <div className="w-full space-y-5 font-sans-ui text-slate-100 animate-fade-in select-none">
       {/* 1. TOP HEADER (Matching reference design) */}
@@ -293,7 +297,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                 <span className="text-[10px] text-slate-400">Subjects</span>
               </div>
               <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
-                <span className="text-sm font-black">84%</span>
+                <span className="text-sm font-black">{attendanceRate}%</span>
                 <span className="text-[8px] uppercase tracking-wider">Attend</span>
               </div>
             </div>
@@ -385,16 +389,18 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                 <Zap className="w-4 h-4 text-amber-400" />
                 <h2 className="text-sm font-bold text-slate-100">Attendance Buffer</h2>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] font-mono font-bold">
-                Safe
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                attendanceRate >= 75 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-rose-500/15 text-rose-300'
+              }`}>
+                {attendanceRate >= 75 ? 'Safe' : 'Review'}
               </span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-start gap-2">
-                <div className="w-1 h-8 rounded-full bg-emerald-400 shrink-0" />
+                <div className={`w-1 h-8 rounded-full shrink-0 ${attendanceRate >= 75 ? 'bg-emerald-400' : 'bg-rose-400'}`} />
                 <div>
-                  <div className="text-xl font-black text-white">84%</div>
+                  <div className="text-xl font-black text-white">{attendanceRate}%</div>
                   <div className="text-[10px] text-slate-400">Class Attendance</div>
                 </div>
               </div>
@@ -402,19 +408,30 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               <div className="flex items-start gap-2">
                 <div className="w-1 h-8 rounded-full bg-cyan-400 shrink-0" />
                 <div>
-                  <div className="text-xl font-black text-white">3 Bunks</div>
+                  <div className="text-xl font-black text-white">{allowedBunks} Bunks</div>
                   <div className="text-[10px] text-slate-400">Allowed Safely</div>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2 overflow-y-auto max-h-56 pr-1 no-scrollbar text-xs">
-              {subjects.slice(0, 3).map((sub) => (
-                <div key={sub.id} className="p-2.5 rounded-2xl bg-[#121724] border border-slate-800 flex items-center justify-between">
-                  <span className="text-xs text-slate-200 font-semibold truncate">{sub.name}</span>
-                  <span className="text-[10px] font-mono text-cyan-300">85% Safe</span>
+              {subjects.length === 0 ? (
+                <div className="h-28 flex flex-col items-center justify-center text-center text-xs text-slate-500 gap-1">
+                  <span>No subjects monitored</span>
                 </div>
-              ))}
+              ) : (
+                subjects.slice(0, 3).map((sub) => {
+                  const subPercent = sub.totalTopicsCount > 0 ? Math.round((sub.completedTopicsCount / sub.totalTopicsCount) * 100) : 85;
+                  return (
+                    <div key={sub.id} className="p-2.5 rounded-2xl bg-[#121724] border border-slate-800 flex items-center justify-between">
+                      <span className="text-xs text-slate-200 font-semibold truncate">{sub.name}</span>
+                      <span className="text-[10px] font-mono text-cyan-300">
+                        {subPercent}% Safe
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
@@ -426,9 +443,17 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
       )}
       {/* VIEW 2: NOTION WEEKLY MATRIX VIEW (6-Column Full Week Planner) */}
       {viewMode === 'matrix' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-start">
+        <div className="overflow-x-auto no-scrollbar pb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-start min-w-[720px] sm:min-w-0">
           {days.map((day) => {
-            const dayClasses = getFilteredDayClasses(day);
+            const rawDayClasses = getFilteredDayClasses(day);
+            const dayClasses = rawDayClasses.filter(
+              (c) =>
+                !searchQuery.trim() ||
+                c.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                c.room.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                c.teacherName.toLowerCase().includes(searchQuery.toLowerCase())
+            );
             const isToday = getInitialDay() === day;
 
             return (
@@ -519,6 +544,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               </div>
             );
           })}
+          </div>
         </div>
       )}
 

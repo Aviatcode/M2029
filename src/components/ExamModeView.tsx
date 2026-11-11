@@ -135,7 +135,10 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
     setIsAddModalOpen(false);
   };
 
-  const nextExamDaysLeft = activeExam ? calculateDaysLeft(activeExam.date) : 12;
+  const nextExamDaysLeft = activeExam ? calculateDaysLeft(activeExam.date) : 0;
+  const completedDays = activeExam?.revisionDaysPlan?.filter((p) => p.completed).length || 0;
+  const totalDays = activeExam?.revisionDaysPlan?.length || 0;
+  const revisionPercent = totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
 
   return (
     <div className="w-full space-y-5 font-sans-ui text-slate-100 animate-fade-in select-none">
@@ -210,10 +213,10 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                {nextExamDaysLeft > 0 ? `${nextExamDaysLeft}d` : 'Done'}
+                {activeExam ? (nextExamDaysLeft > 0 ? `${nextExamDaysLeft}d` : nextExamDaysLeft === 0 ? 'Today' : 'Past') : '0d'}
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">
-                {activeExam?.subjectName || 'Next Exam'}
+                {activeExam?.subjectName || (exams.length > 0 ? 'Exams Set' : 'No Exams')}
               </span>
             </div>
           </div>
@@ -225,11 +228,11 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
               <span className="text-[10px] text-violet-200">Papers</span>
             </div>
             <div className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20">
-              <span className="text-base font-extrabold">{activeExam?.revisionDaysPlan?.length || 3}</span>
+              <span className="text-base font-extrabold">{activeExam?.revisionDaysPlan?.length || 0}</span>
               <span className="text-[10px] text-slate-400">Days Plan</span>
             </div>
             <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold">
-              <span className="text-sm font-black">100%</span>
+              <span className="text-sm font-black">{revisionPercent}%</span>
               <span className="text-[8px] uppercase tracking-wider">Sync</span>
             </div>
           </div>
@@ -239,10 +242,10 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
                 <span className="font-bold text-white font-mono">10-Marker Readiness</span>
-                <span className="text-slate-400">85%</span>
+                <span className="text-slate-400">{revisionPercent}%</span>
               </div>
               <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-cyan-400 rounded-full" style={{ width: '85%' }} />
+                <div className="h-full bg-cyan-400 rounded-full transition-all duration-300" style={{ width: `${revisionPercent}%` }} />
               </div>
             </div>
           </div>
@@ -397,6 +400,219 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 3. ADD EXAM MODAL */}
+      {isAddModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setIsAddModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-[#121724] border border-slate-800 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[92vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-amber-400" />
+                <h3 className="font-bold text-sm text-white">Add Exam Paper</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveExam} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Subject *</label>
+                {subjects.length > 0 ? (
+                  <div className="space-y-1.5">
+                    <select
+                      value={examSubName}
+                      onChange={(e) => setExamSubName(e.target.value)}
+                      className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                    >
+                      {subjects.map((sub) => (
+                        <option key={sub.id} value={sub.name}>
+                          {sub.name} ({sub.code})
+                        </option>
+                      ))}
+                      <option value="__custom__">+ Custom Subject</option>
+                    </select>
+                    {examSubName === '__custom__' && (
+                      <input
+                        type="text"
+                        placeholder="Enter custom subject name..."
+                        onChange={(e) => setExamSubName(e.target.value)}
+                        required
+                        className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    value={examSubName}
+                    onChange={(e) => setExamSubName(e.target.value)}
+                    placeholder="e.g. Operating Systems"
+                    required
+                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                  />
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Exam Date *</label>
+                  <input
+                    type="date"
+                    value={examDate}
+                    onChange={(e) => setExamDate(e.target.value)}
+                    required
+                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-medium mb-1">Exam Type</label>
+                  <select
+                    value={examType}
+                    onChange={(e) => setExamType(e.target.value as any)}
+                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                  >
+                    <option value="End-Term">End-Term (University)</option>
+                    <option value="Mid-Term">Mid-Term (Internal)</option>
+                    <option value="Practical">Practical / Viva</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Time Slot</label>
+                <input
+                  type="text"
+                  value={examTime}
+                  onChange={(e) => setExamTime(e.target.value)}
+                  placeholder="10:00 AM - 01:00 PM"
+                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2 border-t border-slate-800/80">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-3 py-2 rounded-xl border border-slate-800 hover:bg-slate-800 text-slate-300 transition text-xs font-semibold cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition text-xs cursor-pointer shadow-sm shadow-cyan-500/20"
+                >
+                  Schedule Exam
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 4. EXAM RADAR PREDICTION MODAL */}
+      {isRadarOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setIsRadarOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="w-full max-w-lg rounded-3xl bg-[#121724] border border-slate-800 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-amber-400" />
+                <h3 className="font-bold text-sm text-white">
+                  Exam Radar: {activeExam?.subjectName || 'Cohort Predictions'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsRadarOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {isRadarLoading ? (
+              <div className="py-12 flex flex-col items-center justify-center gap-2 text-slate-400 text-xs">
+                <div className="w-6 h-6 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+                <span>Scanning past 5-year question patterns...</span>
+              </div>
+            ) : radarPredictions.length > 0 ? (
+              <div className="space-y-2 text-xs">
+                {radarPredictions.map((pred, i) => (
+                  <div key={i} className="p-3 rounded-2xl bg-[#0d111a] border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-slate-100 truncate">{pred.topicTitle || pred.topic}</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">
+                        {pred.probability || '94%'} Repeat
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400">{pred.reasoning || 'Frequently tested 10-marker concept'}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2.5 text-xs">
+                <div className="p-3 rounded-2xl bg-[#0d111a] border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-100">Core Architecture & Invariants</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">96% Repeat</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Unit 1 & 2 foundational definitions and comparative tables.</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#0d111a] border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-100">Step-by-step Algorithms & Proofs</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">88% Repeat</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Unit 3 & 4 mathematical or mechanistic numerical questions.</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-[#0d111a] border border-slate-800 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-100">Past 5-Year High Frequency 10-Markers</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold">85% Repeat</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">Full model answers with standard university grading rubrics.</p>
+                </div>
+              </div>
+            )}
+
+            <div className="pt-2 flex justify-between items-center border-t border-slate-800/80">
+              <span className="text-[10px] text-slate-500 font-mono">GGSIPU Pattern Analysis</span>
+              <button
+                onClick={() => {
+                  setIsRadarOpen(false);
+                  if (activeExam) {
+                    onOpenStudySession(activeExam.subjectName);
+                  }
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer"
+              >
+                Start AI Revision →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

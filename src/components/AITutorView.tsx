@@ -753,7 +753,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       </div>
 
       {/* 2. MAIN AI DESK CONTAINER (Rounded-3xl obsidian card) */}
-      <div className="w-full h-[calc(100vh-11rem)] flex flex-col rounded-3xl bg-[#121724] border border-slate-800/80 shadow-md overflow-hidden">
+      <div className="w-full h-[calc(100dvh-11.5rem)] min-h-[480px] flex flex-col rounded-3xl bg-[#121724] border border-slate-800/80 shadow-md overflow-hidden">
 
       {/* 2. SUB-HEADER: Syllabus Track & Progress Bar (Guided Mode) */}
       {viewMode === 'guided' && activeTrack && (
