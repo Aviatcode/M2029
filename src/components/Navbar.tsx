@@ -42,7 +42,6 @@ interface NavbarProps {
   onOpenThemeSelector?: () => void;
   onOpenAIKeyConfig?: () => void;
   onUpdateUsername?: (newName: string) => void;
-  onOpenVideoTutorial?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -73,7 +72,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenThemeSelector,
   onOpenAIKeyConfig,
   onUpdateUsername,
-  onOpenVideoTutorial,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -193,18 +191,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* 3. Right: Alerts & Minimal User DP */}
       <div className="flex items-center gap-2">
-        {/* Game-Style Video Tutorial Button */}
-        {onOpenVideoTutorial && (
-          <button
-            onClick={onOpenVideoTutorial}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/35 text-cyan-300 text-xs font-semibold transition cursor-pointer shadow-xs shadow-cyan-500/10"
-            title="Video Tutorial"
-          >
-            <Play className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
-            <span className="hidden sm:inline">Tutorial</span>
-          </button>
-        )}
-
         {/* Failover Model Status Pill */}
         {onOpenAIKeyConfig && (
           <button

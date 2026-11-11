@@ -40,6 +40,7 @@ interface SettingsViewProps {
   onUpdateUsername?: (newName: string) => void;
   sidebarPosition?: 'left' | 'right' | 'top' | 'bottom';
   onChangeSidebarPosition?: (pos: 'left' | 'right' | 'top' | 'bottom') => void;
+  onOpenVideoTutorial?: () => void;
 }
 
 export type SupportedProvider =
@@ -84,6 +85,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onUpdateUsername,
   sidebarPosition = 'left',
   onChangeSidebarPosition,
+  onOpenVideoTutorial,
 }) => {
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [editedUsername, setEditedUsername] = useState(currentUser?.name || '');
@@ -702,6 +704,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Clear Local Cache & Reload</span>
             </button>
+
+            {/* Video Tutorial Replay Option */}
+            {onOpenVideoTutorial && (
+              <button
+                onClick={onOpenVideoTutorial}
+                className="w-full py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 hover:text-cyan-200 text-xs font-bold transition cursor-pointer flex items-center justify-center gap-2 mt-2"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Replay Video Tutorial</span>
+              </button>
+            )}
           </div>
 
           {/* Cloud Database (Collapsible) */}

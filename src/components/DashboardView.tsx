@@ -46,7 +46,6 @@ export interface DashboardViewProps {
   onAskAI?: (prompt: string) => void;
   onFilesDropped?: (files: File[]) => void;
   onOpenNotifications?: () => void;
-  onOpenVideoTutorial?: () => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -64,7 +63,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onOpenMaterial,
   onFilesDropped,
   onOpenNotifications,
-  onOpenVideoTutorial,
 }) => {
   const [timePeriod, setTimePeriod] = useState<'today' | 'tomorrow' | 'week'>('today');
   const [isPeriodDropdownOpen, setIsPeriodDropdownOpen] = useState(false);
@@ -238,17 +236,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <Bell className="w-3.5 h-3.5" />
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400" />
           </button>
-
-          {onOpenVideoTutorial && (
-            <button
-              onClick={onOpenVideoTutorial}
-              className="h-8 px-2.5 sm:px-3 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/35 text-xs text-cyan-300 font-bold flex items-center gap-1.5 cursor-pointer transition shadow-xs shadow-cyan-500/10"
-              title="Watch Video Tutorial"
-            >
-              <Play className="w-3.5 h-3.5 text-cyan-400 fill-cyan-400" />
-              <span className="hidden sm:inline">Tutorial</span>
-            </button>
-          )}
 
           <div className="relative">
             <button

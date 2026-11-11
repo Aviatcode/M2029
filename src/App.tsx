@@ -1727,7 +1727,6 @@ export default function App() {
                   onChangePosition={setSidebarPosition}
                   currentUser={currentUser}
                   onLogout={handleLogout}
-                  onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
                 />
               </div>
             )}
@@ -1763,7 +1762,6 @@ export default function App() {
                   onOpenAIKeyConfig={() => setIsAIKeyModalOpen(true)}
                   onOpenMaterial={handleOpenMaterial}
                   onOpenOnboardingUpload={() => setIsOnboardingModalOpen(true)}
-                  onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
                   calmMode={calmMode}
                   onAskAI={(prompt) => {
                     setInitialTutorPrompt(prompt);
@@ -1915,6 +1913,7 @@ export default function App() {
               onUpdateUsername={handleUpdateUsername}
               sidebarPosition={sidebarPosition}
               onChangeSidebarPosition={setSidebarPosition}
+              onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
             />
           )}
         </main>
@@ -1938,7 +1937,6 @@ export default function App() {
             onChangePosition={setSidebarPosition}
             currentUser={currentUser}
             onLogout={handleLogout}
-            onOpenVideoTutorial={() => setIsVideoTutorialOpen(true)}
           />
         </div>
       )}

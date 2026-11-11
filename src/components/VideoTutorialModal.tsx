@@ -134,11 +134,9 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
   if (!isOpen) return null;
 
   const handleFinish = () => {
-    if (dontShowAgain) {
-      try {
-        localStorage.setItem('m2028_tutorial_seen', 'true');
-      } catch {}
-    }
+    try {
+      localStorage.setItem('m2028_tutorial_seen', 'true');
+    } catch {}
     onClose();
   };
 
@@ -373,15 +371,9 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
 
         {/* 5. Bottom Actions: "I'll figure it out" and Start Playing */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
-          <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={dontShowAgain}
-              onChange={(e) => setDontShowAgain(e.target.checked)}
-              className="rounded bg-slate-900 border-slate-800 text-cyan-500 focus:ring-0 cursor-pointer"
-            />
-            <span>Don't show video on startup (I will figure it out)</span>
-          </label>
+          <span className="text-[11px] text-slate-500 font-mono">
+            Always accessible later in Settings
+          </span>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
@@ -408,3 +400,4 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
     </div>
   );
 };
+
