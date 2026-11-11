@@ -708,6 +708,32 @@ ${
       return false;
     }
   }
+
+  /**
+   * Reset all indexed documents and clear RAG cache completely
+   */
+  public clearAll(): void {
+    try {
+      this.documents.clear();
+      this.chunksCache.clear();
+      this.invertedIndex.clear();
+      this.totalIndexedWords = 0;
+      this.avgChunkLength = 0;
+
+      if (fs.existsSync(this.baseDir)) {
+        const files = fs.readdirSync(this.baseDir);
+        for (const f of files) {
+          try {
+            fs.unlinkSync(path.join(this.baseDir, f));
+          } catch {}
+        }
+      }
+      this.saveRegistry();
+      console.log('[RAG Engine] Cache completely cleared and reset to zero state.');
+    } catch (err) {
+      console.error('[RAG Engine] Failed to clear all:', err);
+    }
+  }
 }
 
 // Global Singleton Instance

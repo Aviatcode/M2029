@@ -376,7 +376,7 @@ export const RagDocumentViewer: React.FC<RagDocumentViewerProps> = ({
                 <span>
                   Found <strong className="text-slate-200">{searchResults.length} relevant passages</strong> in backend index:
                 </span>
-                <span className="text-[11px] font-mono text-emerald-400">⚡ Instant BM25 Retrieval</span>
+                <span className="text-[11px] font-mono text-emerald-400">Instant BM25 Retrieval</span>
               </div>
 
               <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1">

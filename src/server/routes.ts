@@ -399,6 +399,38 @@ class MemoryStore {
       console.warn('[Classroom Cache] Disk read fallback to seeds:', e);
     }
   }
+
+  clearAll() {
+    this.classes = { 'class-bca-2028': { ...SEED_CLASS } };
+    this.subjects = { 'class-bca-2028': [...SEED_SUBJECTS] };
+    this.units = { ...SEED_UNITS };
+    this.timetable = { 'class-bca-2028': [...SEED_TIMETABLE] };
+    this.materials = { 'class-bca-2028': [] };
+    this.pyqs = {};
+    this.exams = { 'class-bca-2028': [...SEED_EXAMS] };
+    this.announcements = [...SEED_ANNOUNCEMENTS];
+    this.notifications = [...SEED_NOTIFICATIONS];
+    this.assignments = [...SEED_ASSIGNMENTS];
+
+    try {
+      const emptyData = {
+        classes: this.classes,
+        subjects: this.subjects,
+        units: this.units,
+        timetable: this.timetable,
+        materials: {},
+        pyqs: {},
+        exams: this.exams,
+        announcements: this.announcements,
+        notifications: this.notifications,
+        assignments: this.assignments,
+      };
+      fs.writeFileSync(CACHE_FILE, JSON.stringify(emptyData, null, 2), 'utf-8');
+      console.log('[Classroom Cache] Reset classroom store to clean seed state on disk.');
+    } catch (e) {
+      console.warn('[Classroom Cache] Failed to wipe cache on disk:', e);
+    }
+  }
 }
 
 export const db = new MemoryStore();
@@ -416,6 +448,37 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
   });
+});
+
+// Complete Cache & Knowledge Reset Endpoint
+apiRouter.all('/cache/reset-all', (_req: Request, res: Response) => {
+  try {
+    aiKnowledgeCache.clearAll();
+    db.clearAll();
+    ragEngine.clearAll();
+    res.json({
+      success: true,
+      message: 'All AI caches, classroom data, and RAG indexes have been completely reset to zero state.',
+      timestamp: Date.now(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to reset all caches.' });
+  }
+});
+
+apiRouter.all('/ai/cache/reset-all', (_req: Request, res: Response) => {
+  try {
+    aiKnowledgeCache.clearAll();
+    db.clearAll();
+    ragEngine.clearAll();
+    res.json({
+      success: true,
+      message: 'All AI caches and classroom data reset to zero state.',
+      timestamp: Date.now(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to reset AI caches.' });
+  }
 });
 
 // 0.1 Supabase Database Connection & Migration Status

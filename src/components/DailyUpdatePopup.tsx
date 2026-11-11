@@ -66,11 +66,11 @@ export const DailyUpdatePopup: React.FC<DailyUpdatePopupProps> = ({
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
           </span>
           <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1 font-mono">
-            ⚡ Daily Update · 1-Tap Pulse
+            Daily Update · 1-Tap Pulse
           </span>
           {isCR && (
             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-              👑 CR (3x Weight)
+              CR (3x Weight)
             </span>
           )}
         </div>

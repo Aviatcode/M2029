@@ -504,7 +504,7 @@ export function getActiveModelInfo(): {
       provider: pool[0].provider,
       modelName: pool[0].modelName,
       displayName: `Auto-Failover Pool (${pool.length} Accounts)`,
-      badge: `${pool.length} Free Keys Active 🟢`,
+      badge: `${pool.length} Free Keys Active `,
       poolCount: pool.length,
     };
   }

@@ -70,10 +70,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const effectiveId = getEffectiveNavId(activeTab);
 
   const mainNavItems = [
-    { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'dashboard' as const, label: 'Home', icon: LayoutDashboard },
     { id: 'ai-tutor' as const, label: 'AI Tutor', icon: Bot, isAI: true },
-    { id: 'materials' as const, label: 'Materials', icon: FolderOpen },
-    { id: 'exams' as const, label: 'Exams', icon: Flame },
+    { id: 'materials' as const, label: 'Study Vault', icon: FolderOpen },
+    { id: 'exams' as const, label: 'Exam Radar', icon: Flame },
     { id: 'timetable' as const, label: 'Schedule', icon: Calendar },
     { id: 'knowledge-dashboard' as const, label: 'Class Brain', icon: Trophy },
   ];
@@ -114,15 +114,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* 1. Brand Logo */}
           <button
             onClick={() => handleTabClick('dashboard')}
-            className="flex items-center gap-1.5 cursor-pointer focus:outline-none group shrink-0"
-            title="M2029 Academic OS"
+            className="flex items-center gap-2 cursor-pointer focus:outline-none group shrink-0"
+            title="M2028 Workspace"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              ✦
-            </div>
+            <img
+              src="./icon-192.png"
+              alt="M2028 Logo"
+              className="w-7 h-7 rounded-lg shrink-0 object-contain group-hover:scale-105 transition-transform border border-neutral-800"
+            />
             <div className="leading-tight hidden md:block">
               <span className="text-xs font-extrabold text-white tracking-tight font-sans block">
-                m2029
+                M2028
               </span>
               <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5">
                 {classCode || 'BCA-2028'}
@@ -297,15 +299,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }
             }}
             className="flex items-center gap-2 cursor-pointer focus:outline-none group text-left w-full"
-            title="M2029 Academic OS"
+            title="M2028 Workspace"
           >
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform shrink-0">
-              ✦
-            </div>
+            <img
+              src="./icon-192.png"
+              alt="M2028 Logo"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg shrink-0 object-contain group-hover:scale-105 transition-transform border border-neutral-800"
+            />
             {isHovered && (
               <div className="leading-tight overflow-hidden">
                 <span className="text-sm sm:text-base font-extrabold text-white tracking-tight font-sans block truncate">
-                  m2029
+                  M2028
                 </span>
                 <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5 truncate">
                   {classCode || 'BCA-2028'}

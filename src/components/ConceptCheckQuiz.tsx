@@ -224,7 +224,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
               <div className="flex items-center justify-between">
                 <span className="font-bold">Score: {openResult.score} / 10 Marks</span>
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-700">
-                  {openResult.passed ? 'PASSED ✅' : 'NEEDS REVISION ⚠️'}
+                  {openResult.passed ? 'PASSED' : 'NEEDS REVISION'}
                 </span>
               </div>
               <p className="leading-relaxed">{openResult.feedback}</p>

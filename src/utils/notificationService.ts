@@ -21,7 +21,7 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   try {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      sendBrowserNotification('🎓 SyllabusOS Alerts Enabled', {
+      sendBrowserNotification('M2028 Alerts Enabled', {
         body: 'Push alerts are now active for upcoming assignments, PPT schedules, and class reminders.',
       });
     }

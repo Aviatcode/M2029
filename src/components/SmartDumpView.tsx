@@ -323,15 +323,15 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
   }) => {
     setIsProcessing(true);
     setProcessingProgress(20);
-    setProcessingStage('📥 Extracting text, metadata, and structural headers...');
+    setProcessingStage('Extracting text, metadata, and structural headers...');
 
     await new Promise((r) => setTimeout(r, 250));
     setProcessingProgress(55);
-    setProcessingStage('🧠 AI Zero-Prompt Classifier: Matching syllabus unit, subject & category...');
+    setProcessingStage('AI Zero-Prompt Classifier: Matching syllabus unit, subject & category...');
 
     await new Promise((r) => setTimeout(r, 250));
     setProcessingProgress(80);
-    setProcessingStage('⚡ Compounding Knowledge: Synthesizing notes, mnemonics, mindmap & 10-markers...');
+    setProcessingStage('Compounding Knowledge: Synthesizing notes, mnemonics, mindmap & 10-markers...');
 
     let finalMaterial: AcademicMaterial | null = null;
 
@@ -377,7 +377,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
     }
 
     setProcessingProgress(100);
-    setProcessingStage('✅ Auto-sorted into classroom folders! Ready across all student devices.');
+    setProcessingStage('Auto-sorted into classroom folders! Ready across all student devices.');
 
     // GUARANTEED: Always update materials list and active inspector
     onMaterialUploaded?.(finalMaterial);
@@ -418,7 +418,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
       if (file.size > 2 * 1024 * 1024 || file.name.endsWith('.pdf') || file.name.endsWith('.docx')) {
         setIsProcessing(true);
         setProcessingProgress(10);
-        setProcessingStage(`📤 Streaming "${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)} MB) to backend disk...`);
+        setProcessingStage(`Streaming "${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)} MB) to backend disk...`);
 
         try {
           const res = await uploadLargeFileToRag(file, {
@@ -429,13 +429,13 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
             onProgress: (pct) => {
               setProcessingProgress(Math.max(10, Math.min(92, pct)));
               if (pct >= 90) {
-                setProcessingStage('⚡ Chunking & Building in-memory BM25 index on backend...');
+                setProcessingStage('Chunking & Building in-memory BM25 index on backend...');
               }
             },
           });
 
           setProcessingProgress(100);
-          setProcessingStage(`✅ Active on backend! Indexed ${res.document.chunkCount} searchable chunks.`);
+          setProcessingStage(`Active on backend! Indexed ${res.document.chunkCount} searchable chunks.`);
 
           const finalMat = res.material || buildClientMaterial({
             fileName: file.name,
@@ -783,7 +783,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   {activeItem.title}
                 </h2>
                 <div className="text-xs text-slate-400 font-mono mt-1 flex flex-wrap items-center gap-2">
-                  <span>📂 {activeItem.folderPath || `${activeItem.subjectName} / Unit ${activeItem.unitNumber || 1} / ${(activeItem.detectedCategory || 'notes').toUpperCase()}`}</span>
+                  <span>{activeItem.folderPath || `${activeItem.subjectName} / Unit ${activeItem.unitNumber || 1} / ${(activeItem.detectedCategory || 'notes').toUpperCase()}`}</span>
                   <span>·</span>
                   <span>{activeItem.fileName}</span>
                   <span>({activeItem.fileSize})</span>
@@ -862,7 +862,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                 }`}
               >
                   <Database className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>⚡ Fetch Anything (RAG)</span>
+                  <span>Fetch Anything (RAG)</span>
                 </button>
               </div>
 
@@ -888,7 +888,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   </p>
                   {activeItem.resources?.hinglishSummary && (
                     <p className="text-xs text-slate-400 italic bg-slate-950/60 p-2.5 rounded-lg border border-slate-800/80">
-                      💬 <strong>Quick Recap:</strong> {activeItem.resources.hinglishSummary}
+                      <strong>Quick Recap:</strong> {activeItem.resources.hinglishSummary}
                     </p>
                   )}
                 </div>
@@ -1021,7 +1021,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                 {/* 60-Student Compounded Gold Standard Badge */}
                 <div className="p-3 bg-gradient-to-r from-amber-500/15 via-slate-900 to-indigo-950/20 border border-amber-500/30 rounded-xl flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="text-amber-400 font-bold">🏆 Student 60 Master Standard</span>
+                    <span className="text-amber-400 font-bold">Student 60 Master Standard</span>
                     <span className="text-slate-400">• Refined for 10/10 university internal marks</span>
                   </div>
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">
@@ -1290,7 +1290,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
           onChange={(e) => setSelectedSubjectId(e.target.value)}
           className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 focus:outline-none"
         >
-          <option value="all">📂 All Curriculum Subjects</option>
+          <option value="all">All Curriculum Subjects</option>
           {subjects.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name} ({s.code})

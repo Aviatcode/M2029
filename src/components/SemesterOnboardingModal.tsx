@@ -93,7 +93,7 @@ export const SemesterOnboardingModal: React.FC<SemesterOnboardingModalProps> = (
     setErrorMessage('');
     setIsProcessing(true);
     setProcessingProgress(15);
-    setProcessingStage('📥 Reading document text & extracting schedule matrix...');
+    setProcessingStage('Reading document text & extracting schedule matrix...');
 
     try {
       let text = textToProcess || '';
@@ -102,7 +102,7 @@ export const SemesterOnboardingModal: React.FC<SemesterOnboardingModalProps> = (
 
       if (file) {
         setProcessingProgress(35);
-        setProcessingStage(`📄 Unpacking ${file.name} and extracting content...`);
+        setProcessingStage(`Unpacking ${file.name} and extracting content...`);
         const extracted = await extractTextFromFile(file);
         text = extracted.text || text;
         dataUrl = extracted.dataUrl;
@@ -118,7 +118,7 @@ export const SemesterOnboardingModal: React.FC<SemesterOnboardingModalProps> = (
       const isSyllabus = isSyllabusDocument(fileName, text);
 
       setProcessingProgress(60);
-      setProcessingStage('🧠 AI analyzing subjects, lecture timings, faculty, and modules...');
+      setProcessingStage('AI analyzing subjects, lecture timings, faculty, and modules...');
 
       if (isTimetable || (!isSyllabus && text.length > 0)) {
         // Parse as Timetable
@@ -135,7 +135,7 @@ export const SemesterOnboardingModal: React.FC<SemesterOnboardingModalProps> = (
         }
 
         setProcessingProgress(90);
-        setProcessingStage('✨ Configuring weekly schedule and classroom folders...');
+        setProcessingStage('Configuring weekly schedule and classroom folders...');
         setParsedSubjects(result.subjects);
         setParsedTimetable(result.timetable);
         setIsReviewReady(true);
@@ -145,7 +145,7 @@ export const SemesterOnboardingModal: React.FC<SemesterOnboardingModalProps> = (
         const result = parseSyllabusClient(text, fileName.replace(/\.[^/.]+$/, ''));
 
         setProcessingProgress(90);
-        setProcessingStage('✨ Generating syllabus units, topics and study trackers...');
+        setProcessingStage('Generating syllabus units, topics and study trackers...');
         setParsedSubjects(result.subjects);
         setParsedUnits(result.unitsBySubject);
         setIsReviewReady(true);
@@ -353,7 +353,7 @@ Friday:
                 onClick={handleConfirmAndProceed}
                 className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg transition cursor-pointer flex items-center gap-2"
               >
-                <span>✓ Proceed to Workspace</span>
+                <span>Proceed to Workspace</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -514,7 +514,7 @@ Friday:
                       }`}
                     >
                       <Sparkles className="w-4 h-4" />
-                      <span>⚡ Analyze Document & Auto-Configure Workspace</span>
+                      <span>Analyze Document & Auto-Configure Workspace</span>
                     </button>
                   </div>
                 )}
@@ -558,7 +558,7 @@ Friday:
                       }`}
                     >
                       <Sparkles className="w-4 h-4" />
-                      <span>⚡ Parse Text with AI</span>
+                      <span>Parse Text with AI</span>
                     </button>
                   </div>
                 )}
@@ -577,7 +577,7 @@ Friday:
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-xs text-white group-hover:text-cyan-300">
-                            📚 BCA Semester 3 Schedule
+                            BCA Semester 3 Schedule
                           </span>
                           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800 text-cyan-300">
                             5 Subjects
@@ -595,7 +595,7 @@ Friday:
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-xs text-white group-hover:text-emerald-300">
-                            💻 B.Tech Computer Science
+                            B.Tech Computer Science
                           </span>
                           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-800 text-emerald-300">
                             5 Subjects

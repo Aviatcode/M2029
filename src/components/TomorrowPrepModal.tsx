@@ -72,7 +72,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase font-bold text-amber-400">
-                  🌅 7-Minute Pre-Lecture Prep
+                  7-Minute Pre-Lecture Prep
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
                   Step {currentStep} of 4
@@ -128,7 +128,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                 {prep.step1WhatIsIt}
               </p>
               <div className="p-3.5 rounded-xl bg-blue-950/30 border border-blue-500/20 text-xs text-blue-200">
-                💡 <strong>Pre-class insight:</strong> When your professor walks into Room {prep.room} tomorrow at {prep.time}, you will already understand what this keyword represents!
+                <strong>Pre-class insight:</strong> When your professor walks into Room {prep.room} tomorrow at {prep.time}, you will already understand what this keyword represents!
               </div>
             </div>
           )}
@@ -144,7 +144,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                 {prep.step2WhyUsed}
               </p>
               <div className="p-3.5 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs text-indigo-200">
-                🎯 <strong>Exam Value:</strong> University theory questions almost always ask "Explain advantages and real-world necessity of this mechanism".
+                <strong>Exam Value:</strong> University theory questions almost always ask "Explain advantages and real-world necessity of this mechanism".
               </div>
             </div>
           )}
@@ -223,7 +223,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
 
                       {quizSubmitted && (
                         <p className="text-[11px] text-slate-400 pt-1 italic">
-                          💡 {q.explanation}
+                          {q.explanation}
                         </p>
                       )}
                     </div>
@@ -240,7 +240,7 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
                 </button>
               ) : (
                 <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs text-center font-medium">
-                  🎉 Pre-lecture prep complete! You are ready to ace tomorrow's lecture in Room {prep.room}.
+                  Pre-lecture prep complete! You are ready to ace tomorrow's lecture in Room {prep.room}.
                 </div>
               )}
             </div>

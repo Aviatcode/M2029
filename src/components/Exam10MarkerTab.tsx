@@ -63,7 +63,7 @@ ${exam.examinerTraps.join('\n')}
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs font-mono font-semibold">
-              📝 Section C / Long Answer
+              Section C / Long Answer
             </span>
             <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700 text-xs font-semibold">
               Target: 10 / 10 Marks
@@ -118,7 +118,7 @@ ${exam.examinerTraps.join('\n')}
           </pre>
         </div>
         <p className="text-[11px] text-slate-400 mt-2 italic">
-          💡 Tip: Draw this block diagram neatly using pencil and ruler in the first 3 minutes of answering Section C questions.
+          Tip: Draw this block diagram neatly using pencil and ruler in the first 3 minutes of answering Section C questions.
         </p>
       </div>
 
@@ -197,7 +197,7 @@ ${exam.examinerTraps.join('\n')}
       <div className="rounded-2xl bg-amber-950/30 border border-amber-500/40 p-5 md:p-6 shadow-xl">
         <div className="flex items-center gap-2 text-amber-300 font-bold text-sm mb-3">
           <AlertTriangle className="w-5 h-5 text-amber-400" />
-          <span>⚠️ Examiner Traps & Common Gotchas (Where Students Lose Marks)</span>
+          <span>Examiner Traps & Common Gotchas (Where Students Lose Marks)</span>
         </div>
         <div className="space-y-2.5">
           {exam.examinerTraps.map((trap, idx) => (

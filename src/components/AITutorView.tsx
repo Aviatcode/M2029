@@ -594,8 +594,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       setVotedMap((prev) => ({ ...prev, [topicTitle]: vote }));
       setVoteToast(
         vote === 'up'
-          ? 'Thanks for upvoting! Collective intelligence boosted 👍'
-          : 'Feedback noted! Triggered background peer refinement ⚡'
+          ? 'Thanks for upvoting! Collective intelligence boosted'
+          : 'Feedback noted! Triggered background peer refinement'
       );
       setTimeout(() => setVoteToast(null), 3000);
 
@@ -666,7 +666,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             : null
         );
         setIsCurating(false);
-        setVoteToast('🏆 Locked as permanent Teacher-Verified Gold Standard!');
+        setVoteToast('Locked as permanent Teacher-Verified Gold Standard');
         setTimeout(() => setVoteToast(null), 3500);
       }
     } catch (e) {
@@ -1156,10 +1156,10 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                 <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                   <span className="text-[11px] text-slate-500 font-mono">Format:</span>
                   {[
-                    { mode: 'exam_10marker' as const, label: '📝 10-Marker Exam Note' },
-                    { mode: 'hinglish' as const, label: '🗣️ Hinglish Intuition' },
-                    { mode: 'simple' as const, label: '🎯 Simple Overview' },
-                    { mode: 'eli9' as const, label: '💡 ELI9 Analogy' },
+                    { mode: 'exam_10marker' as const, label: '10-Marker Exam Note' },
+                    { mode: 'hinglish' as const, label: 'Hinglish Intuition' },
+                    { mode: 'simple' as const, label: 'Simple Overview' },
+                    { mode: 'eli9' as const, label: 'ELI9 Analogy' },
                   ].map((m) => (
                     <button
                       key={m.mode}
@@ -1178,7 +1178,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                 {/* Popular University Exam Topics */}
                 <div className="pt-3 border-t border-slate-850 space-y-2 text-left">
                   <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block">
-                    ⚡ Frequently Asked in University Exams:
+                    Frequently Asked in University Exams:
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {[
@@ -1221,7 +1221,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                 {contributedToClass && (
                   <div className="p-3 rounded-xl bg-indigo-950/60 border border-indigo-500/40 shadow-sm flex items-center justify-between gap-3 animate-in fade-in">
                     <span className="text-xs font-semibold text-indigo-200">
-                      ⚡ Answer contributed to class library ({contributedModelName || 'Premium AI'})
+                      Answer contributed to class library ({contributedModelName || 'Premium AI'})
                     </span>
                     <button
                       onClick={() => setContributedToClass(false)}
@@ -1303,7 +1303,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                           className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-[10px]"
                           title={`Class-contributed by student model: ${studyGuide.contributingModels.join(', ')}`}
                         >
-                          <span>🌟</span>
+                          <Sparkles className="w-3 h-3 text-amber-400" />
                           <span>Contributed by {studyGuide.contributingModels[0]}</span>
                         </span>
                       )}
@@ -1337,7 +1337,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                           className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/50 border border-indigo-500/30 text-indigo-300 text-[11px] font-mono transition cursor-pointer"
                         >
                           <Sparkles className="w-3 h-3 text-indigo-400" />
-                          <span className="font-semibold">✦ LangGraph Academic Agent Trace ({studyGuide.reasoningSteps.length} Steps)</span>
+                          <span className="font-semibold">LangGraph Academic Agent Trace ({studyGuide.reasoningSteps.length} Steps)</span>
                           <ChevronDown
                             className={`w-3 h-3 text-indigo-400 transition-transform ${showReasoningTrace ? 'rotate-180' : ''}`}
                           />
@@ -1354,7 +1354,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                                   key={idx}
                                   className="flex items-start gap-2 text-slate-300 font-mono text-[11px] bg-slate-900/60 p-2 rounded-lg border border-slate-800/60"
                                 >
-                                  <span className="text-emerald-400 shrink-0 font-bold">✓</span>
+                                  <span className="text-emerald-400 shrink-0 font-bold"></span>
                                   <div className="flex-1 min-w-0">
                                     <span className="text-indigo-300 font-semibold">{step.step}: </span>
                                     <span className="text-slate-200">{step.detail}</span>
@@ -1410,16 +1410,16 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                     )}
                     <span className="text-xs text-slate-200 font-medium">
                       {(studyGuide.hitCount || 1) < 10
-                        ? "💡 You're one of the first to explore this topic"
+                        ? "You are one of the first to explore this topic"
                         : (studyGuide.hitCount || 1) < 30
-                        ? `👥 ${studyGuide.hitCount || 1} classmates have asked this — answers improving`
+                        ? `${studyGuide.hitCount || 1} classmates have asked this — answers improving`
                         : !studyGuide.isCohortPerfected
-                        ? `🔥 ${studyGuide.hitCount || 1} students strong — answer almost perfected`
-                        : `🏆 Perfected by ${studyGuide.iterationCount || 60} students — Class Gold Standard`}
+                        ? `${studyGuide.hitCount || 1} students strong — answer almost perfected`
+                        : `Perfected by ${studyGuide.iterationCount || 60} students — Class Gold Standard`}
                     </span>
                     {studyGuide.isTeacherCurated && (
                       <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-bold">
-                        🏆 Teacher-Verified
+                        Teacher-Verified
                       </span>
                     )}
                   </div>
@@ -1473,13 +1473,13 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                 {/* Single-Click Mode Switcher Bar & Copy Button */}
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800 text-xs scrollbar-none">
                   {[
-                    { mode: 'exam_10marker' as const, label: '📝 10-Marker Format' },
-                    { mode: 'hinglish' as const, label: '🗣️ Hinglish Intuition' },
-                    { mode: 'eli9' as const, label: '💡 ELI9 Analogy' },
-                    { mode: 'simple' as const, label: '🎯 Simple Concept' },
-                    { mode: 'detailed' as const, label: '⚡ Deep Dive' },
-                    { mode: 'socratic' as const, label: '❓ Quiz Me' },
-                    { mode: 'all' as const, label: '📑 View All' },
+                    { mode: 'exam_10marker' as const, label: '10-Marker Format' },
+                    { mode: 'hinglish' as const, label: 'Hinglish Intuition' },
+                    { mode: 'eli9' as const, label: 'ELI9 Analogy' },
+                    { mode: 'simple' as const, label: 'Simple Concept' },
+                    { mode: 'detailed' as const, label: 'Deep Dive' },
+                    { mode: 'socratic' as const, label: 'Quiz Me' },
+                    { mode: 'all' as const, label: 'View All' },
                   ].map((tab) => (
                     <button
                       key={tab.mode}
@@ -1579,7 +1579,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                 {studyGuide && !studyGuide.cached && !studyGuide.isPersonalKey && (
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-indigo-500/30 bg-indigo-950/20 text-xs">
                     <div className="flex items-center gap-2.5 text-indigo-200">
-                      <span className="text-base">🔑</span>
+                      <KeyRound className="w-4 h-4 text-indigo-400 shrink-0" />
                       <span>
                         Add your personal API key (Gemini, Claude, GPT) to contribute premium answers to class.
                       </span>

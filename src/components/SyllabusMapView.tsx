@@ -501,7 +501,7 @@ export const SyllabusMapView: React.FC<SyllabusMapViewProps> = ({
                 className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5 shadow-sm transition"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>⚡ Auto-Generate Course Units</span>
+                <span>Auto-Generate Course Units</span>
               </button>
             )}
 

@@ -40,7 +40,7 @@ export const ShareInviteModal: React.FC<ShareInviteModalProps> = ({
     try {
       await navigator.clipboard.writeText(cleanCode);
       setCopiedCode(true);
-      setToastMessage('✓ Class code copied!');
+      setToastMessage('Class code copied!');
       setTimeout(() => {
         setCopiedCode(false);
         setToastMessage('');
@@ -52,7 +52,7 @@ export const ShareInviteModal: React.FC<ShareInviteModalProps> = ({
     try {
       await navigator.clipboard.writeText(inviteMessage);
       setCopiedMessage(true);
-      setToastMessage('✓ 2-liner invite message copied!');
+      setToastMessage('2-liner invite message copied!');
       setTimeout(() => {
         setCopiedMessage(false);
         setToastMessage('');
@@ -64,7 +64,7 @@ export const ShareInviteModal: React.FC<ShareInviteModalProps> = ({
     const res = await shareClassInvite(className, cleanCode);
     if (res.method === 'clipboard') {
       setCopiedMessage(true);
-      setToastMessage('✓ 2-liner invite copied to clipboard!');
+      setToastMessage('2-liner invite copied to clipboard!');
       setTimeout(() => {
         setCopiedMessage(false);
         setToastMessage('');

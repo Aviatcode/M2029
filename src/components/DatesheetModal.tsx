@@ -146,7 +146,7 @@ export const DatesheetModal: React.FC<DatesheetModalProps> = ({
                       }}
                       className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition cursor-pointer"
                     >
-                      Revise 🚀
+                      Revise
                     </button>
                   </div>
                 </div>

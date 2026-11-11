@@ -47,7 +47,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
     try {
       await navigator.clipboard.writeText(displayCode);
       setCopiedCode(true);
-      setToastText('✓ Class code copied to clipboard');
+      setToastText('Class code copied to clipboard');
       setTimeout(() => {
         setCopiedCode(false);
         setToastText('');
@@ -64,7 +64,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
     }
     const res = await shareClassInvite(className, displayCode);
     if (res.method === 'clipboard') {
-      setToastText('✓ 2-liner invite copied to clipboard');
+      setToastText('2-liner invite copied to clipboard');
       setTimeout(() => setToastText(''), 2500);
     }
   };

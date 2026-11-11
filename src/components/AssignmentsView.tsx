@@ -346,14 +346,14 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     } catch {}
   };
 
-  // Toggle Done state
-  const handleToggleDone = async (id: string, e?: React.MouseEvent) => {
+  // Toggle Donestate
+  const handleToggleDone= async (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
 
     const updated: AcademicAssignment[] = assignments.map((a) => {
       if (a.id === id) {
-        const nextCompleted = !a.completed;
-        const nextStatus: 'completed' | 'todo' = nextCompleted ? 'completed' : 'todo';
+        const nextCompleted= !a.completed;
+        const nextStatus: 'completed' | 'todo' = nextCompleted? 'completed' : 'todo';
         return {
           ...a,
           completed: nextCompleted,
@@ -367,8 +367,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     if (activeModalItem?.id === id) {
       setActiveModalItem((prev) => {
         if (!prev) return null;
-        const nextCompleted = !prev.completed;
-        const nextStatus: 'completed' | 'todo' = nextCompleted ? 'completed' : 'todo';
+        const nextCompleted= !prev.completed;
+        const nextStatus: 'completed' | 'todo' = nextCompleted? 'completed' : 'todo';
         return { ...prev, completed: nextCompleted, status: nextStatus };
       });
     }
@@ -499,7 +499,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       // offline safe
     }
 
-    setCrSyncSuccess(`✓ Synchronized ${parsedItems.length} presentation slots with the cohort!`);
+    setCrSyncSuccess(` Synchronized ${parsedItems.length} presentation slots with the cohort!`);
     setTimeout(() => {
       setIsCRPortalOpen(false);
       setCrSyncSuccess('');
@@ -856,9 +856,9 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             onChange={(e) => setQuickAddType(e.target.value as ClassworkType)}
             className="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-cyan-500/50"
           >
-            <option value="assignment">📝 Assignment</option>
-            <option value="lab_record">🔬 Lab Record</option>
-            <option value="ppt_presentation">🎤 PPT</option>
+            <option value="assignment">Assignment</option>
+            <option value="lab_record">Lab Record</option>
+            <option value="ppt_presentation">PPT</option>
           </select>
 
           <button
@@ -883,7 +883,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             { id: 'all', label: `All (${assignments.length})` },
             { id: 'pending', label: `To Do (${pendingCount})` },
             { id: 'in_progress', label: `In Progress (${inProgressCount})` },
-            { id: 'completed', label: `Completed (${completedCount})` },
+            { id: 'completed', label: `Completed(${completedCount})` },
             { id: 'ppt', label: `PPT Roster (${assignments.filter((a) => a.type === 'ppt_presentation').length})` },
           ].map((pill) => (
             <button
@@ -1015,7 +1015,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                 }`}
                               >
                                 {item.completed
-                                  ? 'Done ✓'
+                                  ? 'Done'
                                   : daysLeft < 0
                                   ? 'Overdue'
                                   : daysLeft === 0
@@ -1041,7 +1041,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
                             {item.presenterName && (
                               <div className="text-[10px] text-indigo-300 font-mono truncate">
-                                🎤 {item.presenterName}
+                                {item.presenterName}
                               </div>
                             )}
                           </div>
@@ -1120,7 +1120,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-mono text-[11px]">
                 <tr>
-                  <th className="py-2.5 px-3 w-10 text-center">✓</th>
+                  <th className="py-2.5 px-3 w-10 text-center"></th>
                   <th className="py-2.5 px-3 font-medium">Task Name</th>
                   <th className="py-2.5 px-3 font-medium">Subject</th>
                   <th className="py-2.5 px-3 font-medium">Type</th>
@@ -1208,10 +1208,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         <td className="py-2.5 px-3 whitespace-nowrap">
                           <span className="text-[11px] text-slate-400">
                             {item.type === 'ppt_presentation'
-                              ? '🎤 PPT'
+                              ? 'PPT'
                               : item.type === 'lab_record'
-                              ? '🔬 Lab'
-                              : '📝 Assignment'}
+                              ? 'Lab'
+                              : 'Assignment'}
                           </span>
                         </td>
 
@@ -1231,7 +1231,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                               }`}
                             >
                               {item.completed
-                                ? '✓'
+                                ? ''
                                 : daysLeft < 0
                                 ? 'Overdue'
                                 : daysLeft === 0
@@ -1339,7 +1339,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   </div>
                 ) : (
                   subjectFolders.map((folder) => {
-                    const percentDone =
+                    const percentDone=
                       folder.totalCount > 0 ? Math.round((folder.completedCount / folder.totalCount) * 100) : 0;
 
                     return (
@@ -1474,7 +1474,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                     : 'bg-slate-950 text-slate-400 border-slate-800'
                                 }`}
                               >
-                                {item.type === 'ppt_presentation' ? '🎤 PPT Presentation' : '📝 Written Assignment'}
+                                {item.type === 'ppt_presentation' ? 'PPT Presentation' : 'Written Assignment'}
                               </span>
 
                               {(item.solution || item.aiSolvedAnswer) && (
@@ -1495,7 +1495,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                               }`}
                             >
                               {item.completed
-                                ? 'Completed ✓'
+                                ? 'Completed'
                                 : daysLeft === 0
                                 ? 'Due Today'
                                 : daysLeft === 1
@@ -1509,7 +1509,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                               {item.title}
                             </h4>
                             <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                              📁 {item.subjectName}
+                              {item.subjectName}
                             </span>
                           </div>
 
@@ -1589,7 +1589,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             <div className="flex items-start justify-between pb-3 border-b border-slate-800">
               <div className="space-y-1 pr-3">
                 <div className="flex items-center gap-2 text-[11px] font-mono text-cyan-400">
-                  <span>📁 {activeModalItem.subjectName}</span>
+                  <span>{activeModalItem.subjectName}</span>
                   <span>·</span>
                   <span className="text-amber-300 font-medium">Due: {activeModalItem.dueDate}</span>
                 </div>
@@ -1611,7 +1611,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               </button>
             </div>
 
-            {/* Quick Actions (Done button + Instructions) */}
+            {/* Quick Actions (Donebutton + Instructions) */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <button
@@ -1625,7 +1625,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   {activeModalItem.completed ? (
                     <>
                       <CheckCircle2 className="w-4 h-4 text-neutral-300" />
-                      <span>Completed ✓ (Click to Undo)</span>
+                      <span>Completed(Click to Undo)</span>
                     </>
                   ) : (
                     <>
@@ -1658,7 +1658,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   }`}
                 >
                   <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>⚡ AI Solver (Full-Mark Solution)</span>
+                  <span>AI Solver (Full-Mark Solution)</span>
                 </button>
 
                 <button
@@ -1899,7 +1899,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         : 'text-slate-400 hover:text-slate-200 border border-transparent'
                     }`}
                   >
-                    <span>📝 Written Assignment</span>
+                    <span>Written Assignment</span>
                   </button>
                   <button
                     type="button"
@@ -1910,7 +1910,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         : 'text-slate-400 hover:text-slate-200 border border-transparent'
                     }`}
                   >
-                    <span>🎤 PPT Presentation</span>
+                    <span>PPT Presentation</span>
                   </button>
                 </div>
               </div>

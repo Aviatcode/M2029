@@ -37,6 +37,8 @@ interface MaterialsViewProps {
   classCode?: string;
   onAskAI?: (prompt: string) => void;
   onNavigateTab?: (tab: ActiveNavTab) => void;
+  pendingFiles?: File[];
+  onClearPendingFiles?: () => void;
 }
 
 export const MaterialsView: React.FC<MaterialsViewProps> = ({
@@ -48,6 +50,8 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
   classCode,
   onAskAI,
   onNavigateTab,
+  pendingFiles,
+  onClearPendingFiles,
 }) => {
   const [selectedSubjectFilter, setSelectedSubjectFilter] = useState<string>('all');
   const [selectedMaterial, setSelectedMaterial] = useState<AcademicMaterial | null>(materials[0] || null);
@@ -95,6 +99,16 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       setGithubFetchSubjectId(subjects[0].id);
     }
   }, [subjects, uploadSubjectId, githubFetchSubjectId]);
+
+  // Auto-process pending files from native Share Target or LaunchQueue
+  useEffect(() => {
+    if (pendingFiles && pendingFiles.length > 0) {
+      const fileToIngest = pendingFiles[0];
+      handleFileSelected(fileToIngest);
+      setIsUploading(true);
+      onClearPendingFiles?.();
+    }
+  }, [pendingFiles]);
 
   // Close upload modal on Escape key if idle
   useEffect(() => {
@@ -660,7 +674,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                   onClick={() => setShowRagModal(true)}
                   className="px-2.5 py-1 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition cursor-pointer flex items-center gap-1"
                 >
-                  <span>⚡ RAG</span>
+                  <span>RAG</span>
                 </button>
               </div>
             )}
@@ -745,7 +759,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
             title="Open RAG status"
           >
             <span className="text-slate-500 font-mono text-[10px]">Indexed for Class AI</span>
-            <span className="text-emerald-400 font-bold text-[10px]">Ready ⚡</span>
+            <span className="text-emerald-400 font-bold text-[10px]">Ready</span>
           </div>
         </div>
       </div>

@@ -136,7 +136,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
       setIsUploading(true);
       setUploadError(null);
       setUploadProgress(5);
-      setUploadStage(`📤 Streaming "${file.name}" to backend disk storage...`);
+      setUploadStage(`Streaming "${file.name}" to backend disk storage...`);
 
       const result = await uploadLargeFileToRag(file, {
         classId: 'class-bca-2028',
@@ -145,13 +145,13 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
         onProgress: (pct) => {
           setUploadProgress(Math.max(5, Math.min(92, pct)));
           if (pct >= 95) {
-            setUploadStage('⚡ Chunking & Building in-memory BM25 index on backend...');
+            setUploadStage('Chunking & Building in-memory BM25 index on backend...');
           }
         },
       });
 
       setUploadProgress(100);
-      setUploadStage(`✅ Active on backend! Indexed ${result.document.chunkCount} searchable chunks.`);
+      setUploadStage(`Active on backend! Indexed ${result.document.chunkCount} searchable chunks.`);
 
       if (onMaterialCreated && result.material) {
         onMaterialCreated(result.material);
@@ -188,7 +188,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
         subjectName: 'GitHub Cloud Repository',
       });
 
-      setGithubFetchSuccess(`🎉 Successfully fetched & indexed ${result.document.chunkCount} chunks into active RAG memory!`);
+      setGithubFetchSuccess(`Successfully fetched & indexed ${result.document.chunkCount} chunks into active RAG memory!`);
       setGithubUrl('');
       setGithubCustomTitle('');
 
@@ -277,7 +277,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
         token,
       });
 
-      setReleaseSuccessMsg(`☁️ Document backed up to GitHub Releases! File is now hosted on GitHub CDN: ${result.githubUrl}`);
+      setReleaseSuccessMsg(`Document backed up to GitHub Releases! File is now hosted on GitHub CDN: ${result.githubUrl}`);
       await loadData();
     } catch (err: any) {
       console.error('Release push failed:', err);
@@ -542,7 +542,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>⚡ Fetch into RAG</span>
+                      <span>Fetch into RAG</span>
                     </>
                   )}
                 </button>
@@ -559,7 +559,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
                 >
-                  📅 Timetable Spec
+                  Timetable Spec
                 </button>
                 <button
                   type="button"
@@ -569,7 +569,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
                 >
-                  📋 Syllabus Guide
+                  Syllabus Guide
                 </button>
                 <button
                   type="button"
@@ -579,7 +579,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
                 >
-                  📘 README Architecture
+                  README Architecture
                 </button>
               </div>
 
@@ -685,7 +685,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                             ) : (
                               <>
                                 <Sparkles className="w-3 h-3" />
-                                <span>📥 Fetch to RAG</span>
+                                <span>Fetch to RAG</span>
                               </>
                             )}
                           </button>

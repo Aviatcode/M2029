@@ -38,7 +38,7 @@ export const PWAInstallButton: React.FC<{ compact?: boolean }> = ({ compact = fa
         }`}
       >
         <Smartphone className="w-4 h-4 text-neutral-300" />
-        <span>{installing ? 'Installing...' : '📲 Install WebAPK'}</span>
+        <span>{installing ? 'Installing...' : 'Install WebAPK'}</span>
       </button>
     );
   }

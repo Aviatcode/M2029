@@ -151,7 +151,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
       const data = await res.json();
       if (data.notices) {
         setNotices(data.notices);
-        setFeedbackToast('✓ University portal scanned! Gazetted holidays and notices updated.');
+        setFeedbackToast('University portal scanned! Gazetted holidays and notices updated.');
         setTimeout(() => setFeedbackToast(''), 4000);
       }
     } catch (err) {
@@ -401,7 +401,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
                           : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
                       }`}
                     >
-                      {n.type === 'holiday' ? '🎉 Gazetted Holiday' : n.type === 'exam' ? '📝 Exam Schedule' : '📢 Official Notice'}
+                      {n.type === 'holiday' ? 'Gazetted Holiday' : n.type === 'exam' ? 'Exam Schedule' : 'Official Notice'}
                     </span>
                     <span className="text-[10px] font-mono text-slate-500">{n.date}</span>
                   </div>
@@ -428,7 +428,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
               </div>
               {isCR ? (
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                  👑 CR Override Mode (3x Weight)
+                  CR Override Mode (3x Weight)
                 </span>
               ) : (
                 <span className="text-[10px] text-slate-400 font-mono">
@@ -538,7 +538,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-amber-400" />
                 <h3 className="font-bold text-sm text-white">
-                  ⚡ 7-Minute AI Pre-Lecture Primer & Viva Check
+                  7-Minute AI Pre-Lecture Primer & Viva Check
                 </h3>
               </div>
               <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
@@ -549,7 +549,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
             <div className="space-y-3 text-xs">
               <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block mb-1">
-                  💡 Intuition in 30 Seconds
+                  Intuition in 30 Seconds
                 </span>
                 <p className="text-slate-200 leading-relaxed">
                   In today's lecture on <span className="font-bold text-amber-300">B+ Tree Indexing</span>, the professor will explain why standard binary search trees fail on hard disks. Think of a phonebook: instead of flipping 1 page at a time (BST), you jump directly to letter 'S', then scan 100 entries per block (B+ Tree).
@@ -558,7 +558,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
 
               <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block mb-1">
-                  🎯 3 Predicted Viva / Exam Questions For Tomorrow
+                  3 Predicted Viva / Exam Questions For Tomorrow
                 </span>
                 <ul className="space-y-1.5 text-slate-300 text-[11px]">
                   <li className="flex items-start gap-1.5">

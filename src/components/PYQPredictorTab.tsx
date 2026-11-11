@@ -19,7 +19,7 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700 text-xs font-semibold">
-              🎯 Previous Year Question (PYQ) Bank
+              Previous Year Question (PYQ) Bank
             </span>
             <span className="text-xs text-slate-400">Repeated University Papers</span>
           </div>
@@ -100,7 +100,7 @@ export const PYQPredictorTab: React.FC<PYQPredictorTabProps> = ({ lesson, topicT
                       <ul className="space-y-1.5 text-xs text-slate-300">
                         {pyq.keyPointsForExaminer.map((pt, pIdx) => (
                           <li key={pIdx} className="flex items-start gap-2">
-                            <span className="text-indigo-400 font-bold">✓</span>
+                            <span className="text-indigo-400 font-bold"></span>
                             <span>{pt}</span>
                           </li>
                         ))}

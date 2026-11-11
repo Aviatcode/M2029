@@ -228,7 +228,7 @@ export default function App() {
               name: `${newCode} Workspace`,
             }));
           }
-          setShareToast(`🎓 Switched to class: ${newCode}`);
+          setShareToast(`Switched to class: ${newCode}`);
           setTimeout(() => setShareToast(''), 4000);
         }
         return;
@@ -275,7 +275,7 @@ export default function App() {
       const isSyllabus = isSyllabusDocument(file.name, extracted.text);
 
       if (isTimetable) {
-        setShareToast(`📅 Reading Timetable "${file.name}" with AI...`);
+        setShareToast(`Reading Timetable "${file.name}" with AI...`);
         const parsed = await parseTimetableWithAi({
           rawText: extracted.text,
           fileDataUrl: extracted.dataUrl,
@@ -302,13 +302,13 @@ export default function App() {
         try {
           window.location.hash = 'timetable';
         } catch {}
-        setShareToast(`✓ Timetable Loaded! Configured ${parsed.subjects.length} subjects & ${parsed.timetable.length} class slots.`);
+        setShareToast(`Timetable Loaded! Configured ${parsed.subjects.length} subjects & ${parsed.timetable.length} class slots.`);
         setTimeout(() => setShareToast(''), 4500);
         return;
       }
 
       if (isSyllabus) {
-        setShareToast(`📚 Reading Syllabus "${file.name}" with AI...`);
+        setShareToast(`Reading Syllabus "${file.name}" with AI...`);
         const parsed = parseSyllabusClient(extracted.text, file.name.replace(/\.[^/.]+$/, ''));
         if (parsed.subjects.length > 0) {
           setSubjects((prev) => {
@@ -339,7 +339,7 @@ export default function App() {
         try {
           window.location.hash = 'syllabus';
         } catch {}
-        setShareToast(`✓ Syllabus Loaded! Added ${parsed.subjects[0]?.name || 'Subject'} and course units.`);
+        setShareToast(`Syllabus Loaded! Added ${parsed.subjects[0]?.name || 'Subject'} and course units.`);
         setTimeout(() => setShareToast(''), 4500);
         return;
       }
@@ -350,7 +350,7 @@ export default function App() {
       try {
         window.location.hash = 'materials';
       } catch {}
-      setShareToast(`📥 Dropped ${files.length} file(s). Added to Materials Vault.`);
+      setShareToast(`Dropped ${files.length} file(s). Added to Study Vault.`);
       setTimeout(() => setShareToast(''), 4500);
     } catch (err: any) {
       console.warn('Drop error fallback:', err);
@@ -417,12 +417,23 @@ export default function App() {
 
   // 2. Phone Share Target & Web File Handling API: Ingest files shared from phone apps
   useEffect(() => {
+    // Check if opened directly from PWA Web Share Target
+    try {
+      const search = window.location.search || '';
+      const hash = window.location.hash || '';
+      if (search.includes('from_share=1') || hash.includes('from_share=1')) {
+        setShareToast('Shared document successfully received and indexed in Study Vault.');
+        setTimeout(() => setShareToast(''), 5000);
+        handleSelectTab('materials');
+      }
+    } catch {}
+
     const checkShares = async () => {
       const payload = await checkAndRetrieveSharedFiles();
       if (payload && payload.files.length > 0) {
         setPendingIngestFiles(payload.files);
-        handleSelectTab('dump');
-        setShareToast(`📱 Received ${payload.files.length} file(s) via Phone Share Sheet. Auto-sorting with AI...`);
+        handleSelectTab('materials');
+        setShareToast(`Received ${payload.files.length} file(s) via Phone Share Sheet. Auto-indexing in Study Vault...`);
         setTimeout(() => setShareToast(''), 5000);
       }
     };
@@ -433,8 +444,8 @@ export default function App() {
     registerLaunchQueueHandler((files) => {
       if (files.length > 0) {
         setPendingIngestFiles(files);
-        handleSelectTab('dump');
-        setShareToast(`📂 Opened ${files.length} file(s). Auto-sorting with AI...`);
+        handleSelectTab('materials');
+        setShareToast(`Opened ${files.length} file(s). Auto-indexing in Study Vault...`);
         setTimeout(() => setShareToast(''), 5000);
       }
     });
@@ -609,7 +620,7 @@ export default function App() {
     }
     setIsSemesterSetupDone(true);
     setIsOnboardingModalOpen(false);
-    setShareToast(`✓ Configured ${data.subjects.length} subjects & ${data.timetable?.length || 0} class slots!`);
+    setShareToast(`Configured ${data.subjects.length} subjects & ${data.timetable?.length || 0} class slots!`);
     setTimeout(() => setShareToast(''), 4500);
   };
   const [pyqs, setPyqs] = useState<HistoricalPYQ[]>(() => {
@@ -1136,7 +1147,7 @@ export default function App() {
       const data = await res.json();
       if (data.status === 'success') {
         setDailyPulses((prev) => prev.map((p) => (p.id === pulseId ? data.pulse : p)));
-        setShareToast(data.message || '✓ Daily update & attendance logged!');
+        setShareToast(data.message || 'Daily update & attendance logged!');
         setTimeout(() => setShareToast(''), 4500);
       }
     } catch (err) {
@@ -1235,7 +1246,7 @@ export default function App() {
       } catch {}
       return updated;
     });
-    setShareToast(`✓ Added ${classWithId.subjectName} to ${classWithId.day}!`);
+    setShareToast(`Added ${classWithId.subjectName} to ${classWithId.day}!`);
     setTimeout(() => setShareToast(''), 3000);
   };
 
@@ -1262,7 +1273,7 @@ export default function App() {
       } catch {}
       return updated;
     });
-    setShareToast(`✓ Added "${unit.title}" to syllabus map!`);
+    setShareToast(`Added "${unit.title}" to syllabus map!`);
     setTimeout(() => setShareToast(''), 3000);
   };
 
@@ -1298,7 +1309,7 @@ export default function App() {
       } catch {}
       return updated;
     });
-    setShareToast(`✓ Added topic "${topic.title}"!`);
+    setShareToast(`Added topic "${topic.title}"!`);
     setTimeout(() => setShareToast(''), 3000);
   };
 
@@ -1457,7 +1468,7 @@ export default function App() {
       return updated;
     });
 
-    setShareToast(`✓ Generated 4 course units for ${subjectName}!`);
+    setShareToast(`Generated 4 course units for ${subjectName}!`);
     setTimeout(() => setShareToast(''), 3500);
   };
 
@@ -1477,7 +1488,7 @@ export default function App() {
       return updated;
     });
 
-    setShareToast(`✓ Added ${examWithId.subjectName} to university datesheet!`);
+    setShareToast(`Added ${examWithId.subjectName} to university datesheet!`);
     setTimeout(() => setShareToast(''), 3000);
   };
 
@@ -1506,7 +1517,7 @@ export default function App() {
       return updated;
     });
 
-    setShareToast(`✓ Added past question to ${pyqWithId.subjectName || 'curriculum'} archive!`);
+    setShareToast(`Added past question to ${pyqWithId.subjectName || 'curriculum'} archive!`);
     setTimeout(() => setShareToast(''), 3000);
   };
 
@@ -1545,7 +1556,7 @@ export default function App() {
       }
     } catch {}
 
-    setShareToast(`✓ "${newMat.title}" saved to ${newMat.subjectName}! AI Notes, Mindmap & 10-Marker ready.`);
+    setShareToast(`"${newMat.title}" saved to ${newMat.subjectName}! AI Notes, Mindmap & 10-Marker ready.`);
     setTimeout(() => setShareToast(''), 4500);
   };
 
@@ -1821,6 +1832,8 @@ export default function App() {
               studentName={currentUser.name}
               classCode={classCode}
               onNavigateTab={handleSelectTab}
+              pendingFiles={pendingIngestFiles}
+              onClearPendingFiles={() => setPendingIngestFiles([])}
               onAskAI={(prompt) => {
                 setInitialTutorPrompt(prompt);
                 setActiveTab('ai-tutor');
@@ -2028,7 +2041,7 @@ export default function App() {
               try {
                 window.location.hash = 'materials';
               } catch {}
-              setShareToast(`📥 Dropped ${filesArray.length} file(s) from PC. Added to Materials Vault.`);
+              setShareToast(`Dropped ${filesArray.length} file(s) from PC. Added to Study Vault.`);
               setTimeout(() => setShareToast(''), 4500);
             }
           }}
@@ -2054,7 +2067,7 @@ export default function App() {
               <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">IMAGES</span>
             </div>
             <p className="text-[11px] text-slate-400 font-sans">
-              ⚡ Auto-generates visual mindmaps, mnemonics & 10-marker answers
+              Auto-generates visual mindmaps, mnemonics & 10-marker answers
             </p>
           </div>
         </div>

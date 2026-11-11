@@ -50,7 +50,7 @@ export const MorningPrimerTab: React.FC<MorningPrimerTabProps> = ({ lesson, topi
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs uppercase tracking-wider font-bold text-amber-400">
-                  🌅 7:00 AM Morning Primer
+                  7:00 AM Morning Primer
                 </span>
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-200 border border-amber-400/30 font-medium">
                   3-Min Read
@@ -75,7 +75,7 @@ export const MorningPrimerTab: React.FC<MorningPrimerTabProps> = ({ lesson, topi
             }`}
           >
             <Volume2 className={`w-4 h-4 ${isPlayingAudio ? 'animate-pulse' : 'text-amber-400'}`} />
-            <span>{isPlayingAudio ? 'Stop Audio' : 'Listen 🎧 (TTS)'}</span>
+            <span>{isPlayingAudio ? 'Stop Audio' : 'Listen (TTS)'}</span>
           </button>
         </div>
       </div>
@@ -116,7 +116,7 @@ export const MorningPrimerTab: React.FC<MorningPrimerTabProps> = ({ lesson, topi
                 activeAnalogyStyle === 'traffic' ? 'bg-amber-500 text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Traffic 🚗
+              Traffic
             </button>
             <button
               onClick={() => setActiveAnalogyStyle('gaming')}
@@ -124,7 +124,7 @@ export const MorningPrimerTab: React.FC<MorningPrimerTabProps> = ({ lesson, topi
                 activeAnalogyStyle === 'gaming' ? 'bg-amber-500 text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
               }`}
             >
-              Gaming 🎮
+              Gaming
             </button>
           </div>
         </div>
@@ -153,7 +153,7 @@ export const MorningPrimerTab: React.FC<MorningPrimerTabProps> = ({ lesson, topi
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <h4 className="font-bold text-white text-sm md:text-base">
-              🎓 When Your Professor Lectures Today:
+              When Your Professor Lectures Today:
             </h4>
             <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">
               Exam Hint

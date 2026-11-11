@@ -123,7 +123,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
       [account.id]: {
         isLoading: false,
         ok: res.ok,
-        message: res.ok ? `✓ Active (${res.latencyMs}ms latency)` : `✗ ${res.error || 'Connection Failed'}`,
+        message: res.ok ? `Active (${res.latencyMs}ms latency)` : `${res.error || 'Connection Failed'}`,
       },
     }));
   };
@@ -326,8 +326,8 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
       result: {
         ok: res.ok,
         message: res.ok
-          ? `✓ Connected (${res.latencyMs}ms latency) - ${res.providerName}`
-          : `✗ Connection failed: ${res.error}`,
+          ? `Connected (${res.latencyMs}ms latency) - ${res.providerName}`
+          : `Connection failed: ${res.error}`,
         latencyMs: res.latencyMs,
       },
     });
@@ -357,7 +357,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
         });
         setClassSaveMessage({
           type: 'success',
-          text: `✓ Class default model updated to ${data.providerName}. Shared across all students.`,
+          text: `Class default model updated to ${data.providerName}. Shared across all students.`,
         });
         setClassApiKey('');
       } else {
@@ -374,7 +374,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
     try {
       localStorage.setItem('syllabus_supabase_url', supabaseUrl.trim());
       localStorage.setItem('syllabus_supabase_key', supabaseKey.trim());
-      alert('✓ Database credentials saved locally.');
+      alert('Database credentials saved locally.');
     } catch {}
   };
 
@@ -547,7 +547,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
                                   : 'bg-slate-800 border-slate-700 text-slate-400'
                               }`}
                             >
-                              {account.isActive ? 'Active 🟢' : 'Paused ⏸️'}
+                              {account.isActive ? 'Active' : 'Paused'}
                             </button>
                             <button
                               type="button"

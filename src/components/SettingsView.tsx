@@ -13,6 +13,7 @@ import {
   Play,
   RotateCcw,
   Smartphone,
+  Trash2,
   Layers,
   Settings,
   Send,
@@ -257,7 +258,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         });
         setStatusMessage({
           type: 'success',
-          text: `✓ Key active! Active Provider: ${data.providerName || 'Configured Model'}`,
+          text: `Key active! Active Provider: ${data.providerName || 'Configured Model'}`,
         });
       } else {
         setStatusMessage({ type: 'error', text: 'Failed to configure API key.' });
@@ -272,7 +273,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       setAiStatus(fallbackStatus);
       setStatusMessage({
         type: 'success',
-        text: '✓ Key saved to browser local storage! Ready for live tutoring and exam answers.',
+        text: 'Key saved to browser local storage! Ready for live tutoring and exam answers.',
       });
     } finally {
       setIsLoading(false);
@@ -317,7 +318,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       setAiStatus(basic);
       setStatusMessage({
         type: 'success',
-        text: '✓ Reverted to Built-in Basic Academic Model (Zero API key needed).',
+        text: 'Reverted to Built-in Basic Academic Model (Zero API key needed).',
       });
       setApiKey('');
       setModelName('');
@@ -332,7 +333,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       setAiStatus(basic);
       setStatusMessage({
         type: 'success',
-        text: '✓ Switched to Built-in Basic Academic Model.',
+        text: 'Switched to Built-in Basic Academic Model.',
       });
       setApiKey('');
     } finally {
@@ -375,7 +376,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       localStorage.setItem('syllabus_supabase_key', supabaseKey.trim());
       setStatusMessage({
         type: 'success',
-        text: '✓ Supabase credentials saved in browser storage. Remember to run npm run db:push to push schema data.',
+        text: 'Supabase credentials saved in browser storage. Remember to run npm run db:push to push schema data.',
       });
     } catch {
       setStatusMessage({ type: 'error', text: 'Storage error.' });
@@ -662,21 +663,46 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              if (window.confirm('Clear cached app data and reload? Your saved notes will remain safe.')) {
-                try {
-                  sessionStorage.clear();
-                  localStorage.removeItem('syllabus_cache');
-                } catch {}
-                window.location.reload();
-              }
-            }}
-            className="w-full py-2.5 rounded-xl bg-[#141926] hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Clear Cache & Reload</span>
-          </button>
+          <div className="space-y-2">
+            <button
+              onClick={async () => {
+                if (window.confirm('Reset ALL system data, AI caches, RAG indexes, and local storage to a completely clean slate?')) {
+                  try {
+                    await fetch('/api/cache/reset-all', { method: 'POST' }).catch(() => {});
+                    if ('caches' in window) {
+                      const keys = await caches.keys();
+                      await Promise.all(keys.map((k) => caches.delete(k)));
+                    }
+                    localStorage.clear();
+                    sessionStorage.clear();
+                  } catch (e) {
+                    console.warn('Cache reset warning:', e);
+                  }
+                  window.location.href = '/';
+                }
+              }}
+              className="w-full py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 hover:text-rose-200 text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Reset All Cache (Factory Reset)</span>
+            </button>
+
+            <button
+              onClick={() => {
+                if (window.confirm('Clear local browser cache and reload? Your saved notes will remain safe.')) {
+                  try {
+                    sessionStorage.clear();
+                    localStorage.removeItem('syllabus_cache');
+                  } catch {}
+                  window.location.reload();
+                }
+              }}
+              className="w-full py-2 rounded-xl bg-[#141926] hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Clear Local Cache & Reload</span>
+            </button>
+          </div>
 
           {/* Cloud Database (Collapsible) */}
           <details className="mt-3 pt-3 border-t border-slate-800/80 group">

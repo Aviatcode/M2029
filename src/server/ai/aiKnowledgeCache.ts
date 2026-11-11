@@ -1129,6 +1129,15 @@ Given: \`R(A, B, C, D, E)\`, FDs: \`A -> B\`, \`BC -> D\`, \`E -> C\`
 
     this.saveToDisk();
   }
+
+  public clearAll() {
+    this.cache.clear();
+    this.totalHits = 0;
+    this.totalTokensSaved = 0;
+    try {
+      fs.writeFileSync(CACHE_FILE, JSON.stringify({ entries: [], totalHits: 0, totalTokensSaved: 0 }, null, 2));
+    } catch (e) {}
+  }
 }
 
 export const aiKnowledgeCache = new AIKnowledgeCacheManager();

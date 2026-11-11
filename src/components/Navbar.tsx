@@ -160,13 +160,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           aria-label="Return to Workspace"
         >
           <img
-            src="./am-logo.png"
-            alt="M2029 Logo"
+            src="./icon-192.png"
+            alt="M2028 Logo"
             className="w-7 h-7 rounded-lg shrink-0 object-contain group-hover:opacity-90 transition border border-neutral-800/80"
           />
           <div className="flex items-center gap-1.5">
             <span className="text-sm font-bold text-slate-100 tracking-tight font-sans">
-              M2029
+              M2028
             </span>
             <span className="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.2 rounded bg-neutral-900 border border-neutral-800 text-neutral-400">
               {classCode || 'CLASS'}

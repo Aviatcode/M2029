@@ -132,7 +132,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               }
               className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-cyan-300 transition cursor-pointer"
             >
-              📚 BCA Sem 3 (Data Structures)
+              BCA Sem 3 (Data Structures)
             </button>
 
             <button
@@ -145,7 +145,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               }
               className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-indigo-300 transition cursor-pointer"
             >
-              💻 BCA Sem 3 (Operating Systems)
+              BCA Sem 3 (Operating Systems)
             </button>
 
             <button
@@ -158,7 +158,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               }
               className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-neutral-200 transition cursor-pointer"
             >
-              🗄️ BCA Sem 3 (DBMS)
+              BCA Sem 3 (DBMS)
             </button>
           </div>
         </div>

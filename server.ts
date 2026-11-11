@@ -7,7 +7,8 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { DEFAULT_CLASSROOM, DEFAULT_LESSONS } from './src/defaultCurriculum.js';
-import { Classroom, LessonContent, ClassroomDoubt, Unit, Topic } from './src/types.js';
+import { Classroom, LessonContent, ClassroomDoubt, Unit, Topic, AcademicMaterial } from './src/types.js';
+import multer from 'multer';
 
 dotenv.config();
 
@@ -24,7 +25,8 @@ const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 // In-memory persistent store of classrooms
 const classroomsStore: Record<string, Classroom> = {};
 
-import { apiRouter } from './src/server/routes.js';
+import { apiRouter, db } from './src/server/routes.js';
+import { ragEngine } from './src/server/rag/ragIndex.js';
 import { initDailyAutoSyncScheduler } from './src/server/autoSyncService.js';
 import { aiKnowledgeCache } from './src/server/ai/aiKnowledgeCache.js';
 import {
@@ -54,9 +56,162 @@ async function startServer() {
   // Mount M2028 API Router
   app.use('/api', apiRouter);
 
-  // Fallback endpoint for PWA Web Share Target
-  app.all('/share-target', (req: Request, res: Response) => {
-    res.redirect(303, '/#dump?from_share=1');
+  // Configure Multer for PWA Web Share Target Level 2 Ingestion
+  const shareStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, ragEngine.getUploadDir());
+    },
+    filename: (_req, file, cb) => {
+      const timestamp = Date.now();
+      const sanitized = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+      cb(null, `${timestamp}_${sanitized}`);
+    },
+  });
+
+  const shareUpload = multer({
+    storage: shareStorage,
+    limits: {
+      fileSize: 500 * 1024 * 1024, // 500MB
+    },
+  });
+
+  // GET handler for Share Target redirect
+  app.get('/share-target', (_req: Request, res: Response) => {
+    res.redirect(303, '/#materials?from_share=1');
+  });
+
+  // POST handler: Auto-ingest documents shared from WhatsApp, Drive, or phone share sheets without needing app pre-open
+  app.post('/share-target', shareUpload.any(), async (req: Request, res: Response) => {
+    try {
+      const files = (req.files as Express.Multer.File[]) || [];
+      const classId = (req.body.classId || 'class-bca-2028').trim();
+      let ingestedCount = 0;
+
+      for (const file of files) {
+        const fileExt = path.extname(file.originalname).replace(/^\./, '').toLowerCase() || 'pdf';
+        const cleanTitle = (req.body.title || file.originalname.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ')).trim();
+
+        console.log(`[PWA Share Target] Direct file ingest: "${file.originalname}" (${(file.size / (1024 * 1024)).toFixed(1)} MB)`);
+
+        const ragDoc = await ragEngine.ingestFile({
+          filePath: file.path,
+          fileName: file.filename,
+          originalName: file.originalname,
+          fileType: fileExt,
+          fileSize: file.size,
+          classId,
+          subjectId: 'sub-general',
+          subjectName: 'Shared Notes & Documents',
+          title: cleanTitle,
+        });
+
+        const materialId = `mat-${Date.now()}-${ingestedCount}`;
+        ragDoc.materialId = materialId;
+
+        const newMaterial: AcademicMaterial = {
+          id: materialId,
+          classId,
+          subjectId: 'sub-general',
+          subjectName: 'Shared Notes & Documents',
+          title: cleanTitle,
+          fileName: file.originalname,
+          fileType: fileExt as any,
+          fileSize: ragDoc.fileSizeFormatted,
+          uploaderName: 'PWA Share Sheet',
+          uploaderRole: 'student',
+          verificationStatus: 'teacher_verified',
+          createdAt: 'Just now',
+          ragDocId: ragDoc.id,
+          resources: {
+            summary: ragDoc.summary || `Synthesized overview of ${cleanTitle}. Extracted ${ragDoc.chunkCount} active chunks for deep question retrieval.`,
+            hinglishSummary: `Is document (${cleanTitle}) ke chapters backend par active hain, aap direct koi bhi topic ya question search kar sakte ho.`,
+            mindmapMermaid: `graph TD\n  A[${cleanTitle.slice(0, 25)}] --> B[Active RAG Chunks: ${ragDoc.chunkCount}]\n  A --> C[Full Text Indexed]`,
+            keyConcepts: (ragDoc.tableOfContents || []).slice(0, 4).map((toc) => ({
+              concept: toc.title,
+              explanation: `Indexed at Chunk #${toc.chunkIndex} (Page ${toc.page || 1})`,
+            })),
+            importantDefinitions: [
+              {
+                term: cleanTitle,
+                definition: `University study material stored on backend (${ragDoc.fileSizeFormatted}). Accessible via RAG semantic search.`,
+              },
+            ],
+            examples: [],
+            examPoints: [
+              `Contains ${ragDoc.chunkCount} active searchable chunks`,
+              `Estimated ${ragDoc.pageCount || 1} pages parsed & indexed`,
+              'Direct citation retrieval available in AI Tutor',
+            ],
+            flashcards: [],
+            quiz: [],
+            possibleQuestions: [],
+            relatedPYQs: [],
+          },
+        };
+
+        if (db && db.materials) {
+          if (!db.materials[classId]) {
+            db.materials[classId] = [];
+          }
+          db.materials[classId].unshift(newMaterial);
+          if (typeof db.saveToDisk === 'function') {
+            db.saveToDisk();
+          }
+        }
+
+        ingestedCount++;
+      }
+
+      // If text/URL was shared without files (e.g. WhatsApp copied message)
+      if (ingestedCount === 0 && (req.body.text || req.body.url || req.body.title)) {
+        const sharedTitle = (req.body.title || req.body.text?.slice(0, 40) || req.body.url || 'Shared Note').trim();
+        const sharedText = [req.body.title, req.body.text, req.body.url].filter(Boolean).join('\n\n');
+        const materialId = `mat-${Date.now()}`;
+        const newMaterial: AcademicMaterial = {
+          id: materialId,
+          classId,
+          subjectId: 'sub-general',
+          subjectName: 'Shared Notes & Documents',
+          title: sharedTitle,
+          fileName: 'shared_text.txt',
+          fileType: 'notes' as any,
+          fileSize: `${Math.round(sharedText.length / 1024 * 10) / 10} KB`,
+          uploaderName: 'PWA Share Sheet',
+          uploaderRole: 'student',
+          verificationStatus: 'teacher_verified',
+          createdAt: 'Just now',
+          resources: {
+            summary: sharedText,
+            hinglishSummary: sharedText,
+            mindmapMermaid: `graph TD\n  A[${sharedTitle.slice(0, 20)}] --> B[Shared Content]`,
+            keyConcepts: [],
+            importantDefinitions: [],
+            examples: [],
+            examPoints: [],
+            flashcards: [],
+            quiz: [],
+            possibleQuestions: [],
+            relatedPYQs: [],
+          },
+        };
+
+        if (db && db.materials) {
+          if (!db.materials[classId]) {
+            db.materials[classId] = [];
+          }
+          db.materials[classId].unshift(newMaterial);
+          if (typeof db.saveToDisk === 'function') {
+            db.saveToDisk();
+          }
+        }
+        ingestedCount = 1;
+      }
+
+      res.redirect(303, `/#materials?from_share=1&uploaded=${ingestedCount}`);
+    } catch (err: any) {
+      console.error('[PWA Share Target Ingest Error]:', err);
+      res.redirect(303, '/#materials?from_share_error=1');
+    }
   });
 
   // 1. Get or Create Classroom

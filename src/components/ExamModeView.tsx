@@ -201,7 +201,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
             className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-amber-300 hover:text-white hover:border-amber-500/40 flex items-center gap-1.5 cursor-pointer font-semibold transition"
           >
             <Target className="w-3.5 h-3.5 text-amber-400" />
-            <span>Radar 🎯</span>
+            <span>Radar</span>
           </button>
 
           {/* Add Exam Button */}
@@ -271,7 +271,7 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
             <button
               type="button"
               onClick={() => handleOpenRadar(activeExam?.subjectName || '')}
-              title="Open Exam Radar 🎯"
+              title="Open Exam Radar"
               className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
             >
               <span className="text-sm font-black">{revisionPercent}%</span>

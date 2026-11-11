@@ -94,7 +94,7 @@ export const KnowledgeDashboard: React.FC<KnowledgeDashboardProps> = ({
         const targetSubjects = subjectName && subjectName !== 'all'
           ? subjects.filter(s => s.name.toLowerCase().includes(subjectName.toLowerCase()))
           : subjects;
-        markdownContent = `# 🎓 ${subjectName || classCode || 'M2029'} — Study Pack & Class Intelligence\n\n`;
+        markdownContent = `# ${subjectName || classCode || 'M2029'} — Study Pack & Class Intelligence\n\n`;
         markdownContent += `> Generated for ${studentName || 'Student'} · ${new Date().toLocaleDateString()}\n\n---\n\n`;
         targetSubjects.forEach((sub, sIdx) => {
           markdownContent += `## ${sIdx + 1}. ${sub.name} (${sub.code})\n`;

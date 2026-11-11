@@ -60,7 +60,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
       await onTriggerRefineNext(feedbackInput.trim());
     }
     setIsSubmittingFeedback(false);
-    setFeedbackSuccess(`✓ Refinement recorded! Elevated to Student ${currentIteration + 1} iteration.`);
+    setFeedbackSuccess(`Refinement recorded! Elevated to Student ${currentIteration + 1} iteration.`);
     setFeedbackInput('');
     setTimeout(() => setFeedbackSuccess(''), 3000);
   };
@@ -88,7 +88,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
                   60-Student Compounding Intelligence Engine
                 </span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-950 border border-slate-800 text-slate-300">
-                  {isPerfected ? '🏆 Golden Master Standard' : `Iteration ${currentIteration}/60`}
+                  {isPerfected ? 'Golden Master Standard' : `Iteration ${currentIteration}/60`}
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-white mt-0.5 font-sans-ui">
@@ -102,7 +102,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
                       key={i}
                       className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-mono"
                     >
-                      ⚡ {m}
+                      {m}
                     </span>
                   ))}
                 </div>
@@ -305,7 +305,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
                 className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-semibold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-xs disabled:opacity-50"
               >
                 <Trophy className="w-3.5 h-3.5" />
-                <span>{isElevating ? 'Running 60-Student Pipeline...' : '⚡ Fast-Track to 60-Student Perfection'}</span>
+                <span>{isElevating ? 'Running 60-Student Pipeline...' : 'Fast-Track to 60-Student Perfection'}</span>
               </button>
             )}
 
