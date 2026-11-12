@@ -108,6 +108,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  // Mobile Minimal Top-Left Trigger: AM Logo (click -> Home) + Small Arrow (click -> open sidebar)
+  const renderMobileTrigger = () => (
+    <div className="sm:hidden fixed top-2.5 left-2.5 z-40 flex items-center gap-1.5 p-1 rounded-xl bg-zinc-950/85 backdrop-blur-md border border-white/10 shadow-lg shadow-black/80">
+      <button
+        type="button"
+        onClick={() => handleTabClick('dashboard')}
+        title="M2029 Home (Academic Overview)"
+        className="p-1 rounded-lg bg-zinc-900/90 border border-white/10 active:scale-95 transition-transform cursor-pointer"
+      >
+        <AppLogo size={22} withGlow={false} />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setIsMobileOpen(true)}
+        title="Open Navigation Menu"
+        aria-label="Open Navigation Menu"
+        className="p-1.5 rounded-lg text-zinc-300 hover:text-white bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 active:scale-95 transition-all cursor-pointer"
+      >
+        <ChevronRight className="w-4 h-4 stroke-[2.2]" />
+      </button>
+    </div>
+  );
+
   // Reusable Slide-out Drawer Overlay
   const renderDrawer = () => {
     if (!isMobileOpen) return null;
@@ -258,10 +282,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return (
       <>
         {renderDrawer()}
+        {renderMobileTrigger()}
         <nav
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`w-full bg-[#09090b]/95 backdrop-blur-md shrink-0 transition-all duration-200 select-none z-30 ${
+          className={`hidden sm:block w-full bg-[#09090b]/95 backdrop-blur-md shrink-0 transition-all duration-200 select-none z-30 ${
             isTop ? 'border-b border-zinc-800/80 shadow-sm' : 'border-t border-zinc-800/80 shadow-2xl'
           } h-13 sm:h-14 py-1 px-2.5 sm:px-5 ${!isTop ? 'pb-[env(safe-area-inset-bottom)]' : ''}`}
         >
@@ -368,12 +393,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {renderDrawer()}
+      {renderMobileTrigger()}
       <aside
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`bg-[#09090b] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-30 ${
+        className={`hidden sm:flex bg-[#09090b] flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-30 ${
           isRight ? 'border-l border-zinc-800/80' : 'border-r border-zinc-800/80'
-        } ${isHovered ? 'w-52 sm:w-60' : 'w-12 sm:w-16 md:w-18'}`}
+        } ${isHovered ? 'w-52 sm:w-60' : 'w-14 sm:w-16 md:w-18'}`}
       >
         {/* 1. App Logo Header & Small Arrow just below it */}
         <div className="p-2 sm:p-2.5 border-b border-zinc-800/70 bg-zinc-950/40 shrink-0 flex flex-col items-center gap-1.5">
