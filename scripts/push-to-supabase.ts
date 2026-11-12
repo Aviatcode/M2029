@@ -126,7 +126,7 @@ async function main() {
     console.log('\n🕒 4. Upserting Timetable Classes...');
     const timetableRows = SEED_TIMETABLE.map((t) => ({
       id: t.id,
-      class_id: 'class-bca-2028',
+      class_id: 'class-m2029',
       day: t.day,
       time: t.time,
       subject_id: t.subjectId,

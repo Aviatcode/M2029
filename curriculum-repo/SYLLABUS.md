@@ -1,5 +1,5 @@
 # 📖 Comprehensive Academic Syllabus & Exam Blueprint
-## BCA-2028 Workspace (BCA-2028) — State University
+## M2029 Workspace (M2029) — State University
 **Academic Year:** 2026–2028 | **Semester:** Semester 1
 
 ---

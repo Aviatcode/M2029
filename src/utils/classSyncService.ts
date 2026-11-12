@@ -27,7 +27,7 @@ const SYNC_CACHE_KEY = 'm2029_class_sync_cache_v1';
  * Fetch the latest shared classroom state from the central server.
  * Uses 0 AI tokens because it purely fetches pre-computed and cached data.
  */
-export async function fetchClassroomSync(classCode = 'BCA-2028'): Promise<ClassroomSyncPayload | null> {
+export async function fetchClassroomSync(classCode = 'M2029'): Promise<ClassroomSyncPayload | null> {
   try {
     const res = await fetch(`/api/sync/classroom/${encodeURIComponent(classCode)}`, {
       headers: { 'Cache-Control': 'no-cache' },

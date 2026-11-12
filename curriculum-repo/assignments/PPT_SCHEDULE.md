@@ -1,5 +1,5 @@
 # 🎤 Class Representative (CR) Technical Seminar & PPT Roster
-**Cohort:** BCA-2028 | **Class Representative Broadcast**
+**Cohort:** M2029 | **Class Representative Broadcast**
 
 Official seminar order and group presentation roster for the current semester.
 

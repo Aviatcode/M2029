@@ -58,19 +58,19 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
   });
 
   const [joinCodeInput, setJoinCodeInput] = useState<string>(() => {
-    return urlDetectedCode || classCode || 'BCA-2028';
+    return urlDetectedCode || classCode || 'M2029';
   });
 
   // Create Mode States
-  const [newClassName, setNewClassName] = useState('BCA 2028');
+  const [newClassName, setNewClassName] = useState('Class 2029');
   const [newSemester, setNewSemester] = useState(1);
-  const [generatedCode, setGeneratedCode] = useState('BCA-2028');
+  const [generatedCode, setGeneratedCode] = useState('M2029');
   const [formError, setFormError] = useState('');
 
   // Auto-generate code when class name changes
   useEffect(() => {
     if (mode === 'create') {
-      const prefix = newClassName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() || 'BCA';
+      const prefix = newClassName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 4).toUpperCase() || 'CLASS';
       setGeneratedCode(`${prefix}-${newSemester}01`);
     }
   }, [newClassName, newSemester, mode]);
@@ -81,7 +81,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
     for (let i = 0; i < 4; i++) {
       rand += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    const prefix = newClassName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 3).toUpperCase() || 'BCA';
+    const prefix = newClassName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 3).toUpperCase() || 'CLS';
     setGeneratedCode(`${prefix}-${rand}`);
   };
 
@@ -105,7 +105,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
     if (mode === 'join') {
       const targetCode = joinCodeInput.trim().toUpperCase();
       if (!targetCode) {
-        setFormError('Please enter the Class Code (e.g. BCA-2028).');
+        setFormError('Please enter the Class Code (e.g. M2029).');
         return;
       }
 
@@ -140,7 +140,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       onEnterWorkspace(profile, { workspace, subjects });
     } else {
       // CREATE MODE (1st Person / Admin Setup)
-      const finalCode = (generatedCode || 'BCA-2028').trim().toUpperCase();
+      const finalCode = (generatedCode || 'M2029').trim().toUpperCase();
       const finalName = newClassName.trim() || `${finalCode} Batch`;
       const subjects = getDefaultSubjectsForClass(finalCode, newSemester);
 
@@ -199,10 +199,10 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         <div className="flex items-center gap-2.5">
           <img
             src="./icon-192.png"
-            alt="M2028 Logo"
+            alt="M2029 Logo"
             className="w-7 h-7 rounded-lg shrink-0 object-contain shadow-xs border border-neutral-800"
           />
-          <span className="font-semibold text-sm tracking-tight text-white">M2028</span>
+          <span className="font-semibold text-sm tracking-tight text-white">M2029</span>
         </div>
 
         <div>
@@ -223,7 +223,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         <div className="text-center space-y-2 mb-6 flex flex-col items-center">
           <img
             src="./icon-192.png"
-            alt="M2028 Logo"
+            alt="M2029 Logo"
             className="w-12 h-12 rounded-2xl object-contain shadow-lg mb-1 border border-neutral-800"
           />
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -327,7 +327,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                   type="text"
                   value={joinCodeInput}
                   onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
-                  placeholder="e.g. BCA-2028"
+                  placeholder="e.g. M2029"
                   required
                   className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-sm font-mono uppercase tracking-widest font-bold"
                 />
@@ -346,7 +346,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                       type="text"
                       value={newClassName}
                       onChange={(e) => setNewClassName(e.target.value)}
-                      placeholder="e.g. BCA 2028"
+                      placeholder="e.g. Class 2029"
                       required
                       className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-neutral-100 placeholder:text-neutral-600 focus:outline-none focus:border-neutral-500 transition text-xs"
                     />
@@ -410,7 +410,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       {/* Footer */}
       <footer className="relative z-10 border-t border-neutral-850/60 bg-neutral-950/70 py-3.5 px-4 sm:px-8 text-center text-[11px] text-neutral-500 font-mono flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <img src="./am-logo.png" alt="AM" className="w-3.5 h-3.5 rounded object-contain border border-neutral-800" />
+          <img src="./icon-192.png" alt="M2029 Logo" className="w-3.5 h-3.5 rounded object-contain border border-neutral-800" />
           <span>M2029</span>
         </div>
         <div>

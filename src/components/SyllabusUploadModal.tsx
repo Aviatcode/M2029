@@ -126,39 +126,39 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               type="button"
               onClick={() =>
                 handleSelectPreset(
-                  'BCA Sem 3: Data Structures & Algorithms',
+                  'Data Structures & Algorithms',
                   `Unit 1: Linear Data Structures\n- Stack operations, Prefix to Postfix conversion\n- Circular Queue vs Linear Queue & Wrap Around Math\n- Singly vs Doubly Linked Lists & Traversal\n\nUnit 2: Trees & Graph Algorithms\n- Binary Search Tree (BST) Insertion and Deletion\n- AVL Tree Rotations (LL, RR, LR, RL)\n- Graph Traversal: BFS vs DFS & Shortest Path Dijkstra\n\nUnit 3: Sorting & Searching\n- Quick Sort & Merge Sort Time Complexity\n- Hashing Techniques & Collision Resolution Strategies`
                 )
               }
               className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-cyan-300 transition cursor-pointer"
             >
-              BCA Sem 3 (Data Structures)
+              Data Structures & Algorithms
             </button>
 
             <button
               type="button"
               onClick={() =>
                 handleSelectPreset(
-                  'BCA Sem 3: Operating Systems & Systems Programming',
+                  'Operating Systems & Systems Programming',
                   `Unit 1: Process Management\n- Process States, PCB, Context Switching\n- CPU Scheduling: Round Robin, FCFS, Shortest Job First\n\nUnit 2: Concurrency & Synchronization\n- Critical Section Problem, Semaphores & Mutex Locks\n- Deadlocks: 4 Coffman Conditions, Banker Avoidance Algorithm\n\nUnit 3: Memory Management\n- Paging, Segmentation, TLB Translation\n- Virtual Memory, Demand Paging, LRU Page Replacement Algorithm`
                 )
               }
               className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-indigo-300 transition cursor-pointer"
             >
-              BCA Sem 3 (Operating Systems)
+              Operating Systems
             </button>
 
             <button
               type="button"
               onClick={() =>
                 handleSelectPreset(
-                  'BCA Sem 3: Database Management Systems',
+                  'Database Management Systems',
                   `Unit 1: Relational Model & ER Design\n- Entity Relationship Diagrams, Weak Entities\n- Relational Algebra Operations\n\nUnit 2: Normalization\n- Functional Dependencies\n- 1NF, 2NF, 3NF and Boyce-Codd Normal Form (BCNF)\n\nUnit 3: Transactions & Concurrency\n- ACID Properties\n- Serializability & Two-Phase Locking (2PL) Protocol`
                 )
               }
               className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-neutral-200 transition cursor-pointer"
             >
-              BCA Sem 3 (DBMS)
+              Database Management (DBMS)
             </button>
           </div>
         </div>
@@ -171,7 +171,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
             </label>
             <input
               type="text"
-              placeholder="e.g. Data Structures & Algorithms (BCA-301)"
+              placeholder="e.g. Data Structures & Algorithms (CS-101)"
               value={subjectName}
               onChange={(e) => setSubjectName(e.target.value)}
               className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-cyan-500"

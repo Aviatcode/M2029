@@ -186,7 +186,7 @@ export const DailyUpdateView: React.FC<DailyUpdateViewProps> = ({
                 DAILY UPDATE & 75% ATTENDANCE RADAR
               </span>
               <span className="text-xs text-slate-400 font-mono">
-                {attendanceSummary?.semesterSpan || 'Odd Semester (August – December)'}
+                {attendanceSummary?.semesterSpan || 'Academic Term (August – December)'}
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">

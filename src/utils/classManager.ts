@@ -11,7 +11,7 @@ export const getDefaultSubjectsForClass = (_classId: string, _semester: number =
  * Returns the exact 2-liner invite message for sharing across WhatsApp, Telegram, etc.
  */
 export const getTwoLineInviteMessage = (className: string, classCode: string): string => {
-  const cleanCode = (classCode || 'BCA-2028').trim().toUpperCase();
+  const cleanCode = (classCode || 'M2029').trim().toUpperCase();
   const cleanName = (className || cleanCode).trim();
   const origin = window.location.origin + window.location.pathname;
   const cleanUrl = origin.split('#')[0].split('?')[0];
@@ -28,7 +28,7 @@ export const shareClassInvite = async (
   classCode: string
 ): Promise<{ method: 'native' | 'clipboard'; success: boolean }> => {
   const message = getTwoLineInviteMessage(className, classCode);
-  const cleanCode = (classCode || 'BCA-2028').trim().toUpperCase();
+  const cleanCode = (classCode || 'M2029').trim().toUpperCase();
   const origin = window.location.origin + window.location.pathname;
   const cleanUrl = origin.split('#')[0].split('?')[0];
   const inviteUrl = `${cleanUrl}#class=${encodeURIComponent(cleanCode)}`;

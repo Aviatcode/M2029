@@ -88,8 +88,8 @@ export const PWAInstallPopup: React.FC = () => {
 
           <div className="flex items-start gap-3 pr-5">
             <img
-              src="./am-logo.png"
-              alt="AM Logo"
+              src="./icon-192.png"
+              alt="M2029 Logo"
               className="w-7 h-7 rounded-lg object-contain border border-slate-800 shrink-0 mt-0.5"
             />
 

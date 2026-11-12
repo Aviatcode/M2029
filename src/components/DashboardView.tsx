@@ -169,10 +169,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     { label: 'W1-2', value: 35, isHatched: true },
     { label: 'W3-4', value: 50, isHatched: true },
     { label: 'W5-6', value: 65, isHatched: true },
-    { label: 'Mid-Sem', value: 90, isDualActive: true },
+    { label: 'Mid-Term', value: 90, isDualActive: true },
     { label: 'W9-10', value: 55, isHatched: true },
     { label: 'W11-12', value: 70, isHatched: true },
-    { label: 'End-Sem', value: 85, isHatched: true },
+    { label: 'End-Term', value: 85, isHatched: true },
   ];
 
   const activeChartBars = radarFilter === 'Monthly' ? monthlyChartBars : semesterChartBars;
@@ -195,7 +195,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {studentName || 'Student'}
             </span>
             <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
-              • {classCode || 'BCA-2028'}
+              • {classCode || 'M2029'}
             </span>
           </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">

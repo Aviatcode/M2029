@@ -198,7 +198,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               {studentName || 'Student'}
             </span>
             <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
-              • {classCode || 'BCA-2028'}
+              • {classCode || 'M2029'}
             </span>
           </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">

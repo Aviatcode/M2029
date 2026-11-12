@@ -33,7 +33,7 @@ const COHORT_PARTICIPATION_NUDGES: CohortParticipationNudge[] = [
     callToAction: 'Align With Cohort (1-Tap)',
   },
   {
-    headline: '👑 Trusted Academic Voice of BCA-2028',
+    headline: '👑 Trusted Academic Voice of M2029',
     persuasiveCopy:
       'The curriculum algorithm prioritizes your input to lock in official syllabus progression. Verify what was taught to maintain your Verified Student badge.',
     callToAction: 'Submit Official Verification',
@@ -66,7 +66,7 @@ export class AttendanceService {
   }
 
   /**
-   * Determine whether current date falls into Odd Semester (Aug–Dec) or Even Semester (Jan–Jun)
+   * Determine whether current date falls into Odd Term (Aug–Dec) or Even Term (Jan–Jun)
    */
   public getSemesterTypeForDate(date: Date = new Date()): {
     semesterType: 'odd' | 'even';
@@ -84,14 +84,14 @@ export class AttendanceService {
     const currentMonthName = monthNames[month - 1];
     const currentMonthKey = `${year}-${String(month).padStart(2, '0')}`;
 
-    // Odd Semester: August (8) to December (12)
-    // Even Semester: January (1) to June (6)
-    // July is pre-semester or orientation
+    // Odd Term: August (8) to December (12)
+    // Even Term: January (1) to June (6)
+    // July is pre-term or orientation
     const isOdd = month >= 8 || month === 7;
     const semesterType = isOdd ? 'odd' : 'even';
     const semesterSpan = isOdd
-      ? 'Odd Semester (August – December)'
-      : 'Even Semester (January – June)';
+      ? 'Odd Term (August – December)'
+      : 'Even Term (January – June)';
 
     return {
       semesterType,
@@ -472,7 +472,7 @@ export class AttendanceService {
     const defaultNotices: UniversityCalendarNotice[] = [
       {
         id: `notice-${Date.now()}-1`,
-        title: 'Odd Semester End-Term Examination Schedule Released',
+        title: 'Academic Term Examination Schedule Released',
         date: '2026-11-20',
         type: 'exam',
         summary: 'Theory examinations commence from December 1st, 2026. Practical exams scheduled for Nov 24–28.',

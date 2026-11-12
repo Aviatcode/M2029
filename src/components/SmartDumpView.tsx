@@ -220,7 +220,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
 
     return {
       id: `mat-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      classId: 'class-bca-2028',
+      classId: 'class-m2029',
       subjectId,
       subjectName,
       unitNumber,
@@ -246,7 +246,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
             term: cleanTitle,
             acronym: cleanTitle.split(' ').map((w) => w[0]).join('').slice(0, 4).toUpperCase() || 'CORE',
             mnemonic: 'Concepts Organized for Rapid Examination',
-            explanation: `High-yield memory anchor for ${cleanTitle} during end-semester exams.`,
+            explanation: `High-yield memory anchor for ${cleanTitle} during university exams.`,
           },
         ],
         exam10Marker: {
@@ -341,7 +341,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          classId: 'class-bca-2028',
+          classId: 'class-m2029',
           file: fileData,
           uploaderName: currentRole === 'teacher' ? 'Faculty Professor' : 'Classmate',
           uploaderRole: currentRole,
@@ -422,7 +422,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
 
         try {
           const res = await uploadLargeFileToRag(file, {
-            classId: 'class-bca-2028',
+            classId: 'class-m2029',
             title: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
             uploaderName: currentRole === 'teacher' ? 'Faculty Professor' : currentRole === 'cr' ? 'Class Representative' : 'Classmate',
             uploaderRole: currentRole,

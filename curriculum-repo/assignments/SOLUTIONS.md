@@ -1,5 +1,5 @@
 # 💡 Model Academic Solutions & Full-Credit Submission Templates
-Comprehensive, university-grade reference solutions for BCA-2028 coursework assignments.
+Comprehensive, university-grade reference solutions for M2029 coursework assignments.
 
 ---
 

@@ -43,10 +43,10 @@ const REAL_STUDENT_QUERIES = [
 ];
 
 const GITHUB_TEST_URLS = [
-  "https://github.com/Aviatcode/M2029/blob/main/README.md",
-  "https://raw.githubusercontent.com/Aviatcode/M2029/main/curriculum-repo/TIMETABLE.md",
-  "https://raw.githubusercontent.com/Aviatcode/M2029/main/curriculum-repo/SYLLABUS.md",
-  "https://github.com/Aviatcode/M2029/releases/download/v1.0.0/textbook.pdf",
+  "https://github.com/m2029/M2029/blob/main/README.md",
+  "https://raw.githubusercontent.com/m2029/M2029/main/curriculum-repo/TIMETABLE.md",
+  "https://raw.githubusercontent.com/m2029/M2029/main/curriculum-repo/SYLLABUS.md",
+  "https://github.com/m2029/M2029/releases/download/v1.0.0/textbook.pdf",
   "https://github.com/torvalds/linux/blob/master/Makefile",
 ];
 
@@ -54,12 +54,12 @@ const GITHUB_TEST_URLS = [
 async function runMilestone1Simulation(i: number): Promise<SimulationResult> {
   const start = performance.now();
   try {
-    const res = await fetch(`${BASE_URL}/api/class/BCA-2028`);
+    const res = await fetch(`${BASE_URL}/api/class/M2029`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const durationMs = performance.now() - start;
 
-    const hasWorkspace = !!data.workspace && data.workspace.code === 'BCA-2028';
+    const hasWorkspace = !!data.workspace && data.workspace.code === 'M2029';
     const hasTimetable = !!data.timetable;
 
     return {
@@ -85,7 +85,7 @@ async function runMilestone2Simulation(i: number): Promise<SimulationResult> {
   const start = performance.now();
   try {
     const samplePayload = {
-      classId: 'class-bca-2028',
+      classId: 'class-m2029',
       file: {
         fileName: `Unit_${(i % 4) + 1}_Operating_Systems.txt`,
         rawTextContent: `Module ${(i % 4) + 1}: Process Synchronization, Critical Section Problem, Peterson's Solution, Semaphores, Mutex Locks, Deadlock Prevention and Avoidance via Banker's algorithm. Four Coffman conditions for deadlocks: mutual exclusion, hold and wait, no preemption, circular wait.`,

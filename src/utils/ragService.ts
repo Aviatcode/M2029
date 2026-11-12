@@ -291,13 +291,13 @@ export function saveGitHubToken(token: string) {
 }
 
 export function getSavedGitHubRepo(): string {
-  if (typeof window === 'undefined') return 'Aviatcode/M2029';
-  return localStorage.getItem('syllabus_github_repo') || 'Aviatcode/M2029';
+  if (typeof window === 'undefined') return 'm2029/M2029';
+  return localStorage.getItem('syllabus_github_repo') || 'm2029/M2029';
 }
 
 export function saveGitHubRepo(repo: string) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('syllabus_github_repo', repo.trim() || 'Aviatcode/M2029');
+  localStorage.setItem('syllabus_github_repo', repo.trim() || 'm2029/M2029');
 }
 
 /**
@@ -405,7 +405,7 @@ export async function fetchGitHubConfig(): Promise<{
   defaultTag: string;
 }> {
   const res = await fetch('/api/rag/github/config');
-  if (!res.ok) return { configured: false, defaultRepo: 'Aviatcode/M2029', defaultTag: 'academic-vault-v1' };
+  if (!res.ok) return { configured: false, defaultRepo: 'm2029/M2029', defaultTag: 'academic-vault-v1' };
   const data = await res.json();
   return data.config;
 }

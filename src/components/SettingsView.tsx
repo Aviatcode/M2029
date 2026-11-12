@@ -400,7 +400,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {currentUser?.name || 'Student'}
             </span>
             <span className="text-[10px] text-slate-500 font-mono">
-              • {classCode || 'BCA-2028'}
+              • {classCode || 'M2029'}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -519,11 +519,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between p-3 rounded-2xl bg-[#141926] border border-slate-800/80 text-xs">
               <span className="text-slate-400">Class Code</span>
-              <span className="font-mono font-bold text-cyan-400">{classCode || 'BCA-2028'}</span>
+              <span className="font-mono font-bold text-cyan-400">{classCode || 'M2029'}</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-2xl bg-[#141926] border border-slate-800/80 text-xs">
               <span className="text-slate-400">Current Semester</span>
-              <span className="font-mono font-bold text-white">Sem {semesterNumber}</span>
+              <span className="font-mono font-bold text-white">Semester {semesterNumber}</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-2xl bg-[#141926] border border-slate-800/80 text-xs">
               <span className="text-slate-400">Enrolled Subjects</span>
@@ -638,8 +638,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* Sidebar Dock & Auto-Collapse Settings */}
           <div className="p-3.5 rounded-2xl bg-[#141926] border border-slate-800 space-y-3 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-slate-200 font-semibold text-xs block">Navigation Dock Position</span>
-              <span className="text-[10px] font-mono text-cyan-400 capitalize px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800">
+              <div>
+                <span className="text-slate-200 font-semibold text-xs block">Navigation Dock Position</span>
+                <span className="text-[11px] text-slate-400 block mt-0.5">
+                  Customize the desktop bar position. On mobile phones, navigation is tucked into the minimal edge arrow.
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-cyan-400 capitalize px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 shrink-0">
                 {sidebarPosition}
               </span>
             </div>

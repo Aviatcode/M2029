@@ -33,8 +33,8 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   initialWorkspace,
   initialSubjects,
 }) => {
-  const [className, setClassName] = useState<string>('BCA 2028');
-  const [classCode, setClassCode] = useState<string>('BCA-2028');
+  const [className, setClassName] = useState<string>('Class 2029');
+  const [classCode, setClassCode] = useState<string>('M2029');
   const [semester, setSemester] = useState<number>(1);
   const [university, setUniversity] = useState<string>('Affiliated University');
   const [collegeName, setCollegeName] = useState<string>('');
@@ -55,8 +55,8 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       if (initialWorkspace) {
-        setClassName(initialWorkspace.name || 'BCA 2028');
-        setClassCode(initialWorkspace.code || 'BCA-2028');
+        setClassName(initialWorkspace.name || 'Class 2029');
+        setClassCode(initialWorkspace.code || 'M2029');
         setSemester(initialWorkspace.semester || 1);
         setUniversity(initialWorkspace.university || 'Affiliated University');
         setCollegeName(initialWorkspace.collegeName || '');
@@ -167,7 +167,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
     e.preventDefault();
     setIsSubmitting(true);
 
-    const finalCode = (classCode.trim() || 'BCA-2028').toUpperCase();
+    const finalCode = (classCode.trim() || 'M2029').toUpperCase();
     const finalName = className.trim() || `${finalCode} Semester ${semester}`;
     // No minimum or maximum subjects mandated: preserves 0 subjects, 1 subject, or any number of subjects
     const subjectNames = subjects;
@@ -303,7 +303,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 type="text"
                 value={className}
                 onChange={(e) => setClassName(e.target.value)}
-                placeholder="e.g. BCA 2028"
+                placeholder="e.g. Class 2029"
                 required
                 className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-slate-100 outline-none transition"
               />
@@ -346,7 +346,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
               type="text"
               value={classCode}
               onChange={(e) => setClassCode(e.target.value.toUpperCase())}
-              placeholder="e.g. BCA-2028"
+              placeholder="e.g. M2029"
               required
               className="w-full bg-slate-950 border border-slate-700 focus:border-slate-500 rounded-xl px-3 py-2 text-xs text-white font-mono uppercase tracking-wider outline-none transition font-semibold"
             />
@@ -360,7 +360,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                 <span>University & College Monitoring Links</span>
               </label>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300">
-                {semesterType === 'odd' ? 'Odd Sem (Aug–Dec)' : 'Even Sem (Jan–Jun)'}
+                {semesterType === 'odd' ? 'Odd Term (Aug–Dec)' : 'Even Term (Jan–Jun)'}
               </span>
             </div>
 
@@ -501,7 +501,7 @@ export const SemesterSetupModal: React.FC<SemesterSetupModalProps> = ({
                     className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition cursor-pointer inline-flex items-center gap-1"
                   >
                     <CheckCircle2 className="w-3 h-3" />
-                    <span>Load 5 Recommended BCA Sem 1 Subjects</span>
+                    <span>Load 5 Recommended Core Subjects</span>
                   </button>
                 </div>
               ) : (

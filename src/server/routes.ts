@@ -401,13 +401,13 @@ class MemoryStore {
   }
 
   clearAll() {
-    this.classes = { 'class-bca-2028': { ...SEED_CLASS } };
-    this.subjects = { 'class-bca-2028': [...SEED_SUBJECTS] };
+    this.classes = { 'class-m2029': { ...SEED_CLASS } };
+    this.subjects = { 'class-m2029': [...SEED_SUBJECTS] };
     this.units = { ...SEED_UNITS };
-    this.timetable = { 'class-bca-2028': [...SEED_TIMETABLE] };
-    this.materials = { 'class-bca-2028': [] };
+    this.timetable = { 'class-m2029': [...SEED_TIMETABLE] };
+    this.materials = { 'class-m2029': [] };
     this.pyqs = {};
-    this.exams = { 'class-bca-2028': [...SEED_EXAMS] };
+    this.exams = { 'class-m2029': [...SEED_EXAMS] };
     this.announcements = [...SEED_ANNOUNCEMENTS];
     this.notifications = [...SEED_NOTIFICATIONS];
     this.assignments = [...SEED_ASSIGNMENTS];
@@ -518,8 +518,8 @@ apiRouter.post('/neon/init', async (req: Request, res: Response) => {
 
 // 1. Get Class Workspace & Overview
 apiRouter.get('/class/:code', (req: Request, res: Response) => {
-  const code = (req.params.code || 'BCA-2028').toUpperCase().trim();
-  let cls = db.classes[code] || db.classes['BCA-2028'];
+  const code = (req.params.code || 'M2029').toUpperCase().trim();
+  let cls = db.classes[code] || db.classes['M2029'];
   if (!cls) {
     cls = {
       id: `class-${code.toLowerCase()}`,
@@ -658,7 +658,7 @@ apiRouter.post('/class/create', (req: Request, res: Response) => {
 
 // 2.1 Monthly Attendance Compilation (75% Rule Engine)
 apiRouter.get('/attendance/monthly/:code', (req: Request, res: Response) => {
-  const code = (req.params.code || 'BCA-2028').toUpperCase();
+  const code = (req.params.code || 'M2029').toUpperCase();
   const studentId = (req.query.studentId as string) || 'user-student-current';
   const studentName = (req.query.studentName as string) || 'Rohit Kumar';
 
@@ -668,7 +668,7 @@ apiRouter.get('/attendance/monthly/:code', (req: Request, res: Response) => {
 
 // 2.2 Get Today's Daily Lecture Pulses (With Dynamic Participation Motivators)
 apiRouter.get('/daily-pulse/:code', (req: Request, res: Response) => {
-  const code = (req.params.code || 'BCA-2028').toUpperCase();
+  const code = (req.params.code || 'M2029').toUpperCase();
   const cls = db.classes[code] || SEED_CLASS;
   const rawTt = db.timetable[cls.id];
   const timetable = Array.isArray(rawTt) && rawTt.length > 0 ? rawTt : SEED_TIMETABLE;
@@ -697,7 +697,7 @@ apiRouter.post('/daily-pulse/vote', (req: Request, res: Response) => {
       reportedTopic,
     } = req.body;
 
-    const cleanCode = (classCode || 'BCA-2028').toUpperCase();
+    const cleanCode = (classCode || 'M2029').toUpperCase();
     const result = attendanceService.registerPulseVote({
       classCode: cleanCode,
       pulseId: pulseId || `pulse-${cleanCode}-default`,
@@ -724,7 +724,7 @@ apiRouter.post('/daily-pulse/vote', (req: Request, res: Response) => {
 apiRouter.post('/university/sync-links', async (req: Request, res: Response) => {
   try {
     const { classCode, universityWebsiteUrl, academicCalendarUrl, circularsNoticeUrl } = req.body;
-    const cleanCode = (classCode || 'BCA-2028').toUpperCase();
+    const cleanCode = (classCode || 'M2029').toUpperCase();
     const cls = db.classes[cleanCode];
 
     if (cls) {
@@ -756,7 +756,7 @@ apiRouter.post('/university/sync-links', async (req: Request, res: Response) => 
 
 // 2.5 Get University Notices & Gazetted Holidays
 apiRouter.get('/university/notices/:code', (req: Request, res: Response) => {
-  const code = (req.params.code || 'BCA-2028').toUpperCase();
+  const code = (req.params.code || 'M2029').toUpperCase();
   const notices = attendanceService.getUniversityNotices(code);
   res.json({ notices });
 });
@@ -1010,7 +1010,7 @@ function parseTutorSections(text: string): Record<string, string> {
  */
 function broadcastPerfectionNotification(topicTitle: string, subjectName: string) {
   try {
-    const classId = 'class-bca-2028';
+    const classId = 'class-m2029';
     const newAnnouncement: ClassAnnouncement = {
       id: `ann-perfect-${Date.now()}`,
       classId,
@@ -1943,7 +1943,7 @@ Evaluate the answer. Return STRICT JSON only:
 // 7. Material Upload & Processing Pipeline (PDF, DOCX, JPG, PPT, Notes)
 apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
   const {
-    classId = 'class-bca-2028',
+    classId = 'class-m2029',
     subjectId,
     subjectName,
     title,
@@ -1956,7 +1956,7 @@ apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
     uploaderName,
   } = req.body;
 
-  const targetClassId = classId || 'class-bca-2028';
+  const targetClassId = classId || 'class-m2029';
   if (!db.materials[targetClassId]) {
     db.materials[targetClassId] = [];
   }
@@ -2065,7 +2065,7 @@ Provide a clean, high-yield 3-sentence summary of the core concepts for universi
 // 8.0.1 Timetable Auto-Parser (AI + Heuristic Fallback)
 apiRouter.post('/timetable/parse', async (req: Request, res: Response) => {
   try {
-    const { rawText = '', fileName = '', classCode = 'BCA-2028' } = req.body;
+    const { rawText = '', fileName = '', classCode = 'M2029' } = req.body;
     const provider = AIProviderFactory.getProvider(extractAiConfig(req));
 
     const defaultColors = [
@@ -2097,7 +2097,7 @@ Return ONLY a valid JSON object with this exact structure:
   "subjects": [
     {
       "name": "Full Subject Title (e.g. Data Structures and Algorithms)",
-      "code": "Subject Code (e.g. CS-201 or BCA-101)",
+      "code": "Subject Code (e.g. CS-201 or M29-101)",
       "teacherName": "Teacher Name or Faculty In-Charge",
       "credits": 4
     }
@@ -2222,7 +2222,7 @@ Return ONLY a valid JSON object with this exact structure:
 // 8.0.2 Syllabus Smart-Parser (Extracts Subjects, Units & Topics)
 apiRouter.post('/syllabus/parse-smart', async (req: Request, res: Response) => {
   try {
-    const { rawText = '', classCode = 'BCA-2028', subjectName = '' } = req.body;
+    const { rawText = '', classCode = 'M2029', subjectName = '' } = req.body;
     const provider = AIProviderFactory.getProvider(extractAiConfig(req));
 
     const prompt = `You are an expert University Syllabus & Curriculum Parser.
@@ -2317,7 +2317,7 @@ Return ONLY a valid JSON object matching this schema:
 // 8.1 Study Material Drop & Auto-Classification Pipeline (Classroom Cache)
 apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
   const {
-    classId = 'class-bca-2028',
+    classId = 'class-m2029',
     file,
     uploaderName,
     uploaderRole,
@@ -2327,7 +2327,7 @@ apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'No file or content provided for ingestion.' });
   }
 
-  const targetClassId = classId || 'class-bca-2028';
+  const targetClassId = classId || 'class-m2029';
   if (!db.materials[targetClassId]) {
     db.materials[targetClassId] = [];
   }
@@ -2816,28 +2816,28 @@ Return ONLY a valid JSON object matching this structure:
 
 // 8. Get Materials
 apiRouter.get('/materials/:classId', (req: Request, res: Response) => {
-  const classId = req.params.classId || 'class-bca-2028';
+  const classId = req.params.classId || 'class-m2029';
   const list = db.materials[classId] || [];
   res.json(list);
 });
 
 // 8.5 Unified Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
 apiRouter.get('/sync/classroom/:classCode', (req: Request, res: Response) => {
-  const code = (req.params.classCode || 'BCA-2028').toUpperCase();
+  const code = (req.params.classCode || 'M2029').toUpperCase();
   const foundClass = db.classes[code] || Object.values(db.classes).find((c) => c.code?.toUpperCase() === code);
-  const classId = foundClass?.id || 'class-bca-2028';
+  const classId = foundClass?.id || 'class-m2029';
 
   const materials = (db.materials[classId] && db.materials[classId].length > 0)
     ? db.materials[classId]
-    : (db.materials['class-bca-2028'] || Object.values(db.materials).flat() || []);
+    : (db.materials['class-m2029'] || Object.values(db.materials).flat() || []);
 
   const exams = (db.exams[classId] && db.exams[classId].length > 0)
     ? db.exams[classId]
-    : (db.exams['class-bca-2028'] || Object.values(db.exams).flat() || []);
+    : (db.exams['class-m2029'] || Object.values(db.exams).flat() || []);
 
   const timetable = (db.timetable[classId] && db.timetable[classId].length > 0)
     ? db.timetable[classId]
-    : (db.timetable['class-bca-2028'] || Object.values(db.timetable).flat() || []);
+    : (db.timetable['class-m2029'] || Object.values(db.timetable).flat() || []);
 
   res.json({
     classCode: code,
@@ -2902,7 +2902,7 @@ apiRouter.get('/pyqs/:subjectId', (req: Request, res: Response) => {
 
 // 10. Exams & Revision Plans
 apiRouter.get('/exams/:classId', (req: Request, res: Response) => {
-  const classId = req.params.classId || 'class-bca-2028';
+  const classId = req.params.classId || 'class-m2029';
   const exams = db.exams[classId] || SEED_EXAMS;
 
   // Calculate days remaining dynamically
@@ -2925,7 +2925,7 @@ apiRouter.get('/exams/:classId', (req: Request, res: Response) => {
 // 11. Toggle Revision Plan Item
 apiRouter.post('/exams/toggle-plan', (req: Request, res: Response) => {
   const { examId, dayNumber } = req.body;
-  const exams = db.exams['class-bca-2028'] || [];
+  const exams = db.exams['class-m2029'] || [];
   const found = exams.find((e) => e.id === examId);
   if (found) {
     const day = found.revisionDaysPlan.find((d) => d.dayNumber === dayNumber);
@@ -2957,7 +2957,7 @@ apiRouter.post('/assignments/add', (req: Request, res: Response) => {
 
   const newAssignment: AcademicAssignment = {
     id: `assign-${Date.now()}`,
-    classId: 'class-bca-2028',
+    classId: 'class-m2029',
     subjectId: subjectId || 'sub-dbms',
     subjectName: subjectName || 'Database Management Systems',
     type: type || 'assignment',
@@ -3011,7 +3011,7 @@ apiRouter.post('/assignments/cr-sync', (req: Request, res: Response) => {
     } else {
       db.assignments.unshift({
         id: it.id || `cr-work-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-        classId: 'class-bca-2028',
+        classId: 'class-m2029',
         subjectId: it.subjectId || 'sub-dbms',
         subjectName: it.subjectName || 'Database Management Systems',
         title: it.title,
@@ -3039,7 +3039,7 @@ apiRouter.post('/assignments/cr-sync', (req: Request, res: Response) => {
   // Broadcast classwide announcement
   db.announcements.unshift({
     id: `ann-${Date.now()}`,
-    classId: 'class-bca-2028',
+    classId: 'class-m2029',
     authorName: 'Class Representative (CR)',
     authorRole: 'student',
     title: '📢 CR Notice: New Assignment & PPT Schedule Synced',
@@ -3259,7 +3259,7 @@ apiRouter.get('/search', (req: Request, res: Response) => {
   });
 
   // Search in materials
-  (db.materials['class-bca-2028'] || []).forEach((m) => {
+  (db.materials['class-m2029'] || []).forEach((m) => {
     if (m.title.toLowerCase().includes(q) || m.resources.summary.toLowerCase().includes(q)) {
       results.push({
         type: 'Notes',
@@ -3307,7 +3307,7 @@ apiRouter.get('/search', (req: Request, res: Response) => {
   });
 
   // Search in timetable classes
-  (db.timetable['class-bca-2028'] || []).forEach((cls) => {
+  (db.timetable['class-m2029'] || []).forEach((cls) => {
     if (cls.subjectName?.toLowerCase().includes(q) || cls.professor?.toLowerCase().includes(q) || cls.room?.toLowerCase().includes(q)) {
       results.push({
         type: 'Class',
@@ -3350,7 +3350,7 @@ Extract and return STRICT JSON with this exact schema:
   "teacherEmail": "Official academic email (e.g. r.sharma@cs.university.edu)",
   "teacherOffice": "Office/Cabin (e.g. Room 402, Block B)",
   "courseName": "Full Course Title (e.g. Database Management Systems)",
-  "courseCode": "Subject Code (e.g. BCA-302)",
+  "courseCode": "Subject Code (e.g. CS-302)",
   "university": "University or Institute Name",
   "department": "Department (e.g. Department of Computer Science)",
   "semester": "Semester (e.g. Semester III)",
@@ -3385,7 +3385,7 @@ Extract and return STRICT JSON with this exact schema:
       teacherEmail: info?.teacherEmail || 'faculty@cs.university.edu',
       teacherOffice: info?.teacherOffice || 'Room 402, Academic Wing',
       courseName: info?.courseName || contextSubject?.name || 'Database Management Systems',
-      courseCode: info?.courseCode || contextSubject?.code || 'BCA-302',
+      courseCode: info?.courseCode || contextSubject?.code || 'CS-302',
       university: info?.university || 'University School of Information Technology',
       department: info?.department || 'Department of Computer Applications',
       semester: info?.semester || 'Semester III',

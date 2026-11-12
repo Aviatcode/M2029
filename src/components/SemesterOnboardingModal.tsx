@@ -175,7 +175,7 @@ export const SemesterOnboardingModal: React.FC<SemesterOnboardingModalProps> = (
 
   const loadSamplePreset = (presetType: 'bca' | 'cse') => {
     if (presetType === 'bca') {
-      const bcaText = `BCA Semester 3 Weekly Class Timetable
+      const bcaText = `Weekly Class Timetable
 Monday:
 09:00 AM - 10:00 AM: Data Structures & Algorithms (CS-301) - Prof. Sharma - Room 302
 10:00 AM - 11:00 AM: Operating Systems (CS-302) - Prof. Gupta - Room 304
@@ -203,7 +203,7 @@ Friday:
 10:00 AM - 11:00 AM: Database Management Systems (CS-303) - Dr. Verma - Room 301
 11:15 AM - 12:15 PM: Discrete Mathematical Structures (CS-305) - Dr. Mathur - Room 302`;
 
-      setPastedTitle('BCA Sem 3 Timetable');
+      setPastedTitle('Class Timetable');
       setPastedText(bcaText);
       handleProcessDocument(bcaText);
     } else {
@@ -526,7 +526,7 @@ Friday:
                         type="text"
                         value={pastedTitle}
                         onChange={(e) => setPastedTitle(e.target.value)}
-                        placeholder="e.g. BCA Semester 3 Timetable"
+                        placeholder="e.g. Weekly Class Timetable"
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
                       />
                     </div>
@@ -573,7 +573,7 @@ Friday:
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-xs text-white group-hover:text-cyan-300">
-                            BCA Semester 3 Schedule
+                            Core Weekly Schedule
                           </span>
                           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800 text-cyan-300">
                             5 Subjects

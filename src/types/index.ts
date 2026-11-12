@@ -11,8 +11,8 @@ export interface User {
 
 export interface ClassWorkspace {
   id: string;
-  code: string; // e.g. "BCA-2028"
-  name: string; // e.g. "BCA Batch of 2028"
+  code: string; // e.g. "M2029"
+  name: string; // e.g. "Batch M2029"
   university: string; // e.g. "Delhi University / IPU"
   collegeName?: string; // e.g. "St. Xavier's / Bharati Vidyapeeth"
   department?: string; // e.g. "Department of Computer Applications & IT"
@@ -406,7 +406,7 @@ export interface MonthlyAttendanceSummary {
   }[];
   overallSemesterPercentage: number;
   semesterType: 'odd' | 'even';
-  semesterSpan: string; // e.g. "Odd Semester (August – December)"
+  semesterSpan: string; // e.g. "Academic Term (August – December)"
 }
 
 export interface CohortParticipationNudge {

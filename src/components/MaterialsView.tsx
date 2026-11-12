@@ -187,7 +187,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     if (selectedRawFile) {
       try {
         const ragRes = await uploadLargeFileToRag(selectedRawFile, {
-          classId: 'class-bca-2028',
+          classId: 'class-m2029',
           subjectId: uploadSubjectId,
           subjectName: resolvedSubName,
           title: resolvedTitle,
@@ -216,7 +216,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            classId: 'class-bca-2028',
+            classId: 'class-m2029',
             subjectId: uploadSubjectId,
             subjectName: resolvedSubName,
             title: resolvedTitle,
@@ -244,7 +244,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
     if (!uploadedMat) {
       uploadedMat = {
         id: `mat-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-        classId: 'class-bca-2028',
+        classId: 'class-m2029',
         subjectId: uploadSubjectId,
         subjectName: resolvedSubName,
         unitNumber: 1,
@@ -405,7 +405,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               {studentName || 'Student'}
             </span>
             <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
-              • {classCode || 'BCA-2028'}
+              • {classCode || 'M2029'}
             </span>
           </button>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">

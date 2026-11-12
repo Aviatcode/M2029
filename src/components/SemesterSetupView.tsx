@@ -40,8 +40,8 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
   const [copiedCode, setCopiedCode] = useState(false);
   const [toastText, setToastText] = useState('');
 
-  const displayCode = (workspace.code || 'BCA-2028').trim().toUpperCase();
-  const className = workspace.name || 'BCA 2028';
+  const displayCode = (workspace.code || 'M2029').trim().toUpperCase();
+  const className = workspace.name || 'Class M2029';
 
   const handleCopyCode = async () => {
     try {
@@ -171,7 +171,7 @@ export const SemesterSetupView: React.FC<SemesterSetupViewProps> = ({
                 className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5 shadow-sm transition"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Load BCA Semester 1 Subjects</span>
+                <span>Load Recommended Core Subjects</span>
               </button>
               <button
                 type="button"

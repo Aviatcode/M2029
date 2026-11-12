@@ -1,7 +1,7 @@
 # 🎓 M2029 — Academic Operating System & Autonomous AI Companion
 
-[![Live Web Application](https://img.shields.io/badge/Live_App-M2029_PWA-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://aviatcode.github.io/M2029/)
-[![GitHub Repo](https://img.shields.io/badge/GitHub-Aviatcode%2FM2029-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Aviatcode/M2029)
+[![Live Web Application](https://img.shields.io/badge/Live_App-M2029_PWA-6366f1?style=for-the-badge&logo=googlechrome&logoColor=white)](https://m2029.github.io/M2029/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-m2029%2FM2029-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/m2029/M2029)
 [![React 19](https://img.shields.io/badge/React-19.0-61dafb?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite 8](https://img.shields.io/badge/Vite-8.x-646cff?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -9,8 +9,8 @@
 [![Neon Database](https://img.shields.io/badge/Database-Neon_Serverless_PostgreSQL-00e599?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b?style=flat-square)](LICENSE)
 
-> 🌐 **Live Application:** [https://aviatcode.github.io/M2029/](https://aviatcode.github.io/M2029/)  
-> 📦 **GitHub Repository:** [https://github.com/Aviatcode/M2029](https://github.com/Aviatcode/M2029)
+> 🌐 **Live Application:** [https://m2029.github.io/M2029/](https://m2029.github.io/M2029/)  
+> 📦 **GitHub Repository:** [https://github.com/m2029/M2029](https://github.com/m2029/M2029)
 
 **M2029** is a high-performance academic operating system and intelligent AI study companion built specifically for computer engineering and computer science university students. It bridges the gap between chaotic college curricula and top exam performance by delivering one-by-one syllabus topic mastery, intuitive Hinglish mental models, university 10-marker answer sheet schemes, interactive Gantt charts, and persistent zero-token classroom knowledge recall.
 
@@ -120,7 +120,7 @@ M2029/
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/Aviatcode/M2029.git
+git clone https://github.com/m2029/M2029.git
 cd M2029
 ```
 
@@ -194,7 +194,7 @@ The compiled assets will be created in `dist/`.
 ## 🤝 Contributing
 
 Contributions to improve M2029 for college students are welcome!
-1. Fork the Project (`https://github.com/Aviatcode/M2029/fork`)
+1. Fork the Project (`https://github.com/m2029/M2029/fork`)
 2. Create your Feature Branch (`git checkout -b feat/amazing-feature`)
 3. Commit your Changes (`git commit -m "feat: add amazing feature"`)
 4. Push to the Branch (`git push origin feat/amazing-feature`)

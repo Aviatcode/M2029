@@ -33,7 +33,7 @@ export const ShareInviteModal: React.FC<ShareInviteModalProps> = ({
 
   if (!isOpen) return null;
 
-  const cleanCode = (classCode || 'BCA-2028').trim().toUpperCase();
+  const cleanCode = (classCode || 'M2029').trim().toUpperCase();
   const inviteMessage = getTwoLineInviteMessage(className, cleanCode);
 
   const handleCopyCode = async () => {

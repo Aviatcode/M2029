@@ -222,7 +222,7 @@ export class RagKnowledgeEngine {
     materialId?: string;
   }): Promise<RagDocument> {
     const docId = `doc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-    const classId = params.classId || 'class-bca-2028';
+    const classId = params.classId || 'class-m2029';
     const cleanTitle = params.title || params.originalName.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
 
     const formatBytes = (bytes: number): string => {

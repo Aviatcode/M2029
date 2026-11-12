@@ -145,26 +145,23 @@ export default function App() {
       // fallback
     }
 
-    // Purge previous hardcoded demo state (Aman Kumar, BCA-2028) so new users get a clean slate
+    // Purge previous hardcoded demo state so new users get a clean slate
     try {
-      const isPurged = localStorage.getItem('syllabus_demo_purged_v2');
+      const isPurged = localStorage.getItem('m2029_reset_v3');
       if (!isPurged) {
-        const savedUser = localStorage.getItem('syllabus_user_profile');
-        if (savedUser && (savedUser.includes('Aman Kumar') || savedUser.includes('user-cr-1'))) {
-          localStorage.removeItem('syllabus_user_profile');
-          localStorage.removeItem('syllabus_workspace');
-          localStorage.removeItem('syllabus_subjects');
-          localStorage.removeItem('syllabus_units');
-          localStorage.removeItem('syllabus_timetable');
-          localStorage.removeItem('syllabus_materials');
-          localStorage.removeItem('syllabus_pyqs');
-          localStorage.removeItem('syllabus_exams');
-          localStorage.removeItem('syllabus_announcements');
-          localStorage.removeItem('syllabus_assignments');
-          localStorage.removeItem('syllabus_notifications');
-          localStorage.removeItem('syllabus_semester_setup_done');
-        }
-        localStorage.setItem('syllabus_demo_purged_v2', 'true');
+        localStorage.removeItem('syllabus_user_profile');
+        localStorage.removeItem('syllabus_workspace');
+        localStorage.removeItem('syllabus_subjects');
+        localStorage.removeItem('syllabus_units');
+        localStorage.removeItem('syllabus_timetable');
+        localStorage.removeItem('syllabus_materials');
+        localStorage.removeItem('syllabus_pyqs');
+        localStorage.removeItem('syllabus_exams');
+        localStorage.removeItem('syllabus_announcements');
+        localStorage.removeItem('syllabus_assignments');
+        localStorage.removeItem('syllabus_notifications');
+        localStorage.removeItem('syllabus_semester_setup_done');
+        localStorage.setItem('m2029_reset_v3', 'true');
       }
     } catch {
       // ignore
@@ -205,7 +202,7 @@ export default function App() {
     } catch {
       // ignore
     }
-    return 'BCA-2028';
+    return 'M2029';
   });
   const [bgConfig, setBgConfig] = useState<BackgroundConfig>(getStoredBackgroundConfig);
 
@@ -282,7 +279,7 @@ export default function App() {
           fileDataUrl: extracted.dataUrl,
           fileName: file.name,
           fileType: extracted.fileExt,
-          classCode: classCode || 'BCA-2028',
+          classCode: classCode || 'M2029',
         });
 
         if (parsed.subjects.length > 0) {
@@ -486,9 +483,9 @@ export default function App() {
       }
     } catch {}
     return {
-      id: 'class-bca-2028',
-      code: 'BCA-2028',
-      name: 'BCA 2028 Batch',
+      id: 'class-m2029',
+      code: 'M2029',
+      name: 'M2029 Workspace',
       university: 'Affiliated University',
       semester: 1,
       academicYear: '2026-2027',
@@ -510,20 +507,6 @@ export default function App() {
       if (saved !== null) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // If cached subjects are legacy built-in defaults (e.g. "Programming Principles & C Language"), purge them!
-          const isLegacyBuiltIn = parsed.some(
-            (s: any) =>
-              s.name === 'Programming Principles & C Language' ||
-              s.name === 'Digital Computer Fundamentals' ||
-              s.name === 'Communication & Technical English' ||
-              s.name === 'Office Automation & Web Basics'
-          );
-          if (isLegacyBuiltIn) {
-            localStorage.removeItem('syllabus_subjects');
-            localStorage.removeItem('syllabus_units');
-            localStorage.removeItem('syllabus_timetable');
-            return SEED_SUBJECTS;
-          }
           return parsed;
         }
       }
@@ -534,8 +517,8 @@ export default function App() {
   // Google Classroom Style Share Modal
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shareModalData, setShareModalData] = useState<{ code: string; name: string }>({
-    code: 'BCA-2028',
-    name: 'BCA 2028',
+    code: 'M2029',
+    name: 'M2029',
   });
 
   // Onboarding Upload Modal: Only open if explicitly triggered or no subjects exist
@@ -553,14 +536,14 @@ export default function App() {
   // One-time video game-style tutorial popup on first load
   const [isVideoTutorialOpen, setIsVideoTutorialOpen] = useState<boolean>(() => {
     try {
-      return !localStorage.getItem('m2028_tutorial_seen');
+      return !localStorage.getItem('m2029_tutorial_seen');
     } catch {
       return false;
     }
   });
 
   const handleOpenShareModal = (code?: string, name?: string) => {
-    const c = code || classCode || workspace.code || 'BCA-2028';
+    const c = code || classCode || workspace.code || 'M2029';
     const n = name || workspace.name || `${c} Workspace`;
     setShareModalData({ code: c, name: n });
     setIsShareModalOpen(true);
@@ -1041,7 +1024,7 @@ export default function App() {
       email: 'guest@university.edu',
       rollNumber: 'GUEST-001',
       role: 'student',
-      classCode: classCode || 'BCA-2028',
+      classCode: classCode || 'M2029',
       isLoggedIn: false,
     };
     setCurrentUser(guestProfile);
@@ -1701,6 +1684,20 @@ export default function App() {
         </div>
       ) : (
         <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
+          {/* Phone Version Minimal Navigation (Hidden on Tablet/PC) */}
+          <div className="sm:hidden">
+            <Sidebar
+              activeTab={activeTab}
+              onSelectTab={handleSelectTab}
+              classCode={classCode}
+              semesterNumber={workspace.semester}
+              position={sidebarPosition}
+              currentUser={currentUser}
+              onLogout={handleLogout}
+              isMobile
+            />
+          </div>
+
           {/* MAIN LAYOUT: 4-WAY NAVIGATION DOCK + CONTENT WORKSPACE */}
           <div
             className={`flex flex-1 overflow-hidden h-full ${
@@ -1714,8 +1711,8 @@ export default function App() {
               <div
                 className={`${
                   sidebarPosition === 'top'
-                    ? 'w-full shrink-0'
-                    : 'h-full shrink-0'
+                    ? 'w-full shrink-0 hidden sm:block'
+                    : 'h-full shrink-0 hidden sm:block'
                 }`}
               >
                 <Sidebar
@@ -1724,7 +1721,6 @@ export default function App() {
                   classCode={classCode}
                   semesterNumber={workspace.semester}
                   position={sidebarPosition}
-                  onChangePosition={setSidebarPosition}
                   currentUser={currentUser}
                   onLogout={handleLogout}
                 />
@@ -1919,13 +1915,13 @@ export default function App() {
         </main>
       </div>
 
-      {/* Navigation Dock (Rendered last when docked to Right or Bottom) */}
+      {/* Desktop Navigation Dock (Rendered last when docked to Right or Bottom) */}
       {(sidebarPosition === 'right' || sidebarPosition === 'bottom') && (
         <div
           className={`${
             sidebarPosition === 'bottom'
-              ? 'w-full shrink-0'
-              : 'h-full shrink-0'
+              ? 'w-full shrink-0 hidden sm:block'
+              : 'h-full shrink-0 hidden sm:block'
           }`}
         >
           <Sidebar
@@ -1934,7 +1930,6 @@ export default function App() {
             classCode={classCode}
             semesterNumber={workspace.semester}
             position={sidebarPosition}
-            onChangePosition={setSidebarPosition}
             currentUser={currentUser}
             onLogout={handleLogout}
           />

@@ -21,7 +21,7 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
   try {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      sendBrowserNotification('M2028 Alerts Enabled', {
+      sendBrowserNotification('M2029 Alerts Enabled', {
         body: 'Push alerts are now active for upcoming assignments, PPT schedules, and class reminders.',
       });
     }
@@ -40,8 +40,8 @@ export function sendBrowserNotification(title: string, options?: NotificationOpt
   if (Notification.permission !== 'granted') return;
 
   const notificationOptions: NotificationOptions = {
-    icon: '/am-logo.png',
-    badge: '/am-logo.png',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
     ...options,
   };
 

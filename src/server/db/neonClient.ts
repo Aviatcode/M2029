@@ -326,7 +326,7 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
   await sql`
     CREATE TABLE IF NOT EXISTS cached_lessons (
       topic_id TEXT PRIMARY KEY,
-      class_code TEXT NOT NULL DEFAULT 'BCA-SEM3',
+      class_code TEXT NOT NULL DEFAULT 'M2029',
       lesson_json JSONB NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -386,7 +386,7 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     // Check if class workspace already exists
     const existing = await sql`SELECT id FROM class_workspaces WHERE id = ${SEED_CLASS.id} LIMIT 1`;
     if (existing.length === 0) {
-      console.log('🌱 Seeding initial BCA-2028 curriculum data into Neon...');
+      console.log('🌱 Seeding initial M2029 curriculum data into Neon...');
 
       // Workspace
       await sql`
@@ -452,7 +452,7 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
             id, class_id, day, time, subject_id, subject_name, subject_code, room, teacher_name,
             likely_topic_title, likely_topic_confidence, likely_topic_reasoning
           ) VALUES (
-            ${t.id}, 'class-bca-2028', ${t.day}, ${t.time}, ${t.subjectId}, ${t.subjectName},
+            ${t.id}, 'class-m2029', ${t.day}, ${t.time}, ${t.subjectId}, ${t.subjectName},
             ${t.subjectCode}, ${t.room}, ${t.teacherName},
             ${t.likelyTopic?.title || null}, ${t.likelyTopic?.confidence || null}, ${t.likelyTopic?.reasoning || null}
           ) ON CONFLICT (id) DO NOTHING;

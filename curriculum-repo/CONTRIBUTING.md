@@ -1,4 +1,4 @@
-# Contributing to BCA-2028 Academic Repository
+# Contributing to M2029 Academic Repository
 
 Welcome cohort students and contributors!
 

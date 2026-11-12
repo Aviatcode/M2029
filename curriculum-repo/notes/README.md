@@ -1,5 +1,5 @@
 # 📚 High-Yield Academic Revision Notes & 7-Minute Primers
-Curated, high-retention study primers for BCA-2028 semester examinations.
+Curated, high-retention study primers for M2029 semester examinations.
 
 ---
 

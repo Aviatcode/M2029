@@ -213,7 +213,7 @@ export async function fetchAndIngestFromGitHub(params: {
 
   console.log(`[GitHub Fetch] Downloaded "${fileName}" (${(stat.size / (1024 * 1024)).toFixed(1)} MB). Ingesting into RAG...`);
 
-  const classId = params.classId || 'class-bca-2028';
+  const classId = params.classId || 'class-m2029';
   const ragDoc = await ragEngine.ingestFile({
     filePath: diskPath,
     fileName: diskFileName,
@@ -322,10 +322,10 @@ export async function uploadDocToGitHubRelease(params: {
     throw new Error('A GitHub Personal Access Token (PAT) with "repo" permission is required to upload files to GitHub Releases.');
   }
 
-  const targetRepo = (params.repo || process.env.GITHUB_REPO || 'Aviatcode/M2029').trim().replace(/^https?:\/\/github\.com\//, '');
+  const targetRepo = (params.repo || process.env.GITHUB_REPO || 'm2029/M2029').trim().replace(/^https?:\/\/github\.com\//, '');
   const repoParts = targetRepo.split('/');
   if (repoParts.length !== 2) {
-    throw new Error(`Invalid GitHub repository format: "${targetRepo}". Expected "owner/repo" (e.g. "Aviatcode/M2029").`);
+    throw new Error(`Invalid GitHub repository format: "${targetRepo}". Expected "owner/repo" (e.g. "m2029/M2029").`);
   }
 
   const [owner, repo] = repoParts;
@@ -496,10 +496,10 @@ export async function browseGitHubRepo(params: {
     isIndexable: boolean;
   }>;
 }> {
-  const targetRepo = (params.repo || process.env.GITHUB_REPO || 'Aviatcode/M2029').trim().replace(/^https?:\/\/github\.com\//, '');
+  const targetRepo = (params.repo || process.env.GITHUB_REPO || 'm2029/M2029').trim().replace(/^https?:\/\/github\.com\//, '');
   const repoParts = targetRepo.split('/');
   if (repoParts.length !== 2) {
-    throw new Error(`Invalid GitHub repository format: "${targetRepo}". Expected "owner/repo" (e.g. "Aviatcode/M2029").`);
+    throw new Error(`Invalid GitHub repository format: "${targetRepo}". Expected "owner/repo" (e.g. "m2029/M2029").`);
   }
 
   const [owner, repo] = repoParts;
@@ -573,7 +573,7 @@ export async function browseGitHubRepo(params: {
  */
 export function getGitHubConfig() {
   const token = process.env.GITHUB_TOKEN || process.env.GITHUB_PAT;
-  const defaultRepo = process.env.GITHUB_REPO || 'Aviatcode/M2029';
+  const defaultRepo = process.env.GITHUB_REPO || 'm2029/M2029';
   return {
     configured: !!token,
     defaultRepo,

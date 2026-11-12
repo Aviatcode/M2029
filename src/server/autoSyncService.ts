@@ -71,17 +71,17 @@ function getLiveDb() {
     return customDb;
   }
   return {
-    classes: { 'BCA-2028': SEED_CLASS },
-    subjects: { 'class-bca-2028': SEED_SUBJECTS },
+    classes: { 'M2029': SEED_CLASS },
+    subjects: { 'class-m2029': SEED_SUBJECTS },
     units: SEED_UNITS,
-    timetable: { 'class-bca-2028': SEED_TIMETABLE },
-    materials: { 'class-bca-2028': SEED_MATERIALS },
+    timetable: { 'class-m2029': SEED_TIMETABLE },
+    materials: { 'class-m2029': SEED_MATERIALS },
     pyqs: {
       'sub-dbms': SEED_PYQS.filter((p) => p.subjectId === 'sub-dbms'),
       'sub-java': SEED_PYQS.filter((p) => p.subjectId === 'sub-java'),
       'sub-os': SEED_PYQS.filter((p) => p.subjectId === 'sub-os'),
     },
-    exams: { 'class-bca-2028': SEED_EXAMS },
+    exams: { 'class-m2029': SEED_EXAMS },
     assignments: SEED_ASSIGNMENTS,
   };
 }
@@ -127,7 +127,7 @@ function calculateDaysLeft(dateStr: string): number {
  * Generate Master README.md
  */
 function buildMasterReadme(db: any): string {
-  const cls: ClassWorkspace = db.classes['BCA-2028'] || SEED_CLASS;
+  const cls: ClassWorkspace = db.classes['M2029'] || SEED_CLASS;
   const subjects: Subject[] = db.subjects[cls.id] || SEED_SUBJECTS;
   const assignments: AcademicAssignment[] = db.assignments || SEED_ASSIGNMENTS;
   const timetable = db.timetable[cls.id] || SEED_TIMETABLE;
@@ -289,7 +289,7 @@ This curriculum repository is maintained for educational cohort reference. All l
  * Generate Multi-Subject Comprehensive SYLLABUS.md
  */
 function buildSyllabusMarkdown(db: any): string {
-  const cls: ClassWorkspace = db.classes['BCA-2028'] || SEED_CLASS;
+  const cls: ClassWorkspace = db.classes['M2029'] || SEED_CLASS;
   const subjects: Subject[] = db.subjects[cls.id] || SEED_SUBJECTS;
   const unitsMap = db.units || SEED_UNITS;
 
@@ -378,7 +378,7 @@ ${subjects
  * Generate TIMETABLE.md
  */
 function buildTimetableMarkdown(db: any): string {
-  const cls: ClassWorkspace = db.classes['BCA-2028'] || SEED_CLASS;
+  const cls: ClassWorkspace = db.classes['M2029'] || SEED_CLASS;
   const timetable = db.timetable[cls.id] || SEED_TIMETABLE;
   const exams: ExamDateSheetItem[] = db.exams[cls.id] || SEED_EXAMS;
 
@@ -436,7 +436,7 @@ function buildActiveDeadlinesMarkdown(db: any): string {
   const assignments: AcademicAssignment[] = db.assignments || SEED_ASSIGNMENTS;
 
   return `# 📝 Official Active Assignments & Lab Submissions
-This register details all coursework assignments, problem sets, and submission criteria for BCA-2028.
+This register details all coursework assignments, problem sets, and submission criteria for M2029.
 
 ---
 
@@ -504,7 +504,7 @@ function buildPPTScheduleMarkdown(db: any): string {
       ? pptItems
           .map((p) => {
             const cleanTitle = p.title.replace('Class Presentation: ', '');
-            return `| \`${p.rollNumber || 'BCA-01 to 05'}\` | **${p.presenterName || 'Team'}** | ${p.subjectName} | ${cleanTitle} | \`${p.dueDate}\` | ${p.completed ? '✅ Presented' : '⏳ Scheduled'} |`;
+            return `| \`${p.rollNumber || 'M29-01 to 05'}\` | **${p.presenterName || 'Team'}** | ${p.subjectName} | ${cleanTitle} | \`${p.dueDate}\` | ${p.completed ? '✅ Presented' : '⏳ Scheduled'} |`;
           })
           .join('\n')
       : '| `Cohort` | **Class Presentation** | General | Schedule will be posted by CR | — | ⏳ Scheduled |';
@@ -530,7 +530,7 @@ ${stepList}
     .join('\n---\n');
 
   return `# 🎤 Class Representative (CR) Technical Seminar & PPT Roster
-**Cohort:** BCA-2028 | **Class Representative Broadcast**
+**Cohort:** M2029 | **Class Representative Broadcast**
 
 Official seminar order and group presentation roster for the current semester.
 
@@ -565,7 +565,7 @@ ${detailedDirectives}
  */
 function buildSolutionsMarkdown(_db: any): string {
   return `# 💡 Model Academic Solutions & Full-Credit Submission Templates
-Comprehensive, university-grade reference solutions for BCA-2028 coursework assignments.
+Comprehensive, university-grade reference solutions for M2029 coursework assignments.
 
 ---
 
@@ -705,7 +705,7 @@ Consider a system with 5 Processes (\`P0, P1, P2, P3, P4\`) and 3 Resource Types
  */
 function buildNotesMarkdown(): string {
   return `# 📚 High-Yield Academic Revision Notes & 7-Minute Primers
-Curated, high-retention study primers for BCA-2028 semester examinations.
+Curated, high-retention study primers for M2029 semester examinations.
 
 ---
 
@@ -815,7 +815,7 @@ export async function executeAutoSync(force = false): Promise<{ success: boolean
     const notesContent = buildNotesMarkdown();
     const pyqsContent = buildPYQsMarkdown(db);
 
-    const contributingContent = `# Contributing to BCA-2028 Academic Repository
+    const contributingContent = `# Contributing to M2029 Academic Repository
 
 Welcome cohort students and contributors!
 
@@ -827,7 +827,7 @@ Welcome cohort students and contributors!
 
     const licenseContent = `MIT License
 
-Copyright (c) 2026 BCA-2028 Cohort & Faculty
+Copyright (c) 2026 M2029 Cohort & Faculty
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -857,7 +857,7 @@ SOFTWARE.
 
     // Subject folder-wise differentiation for assignments
     const assignments: AcademicAssignment[] = db.assignments || SEED_ASSIGNMENTS;
-    const subjects: Subject[] = db.subjects['class-bca-2028'] || SEED_SUBJECTS;
+    const subjects: Subject[] = db.subjects['class-m2029'] || SEED_SUBJECTS;
 
     const subjectFolderMap: Record<string, { name: string; code: string; items: AcademicAssignment[] }> = {};
 
@@ -869,7 +869,7 @@ SOFTWARE.
         .replace(/^-|-$/g, '');
       subjectFolderMap[slug] = {
         name: s.name,
-        code: s.code || 'BCA',
+        code: s.code || 'M2029',
         items: [],
       };
     });
@@ -883,7 +883,7 @@ SOFTWARE.
       if (!subjectFolderMap[slug]) {
         subjectFolderMap[slug] = {
           name: a.subjectName || 'General Studies',
-          code: 'BCA',
+          code: 'M2029',
           items: [],
         };
       }

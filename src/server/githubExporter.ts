@@ -180,7 +180,7 @@ ${
             `| **${e.component}** | \`${e.weightage}\` | Evaluated based on syllabus performance |`
         )
         .join('\n')
-    : '| **Continuous Internal Assessment** | `25%` | Quizzes, assignments, and tutorials |\n| **Practical Laboratory Examination** | `25%` | Viva-voce and lab execution |\n| **End-Semester University Exam** | `50%` | Formal written 3-hour examination |'
+    : '| **Continuous Internal Assessment** | `25%` | Quizzes, assignments, and tutorials |\n| **Practical Laboratory Examination** | `25%` | Viva-voce and lab execution |\n| **End-Term University Exam** | `50%` | Formal written 3-hour examination |'
 }
 
 ---

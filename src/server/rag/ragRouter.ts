@@ -54,7 +54,7 @@ ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Respo
     }
 
     const {
-      classId = 'class-bca-2028',
+      classId = 'class-m2029',
       subjectId,
       subjectName,
       title,

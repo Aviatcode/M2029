@@ -32,10 +32,10 @@ export default defineConfig(() => {
         },
         manifest: {
           id: '/',
-          name: 'M2028',
-          short_name: 'M2028',
+          name: 'M2029',
+          short_name: 'M2029',
           description:
-            'M2028 Academic OS - Shared classroom workspace, study vault, AI tutor, and active RAG document indexing.',
+            'M2029 Academic OS - Shared classroom workspace, study vault, AI tutor, and active RAG document indexing.',
           theme_color: '#070a0f',
           background_color: '#070a0f',
           display: 'standalone',

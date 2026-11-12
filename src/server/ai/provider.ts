@@ -779,7 +779,7 @@ A formal computational or structural paradigm designed to guarantee consistency,
           { component: 'Class Quizzes & Continuous Evaluation', weightage: '15%' },
           { component: 'Mid-Term Examination (Internal)', weightage: '25%' },
           { component: 'Practical Lab Assessment & Project', weightage: '20%' },
-          { component: 'University End-Semester Examination', weightage: '40%' },
+          { component: 'University Final Examination', weightage: '40%' },
         ],
       } as unknown as T;
     }

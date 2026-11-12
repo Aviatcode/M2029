@@ -57,7 +57,7 @@ interface ActiveRagVaultViewProps {
 }
 
 export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
-  classCode = 'BCA-2028',
+  classCode = 'M2029',
   onMaterialCreated,
 }) => {
   const [documents, setDocuments] = useState<RagDocumentClient[]>([]);
@@ -139,8 +139,8 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
       setUploadStage(`Streaming "${file.name}" to backend disk storage...`);
 
       const result = await uploadLargeFileToRag(file, {
-        classId: 'class-bca-2028',
-        subjectName: 'Core Semester Material',
+        classId: 'class-m2029',
+        subjectName: 'Core Study Material',
         title: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
         onProgress: (pct) => {
           setUploadProgress(Math.max(5, Math.min(92, pct)));
@@ -184,7 +184,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
       const result = await fetchFromGitHubUrl({
         url: githubUrl.trim(),
         title: githubCustomTitle.trim() || undefined,
-        classId: 'class-bca-2028',
+        classId: 'class-m2029',
         subjectName: 'GitHub Cloud Repository',
       });
 
@@ -214,7 +214,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
       setExplorerPath(path);
 
       const result = await browseGitHubRepo({
-        repo: explorerRepo.trim() || 'Aviatcode/M2029',
+        repo: explorerRepo.trim() || 'm2029/M2029',
         path,
       });
 
@@ -238,7 +238,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
       const result = await fetchFromGitHubUrl({
         url: downloadLink,
         title: item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
-        classId: 'class-bca-2028',
+        classId: 'class-m2029',
         subjectName: `GitHub: ${explorerRepo}`,
       });
 
@@ -273,7 +273,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
 
       const result = await uploadDocToGitHubRelease({
         docId,
-        repo: targetRepo.trim() || 'Aviatcode/M2029',
+        repo: targetRepo.trim() || 'm2029/M2029',
         token,
       });
 
@@ -554,8 +554,8 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setGithubUrl('https://github.com/Aviatcode/M2029/blob/main/curriculum-repo/TIMETABLE.md');
-                    setGithubCustomTitle('BCA Semester Timetable & Lab Schedule');
+                    setGithubUrl('https://github.com/m2029/M2029/blob/main/curriculum-repo/TIMETABLE.md');
+                    setGithubCustomTitle('Class Timetable & Schedule');
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
                 >
@@ -564,7 +564,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setGithubUrl('https://github.com/Aviatcode/M2029/blob/main/curriculum-repo/SYLLABUS.md');
+                    setGithubUrl('https://github.com/m2029/M2029/blob/main/curriculum-repo/SYLLABUS.md');
                     setGithubCustomTitle('Core University Syllabus Blueprint');
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
@@ -574,7 +574,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    setGithubUrl('https://raw.githubusercontent.com/Aviatcode/M2029/main/README.md');
+                    setGithubUrl('https://raw.githubusercontent.com/m2029/M2029/main/README.md');
                     setGithubCustomTitle('M2029 Operating System Overview');
                   }}
                   className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-slate-700 text-indigo-300 font-mono transition-all cursor-pointer"
@@ -613,7 +613,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                     type="text"
                     value={explorerRepo}
                     onChange={(e) => setExplorerRepo(e.target.value)}
-                    placeholder="owner/repo (e.g. Aviatcode/M2029)"
+                    placeholder="owner/repo (e.g. m2029/M2029)"
                     className="px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 font-mono focus:outline-none focus:border-indigo-500 w-full sm:w-48"
                   />
                   <button
@@ -744,7 +744,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                       type="text"
                       value={targetRepo}
                       onChange={(e) => setTargetRepo(e.target.value)}
-                      placeholder="owner/repo (e.g. Aviatcode/M2029)"
+                      placeholder="owner/repo (e.g. m2029/M2029)"
                       className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 font-mono text-xs focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -1095,7 +1095,7 @@ export const ActiveRagVaultView: React.FC<ActiveRagVaultViewProps> = ({
                   type="text"
                   value={targetRepo}
                   onChange={(e) => setTargetRepo(e.target.value)}
-                  placeholder="owner/repo (e.g. Aviatcode/M2029)"
+                  placeholder="owner/repo (e.g. m2029/M2029)"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 font-mono text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>

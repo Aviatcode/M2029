@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "M2028",
-  "short_name": "M2028",
-  "description": "M2028 Academic OS - Shared classroom workspace, study vault, AI tutor, and active RAG document indexing.",
+  "name": "M2029",
+  "short_name": "M2029",
+  "description": "M2029 Academic OS - Shared classroom workspace, study vault, AI tutor, and active RAG document indexing.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

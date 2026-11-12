@@ -88,8 +88,8 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
             <img
-              src="./am-logo.png"
-              alt="AM Logo"
+              src="./icon-192.png"
+              alt="M2029 Logo"
               className="w-8 h-8 rounded-lg shrink-0 object-contain shadow-xs border border-neutral-800/80"
             />
             <div>

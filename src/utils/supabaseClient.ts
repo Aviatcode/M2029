@@ -39,7 +39,7 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured()
 /**
  * Fetch full workspace data from Supabase
  */
-export async function fetchWorkspaceFromSupabase(classCode = 'BCA-2028') {
+export async function fetchWorkspaceFromSupabase(classCode = 'M2029') {
   if (!supabase) return null;
 
   try {

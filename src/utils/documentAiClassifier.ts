@@ -202,7 +202,7 @@ export function detectDocumentType(fileName: string = '', rawText: string = ''):
  */
 export function parseTimetableClient(
   rawText: string,
-  classCode: string = 'BCA-2028'
+  classCode: string = 'M2029'
 ): { subjects: Subject[]; timetable: TimetableClass[] } {
   const daysList: ('Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday')[] = [
     'Monday',
@@ -479,7 +479,7 @@ export async function parseTimetableWithAi(payload: {
   timetable: TimetableClass[];
   source: 'ai' | 'heuristic';
 }> {
-  const cleanCode = payload.classCode || 'BCA-2028';
+  const cleanCode = payload.classCode || 'M2029';
   const textContent = payload.rawText || '';
 
   try {
