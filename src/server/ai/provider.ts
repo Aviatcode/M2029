@@ -100,7 +100,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'deepseek/deepseek-r1';
           break;
         case 'gemini':
-          this.modelName = 'gemini-2.5-flash';
+          this.modelName = 'gemini-1.5-flash';
           break;
         case 'custom':
           this.modelName = 'llama3:latest';
@@ -112,8 +112,14 @@ export class UniversalAIProvider implements AIProvider {
 
     // Clean up Gemini model names
     if (this.provider === 'gemini') {
-      if (!this.modelName || this.modelName === 'gemini-3.8-flash' || this.modelName === 'gemini-3-flash' || this.modelName === 'gemini-2.0-flash') {
-        this.modelName = 'gemini-2.5-flash';
+      if (
+        !this.modelName ||
+        this.modelName === 'gemini-3.8-flash' ||
+        this.modelName === 'gemini-3-flash' ||
+        this.modelName === 'gemini-2.5-flash' ||
+        this.modelName === 'gemini-2.0-flash'
+      ) {
+        this.modelName = 'gemini-1.5-flash';
       }
     }
 
@@ -427,221 +433,69 @@ export class MockAIProvider implements AIProvider {
 
   async generateText(prompt: string = '', systemInstruction?: string): Promise<string> {
     const p = (prompt || '').toLowerCase();
-    // Comprehensive 6-order academic study breakdown
+
+    // Extract cleanest topic and subject
+    const topicMatch =
+      prompt.match(/"([^"]+)"/) ||
+      prompt.match(/of\s+([A-Za-z0-9\s&]+?)(?:\s+in|\.|$)/i) ||
+      prompt.match(/for\s+"?([^".\n]+)"?/i);
+    const cleanTopic = (
+      topicMatch
+        ? topicMatch[1]
+        : prompt.replace(/explain.*?(?:of|about|for)/i, '').replace(/\..*$/, '')
+    )
+      .replace(/["']/g, '')
+      .trim() || 'Academic Concept';
+
+    const subjMatch =
+      prompt.match(/in\s+(?:course|subject)\s+"?([A-Za-z0-9\s&]+?)"?(?:\.|$|\n)/i) ||
+      (systemInstruction && systemInstruction.match(/Target Subject:\s*([^\n]+)/i));
+    const subjectName = subjMatch ? subjMatch[1].trim() : 'Computer Science & Engineering';
+
+    // 1. Comprehensive 6-order academic study breakdown
     if (
       p.includes('6 sections') ||
       p.includes('in that order') ||
       p.includes('teaching mode: all') ||
       (systemInstruction && (systemInstruction.includes('6 sections') || systemInstruction.includes('Simple Overview')))
     ) {
-      const topicMatch = prompt.match(/"([^"]+)"/) || prompt.match(/of\s+([A-Za-z0-9\s]+?)(?:\s+in|\.|$)/i);
-      const cleanTopic = (topicMatch ? topicMatch[1] : prompt.replace(/explain.*?(?:of|about|for)/i, '').replace(/\..*$/, ''))
-        .replace(/["']/g, '')
-        .trim() || 'Core Engineering Concept';
-
-      return `### 1. Simple Overview
-${cleanTopic} is an essential academic concept designed to ensure reliable, coordinated, and predictable operations across modern computing systems.
-- **Core Definition:** It defines a set of foundational protocols and structural invariants that govern state transitions and resource access.
-- **Primary Objective:** Eliminates race conditions, structural anomalies, and uncoordinated state corruptions.
-- **University Syllabus Context:** Consistently tested across mid-terms and end-terms due to its widespread practical importance in software engineering.
-
-### 2. ELI9 (Analogies)
-Imagine a busy school cafeteria where fifty students want ice cream, but there is only ONE golden ice cream spoon!
-If all fifty students rush the counter at the same time and grab the spoon, the spoon breaks, ice cream spills everywhere, and nobody gets dessert.
-Instead, the teacher puts a numbered token box on the counter. Student #1 takes token #1, uses the spoon for thirty seconds, and returns it for Student #2.
-In this analogy:
-- **The Ice Cream Spoon:** The critical resource / data memory.
-- **The Students:** Concurrent processes, threads, or transactions.
-- **The Token Rule:** **${cleanTopic}**, guaranteeing everyone gets served fairly without chaos or collisions!
-
-### 3. Hinglish Breakdown
-Dekho bhai, seedhi aur simple baat hai! Exam point of view se ${cleanTopic} bohot hi scoring aur high-yield topic hai.
-Real life situation socho: jab do gaadiyan ek hi narrow one-way bridge par dono side se ghus jaayengi, toh bina signal ke dono phas jaayengi aur deadlock ho jaayega. ${cleanTopic} wahi intelligent traffic signal ka kaam karta hai.
-- **Exam Memory Hook:** Examiner hamesha 3 cheezein check karega: Mutual Exclusion, Progress, aur Bounded Waiting.
-- **Topper's Shortcut:** Definition mein keywords underline karo, ASCII flowchart banao, aur boundary conditions mention karo — pure 10 marks pakke!
-
-### 4. 10-Marker University Exam Format
-#### Section A: Standard Academic Definition (2 Marks)
-**${cleanTopic}** is formally defined as an architectural invariant and algorithmic synchronization protocol that enforces mutual exclusion, bounded waiting, and safe state transitions across concurrent execution contexts.
-
-#### Section B: Architecture & Schematic Diagram (2 Marks)
-\`\`\`
-  ┌────────────────────────────────────────────────────────┐
-  │              Application / Client Tier                 │
-  └───────────────────────────┬────────────────────────────┘
-                              │ Standard Invocation / Invariant Check
-                              ▼
-  ┌────────────────────────────────────────────────────────┐
-  │         Entry Protocol (Token & Lock Verification)     │
-  └───────────────────────────┬────────────────────────────┘
-                              │ Condition Verified (Safe State)
-                              ▼
-  ┌────────────────────────────────────────────────────────┐
-  │             [CRITICAL SECTION EXECUTION]               │
-  │          Controlled Read / Write Operations            │
-  └───────────────────────────┬────────────────────────────┘
-                              │ Release Lock / Notify Blocked Entities
-                              ▼
-  ┌────────────────────────────────────────────────────────┐
-  │         Exit Protocol & State Synchronization          │
-  └───────────────────────────┬────────────────────────────┘
-\`\`\`
-
-#### Section C: Step-by-Step Working Mechanism (3 Marks)
-1. **Entry Protocol:** The thread evaluates entry flags. If the critical region is occupied, the entity yields CPU or waits on a condition queue.
-2. **Atomic Execution:** Invariant guarantees hold throughout data mutation, backed by write-ahead persistence logs.
-3. **Exit Protocol:** Shared flags are released atomically, triggering a wakeup broadcast to eligible waiting threads.
-4. **Fault Recovery:** In case of an unexpected crash, transactional rollback restores the system to the last known consistent checkpoint.
-
-#### Section D: Algorithmic Implementation (Java / C) (2 Marks)
-\`\`\`java
-public class ${cleanTopic.replace(/[^a-zA-Z]/g, '') || 'Topic'}Manager {
-    private boolean isBusy = false;
-
-    public synchronized void acquireAccess() throws InterruptedException {
-        while (isBusy) {
-            wait(); // Bounded wait condition
-        }
-        isBusy = true;
+      return generateAcademicGuide(cleanTopic, subjectName).fullText;
     }
 
-    public synchronized void releaseAccess() {
-        isBusy = false;
-        notifyAll(); // Wake up queued candidates
-    }
-}
-\`\`\`
-
-#### Section E: Examiner Scoring Points & Traps (1 Mark)
-- **Common Trap:** Omitting the Bounded Waiting condition or deadlock scenario.
-- **Examiner's Favorite:** Mentioning standard textbook citations (Galvin for OS, Korth for DBMS, Tanenbaum for Networks).
-
-### 5. Deep Dive & Edge Cases
-- **Theoretical Formalism:** Let S represent the valid state space. The protocol ensures that for all t >= 0, State(t) is in S.
-- **Time Complexity:** Constant time O(1) amortized overhead for entry and release protocols.
-- **Space Complexity:** O(n) where n is the maximum queue depth of waiting threads.
-- **Critical Edge Cases:**
-  1. Priority Inversion: When high-priority tasks are starved by lower-priority lock holders. Solved via Priority Ceiling / Inheritance.
-  2. Deadlock (Coffman Conditions): Prevented by enforcing strict resource ordering or timeout detection.
-
-### 6. Quiz Me (Self-Check Questions)
-**Question 1 (Conceptual Diagnostic - 2 Marks):**
-Why is a busy-waiting spinlock inefficient on a single-processor core, and what alternative avoids CPU starvation?
-*Model Answer:* On a single core, a spinlock monopolizes 100% of the CPU cycle time while waiting for a condition that only another thread could produce. A sleep/wake condition queue allows the operating system scheduler to dispatch ready threads instead.
-
-**Question 2 (University Exam Scenario - 5 Marks):**
-Can a system guarantee Mutual Exclusion without satisfying the Bounded Waiting condition? Give a concrete scenario.
-*Model Answer:* Yes. If resource arbitration is purely unranked or random, a waiting process might continually be bypassed by newly arriving threads. Mutual exclusion is maintained (only one enters at a time), but the bypassed process suffers starvation due to the lack of bounded waiting.`;
+    // 2. Student Doubt or Question in Chat
+    if (
+      p.includes('student asked a doubt') ||
+      p.includes('question:') ||
+      p.includes('doubt during the study') ||
+      p.includes('explain') ||
+      p.includes('what is') ||
+      p.includes('how does') ||
+      p.includes('why does')
+    ) {
+      const qMatch = prompt.match(/Question:\s*"([^"]+)"/i) || prompt.match(/Question:\s*([^\n]+)/i);
+      const query = qMatch ? qMatch[1].trim() : (cleanTopic.length > 5 ? cleanTopic : prompt);
+      return generateAcademicDoubtAnswer(query, cleanTopic, subjectName);
     }
 
-    // Intelligent heuristic pedagogical fallback
+    // 3. Specific Pedagogical Modes
     if (p.includes('hinglish')) {
-      return `Dekho bhai, seedhi baat hai! Yeh concept exam ke liye bohot zaroori hai. Simple shabdon mein samjho: jab system mein data ya resources organize karne hote hain, toh hum structured rules follow karte hain taaki koi deadlock ya confusion na ho. Professor ke lecture mein bas inke steps aur boundary conditions dhyan se note karna. 10-marker answer mein definition + flowchart + code zaroor likhna!`;
+      return generateAcademicGuide(cleanTopic, subjectName).sections.hinglish;
     }
 
-    if (p.includes('eli9') || p.includes('explain like i\'m 9')) {
-      return `Imagine a busy school cafeteria where everyone wants ice cream, but there is only one spoon! If nobody shares, nobody gets dessert. This concept is just the friendly teacher who sets fair turn-by-turn rules so every kid gets their ice cream without fighting or waiting forever!`;
+    if (p.includes('eli9') || p.includes('explain like i\'m 9') || p.includes('not understand')) {
+      return generateAcademicGuide(cleanTopic, subjectName).sections.eli9;
+    }
+
+    if (p.includes('10-marker') || p.includes('exam notes') || p.includes('section c')) {
+      return generateAcademicGuide(cleanTopic, subjectName).sections.exam_10marker;
     }
 
     if (p.includes('assignment') || p.includes('solve assignment')) {
-      return `## 🎓 UNIVERSITY ASSIGNMENT SUBMISSION & MODEL SOLUTION
-
-### 1. Executive Summary & Problem Scope
-This assignment addresses the formal specification, architectural modeling, and rigorous implementation guarantees required in the university academic curriculum. The objective is to design a fault-tolerant, normalized, and optimized computational pipeline meeting university evaluation standards.
-
----
-
-### 2. Theoretical Foundations & Mathematical Formalisms
-- **Core Principles:** The fundamental rules governing this system require strict adherence to closure properties, atomicity guarantees, and boundary invariants.
-- **Relational Invariant / Formal Equation:**
-  $\\forall X \\rightarrow Y \\in F^+, \\quad \\text{either } Y \\subseteq X \\text{ (trivial) or } X \\text{ is a superkey of } R$
-- **Preconditions & Assumptions:**
-  1. Input data is deterministic with discrete state transitions.
-  2. Deadlock conditions (Coffman criteria) are strictly guarded via pre-allocation or timeout protocols.
-  3. Relational schemas are normalized to eliminate update, insertion, and deletion anomalies.
-
----
-
-### 3. Structural Architecture & Algorithmic Blueprint
-\`\`\`
-[Input Tuple / Transaction]
-        │
-        ▼
- ┌──────────────┐      Violation
- │ Integrity    ├─────────────────────► [Abort / Rollback Protocol]
- │ Verification │
- └──────┬───────┘
-        │ Validated
-        ▼
- ┌──────────────┐
- │ Concurrency  │ (2-Phase Locking / Multiversion Timestamping)
- │ Scheduler    │
- └──────┬───────┘
-        │ Serialized
-        ▼
- [Committed Database State (ACID Guaranteed)]
-\`\`\`
-
----
-
-### 4. Implementation Artifact / Code Execution
-\`\`\`java
-public class AcademicSolutionEngine {
-    private final String courseCode = "BCA-302";
-    private boolean isConsistent = true;
-
-    public void verifyInvariants() {
-        if (!isConsistent) {
-            throw new IllegalStateException("Integrity constraint violated: rolling back state.");
-        }
-        System.out.println("All schema invariants satisfied according to university syllabus.");
-    }
-}
-\`\`\`
-
----
-
-### 5. University Evaluation & Scoring Checklist
-- [x] Defined all formal terminology with boundary conditions.
-- [x] Illustrated architectural block diagrams with state transitions.
-- [x] Outlined code snippets with time complexity bounds.
-- [x] Cross-referenced past 5 years university PYQ variations.`;
+      return generateAcademicGuide(cleanTopic, subjectName).sections.exam_10marker;
     }
 
-    if (p.includes('10-marker') || p.includes('exam')) {
-      return `## 📝 UNIVERSITY 10-MARKER MODEL ANSWER SCHEME
-
-### Section 1: Standard Definition (2 Marks)
-A formal computational or structural paradigm designed to guarantee consistency, fault-isolation, and predictable resource allocation across interconnected software nodes.
-
-### Section 2: Architectural Schematic Diagram (2 Marks)
-\`\`\`
-  ┌────────────────────────────────────────────────────────┐
-  │                 Application / User Tier                 │
-  └───────────────────────────┬────────────────────────────┘
-                              │ Standard Queries (SQL / RPC)
-                              ▼
-  ┌────────────────────────────────────────────────────────┐
-  │           Conceptual Schema / Normal Form Invariant     │
-  └───────────────────────────┬────────────────────────────┘
-                              │ Physical Storage Mapping
-                              ▼
-  ┌────────────────────────────────────────────────────────┐
-  │           Disk Storage & Write-Ahead Logging (WAL)     │
-  └────────────────────────────────────────────────────────┘
-\`\`\`
-
-### Section 3: Step-by-Step Working Mechanism (3 Marks)
-1. **Initiation & Validation:** Input parameters are checked against candidate key constraints.
-2. **State Transition:** Operations are recorded in write-ahead logs prior to cache buffer flushes.
-3. **Commit Guarantee:** Once committed, changes are non-volatile and withstand unexpected failures.
-
-### Section 4: Key Gotchas & Scoring Takeaways (3 Marks)
-- **Common Student Trap:** Forgetting to mention the closure test or dependency preservation check.
-- **Examiner's Favorite:** State explicitly whether the solution guarantees serializability under concurrent schedules.`;
-    }
-
-    return `This is a foundational concept frequently tested in university examinations. It solves critical bottlenecks by introducing formal boundary conditions and predictable resource management. Key exam focus areas include architectural diagrams, time complexity bounds, and real-world failure handling.`;
+    // 4. Default: Generates targeted academic doubt answer
+    return generateAcademicDoubtAnswer(prompt, cleanTopic, subjectName);
   }
 
   async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {
@@ -987,7 +841,7 @@ export class AIProviderFactory {
         this.classInstance = new UniversalAIProvider({
           apiKey: this.classConfig.apiKey || envKey,
           provider: this.classConfig.provider || (isGeminiKey ? 'gemini' : 'auto'),
-          modelName: this.classConfig.modelName || 'gemini-3.8-flash',
+          modelName: this.classConfig.modelName || 'gemini-2.5-flash',
           baseUrl: this.classConfig.baseUrl,
         });
       } else {
@@ -1047,7 +901,7 @@ export class AIProviderFactory {
       modelType: hasKey ? 'custom_ai' : 'basic',
       providerName: hasKey ? provider.name : 'Built-in Basic Academic Model (Free)',
       provider: this.classConfig.provider || 'gemini',
-      modelName: this.classConfig.modelName || 'gemini-3.8-flash',
+      modelName: this.classConfig.modelName || 'gemini-2.5-flash',
       isClassShared: true,
     };
   }

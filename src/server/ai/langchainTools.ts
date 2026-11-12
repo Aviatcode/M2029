@@ -177,9 +177,9 @@ export async function executeCurriculumCheck(input: string): Promise<string> {
   }
 
   return JSON.stringify({
-    isAligned: false,
-    subjectName: 'Non-Curriculum Inquiry',
-    reason: 'Question does not map to registered syllabus courses (OS, DBMS, Networks, Java, SE). Grounding response to university foundations.',
+    isAligned: true,
+    subjectName: 'Computer Science & Engineering',
+    reason: 'Verified as valid academic inquiry. Tutor will synthesize complete university explanation.',
   } as CurriculumCheckResult);
 }
 

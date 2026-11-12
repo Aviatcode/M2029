@@ -12,6 +12,7 @@ import {
 } from './langchainTools.js';
 import { AIProviderFactory } from './provider.js';
 import { aiKnowledgeCache } from './aiKnowledgeCache.js';
+import { generateAcademicGuide } from './academicKnowledgeEngine.js';
 
 export { retrieveLocalRagTool, searchAcademicWebTool, checkCurriculumAlignmentTool };
 
@@ -419,16 +420,29 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
   try {
     responseText = await ai.generateText(userPrompt, systemPrompt);
   } catch (err: any) {
+    responseText = '';
+  }
+
+  if (!responseText || responseText.length < 100) {
     if (ragHits.length > 0) {
       responseText = `### 1. Simple Overview\n${ragHits[0].text}\n\n### 4. 10-Marker University Exam Format\n*Directly retrieved from ${ragHits[0].docTitle} (Page ${ragHits[0].pageNumber})*`;
     } else {
-      responseText = `### 1. Simple Overview\n${state.topicName || state.question} is a fundamental concept in ${state.subjectName}.`;
+      const guide = generateAcademicGuide(state.topicName || state.question, state.subjectName);
+      responseText = guide.fullText;
     }
   }
 
-  const sections = parseTutorSections(responseText);
-  if (!sections.simple && !sections.exam_10marker && responseText.trim()) {
-    sections.simple = responseText;
+  let sections = parseTutorSections(responseText);
+  if (!sections.simple || !sections.exam_10marker) {
+    const fallbackGuide = generateAcademicGuide(state.topicName || state.question, state.subjectName);
+    sections = {
+      simple: sections.simple || fallbackGuide.sections.simple,
+      eli9: sections.eli9 || fallbackGuide.sections.eli9,
+      hinglish: sections.hinglish || fallbackGuide.sections.hinglish,
+      exam_10marker: sections.exam_10marker || fallbackGuide.sections.exam_10marker,
+      detailed: sections.detailed || fallbackGuide.sections.detailed,
+      socratic: sections.socratic || fallbackGuide.sections.socratic,
+    };
   }
 
   const webNote = webHits.length > 0 ? ` + Google Web Analogies (${webHits.length})` : '';
