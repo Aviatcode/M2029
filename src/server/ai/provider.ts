@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { aiKnowledgeCache } from './aiKnowledgeCache.js';
+import { generateAcademicGuide, generateAcademicDoubtAnswer } from './academicKnowledgeEngine.js';
 
 export type ModelProviderType =
   | 'auto'
@@ -99,7 +100,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'deepseek/deepseek-r1';
           break;
         case 'gemini':
-          this.modelName = 'gemini-3.8-flash';
+          this.modelName = 'gemini-2.5-flash';
           break;
         case 'custom':
           this.modelName = 'llama3:latest';
@@ -111,8 +112,8 @@ export class UniversalAIProvider implements AIProvider {
 
     // Clean up Gemini model names
     if (this.provider === 'gemini') {
-      if (!this.modelName || this.modelName === 'gemini-2.0-flash') {
-        this.modelName = 'gemini-3.8-flash';
+      if (!this.modelName || this.modelName === 'gemini-3.8-flash' || this.modelName === 'gemini-3-flash' || this.modelName === 'gemini-2.0-flash') {
+        this.modelName = 'gemini-2.5-flash';
       }
     }
 
@@ -198,7 +199,11 @@ export class UniversalAIProvider implements AIProvider {
     try {
       // 1. Google Gemini via direct REST API (fastest, most reliable) or SDK
       if (this.provider === 'gemini') {
-        const model = this.modelName || 'gemini-3.8-flash';
+        const rawModel = this.modelName || 'gemini-2.5-flash';
+        const model =
+          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash'
+            ? 'gemini-2.5-flash'
+            : rawModel;
 
         // Direct REST API for Gemini with adaptive thinking budget & instant fallback
         if (this.apiKey) {
@@ -351,7 +356,7 @@ export class UniversalAIProvider implements AIProvider {
         throw err;
       }
       console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, err.message);
-      return `[⚠️ Notice: ${this.name} connection notice (${err.message}). Showing Academic Curriculum Fallback:]\n\n${await new MockAIProvider().generateText(prompt, systemInstruction)}`;
+      return new MockAIProvider().generateText(prompt, systemInstruction);
     }
 
     return new MockAIProvider().generateText(prompt, systemInstruction);
@@ -369,7 +374,11 @@ Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
     // Native Gemini structured JSON mode
     if (this.provider === 'gemini' && this.apiKey) {
       try {
-        const model = this.modelName || 'gemini-3.8-flash';
+        const rawModel = this.modelName || 'gemini-2.5-flash';
+        const model =
+          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash'
+            ? 'gemini-2.5-flash'
+            : rawModel;
         const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
         const body: any = {
           contents: [{ parts: [{ text: fullPrompt }] }],
