@@ -1684,20 +1684,6 @@ export default function App() {
         </div>
       ) : (
         <div className="relative z-10 flex flex-col h-full w-full overflow-hidden">
-          {/* Phone Version Minimal Navigation (Hidden on Tablet/PC) */}
-          <div className="sm:hidden">
-            <Sidebar
-              activeTab={activeTab}
-              onSelectTab={handleSelectTab}
-              classCode={classCode}
-              semesterNumber={workspace.semester}
-              position={sidebarPosition}
-              currentUser={currentUser}
-              onLogout={handleLogout}
-              isMobile
-            />
-          </div>
-
           {/* MAIN LAYOUT: 4-WAY NAVIGATION DOCK + CONTENT WORKSPACE */}
           <div
             className={`flex flex-1 overflow-hidden h-full ${
@@ -1711,8 +1697,8 @@ export default function App() {
               <div
                 className={`${
                   sidebarPosition === 'top'
-                    ? 'w-full shrink-0 hidden sm:block'
-                    : 'h-full shrink-0 hidden sm:block'
+                    ? 'w-full shrink-0'
+                    : 'h-full shrink-0'
                 }`}
               >
                 <Sidebar
@@ -1730,7 +1716,7 @@ export default function App() {
         {/* Main Content Workspace */}
         <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
           {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
-          <main className="flex-1 h-full overflow-y-auto pl-16 pr-3.5 sm:px-6 md:px-8 py-3.5 sm:py-6 w-full max-w-[1580px] mx-auto">
+          <main className="flex-1 h-full overflow-y-auto px-3.5 sm:px-6 md:px-8 py-3.5 sm:py-6 w-full max-w-[1580px] mx-auto">
             {activeTab === 'dashboard' && (() => {
               const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
               const nowDayIdx = new Date().getDay();
@@ -1915,13 +1901,13 @@ export default function App() {
         </main>
       </div>
 
-      {/* Desktop Navigation Dock (Rendered last when docked to Right or Bottom) */}
+      {/* Navigation Dock (Rendered last when docked to Right or Bottom) */}
       {(sidebarPosition === 'right' || sidebarPosition === 'bottom') && (
         <div
           className={`${
             sidebarPosition === 'bottom'
-              ? 'w-full shrink-0 hidden sm:block'
-              : 'h-full shrink-0 hidden sm:block'
+              ? 'w-full shrink-0'
+              : 'h-full shrink-0'
           }`}
         >
           <Sidebar
