@@ -111,43 +111,40 @@ export function generateGitHubFiles(info: ExtractedCourseInfo): GitHubPublishFil
 
 | Day | Timings | Room / Venue | Session Type |
 | :--- | :--- | :--- | :--- |
-${
-  info.weeklySchedule && info.weeklySchedule.length > 0
-    ? info.weeklySchedule
+${info.weeklySchedule && info.weeklySchedule.length > 0
+      ? info.weeklySchedule
         .map(
           (s) =>
             `| **${s.day}** | ${s.time} | \`${s.room}\` | ${s.type || 'Lecture'} |`
         )
         .join('\n')
-    : '| **Monday** | 10:00 AM - 11:30 AM | `Room 204` | Lecture |\n| **Wednesday** | 11:30 AM - 01:00 PM | `Room 204` | Lecture |\n| **Friday** | 02:00 PM - 04:00 PM | `CS Lab 3` | Practical |'
-}
+      : '| **Monday** | 10:00 AM - 11:30 AM | `Room 204` | Lecture |\n| **Wednesday** | 11:30 AM - 01:00 PM | `Room 204` | Lecture |\n| **Friday** | 02:00 PM - 04:00 PM | `CS Lab 3` | Practical |'
+    }
 
 ---
 
 ## 📚 Curriculum & Syllabus Units
 
-${
-  info.units && info.units.length > 0
-    ? info.units
+${info.units && info.units.length > 0
+      ? info.units
         .map(
           (u) => `### 📌 Unit ${u.unitNumber}: ${u.title}
 * **Estimated Teaching Hours:** ${u.hours ? `${u.hours} Hours` : '10 Hours'}
 * **University Exam Weightage:** \`${u.examWeightage || '15 - 20 Marks'}\`
 
 **Key Concepts & Topics Covered:**
-${
-  u.topics && u.topics.length > 0
-    ? u.topics.map((t) => `- [ ] ${t}`).join('\n')
-    : '- [ ] Core Theoretical Foundations\n- [ ] Practical Implementations'
-}
+${u.topics && u.topics.length > 0
+              ? u.topics.map((t) => `- [ ] ${t}`).join('\n')
+              : '- [ ] Core Theoretical Foundations\n- [ ] Practical Implementations'
+            }
 `
         )
         .join('\n')
-    : `### 📌 Unit 1: Foundations
+      : `### 📌 Unit 1: Foundations
 - [ ] Core Concepts & Architecture
 - [ ] Theoretical Foundations
 `
-}
+    }
 
 ---
 
@@ -155,16 +152,15 @@ ${
 
 | # | Book Title | Authors | Publisher & Edition |
 | :-: | :--- | :--- | :--- |
-${
-  info.textbooks && info.textbooks.length > 0
-    ? info.textbooks
+${info.textbooks && info.textbooks.length > 0
+      ? info.textbooks
         .map(
           (b, idx) =>
             `| ${idx + 1} | **${b.title}** | ${b.authors} | ${b.publisher || 'Academic Press'}${b.edition ? `, ${b.edition}` : ''} |`
         )
         .join('\n')
-    : '| 1 | **Standard University Textbook** | Faculty Authors | Reference Edition |'
-}
+      : '| 1 | **Standard University Textbook** | Faculty Authors | Reference Edition |'
+    }
 
 ---
 
@@ -172,16 +168,15 @@ ${
 
 | Evaluation Component | Weightage | Description |
 | :--- | :-: | :--- |
-${
-  info.evaluationScheme && info.evaluationScheme.length > 0
-    ? info.evaluationScheme
+${info.evaluationScheme && info.evaluationScheme.length > 0
+      ? info.evaluationScheme
         .map(
           (e) =>
             `| **${e.component}** | \`${e.weightage}\` | Evaluated based on syllabus performance |`
         )
         .join('\n')
-    : '| **Continuous Internal Assessment** | `25%` | Quizzes, assignments, and tutorials |\n| **Practical Laboratory Examination** | `25%` | Viva-voce and lab execution |\n| **End-Term University Exam** | `50%` | Formal written 3-hour examination |'
-}
+      : '| **Continuous Internal Assessment** | `25%` | Quizzes, assignments, and tutorials |\n| **Practical Laboratory Examination** | `25%` | Viva-voce and lab execution |\n| **End-Term University Exam** | `50%` | Formal written 3-hour examination |'
+    }
 
 ---
 
@@ -245,9 +240,8 @@ Code and student notes are distributed under the [MIT License](LICENSE).
 
 ---
 
-${
-  info.units && info.units.length > 0
-    ? info.units
+${info.units && info.units.length > 0
+      ? info.units
         .map(
           (u) => `## Unit ${u.unitNumber}: ${u.title}
 * **Weightage:** ${u.examWeightage || '15-20 Marks'}
@@ -259,20 +253,19 @@ ${u.topics.map((t, idx) => `${idx + 1}. **${t}**`).join('\n')}
 ---`
         )
         .join('\n\n')
-    : '## Unit 1: Foundations\n1. Theoretical Introduction'
-}
+      : '## Unit 1: Foundations\n1. Theoretical Introduction'
+    }
 
 ## Prescribed References
-${
-  info.textbooks && info.textbooks.length > 0
-    ? info.textbooks
+${info.textbooks && info.textbooks.length > 0
+      ? info.textbooks
         .map(
           (b, idx) =>
             `${idx + 1}. *${b.title}* by ${b.authors} (${b.publisher || 'Publisher'}, ${b.edition || ''})`
         )
         .join('\n')
-    : '1. Standard Textbook'
-}
+      : '1. Standard Textbook'
+    }
 `;
 
   const timetableMarkdown = `# 📅 Class Timetable & Faculty Hours: ${info.courseName}
@@ -280,13 +273,12 @@ ${
 ## Weekly Lecture Schedule
 | Day | Time | Room | Session |
 | :--- | :--- | :--- | :--- |
-${
-  info.weeklySchedule && info.weeklySchedule.length > 0
-    ? info.weeklySchedule
+${info.weeklySchedule && info.weeklySchedule.length > 0
+      ? info.weeklySchedule
         .map((s) => `| **${s.day}** | ${s.time} | \`${s.room}\` | ${s.type || 'Lecture'} |`)
         .join('\n')
-    : '| Monday | 10:00 AM - 11:30 AM | Room 204 | Lecture |'
-}
+      : '| Monday | 10:00 AM - 11:30 AM | Room 204 | Lecture |'
+    }
 
 ## Faculty Consultation Hours
 * **Professor:** ${info.teacherName}
