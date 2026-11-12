@@ -213,7 +213,10 @@ html[data-mode="white"][data-theme="rose"] {
 /* 3. Base Styles & Global Transitions                      */
 /* ======================================================== */
 @layer base {
-  html, body, #root {
+
+  html,
+  body,
+  #root {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -264,6 +267,7 @@ html[data-mode="white"] .hover\:text-white:hover {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -273,6 +277,7 @@ html[data-mode="white"] .hover\:text-white:hover {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -356,6 +361,7 @@ html[data-mode="white"] .subtle-academic-border {
 .ai-pulse-dot {
   position: relative;
 }
+
 .ai-pulse-dot::after {
   content: '';
   position: absolute;
@@ -367,10 +373,10 @@ html[data-mode="white"] .subtle-academic-border {
 }
 
 @keyframes ping {
-  75%, 100% {
+
+  75%,
+  100% {
     transform: scale(2);
     opacity: 0;
   }
 }
-
-
