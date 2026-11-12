@@ -115,10 +115,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => setIsMobileOpen(true)}
             aria-label="Open Navigation Menu"
             title="Open Navigation"
-            className={`fixed z-40 flex items-center justify-center p-2 rounded-r-xl bg-[#0d111a]/95 backdrop-blur-md border border-slate-700/80 text-cyan-400 hover:text-white shadow-xl shadow-black/60 transition-all cursor-pointer ${isRightDock
-              ? 'right-0 top-1/2 -translate-y-1/2 rounded-r-none rounded-l-xl border-r-0'
-              : 'left-0 top-1/2 -translate-y-1/2 border-l-0'
-              }`}
+            className={`fixed z-40 flex items-center justify-center py-2 px-2.5 bg-[#0d111a]/95 backdrop-blur-md border border-slate-700/80 text-cyan-400 hover:text-white shadow-xl shadow-black/60 transition-all cursor-pointer active:scale-95 ${
+              isRightDock
+                ? 'right-0 top-3.5 rounded-l-xl border-r-0'
+                : 'left-0 top-3.5 rounded-r-xl border-l-0'
+            }`}
           >
             {isRightDock ? (
               <ChevronLeft className="w-4 h-4 stroke-[2.5]" />

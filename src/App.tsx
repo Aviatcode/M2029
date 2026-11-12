@@ -1730,7 +1730,7 @@ export default function App() {
         {/* Main Content Workspace */}
         <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
           {/* Content Workspace Area (Responsive across Phone, Tablet & Laptop) */}
-          <main className="flex-1 h-full overflow-y-auto px-3 sm:px-5 md:px-7 py-4 sm:py-6 w-full max-w-[1580px] mx-auto">
+          <main className="flex-1 h-full overflow-y-auto pl-9 pr-3 sm:px-5 md:px-7 py-3.5 sm:py-6 w-full max-w-[1580px] mx-auto">
             {activeTab === 'dashboard' && (() => {
               const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
               const nowDayIdx = new Date().getDay();
