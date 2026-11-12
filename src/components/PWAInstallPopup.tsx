@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { Smartphone, X, Download, Share, PlusSquare } from 'lucide-react';
+import { AppLogo } from './AppLogo';
 
 const STORAGE_KEY = 'syllabus_pwa_first_time_prompt_seen';
 
@@ -87,11 +88,7 @@ export const PWAInstallPopup: React.FC = () => {
           </button>
 
           <div className="flex items-start gap-3 pr-5">
-            <img
-              src="./icon-192.png"
-              alt="M2029 Logo"
-              className="w-7 h-7 rounded-lg object-contain border border-slate-800 shrink-0 mt-0.5"
-            />
+            <AppLogo size={28} withGlow className="shrink-0 mt-0.5" />
 
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5">

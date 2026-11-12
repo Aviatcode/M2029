@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Classroom, Topic } from '../types';
+import { AppLogo } from './AppLogo';
 import {
   Folder,
   FolderOpen,
@@ -87,11 +88,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
       <div className="p-4 border-b border-slate-800/80 bg-slate-900/60">
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <img
-              src="./icon-192.png"
-              alt="M2029 Logo"
-              className="w-8 h-8 rounded-lg shrink-0 object-contain shadow-xs border border-neutral-800/80"
-            />
+            <AppLogo size={30} withGlow className="shrink-0 shadow-xs" />
             <div>
               <h1 className="font-bold text-sm text-white tracking-tight">M2029</h1>
               <p className="text-[10px] text-slate-400 font-mono">Curriculum Syllabus</p>

@@ -11,8 +11,10 @@ import {
   Trophy,
   ChevronRight,
   ChevronLeft,
+  Sparkles,
 } from 'lucide-react';
 import type { UserProfile } from './LoginModal';
+import { AppLogo } from './AppLogo';
 
 export type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
 
@@ -100,79 +102,92 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   // -------------------------------------------------------------
   // MOBILE / PHONE VERSION
-  // Completely hides the sidebar to save screen space, leaving
-  // only one minimal arrow trigger to slide the drawer out.
+  // Top-left App Logo ALWAYS visible (click -> Home tab),
+  // with a small minimal arrow just below it to open the sidebar.
   // -------------------------------------------------------------
   if (isMobile) {
     const isRightDock = position === 'right';
 
     return (
       <>
-        {/* 1. Minimal Arrow Button on Phone (Always visible when drawer is closed) */}
-        {!isMobileOpen && (
+        {/* 1. TOP-LEFT AI COMMAND POD (Always visible on phone) */}
+        {/* App Logo on top (sends to Home tab) + Small Arrow just below it (opens sidebar) */}
+        <div
+          className={`fixed z-40 top-3 left-3 flex flex-col items-center gap-1.5 transition-all select-none ${
+            isMobileOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          {/* A. App Logo: ALWAYS in the top left, clicking sends to Home tab */}
+          <button
+            type="button"
+            onClick={() => handleTabClick('dashboard')}
+            aria-label="Go to Home Tab"
+            title="M2029 Home (Academic Overview)"
+            className="w-10 h-10 rounded-2xl flex items-center justify-center p-1 bg-[#080d1a]/95 backdrop-blur-xl border border-cyan-500/40 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.45)] shadow-xl shadow-black/80 transition-all cursor-pointer group active:scale-95 ring-1 ring-white/10"
+          >
+            <AppLogo size={28} withGlow className="group-hover:scale-105 transition-transform" />
+          </button>
+
+          {/* B. Small Arrow just below the logo to open the side bar */}
           <button
             type="button"
             onClick={() => setIsMobileOpen(true)}
-            aria-label="Open Navigation Menu"
-            title="Open Navigation"
-            className={`fixed z-40 flex items-center justify-center py-2 px-2.5 bg-[#0d111a]/95 backdrop-blur-md border border-slate-700/80 text-cyan-400 hover:text-white shadow-xl shadow-black/60 transition-all cursor-pointer active:scale-95 ${
-              isRightDock
-                ? 'right-0 top-3.5 rounded-l-xl border-r-0'
-                : 'left-0 top-3.5 rounded-r-xl border-l-0'
-            }`}
+            aria-label="Open Sidebar Navigation"
+            title="Open Sidebar Navigation"
+            className="w-7 h-5 rounded-lg flex items-center justify-center bg-[#080d1a]/90 backdrop-blur-xl border border-slate-700/80 hover:border-cyan-400 text-cyan-400 hover:text-white shadow-lg shadow-black/60 transition-all cursor-pointer group active:scale-95"
           >
-            {isRightDock ? (
-              <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
-            ) : (
-              <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-            )}
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5] transition-transform group-hover:translate-x-0.5" />
           </button>
-        )}
+        </div>
 
         {/* 2. Mobile Backdrop */}
         {isMobileOpen && (
           <div
             onClick={() => setIsMobileOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 transition-opacity"
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 transition-opacity animate-fade-in"
             aria-hidden="true"
           />
         )}
 
-        {/* 3. Slide-out Mobile Drawer (Clean & Minimal) */}
+        {/* 3. Slide-out Mobile Drawer (Futuristic AI-Generated Design) */}
         <aside
-          className={`fixed inset-y-0 z-50 flex flex-col w-64 max-w-[80vw] bg-[#0d111a] border-slate-800 shadow-2xl transition-transform duration-200 ease-in-out select-none ${isRightDock
-            ? 'right-0 border-l ' + (isMobileOpen ? 'translate-x-0' : 'translate-x-full')
-            : 'left-0 border-r ' + (isMobileOpen ? 'translate-x-0' : '-translate-x-full')
-            }`}
+          className={`fixed inset-y-0 z-50 flex flex-col w-72 max-w-[85vw] bg-[#070b14]/95 backdrop-blur-2xl border-cyan-500/25 shadow-2xl shadow-cyan-950/60 transition-transform duration-250 ease-out select-none ${
+            isRightDock
+              ? 'right-0 border-l ' + (isMobileOpen ? 'translate-x-0' : 'translate-x-full')
+              : 'left-0 border-r ' + (isMobileOpen ? 'translate-x-0' : '-translate-x-full')
+          }`}
         >
-          {/* Header with App Logo & Close Arrow */}
-          <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800/80 shrink-0">
+          {/* Header with App Logo (Click -> Home Tab) & Dismiss Arrow */}
+          <div className="h-16 px-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/60 shrink-0">
             <button
               onClick={() => handleTabClick('dashboard')}
-              className="flex items-center gap-2.5 cursor-pointer focus:outline-none text-left"
-              title="M2029 Workspace"
+              className="flex items-center gap-3 cursor-pointer focus:outline-none text-left group"
+              title="M2029 Home (Academic Overview)"
             >
-              <img
-                src="./icon-192.png"
-                alt="M2029 Logo"
-                className="w-7 h-7 rounded-lg shrink-0 object-contain border border-neutral-800"
-              />
+              <div className="p-1 rounded-xl bg-slate-900/90 border border-cyan-500/40 group-hover:border-cyan-300 shadow-sm shadow-cyan-500/20 transition-all">
+                <AppLogo size={28} withGlow />
+              </div>
               <div className="leading-tight overflow-hidden">
-                <span className="text-sm font-extrabold text-white tracking-tight font-sans block truncate">
-                  M2029
-                </span>
-                <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5 truncate">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-black text-white tracking-tight font-sans block truncate">
+                    M2029
+                  </span>
+                  <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-400">
+                    AI OS
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-slate-400 font-medium block truncate mt-0.5">
                   {classCode || 'CLASS-2029'}
                 </span>
               </div>
             </button>
 
-            {/* Minimal Arrow Button to dismiss sidebar */}
+            {/* Dismiss Arrow Button */}
             <button
               type="button"
               onClick={() => setIsMobileOpen(false)}
               aria-label="Close Navigation"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/70 border border-slate-800 hover:border-slate-700 transition cursor-pointer"
             >
               {isRightDock ? (
                 <ChevronRight className="w-4 h-4 stroke-[2.2]" />
@@ -192,19 +207,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${isActive
-                    ? 'bg-white text-slate-950 font-bold shadow-md shadow-white/10 ring-1 ring-white/20'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-                    }`}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    isActive
+                      ? 'bg-gradient-to-r from-white to-slate-100 text-slate-950 font-bold shadow-lg shadow-cyan-500/15 ring-1 ring-cyan-400/30'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900/70 hover:translate-x-0.5'
+                  }`}
                 >
                   <Icon
-                    className={`shrink-0 w-4.5 h-4.5 ${isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
-                      }`}
+                    className={`shrink-0 w-4.5 h-4.5 ${
+                      isActive ? 'text-slate-950 stroke-[2.3]' : 'text-slate-400'
+                    }`}
                   />
                   <span className="truncate font-sans-ui flex-1 flex items-center justify-between">
                     <span>{item.label}</span>
-                    {item.isAI && !isActive && (
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-full font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+                    {item.isAI && (
+                      <span
+                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded-full font-bold flex items-center gap-1 ${
+                          isActive
+                            ? 'bg-slate-950 text-cyan-400'
+                            : 'bg-cyan-950/80 text-cyan-300 border border-cyan-500/40'
+                        }`}
+                      >
+                        <Sparkles className="w-2.5 h-2.5" />
                         AI
                       </span>
                     )}
@@ -214,15 +238,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
             })}
           </nav>
 
-          {/* Minimal Bottom Controls (Settings & Auth only, no bar shifting) */}
-          <div className="border-t border-slate-800/80 p-3 space-y-1.5 shrink-0">
+          {/* AI Core Status & Bottom Controls */}
+          <div className="border-t border-slate-800/80 p-3 space-y-2 shrink-0 bg-slate-950/50">
+            {/* AI Engine Status Pill */}
+            <div className="px-3 py-1.5 rounded-xl bg-[#090e1a] border border-cyan-500/20 flex items-center justify-between text-[10px] font-mono text-slate-400">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                AI Neural Cache
+              </span>
+              <span className="text-cyan-400 font-bold">ONLINE</span>
+            </div>
+
             {/* Settings */}
             <button
               onClick={() => handleTabClick('settings')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${effectiveId === 'settings'
-                ? 'bg-white text-slate-950 font-bold shadow-md'
-                : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-                }`}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                effectiveId === 'settings'
+                  ? 'bg-white text-slate-950 font-bold shadow-md'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+              }`}
             >
               <SlidersHorizontal className="w-4 h-4 shrink-0" />
               <span className="truncate font-sans-ui">Settings</span>
@@ -260,19 +294,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* 1. Brand Logo */}
           <button
             onClick={() => handleTabClick('dashboard')}
-            className="flex items-center gap-2.5 cursor-pointer focus:outline-none group shrink-0"
-            title="M2029 Workspace"
+            className="flex items-center gap-3 cursor-pointer focus:outline-none group shrink-0"
+            title="M2029 Home (Academic Overview)"
           >
-            <img
-              src="./icon-192.png"
-              alt="M2029 Logo"
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg shrink-0 object-contain group-hover:scale-105 transition-transform border border-neutral-800"
-            />
+            <div className="p-1 rounded-xl bg-slate-900 border border-cyan-500/40 group-hover:border-cyan-300 shadow-sm shadow-cyan-500/20 transition-all">
+              <AppLogo size={26} withGlow />
+            </div>
             <div className="leading-tight hidden md:block">
-              <span className="text-xs sm:text-sm font-extrabold text-white tracking-tight font-sans block">
-                M2029
-              </span>
-              <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs sm:text-sm font-black text-white tracking-tight font-sans block">
+                  M2029
+                </span>
+                <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-400">
+                  AI OS
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-slate-400 font-semibold block truncate">
                 {classCode || 'CLASS-2029'}
               </span>
             </div>
@@ -347,30 +384,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`bg-[#0d111a] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-40 ${isRight ? 'border-l border-slate-800/70' : 'border-r border-slate-800/70'
-        } ${isHovered ? 'w-52 sm:w-56 lg:w-60' : 'w-14 sm:w-16 lg:w-18'}`}
+      className={`bg-[#070b14] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-40 ${
+        isRight ? 'border-l border-slate-800/80' : 'border-r border-slate-800/80'
+      } ${isHovered ? 'w-56 sm:w-60' : 'w-16 sm:w-18'}`}
     >
-      {/* 1. Brand Logo Header */}
-      <div className="h-14 sm:h-16 px-3 sm:px-4 flex items-center justify-between border-b border-slate-800/60 shrink-0">
+      {/* 1. App Logo Header & Small Arrow just below it */}
+      <div className="p-3 border-b border-slate-800/70 bg-slate-950/40 shrink-0 flex flex-col items-center gap-2">
+        {/* A. App Logo: ALWAYS in top left, click sends to Home tab */}
         <button
           onClick={() => handleTabClick('dashboard')}
-          className="flex items-center gap-2.5 cursor-pointer focus:outline-none group text-left w-full"
-          title="M2029 Workspace"
+          className={`flex items-center gap-3 cursor-pointer focus:outline-none group text-left transition-all ${
+            isHovered ? 'w-full' : 'justify-center'
+          }`}
+          title="M2029 Home (Academic Overview)"
         >
-          <img
-            src="./icon-192.png"
-            alt="M2029 Logo"
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg shrink-0 object-contain group-hover:scale-105 transition-transform border border-neutral-800"
-          />
+          <div className="p-1 rounded-2xl bg-[#090d18] border border-cyan-500/40 group-hover:border-cyan-300 shadow-md shadow-cyan-950/50 group-hover:shadow-[0_0_16px_rgba(6,182,212,0.4)] transition-all shrink-0">
+            <AppLogo size={28} withGlow />
+          </div>
           {isHovered && (
-            <div className="leading-tight overflow-hidden">
-              <span className="text-sm sm:text-base font-extrabold text-white tracking-tight font-sans block truncate">
-                M2029
-              </span>
-              <span className="text-[9px] font-mono text-cyan-400 font-semibold block -mt-0.5 truncate">
+            <div className="leading-tight overflow-hidden flex-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-black text-white tracking-tight font-sans block truncate">
+                  M2029
+                </span>
+                <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-400">
+                  AI OS
+                </span>
+              </div>
+              <span className="text-[9px] font-mono text-slate-400 font-semibold block truncate mt-0.5">
                 {classCode || 'CLASS-2029'}
               </span>
             </div>
+          )}
+        </button>
+
+        {/* B. Small Arrow just below it to toggle collapse / expand */}
+        <button
+          type="button"
+          onClick={() => setIsHovered((prev) => !prev)}
+          title={isHovered ? "Collapse Sidebar" : "Expand Sidebar"}
+          aria-label="Toggle Sidebar"
+          className="w-full h-5 rounded-lg flex items-center justify-center bg-slate-900/60 hover:bg-slate-800 text-cyan-400 hover:text-white border border-slate-800 hover:border-cyan-500/40 transition-all cursor-pointer group active:scale-95"
+        >
+          {isHovered ? (
+            <ChevronLeft className="w-3.5 h-3.5 stroke-[2.2] transition-transform group-hover:-translate-x-0.5" />
+          ) : (
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.2] transition-transform group-hover:translate-x-0.5" />
           )}
         </button>
       </div>

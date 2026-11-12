@@ -198,9 +198,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               • {classCode || 'M2029'}
             </span>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Academic Overview
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Academic Overview
+            </h1>
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-cyan-950/70 border border-cyan-500/30 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.2)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              AI OS ONLINE
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">

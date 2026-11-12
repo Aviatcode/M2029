@@ -716,9 +716,15 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
               • {classCode || 'M2029'}
             </span>
           </button>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            AI Tutor
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              AI Tutor
+            </h1>
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 shadow-[0_0_12px_rgba(99,102,241,0.2)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+              NEURAL AGENT
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
