@@ -115,11 +115,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => setIsMobileOpen(true)}
             aria-label="Open Navigation Menu"
             title="Open Navigation"
-            className={`fixed z-40 flex items-center justify-center p-2 rounded-r-xl bg-[#0d111a]/95 backdrop-blur-md border border-slate-700/80 text-cyan-400 hover:text-white shadow-xl shadow-black/60 transition-all cursor-pointer ${
-              isRightDock
-                ? 'right-0 top-1/2 -translate-y-1/2 rounded-r-none rounded-l-xl border-r-0'
-                : 'left-0 top-1/2 -translate-y-1/2 border-l-0'
-            }`}
+            className={`fixed z-40 flex items-center justify-center p-2 rounded-r-xl bg-[#0d111a]/95 backdrop-blur-md border border-slate-700/80 text-cyan-400 hover:text-white shadow-xl shadow-black/60 transition-all cursor-pointer ${isRightDock
+              ? 'right-0 top-1/2 -translate-y-1/2 rounded-r-none rounded-l-xl border-r-0'
+              : 'left-0 top-1/2 -translate-y-1/2 border-l-0'
+              }`}
           >
             {isRightDock ? (
               <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
@@ -140,11 +139,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* 3. Slide-out Mobile Drawer (Clean & Minimal) */}
         <aside
-          className={`fixed inset-y-0 z-50 flex flex-col w-64 max-w-[80vw] bg-[#0d111a] border-slate-800 shadow-2xl transition-transform duration-200 ease-in-out select-none ${
-            isRightDock
-              ? 'right-0 border-l ' + (isMobileOpen ? 'translate-x-0' : 'translate-x-full')
-              : 'left-0 border-r ' + (isMobileOpen ? 'translate-x-0' : '-translate-x-full')
-          }`}
+          className={`fixed inset-y-0 z-50 flex flex-col w-64 max-w-[80vw] bg-[#0d111a] border-slate-800 shadow-2xl transition-transform duration-200 ease-in-out select-none ${isRightDock
+            ? 'right-0 border-l ' + (isMobileOpen ? 'translate-x-0' : 'translate-x-full')
+            : 'left-0 border-r ' + (isMobileOpen ? 'translate-x-0' : '-translate-x-full')
+            }`}
         >
           {/* Header with App Logo & Close Arrow */}
           <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800/80 shrink-0">
@@ -193,16 +191,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                    isActive
-                      ? 'bg-white text-slate-950 font-bold shadow-md shadow-white/10 ring-1 ring-white/20'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition cursor-pointer ${isActive
+                    ? 'bg-white text-slate-950 font-bold shadow-md shadow-white/10 ring-1 ring-white/20'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+                    }`}
                 >
                   <Icon
-                    className={`shrink-0 w-4.5 h-4.5 ${
-                      isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
-                    }`}
+                    className={`shrink-0 w-4.5 h-4.5 ${isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
+                      }`}
                   />
                   <span className="truncate font-sans-ui flex-1 flex items-center justify-between">
                     <span>{item.label}</span>
@@ -222,11 +218,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Settings */}
             <button
               onClick={() => handleTabClick('settings')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
-                effectiveId === 'settings'
-                  ? 'bg-white text-slate-950 font-bold shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${effectiveId === 'settings'
+                ? 'bg-white text-slate-950 font-bold shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+                }`}
             >
               <SlidersHorizontal className="w-4 h-4 shrink-0" />
               <span className="truncate font-sans-ui">Settings</span>
@@ -257,9 +252,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <nav
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`w-full bg-[#0d111a]/95 backdrop-blur-md shrink-0 transition-all duration-200 select-none z-40 ${
-          isTop ? 'border-b border-slate-800/80 shadow-sm' : 'border-t border-slate-800/80 shadow-2xl'
-        } h-14 sm:h-15 py-1 px-3 sm:px-5 ${!isTop ? 'pb-[env(safe-area-inset-bottom)]' : ''}`}
+        className={`w-full bg-[#0d111a]/95 backdrop-blur-md shrink-0 transition-all duration-200 select-none z-40 ${isTop ? 'border-b border-slate-800/80 shadow-sm' : 'border-t border-slate-800/80 shadow-2xl'
+          } h-14 sm:h-15 py-1 px-3 sm:px-5 ${!isTop ? 'pb-[env(safe-area-inset-bottom)]' : ''}`}
       >
         <div className="max-w-[1580px] mx-auto h-full flex items-center justify-between gap-3">
           {/* 1. Brand Logo */}
@@ -294,16 +288,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={item.id}
                   onClick={() => handleTabClick(item.id)}
                   title={item.label}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
-                    isActive
-                      ? 'bg-white text-slate-950 font-bold shadow-md shadow-white/10 ring-1 ring-white/20'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-                  }`}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${isActive
+                    ? 'bg-white text-slate-950 font-bold shadow-md shadow-white/10 ring-1 ring-white/20'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+                    }`}
                 >
                   <Icon
-                    className={`shrink-0 w-4 h-4 ${
-                      isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
-                    }`}
+                    className={`shrink-0 w-4 h-4 ${isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
+                      }`}
                   />
                   <span className="truncate font-sans-ui text-xs">{item.label}</span>
                   {item.isAI && !isActive && (
@@ -322,11 +314,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               onClick={() => handleTabClick('settings')}
               title="Settings"
-              className={`p-1.5 rounded-lg transition cursor-pointer ${
-                effectiveId === 'settings'
-                  ? 'bg-white text-slate-950 font-bold shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-              }`}
+              className={`p-1.5 rounded-lg transition cursor-pointer ${effectiveId === 'settings'
+                ? 'bg-white text-slate-950 font-bold shadow-md'
+                : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
+                }`}
             >
               <SlidersHorizontal className="w-4 h-4" />
             </button>
@@ -355,9 +346,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`bg-[#0d111a] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-40 ${
-        isRight ? 'border-l border-slate-800/70' : 'border-r border-slate-800/70'
-      } ${isHovered ? 'w-52 sm:w-56 lg:w-60' : 'w-14 sm:w-16 lg:w-18'}`}
+      className={`bg-[#0d111a] flex flex-col h-full shrink-0 transition-all duration-200 ease-in-out select-none z-40 ${isRight ? 'border-l border-slate-800/70' : 'border-r border-slate-800/70'
+        } ${isHovered ? 'w-52 sm:w-56 lg:w-60' : 'w-14 sm:w-16 lg:w-18'}`}
     >
       {/* 1. Brand Logo Header */}
       <div className="h-14 sm:h-16 px-3 sm:px-4 flex items-center justify-between border-b border-slate-800/60 shrink-0">
@@ -386,9 +376,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 2. Navigation Links */}
       <nav
-        className={`flex-1 overflow-y-auto space-y-1.5 no-scrollbar ${
-          isHovered ? 'p-2.5 sm:p-3' : 'p-1.5 sm:p-2'
-        }`}
+        className={`flex-1 overflow-y-auto space-y-1.5 no-scrollbar ${isHovered ? 'p-2.5 sm:p-3' : 'p-1.5 sm:p-2'
+          }`}
       >
         {mainNavItems.map((item) => {
           const Icon = item.icon;
@@ -399,18 +388,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
               key={item.id}
               onClick={() => handleTabClick(item.id)}
               title={item.label}
-              className={`relative w-full flex items-center rounded-2xl text-xs font-semibold transition cursor-pointer ${
-                isHovered ? 'gap-3 px-3 py-2 text-left' : 'justify-center py-2.5 px-0'
-              } ${
-                isActive
+              className={`relative w-full flex items-center rounded-2xl text-xs font-semibold transition cursor-pointer ${isHovered ? 'gap-3 px-3 py-2 text-left' : 'justify-center py-2.5 px-0'
+                } ${isActive
                   ? 'bg-white text-slate-950 font-bold shadow-lg shadow-white/10 ring-1 ring-white/20'
                   : 'text-slate-400 hover:text-white hover:bg-slate-900/60 border border-transparent'
-              }`}
+                }`}
             >
               <Icon
-                className={`shrink-0 w-4.5 h-4.5 transition-colors ${
-                  isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
-                }`}
+                className={`shrink-0 w-4.5 h-4.5 transition-colors ${isActive ? 'text-slate-950 stroke-[2.2]' : 'text-slate-400'
+                  }`}
               />
 
               {isHovered && (
@@ -434,13 +420,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={() => handleTabClick('settings')}
           title="Settings"
-          className={`w-full flex items-center rounded-2xl text-xs font-semibold transition cursor-pointer ${
-            isHovered ? 'gap-3 px-3 py-2 text-left' : 'justify-center py-2 px-0'
-          } ${
-            effectiveId === 'settings'
+          className={`w-full flex items-center rounded-2xl text-xs font-semibold transition cursor-pointer ${isHovered ? 'gap-3 px-3 py-2 text-left' : 'justify-center py-2 px-0'
+            } ${effectiveId === 'settings'
               ? 'bg-white text-slate-950 font-bold shadow-md'
               : 'text-slate-400 hover:text-white hover:bg-slate-900/60'
-          }`}
+            }`}
         >
           <SlidersHorizontal className="w-4 h-4 shrink-0" />
           {isHovered && <span className="truncate font-sans-ui">Settings</span>}
@@ -450,9 +434,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button
           onClick={handleAuthAction}
           title={authLabel}
-          className={`w-full flex items-center rounded-2xl text-xs font-medium transition cursor-pointer ${
-            isHovered ? 'gap-2.5 px-3 py-1.5 text-left' : 'justify-center py-1.5 px-0'
-          } text-slate-400 hover:text-rose-400 hover:bg-slate-900/60`}
+          className={`w-full flex items-center rounded-2xl text-xs font-medium transition cursor-pointer ${isHovered ? 'gap-2.5 px-3 py-1.5 text-left' : 'justify-center py-1.5 px-0'
+            } text-slate-400 hover:text-rose-400 hover:bg-slate-900/60`}
         >
           <AuthIcon className="w-4 h-4 shrink-0" />
           {isHovered && <span className="truncate font-sans-ui">{authLabel}</span>}

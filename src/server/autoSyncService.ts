@@ -138,42 +138,42 @@ function buildMasterReadme(db: any): string {
   const assignmentRows =
     assignments.length > 0
       ? assignments
-          .map((item, idx) => {
-            const days = calculateDaysLeft(item.dueDate);
-            const timeLeftBadge = item.completed
-              ? '`Done ✓`'
-              : days < 0
+        .map((item, idx) => {
+          const days = calculateDaysLeft(item.dueDate);
+          const timeLeftBadge = item.completed
+            ? '`Done ✓`'
+            : days < 0
               ? '`Past Due`'
               : days === 0
-              ? '**`Today`** ⚠️'
-              : days === 1
-              ? '**`Tomorrow`** ⚠️'
-              : `${days} days left`;
-            const statusBadge = item.completed ? '✅ **Completed**' : '⏳ **Pending**';
-            return `| ${idx + 1} | **${item.subjectName}** | ${item.title} | \`${item.dueDate}\` | ${timeLeftBadge} | ${item.assignedBy || 'Faculty'} | ${statusBadge} |`;
-          })
-          .join('\n')
+                ? '**`Today`** ⚠️'
+                : days === 1
+                  ? '**`Tomorrow`** ⚠️'
+                  : `${days} days left`;
+          const statusBadge = item.completed ? '✅ **Completed**' : '⏳ **Pending**';
+          return `| ${idx + 1} | **${item.subjectName}** | ${item.title} | \`${item.dueDate}\` | ${timeLeftBadge} | ${item.assignedBy || 'Faculty'} | ${statusBadge} |`;
+        })
+        .join('\n')
       : '| 1 | Core Subjects | All cohort assignments up to date | — | — | Faculty | ✅ Up to date |';
 
   const pptRows =
     pptPresentations.length > 0
       ? pptPresentations
-          .map((ppt) => {
-            const status = ppt.completed ? '✅ Done' : '⏳ Scheduled';
-            const cleanTitle = ppt.title.replace('Class Presentation: ', '');
-            return `| \`${ppt.rollNumber || 'Cohort'}\` | **${ppt.presenterName || 'Team'}** | ${ppt.subjectName} | ${cleanTitle} | \`${ppt.dueDate}\` | ${status} |`;
-          })
-          .join('\n')
+        .map((ppt) => {
+          const status = ppt.completed ? '✅ Done' : '⏳ Scheduled';
+          const cleanTitle = ppt.title.replace('Class Presentation: ', '');
+          return `| \`${ppt.rollNumber || 'Cohort'}\` | **${ppt.presenterName || 'Team'}** | ${ppt.subjectName} | ${cleanTitle} | \`${ppt.dueDate}\` | ${status} |`;
+        })
+        .join('\n')
       : '| `Cohort` | **Class Presentation** | General | Schedule will be posted by CR | — | ⏳ Scheduled |';
 
   const timetableRows =
     timetable.length > 0
       ? timetable
-          .map(
-            (t: any) =>
-              `| **${t.day}** | ${t.time} | ${t.subjectName} (${t.subjectCode}) | \`${t.room}\` | ${t.teacherName} |`
-          )
-          .join('\n')
+        .map(
+          (t: any) =>
+            `| **${t.day}** | ${t.time} | ${t.subjectName} (${t.subjectCode}) | \`${t.room}\` | ${t.teacherName} |`
+        )
+        .join('\n')
       : '| **Mon - Fri** | As per schedule | Timetable will be configured by CR | — | Class Faculty |';
 
   const subjectRows = subjects
@@ -304,11 +304,11 @@ function buildSyllabusMarkdown(db: any): string {
 | Code | Subject Name | Credits | Faculty Lead | Exam Pattern |
 | :--- | :--- | :---: | :--- | :--- |
 ${subjects
-  .map(
-    (s: Subject) =>
-      `| **${s.code}** | ${s.name} | ${s.credits || 4}.0 | ${s.teacherName} | 25% Mid-Term, 25% Practical Lab, 50% University Exam |`
-  )
-  .join('\n')}
+      .map(
+        (s: Subject) =>
+          `| **${s.code}** | ${s.name} | ${s.credits || 4}.0 | ${s.teacherName} | 25% Mid-Term, 25% Practical Lab, 50% University Exam |`
+      )
+      .join('\n')}
 
 ---
 `;
@@ -320,12 +320,12 @@ ${subjects
       subj.name.toLowerCase().includes('database')
         ? 'Database System Concepts (7th Edition) by Silberschatz, Korth, Sudarshan (McGraw-Hill)'
         : subj.name.toLowerCase().includes('java')
-        ? 'Java: The Complete Reference (12th Edition) by Herbert Schildt (Oracle Press)'
-        : subj.name.toLowerCase().includes('web')
-        ? "Learning Web Design: A Beginner's Guide (5th Edition) by Jennifer Robbins (O'Reilly)"
-        : subj.name.toLowerCase().includes('network')
-        ? 'Computer Networking: A Top-Down Approach (8th Edition) by Kurose and Ross (Pearson)'
-        : 'Operating System Concepts (10th Edition) by Silberschatz, Galvin, Gagne (Wiley)';
+          ? 'Java: The Complete Reference (12th Edition) by Herbert Schildt (Oracle Press)'
+          : subj.name.toLowerCase().includes('web')
+            ? "Learning Web Design: A Beginner's Guide (5th Edition) by Jennifer Robbins (O'Reilly)"
+            : subj.name.toLowerCase().includes('network')
+              ? 'Computer Networking: A Top-Down Approach (8th Edition) by Kurose and Ross (Pearson)'
+              : 'Operating System Concepts (10th Edition) by Silberschatz, Galvin, Gagne (Wiley)';
 
     content += `
 <a id="${subj.code.toLowerCase()}"></a>
@@ -441,34 +441,34 @@ This register details all coursework assignments, problem sets, and submission c
 ---
 
 ${assignments
-  .map((item, idx) => {
-    const days = calculateDaysLeft(item.dueDate);
-    const urgency =
-      item.completed
-        ? '✅ Completed'
-        : days < 0
-        ? '⚠️ Past Due'
-        : days === 0
-        ? '🔥 Due Today!'
-        : days === 1
-        ? '⚡ Due Tomorrow!'
-        : `⏳ ${days} days remaining`;
+      .map((item, idx) => {
+        const days = calculateDaysLeft(item.dueDate);
+        const urgency =
+          item.completed
+            ? '✅ Completed'
+            : days < 0
+              ? '⚠️ Past Due'
+              : days === 0
+                ? '🔥 Due Today!'
+                : days === 1
+                  ? '⚡ Due Tomorrow!'
+                  : `⏳ ${days} days remaining`;
 
-    const stepList =
-      item.outlineSteps && item.outlineSteps.length > 0
-        ? item.outlineSteps.map((s) => `1. ${s}`).join('\n')
-        : '1. Formulate theoretical proofs.\n2. Write tested clean implementation code.\n3. Validate boundary test cases.';
+        const stepList =
+          item.outlineSteps && item.outlineSteps.length > 0
+            ? item.outlineSteps.map((s) => `1. ${s}`).join('\n')
+            : '1. Formulate theoretical proofs.\n2. Write tested clean implementation code.\n3. Validate boundary test cases.';
 
-    const refList =
-      item.keyReferences && item.keyReferences.length > 0
-        ? item.keyReferences.map((r) => `- *${r}*`).join('\n')
-        : '- University Semester Syllabus Handbook';
+        const refList =
+          item.keyReferences && item.keyReferences.length > 0
+            ? item.keyReferences.map((r) => `- *${r}*`).join('\n')
+            : '- University Semester Syllabus Handbook';
 
-    const guidance = item.sampleDraftGuidance
-      ? `> 💡 **Faculty Guidance & Hint:** ${item.sampleDraftGuidance}`
-      : '';
+        const guidance = item.sampleDraftGuidance
+          ? `> 💡 **Faculty Guidance & Hint:** ${item.sampleDraftGuidance}`
+          : '';
 
-    return `### ${idx + 1}. ${item.title}
+        return `### ${idx + 1}. ${item.title}
 * **Subject:** ${item.subjectName}
 * **Official Due Date:** \`${item.dueDate}\` (${urgency})
 * **Assigned By:** ${item.assignedBy || 'Faculty'}
@@ -487,8 +487,8 @@ ${guidance}
 
 ---
 `;
-  })
-  .join('\n')}
+      })
+      .join('\n')}
 `;
 }
 
@@ -502,11 +502,11 @@ function buildPPTScheduleMarkdown(db: any): string {
   const pptTableRows =
     pptItems.length > 0
       ? pptItems
-          .map((p) => {
-            const cleanTitle = p.title.replace('Class Presentation: ', '');
-            return `| \`${p.rollNumber || 'M29-01 to 05'}\` | **${p.presenterName || 'Team'}** | ${p.subjectName} | ${cleanTitle} | \`${p.dueDate}\` | ${p.completed ? '✅ Presented' : '⏳ Scheduled'} |`;
-          })
-          .join('\n')
+        .map((p) => {
+          const cleanTitle = p.title.replace('Class Presentation: ', '');
+          return `| \`${p.rollNumber || 'M29-01 to 05'}\` | **${p.presenterName || 'Team'}** | ${p.subjectName} | ${cleanTitle} | \`${p.dueDate}\` | ${p.completed ? '✅ Presented' : '⏳ Scheduled'} |`;
+        })
+        .join('\n')
       : '| `Cohort` | **Class Presentation** | General | Schedule will be posted by CR | — | ⏳ Scheduled |';
 
   const detailedDirectives = pptItems
@@ -911,22 +911,21 @@ SOFTWARE.
 
 | # | Title | Type | Due Date | Status | File Link |
 | :-: | :--- | :---: | :---: | :---: | :--- |
-${
-  folderData.items.length > 0
-    ? folderData.items
-        .map((it, idx) => {
-          const fileBase = `${String(idx + 1).padStart(2, '0')}-${it.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-|-$/g, '')
-            .substring(0, 45)}.md`;
-          const status = it.completed ? '✅ Done' : '⏳ Pending';
-          const typeStr = it.type === 'ppt_presentation' ? 'Presentation' : 'Assignment';
-          return `| ${idx + 1} | **${it.title}** | \`${typeStr}\` | \`${it.dueDate}\` | ${status} | [${fileBase}](${fileBase}) |`;
-        })
-        .join('\n')
-    : '| 1 | No assignments currently assigned for this subject | — | — | — | — |'
-}
+${folderData.items.length > 0
+          ? folderData.items
+            .map((it, idx) => {
+              const fileBase = `${String(idx + 1).padStart(2, '0')}-${it.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '')
+                .substring(0, 45)}.md`;
+              const status = it.completed ? '✅ Done' : '⏳ Pending';
+              const typeStr = it.type === 'ppt_presentation' ? 'Presentation' : 'Assignment';
+              return `| ${idx + 1} | **${it.title}** | \`${typeStr}\` | \`${it.dueDate}\` | ${status} | [${fileBase}](${fileBase}) |`;
+            })
+            .join('\n')
+          : '| 1 | No assignments currently assigned for this subject | — | — | — | — |'
+        }
 
 ---
 

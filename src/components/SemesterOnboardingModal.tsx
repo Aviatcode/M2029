@@ -362,11 +362,10 @@ Friday:
               <button
                 type="button"
                 onClick={() => setActiveTab('upload')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                  activeTab === 'upload'
-                    ? 'bg-slate-800 text-white border border-slate-700'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${activeTab === 'upload'
+                  ? 'bg-slate-800 text-white border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
+                  }`}
               >
                 <UploadCloud className="w-3.5 h-3.5" />
                 <span>Upload Document</span>
@@ -374,11 +373,10 @@ Friday:
               <button
                 type="button"
                 onClick={() => setActiveTab('paste')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                  activeTab === 'paste'
-                    ? 'bg-slate-800 text-white border border-slate-700'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${activeTab === 'paste'
+                  ? 'bg-slate-800 text-white border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
+                  }`}
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span>Paste Text</span>
@@ -386,11 +384,10 @@ Friday:
               <button
                 type="button"
                 onClick={() => setActiveTab('preset')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                  activeTab === 'preset'
-                    ? 'bg-slate-800 text-white border border-slate-700'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${activeTab === 'preset'
+                  ? 'bg-slate-800 text-white border border-slate-700'
+                  : 'text-slate-400 hover:text-slate-200'
+                  }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Sample Timetable Presets</span>
@@ -437,13 +434,12 @@ Friday:
                       onDragLeave={() => setIsDragOver(false)}
                       onDrop={handleFileDrop}
                       onClick={() => fileInputRef.current?.click()}
-                      className={`p-6 sm:p-8 rounded-2xl border-2 border-dashed transition text-center cursor-pointer flex flex-col items-center justify-center gap-3 ${
-                        isDragOver
-                          ? 'border-cyan-400 bg-cyan-950/30 scale-[0.99]'
-                          : selectedFile
+                      className={`p-6 sm:p-8 rounded-2xl border-2 border-dashed transition text-center cursor-pointer flex flex-col items-center justify-center gap-3 ${isDragOver
+                        ? 'border-cyan-400 bg-cyan-950/30 scale-[0.99]'
+                        : selectedFile
                           ? 'border-emerald-500/60 bg-emerald-950/20'
                           : 'border-slate-800 hover:border-slate-700 bg-slate-950/50'
-                      }`}
+                        }`}
                     >
                       <input
                         ref={fileInputRef}
@@ -503,11 +499,10 @@ Friday:
                       type="button"
                       disabled={!selectedFile}
                       onClick={() => handleProcessDocument()}
-                      className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer ${
-                        selectedFile
-                          ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
-                          : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-750'
-                      }`}
+                      className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer ${selectedFile
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
+                        : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-750'
+                        }`}
                     >
                       <Sparkles className="w-4 h-4" />
                       <span>Analyze Document & Auto-Configure Workspace</span>
@@ -547,11 +542,10 @@ Friday:
                       type="button"
                       disabled={!pastedText.trim()}
                       onClick={() => handleProcessDocument(pastedText)}
-                      className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer ${
-                        pastedText.trim()
-                          ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
-                          : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-750'
-                      }`}
+                      className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer ${pastedText.trim()
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
+                        : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-750'
+                        }`}
                     >
                       <Sparkles className="w-4 h-4" />
                       <span>Parse Text with AI</span>

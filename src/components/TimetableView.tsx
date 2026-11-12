@@ -140,11 +140,11 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
       teacherName: teacher.trim() || 'Faculty In-Charge',
       likelyTopic: topicFocus.trim()
         ? {
-            id: `topic-${Date.now()}`,
-            title: topicFocus.trim(),
-            confidence: 90,
-            reasoning: 'Configured by student schedule',
-          }
+          id: `topic-${Date.now()}`,
+          title: topicFocus.trim(),
+          confidence: 90,
+          reasoning: 'Configured by student schedule',
+        }
         : undefined,
     });
 
@@ -230,21 +230,19 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
           <div className="flex items-center gap-1 bg-[#141926] p-1 rounded-xl border border-slate-800">
             <button
               onClick={() => setViewMode('daily')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                viewMode === 'daily'
-                  ? 'bg-slate-800 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${viewMode === 'daily'
+                ? 'bg-slate-800 text-white shadow-xs'
+                : 'text-slate-400 hover:text-white'
+                }`}
             >
               Daily
             </button>
             <button
               onClick={() => setViewMode('matrix')}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                viewMode === 'matrix'
-                  ? 'bg-slate-800 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${viewMode === 'matrix'
+                ? 'bg-slate-800 text-white shadow-xs'
+                : 'text-slate-400 hover:text-white'
+                }`}
             >
               Matrix
             </button>
@@ -253,11 +251,10 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
           {/* Lab filter toggle */}
           <button
             onClick={() => setLabFilter(labFilter === 'all' ? 'labs' : 'all')}
-            className={`h-8 px-3 rounded-xl border text-xs font-semibold transition cursor-pointer ${
-              labFilter === 'labs'
-                ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-                : 'bg-[#141926] text-slate-400 border-slate-800 hover:text-slate-200'
-            }`}
+            className={`h-8 px-3 rounded-xl border text-xs font-semibold transition cursor-pointer ${labFilter === 'labs'
+              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+              : 'bg-[#141926] text-slate-400 border-slate-800 hover:text-slate-200'
+              }`}
           >
             {labFilter === 'labs' ? 'Labs Only' : 'All Classes'}
           </button>
@@ -340,11 +337,10 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                 <button
                   key={d}
                   onClick={() => setSelectedDay(d)}
-                  className={`py-1.5 rounded-xl text-xs font-mono font-bold transition cursor-pointer text-center ${
-                    selectedDay === d
-                      ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                      : 'bg-slate-900/60 text-slate-400 hover:text-white'
-                  }`}
+                  className={`py-1.5 rounded-xl text-xs font-mono font-bold transition cursor-pointer text-center ${selectedDay === d
+                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                    : 'bg-slate-900/60 text-slate-400 hover:text-white'
+                    }`}
                 >
                   {d.slice(0, 1)}
                 </button>
@@ -428,9 +424,8 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               <button
                 type="button"
                 onClick={() => setLabFilter(labFilter === 'all' ? 'labs' : 'all')}
-                className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition cursor-pointer ${
-                  attendanceRate >= 75 ? 'bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25' : 'bg-rose-500/15 text-rose-300 hover:bg-rose-500/25'
-                }`}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold transition cursor-pointer ${attendanceRate >= 75 ? 'bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25' : 'bg-rose-500/15 text-rose-300 hover:bg-rose-500/25'
+                  }`}
                 title="Toggle Labs filter"
               >
                 {attendanceRate >= 75 ? 'Safe' : 'Review'}
@@ -469,11 +464,10 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                       key={sub.id}
                       type="button"
                       onClick={() => setSearchQuery(isFiltered ? '' : sub.name)}
-                      className={`w-full p-2.5 rounded-2xl border flex items-center justify-between text-left transition cursor-pointer ${
-                        isFiltered
-                          ? 'bg-slate-800/90 border-cyan-500/50 shadow-xs'
-                          : 'bg-[#121724] border-slate-800 hover:border-slate-700 hover:bg-[#161c2c]'
-                      }`}
+                      className={`w-full p-2.5 rounded-2xl border flex items-center justify-between text-left transition cursor-pointer ${isFiltered
+                        ? 'bg-slate-800/90 border-cyan-500/50 shadow-xs'
+                        : 'bg-[#121724] border-slate-800 hover:border-slate-700 hover:bg-[#161c2c]'
+                        }`}
                       title={`Click to filter lectures for ${sub.name}`}
                     >
                       <span className="text-xs text-slate-200 font-semibold truncate">{sub.name}</span>
@@ -497,121 +491,120 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
       {viewMode === 'matrix' && (
         <div className="overflow-x-auto no-scrollbar pb-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 items-start min-w-[720px] sm:min-w-0">
-          {days.map((day) => {
-            const rawDayClasses = getFilteredDayClasses(day);
-            const dayClasses = rawDayClasses.filter(
-              (c) =>
-                !searchQuery.trim() ||
-                c.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                c.room.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                c.teacherName.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            const isToday = getInitialDay() === day;
+            {days.map((day) => {
+              const rawDayClasses = getFilteredDayClasses(day);
+              const dayClasses = rawDayClasses.filter(
+                (c) =>
+                  !searchQuery.trim() ||
+                  c.subjectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  c.room.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  c.teacherName.toLowerCase().includes(searchQuery.toLowerCase())
+              );
+              const isToday = getInitialDay() === day;
 
-            return (
-              <div
-                key={day}
-                className={`rounded-2xl border p-3 flex flex-col min-h-[340px] transition ${
-                  isToday
+              return (
+                <div
+                  key={day}
+                  className={`rounded-2xl border p-3 flex flex-col min-h-[340px] transition ${isToday
                     ? 'bg-slate-900/60 border-emerald-500/30 shadow-xs'
                     : 'bg-slate-900/30 border-slate-800'
-                }`}
-              >
-                {/* Day Header */}
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-semibold text-xs text-white">{day.slice(0, 3)}</span>
-                    {isToday && (
-                      <span className="text-[9px] font-mono px-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Today
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-mono text-slate-500">
-                      {dayClasses.length}
-                    </span>
-                    {onAddClass && (
-                      <button
-                        onClick={() => handleOpenAddModal(day)}
-                        className="p-0.5 rounded hover:bg-slate-800 text-slate-400 hover:text-cyan-300 transition cursor-pointer"
-                        title={`Add class for ${day}`}
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Day Lecture Cards */}
-                <div className="space-y-2 flex-1">
-                  {dayClasses.length === 0 ? (
-                    <div
-                      onClick={() => onAddClass && handleOpenAddModal(day)}
-                      className="py-8 text-center text-[11px] text-slate-600 hover:text-slate-400 border border-dashed border-slate-800 hover:border-slate-700 rounded-xl cursor-pointer transition flex flex-col items-center justify-center gap-1"
-                      title="Tap to add class"
-                    >
-                      <Plus className="w-3.5 h-3.5 text-slate-600" />
-                      <span>No classes (Tap +)</span>
+                    }`}
+                >
+                  {/* Day Header */}
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-semibold text-xs text-white">{day.slice(0, 3)}</span>
+                      {isToday && (
+                        <span className="text-[9px] font-mono px-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          Today
+                        </span>
+                      )}
                     </div>
-                  ) : (
-                    dayClasses.map((cls) => {
-                      const isLab = cls.time.toLowerCase().includes('lab') || cls.room.toLowerCase().includes('lab');
-
-                      return (
-                        <div
-                          key={cls.id}
-                          className="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 hover:border-slate-700 transition space-y-1.5 group relative"
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono text-slate-500">
+                        {dayClasses.length}
+                      </span>
+                      {onAddClass && (
+                        <button
+                          onClick={() => handleOpenAddModal(day)}
+                          className="p-0.5 rounded hover:bg-slate-800 text-slate-400 hover:text-cyan-300 transition cursor-pointer"
+                          title={`Add class for ${day}`}
                         >
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="text-[10px] font-mono font-semibold text-slate-300 truncate">
-                              {cls.subjectCode}
-                            </span>
-                            {isLab && (
-                              <span className="text-[8px] font-bold px-1 rounded bg-amber-500/20 text-amber-300">
-                                LAB
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Day Lecture Cards */}
+                  <div className="space-y-2 flex-1">
+                    {dayClasses.length === 0 ? (
+                      <div
+                        onClick={() => onAddClass && handleOpenAddModal(day)}
+                        className="py-8 text-center text-[11px] text-slate-600 hover:text-slate-400 border border-dashed border-slate-800 hover:border-slate-700 rounded-xl cursor-pointer transition flex flex-col items-center justify-center gap-1"
+                        title="Tap to add class"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-slate-600" />
+                        <span>No classes (Tap +)</span>
+                      </div>
+                    ) : (
+                      dayClasses.map((cls) => {
+                        const isLab = cls.time.toLowerCase().includes('lab') || cls.room.toLowerCase().includes('lab');
+
+                        return (
+                          <div
+                            key={cls.id}
+                            className="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 hover:border-slate-700 transition space-y-1.5 group relative"
+                          >
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-[10px] font-mono font-semibold text-slate-300 truncate">
+                                {cls.subjectCode}
                               </span>
+                              {isLab && (
+                                <span className="text-[8px] font-bold px-1 rounded bg-amber-500/20 text-amber-300">
+                                  LAB
+                                </span>
+                              )}
+                            </div>
+
+                            <h5 className="text-[11px] font-semibold text-slate-100 leading-snug truncate">
+                              {cls.subjectName}
+                            </h5>
+
+                            <div className="text-[10px] text-slate-400 font-mono space-y-0.5">
+                              <div className="truncate">{cls.time}</div>
+                              <div className="text-slate-500 truncate">{cls.room}</div>
+                            </div>
+
+                            {onDeleteClass && (
+                              <button
+                                type="button"
+                                onClick={() => onDeleteClass(cls.id)}
+                                className="absolute top-1.5 right-1.5 p-1.5 rounded text-slate-500 hover:text-rose-400 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition cursor-pointer"
+                                title="Delete Class"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
                             )}
                           </div>
+                        );
+                      })
+                    )}
+                  </div>
 
-                          <h5 className="text-[11px] font-semibold text-slate-100 leading-snug truncate">
-                            {cls.subjectName}
-                          </h5>
-
-                          <div className="text-[10px] text-slate-400 font-mono space-y-0.5">
-                            <div className="truncate">{cls.time}</div>
-                            <div className="text-slate-500 truncate">{cls.room}</div>
-                          </div>
-
-                          {onDeleteClass && (
-                            <button
-                              type="button"
-                              onClick={() => onDeleteClass(cls.id)}
-                              className="absolute top-1.5 right-1.5 p-1.5 rounded text-slate-500 hover:text-rose-400 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition cursor-pointer"
-                              title="Delete Class"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })
+                  {/* Add on this day button */}
+                  {onAddClass && (
+                    <button
+                      type="button"
+                      onClick={() => handleOpenAddModal(day)}
+                      className="w-full mt-2 py-1 text-center text-[11px] text-slate-500 hover:text-slate-200 hover:bg-slate-800/60 rounded-lg transition cursor-pointer border border-dashed border-transparent hover:border-slate-700"
+                    >
+                      + Add
+                    </button>
                   )}
                 </div>
-
-                {/* Add on this day button */}
-                {onAddClass && (
-                  <button
-                    type="button"
-                    onClick={() => handleOpenAddModal(day)}
-                    className="w-full mt-2 py-1 text-center text-[11px] text-slate-500 hover:text-slate-200 hover:bg-slate-800/60 rounded-lg transition cursor-pointer border border-dashed border-transparent hover:border-slate-700"
-                  >
-                    + Add
-                  </button>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
           </div>
         </div>
       )}
