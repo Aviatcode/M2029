@@ -205,10 +205,10 @@ export class UniversalAIProvider implements AIProvider {
     try {
       // 1. Google Gemini via direct REST API (fastest, most reliable) or SDK
       if (this.provider === 'gemini') {
-        const rawModel = this.modelName || 'gemini-2.5-flash';
+        const rawModel = this.modelName || 'gemini-1.5-flash';
         const model =
-          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash'
-            ? 'gemini-2.5-flash'
+          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash' || rawModel === 'gemini-2.5-flash'
+            ? 'gemini-1.5-flash'
             : rawModel;
 
         // Direct REST API for Gemini with adaptive thinking budget & instant fallback
@@ -380,10 +380,10 @@ Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
     // Native Gemini structured JSON mode
     if (this.provider === 'gemini' && this.apiKey) {
       try {
-        const rawModel = this.modelName || 'gemini-2.5-flash';
+        const rawModel = this.modelName || 'gemini-1.5-flash';
         const model =
-          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash'
-            ? 'gemini-2.5-flash'
+          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash' || rawModel === 'gemini-2.5-flash'
+            ? 'gemini-1.5-flash'
             : rawModel;
         const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
         const body: any = {
@@ -841,7 +841,7 @@ export class AIProviderFactory {
         this.classInstance = new UniversalAIProvider({
           apiKey: this.classConfig.apiKey || envKey,
           provider: this.classConfig.provider || (isGeminiKey ? 'gemini' : 'auto'),
-          modelName: this.classConfig.modelName || 'gemini-2.5-flash',
+          modelName: this.classConfig.modelName || 'gemini-1.5-flash',
           baseUrl: this.classConfig.baseUrl,
         });
       } else {
@@ -901,7 +901,7 @@ export class AIProviderFactory {
       modelType: hasKey ? 'custom_ai' : 'basic',
       providerName: hasKey ? provider.name : 'Built-in Basic Academic Model (Free)',
       provider: this.classConfig.provider || 'gemini',
-      modelName: this.classConfig.modelName || 'gemini-2.5-flash',
+      modelName: this.classConfig.modelName || 'gemini-1.5-flash',
       isClassShared: true,
     };
   }
