@@ -45,7 +45,7 @@ export const ShareInviteModal: React.FC<ShareInviteModalProps> = ({
         setCopiedCode(false);
         setToastMessage('');
       }, 2500);
-    } catch {}
+    } catch { }
   };
 
   const handleCopyMessage = async () => {
@@ -57,7 +57,7 @@ export const ShareInviteModal: React.FC<ShareInviteModalProps> = ({
         setCopiedMessage(false);
         setToastMessage('');
       }, 2500);
-    } catch {}
+    } catch { }
   };
 
   const handleNativeShare = async () => {

@@ -323,18 +323,16 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                   <div
                     key={ex.id}
                     onClick={() => setSelectedExamId(ex.id)}
-                    className={`p-3 rounded-2xl border cursor-pointer transition text-xs space-y-1 ${
-                      isSelected
-                        ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md'
-                        : 'bg-[#0d111a] border-slate-800/80 hover:border-slate-700 text-slate-300'
-                    }`}
+                    className={`p-3 rounded-2xl border cursor-pointer transition text-xs space-y-1 ${isSelected
+                      ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md'
+                      : 'bg-[#0d111a] border-slate-800/80 hover:border-slate-700 text-slate-300'
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-1.5">
                       <span className="font-semibold truncate">{ex.subjectName}</span>
                       <span
-                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold ${
-                          days <= 5 ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-cyan-300'
-                        }`}
+                        className={`text-[9px] font-mono px-1.5 py-0.5 rounded font-bold ${days <= 5 ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-800 text-cyan-300'
+                          }`}
                       >
                         {days < 0 ? 'Past' : `${days}d Left`}
                       </span>
@@ -392,20 +390,18 @@ export const ExamModeView: React.FC<ExamModeViewProps> = ({
                   <div
                     key={step.dayNumber}
                     onClick={() => onToggleRevisionDay(activeExam.id, step.dayNumber)}
-                    className={`p-2.5 rounded-2xl border transition flex items-start justify-between gap-2.5 cursor-pointer ${
-                      step.completed
-                        ? 'bg-[#121724]/50 border-slate-850 opacity-60'
-                        : 'bg-[#121724] border-slate-800 hover:border-slate-700'
-                    }`}
+                    className={`p-2.5 rounded-2xl border transition flex items-start justify-between gap-2.5 cursor-pointer ${step.completed
+                      ? 'bg-[#121724]/50 border-slate-850 opacity-60'
+                      : 'bg-[#121724] border-slate-800 hover:border-slate-700'
+                      }`}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-4 h-4 rounded-md flex items-center justify-center text-xs shrink-0 border ${
-                            step.completed
-                              ? 'bg-emerald-600 text-white border-emerald-500'
-                              : 'border-slate-700 bg-slate-900 text-transparent'
-                          }`}
+                          className={`w-4 h-4 rounded-md flex items-center justify-center text-xs shrink-0 border ${step.completed
+                            ? 'bg-emerald-600 text-white border-emerald-500'
+                            : 'border-slate-700 bg-slate-900 text-transparent'
+                            }`}
                         >
                           <Check className="w-3 h-3" />
                         </div>
