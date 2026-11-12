@@ -427,14 +427,14 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
     if (ragHits.length > 0) {
       responseText = `### 1. Simple Overview\n${ragHits[0].text}\n\n### 4. 10-Marker University Exam Format\n*Directly retrieved from ${ragHits[0].docTitle} (Page ${ragHits[0].pageNumber})*`;
     } else {
-      const guide = generateAcademicGuide(state.topicName || state.question, state.subjectName);
+      const guide = await generateAcademicGuide(state.topicName || state.question, state.subjectName);
       responseText = guide.fullText;
     }
   }
 
   let sections = parseTutorSections(responseText);
   if (!sections.simple || !sections.exam_10marker) {
-    const fallbackGuide = generateAcademicGuide(state.topicName || state.question, state.subjectName);
+    const fallbackGuide = await generateAcademicGuide(state.topicName || state.question, state.subjectName);
     sections = {
       simple: sections.simple || fallbackGuide.sections.simple,
       eli9: sections.eli9 || fallbackGuide.sections.eli9,

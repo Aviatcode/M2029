@@ -1286,7 +1286,7 @@ apiRouter.get('/ai/cache/export', (req: Request, res: Response) => {
 // 6. AI Tutor with Ordered Pedagogical Breakdown (Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me)
 apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   const question = req.body.question || req.body.query || '';
-  const { mode, subjectName, topicName, forceLive } = req.body;
+  const { mode, subjectName, topicName, forceLive, classCode = 'M2029' } = req.body;
   const tutorMode: TutorResponseMode = mode || 'all';
   const lookupKey = topicName || question;
   const userAiConfig = extractAiConfig(req);
@@ -1424,15 +1424,14 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       });
     }
 
-    // Never return 500 when student hasn't uploaded documents!
     // Ground response using comprehensive academic knowledge engine
-    const fallbackGuide = generateAcademicGuide(lookupKey, subjectName || 'Computer Science & Engineering', tutorMode);
+    const fallbackGuide = await generateAcademicGuide(lookupKey, subjectName || 'Computer Science & Engineering', tutorMode, classCode);
     return res.json({
       answer: fallbackGuide.fullText,
       text: fallbackGuide.fullText,
       sections: fallbackGuide.sections,
       modeUsed: tutorMode,
-      modelUsed: '⚡ Academic Knowledge Engine (Zero Documents Required)',
+      modelUsed: '⚡ Academic Knowledge Engine',
       cached: false,
       tokensSaved: 0,
       reasoningSteps: [
@@ -1682,6 +1681,7 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
       action = 'start', // 'start' | 'answer' | 'next' | 'did_not_understand' | 'hinglish' | 'exam_notes' | 'custom_question'
       userAnswer = '',
       customQuery = '',
+      classCode = 'M2029',
       forceLive = false,
       regenerateLive = false,
     } = req.body;
@@ -1851,7 +1851,7 @@ Respond as the gold-standard academic tutor:
       }
 
       if (!responseText || responseText.length < 50) {
-        responseText = generateAcademicDoubtAnswer(customQuery, targetTopic.title, track.name);
+        responseText = await generateAcademicDoubtAnswer(customQuery, targetTopic.title, track.name, classCode);
       }
 
       aiKnowledgeCache.set(

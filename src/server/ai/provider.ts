@@ -452,6 +452,9 @@ export class MockAIProvider implements AIProvider {
       (systemInstruction && systemInstruction.match(/Target Subject:\s*([^\n]+)/i));
     const subjectName = subjMatch ? subjMatch[1].trim() : 'Computer Science & Engineering';
 
+    const classCodeMatch = prompt.match(/(?:class|course|classroom|code)[:\s]+([A-Za-z0-9_-]+)/i);
+    const classCode = classCodeMatch ? classCodeMatch[1] : 'M2029';
+
     // 1. Comprehensive 6-order academic study breakdown
     if (
       p.includes('6 sections') ||
@@ -459,7 +462,8 @@ export class MockAIProvider implements AIProvider {
       p.includes('teaching mode: all') ||
       (systemInstruction && (systemInstruction.includes('6 sections') || systemInstruction.includes('Simple Overview')))
     ) {
-      return generateAcademicGuide(cleanTopic, subjectName).fullText;
+      const guide = await generateAcademicGuide(cleanTopic, subjectName, 'all', classCode);
+      return guide.fullText;
     }
 
     // 2. Student Doubt or Question in Chat
@@ -474,28 +478,32 @@ export class MockAIProvider implements AIProvider {
     ) {
       const qMatch = prompt.match(/Question:\s*"([^"]+)"/i) || prompt.match(/Question:\s*([^\n]+)/i);
       const query = qMatch ? qMatch[1].trim() : (cleanTopic.length > 5 ? cleanTopic : prompt);
-      return generateAcademicDoubtAnswer(query, cleanTopic, subjectName);
+      return await generateAcademicDoubtAnswer(query, cleanTopic, subjectName, classCode);
     }
 
     // 3. Specific Pedagogical Modes
     if (p.includes('hinglish')) {
-      return generateAcademicGuide(cleanTopic, subjectName).sections.hinglish;
+      const guide = await generateAcademicGuide(cleanTopic, subjectName, 'all', classCode);
+      return guide.sections.hinglish;
     }
 
     if (p.includes('eli9') || p.includes('explain like i\'m 9') || p.includes('not understand')) {
-      return generateAcademicGuide(cleanTopic, subjectName).sections.eli9;
+      const guide = await generateAcademicGuide(cleanTopic, subjectName, 'all', classCode);
+      return guide.sections.eli9;
     }
 
     if (p.includes('10-marker') || p.includes('exam notes') || p.includes('section c')) {
-      return generateAcademicGuide(cleanTopic, subjectName).sections.exam_10marker;
+      const guide = await generateAcademicGuide(cleanTopic, subjectName, 'all', classCode);
+      return guide.sections.exam_10marker;
     }
 
     if (p.includes('assignment') || p.includes('solve assignment')) {
-      return generateAcademicGuide(cleanTopic, subjectName).sections.exam_10marker;
+      const guide = await generateAcademicGuide(cleanTopic, subjectName, 'all', classCode);
+      return guide.sections.exam_10marker;
     }
 
     // 4. Default: Generates targeted academic doubt answer
-    return generateAcademicDoubtAnswer(prompt, cleanTopic, subjectName);
+    return await generateAcademicDoubtAnswer(prompt, cleanTopic, subjectName, classCode);
   }
 
   async generateStructuredJson<T>(prompt: string, schemaDescription?: string): Promise<T> {

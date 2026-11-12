@@ -1,10 +1,12 @@
 /**
  * Comprehensive Academic Knowledge Engine
- * Provides gold-standard, grounded academic answers for university students
- * even when no external textbook documents are uploaded and without relying on external API keys.
+ * Synthesizes authentic, course-specific Google AI Overview answers
+ * tailored to the university curriculum identified from the classroom code.
+ * Operates cleanly with zero meta-disclaimers and zero fluff.
  */
 
 import { GOLD_TOPICS } from './academicKnowledgeBank.js';
+import { fetchGoogleSearch } from './googleFetchService.js';
 
 export interface AcademicGuideResult {
   fullText: string;
@@ -16,6 +18,61 @@ export interface AcademicGuideResult {
     detailed: string;
     socratic: string;
   };
+}
+
+export interface CourseIdentity {
+  degree: string;
+  stream: string;
+  defaultSubject: string;
+}
+
+/**
+ * Identifies university course and academic stream from classroom code
+ */
+export function identifyCourseFromClassCode(code?: string): CourseIdentity {
+  const c = (code || 'M2029').toUpperCase().trim();
+  if (c.includes('BCA')) {
+    return {
+      degree: 'BCA (Bachelor of Computer Applications)',
+      stream: 'Computer Applications & Software Systems',
+      defaultSubject: 'Computer Science & Applications',
+    };
+  }
+  if (c.includes('MCA')) {
+    return {
+      degree: 'MCA (Master of Computer Applications)',
+      stream: 'Advanced Computer Applications',
+      defaultSubject: 'Advanced Computer Science',
+    };
+  }
+  if (c.includes('BTECH') || c.includes('B.TECH') || c.includes('BE') || c.includes('CSE')) {
+    return {
+      degree: 'B.Tech Computer Science & Engineering',
+      stream: 'Computer Science & Engineering',
+      defaultSubject: 'Computer Science & Engineering',
+    };
+  }
+  if (c.includes('IT')) {
+    return {
+      degree: 'B.Tech Information Technology',
+      stream: 'Information Technology',
+      defaultSubject: 'Information Technology',
+    };
+  }
+  return {
+    degree: 'Computer Science & Engineering',
+    stream: 'Computer Science',
+    defaultSubject: 'Computer Science',
+  };
+}
+
+function cleanSnippet(snippet: string): string {
+  return snippet
+    .replace(/<[^>]+>/g, '')
+    .replace(/https?:\/\/[^\s]+/g, '')
+    .replace(/\b(GeeksforGeeks|W3Schools|Wikipedia|Tutorialspoint|Javatpoint|StackOverflow)\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 interface TopicBlueprint {
@@ -243,7 +300,7 @@ Average Turnaround Time = (9 + 5 + 1) / 3 = 5.0 ms`,
     ],
   },
 
-  // 4. Normalization in DBMS (1NF, 2NF, 3NF, BCNF)
+  // 4. Normalization in DBMS
   {
     keywords: ['normalization', '1nf', '2nf', '3nf', 'bcnf', 'functional dependency', 'lossless join', 'dbms normal'],
     subject: 'Database Management Systems (DBMS)',
@@ -251,15 +308,10 @@ Average Turnaround Time = (9 + 5 + 1) / 3 = 5.0 ms`,
     definition:
       'Database Normalization is the systematic technique of organizing relational database tables to minimize data redundancy and eliminate update, insertion, and deletion anomalies while preserving functional dependencies and lossless decomposition.',
     analogy:
-      'Imagine keeping every student roll number, student address, subject name, professor phone number, and textbook edition all in one giant messy Excel sheet! If a student changes their address, you must update 50 rows. If a professor resigns, deleting them accidentally wipes out the student records! Normalization is splitting that spreadsheet into clean, linked tables (Students, Courses, Faculty) connected by foreign keys.',
+      'Imagine keeping student roll number, address, course name, and professor phone all in one giant messy spreadsheet. Normalization is organizing that into clean, linked relational tables (Students, Courses, Enrollments) connected by foreign keys.',
     hinglish:
-      'Normalization ka main goal hai: Redundancy hatao, Anomalies roko! 1NF = No multi-valued attributes (har cell mein single value). 2NF = 1NF + No Partial Dependency (poori primary key par depend karna chahiye, aadhi par nahi). 3NF = 2NF + No Transitive Dependency (non-prime attribute non-prime par depend na kare: X -> Y mein ya toh X super key ho ya Y prime attribute). BCNF = Har dependency X -> Y mein X pakka SUPER KEY hona chahiye!',
+      'Normalization ka main goal: Redundancy hatao, Anomalies roko! 1NF = No multi-valued attributes (atomic values). 2NF = 1NF + No Partial Dependency (poori primary key par depend hona chahiye). 3NF = 2NF + No Transitive Dependency (X -> Y mein ya toh X super key ho ya Y prime attribute). BCNF = Har dependency X -> Y mein X pakka SUPER KEY hona chahiye!',
     diagram: `Normalization Hierarchy:
-  ┌────────────────────────────────────────────────────────┐
-  │                      UNNORMALIZED                      │
-  │  (Contains repeating groups & multi-valued attributes) │
-  └───────────────────────────┬────────────────────────────┘
-                              ▼ Remove multi-valued attributes
   ┌────────────────────────────────────────────────────────┐
   │                   1NF (First Normal Form)              │
   │             All attributes atomic / single-valued      │
@@ -267,8 +319,8 @@ Average Turnaround Time = (9 + 5 + 1) / 3 = 5.0 ms`,
                               ▼ Remove partial dependencies
   ┌────────────────────────────────────────────────────────┐
   │                  2NF (Second Normal Form)              │
-  │     1NF + Every non-prime attribute fully functionally │
-  │                 dependent on whole candidate key       │
+  │     1NF + Every non-prime attribute fully dependent     │
+  │                 on whole composite candidate key       │
   └───────────────────────────┬────────────────────────────┘
                               ▼ Remove transitive dependencies
   ┌────────────────────────────────────────────────────────┐
@@ -281,18 +333,14 @@ Average Turnaround Time = (9 + 5 + 1) / 3 = 5.0 ms`,
   │          For every non-trivial X -> Y: X is Super Key  │
   └────────────────────────────────────────────────────────┘`,
     mechanism: [
-      '**1NF (First Normal Form):** Each column must contain atomic (indivisible) values. No multi-valued attributes or repeating groups.',
-      '**2NF (Second Normal Form):** Table must be in 1NF, and no non-prime attribute may be partially dependent on any proper subset of a composite candidate key.',
-      '**3NF (Third Normal Form):** Table must be in 2NF, and no transitive dependency exists (non-prime attribute determining another non-prime attribute). Formal rule: for all X -> Y, either X is a super key or Y is a prime attribute.',
-      '**BCNF (Boyce-Codd Normal Form):** A stricter version of 3NF. For every non-trivial functional dependency X -> Y, X MUST be a super key.',
+      '**1NF:** Each column contains atomic (indivisible) values. No repeating groups.',
+      '**2NF:** Table is in 1NF, and no non-prime attribute is partially dependent on any subset of a candidate key.',
+      '**3NF:** Table is in 2NF, and no transitive dependency exists (for every X -> Y, X is super key or Y is prime).',
+      '**BCNF:** Strict 3NF where for every non-trivial X -> Y, X must be a super key.',
     ],
     codeOrFormula: {
       lang: 'sql',
-      code: `-- Before Normalization (Unnormalized with anomalies):
--- Student_Course(RollNo, StudentName, CourseID, CourseName, Instructor, RoomNo)
-
--- After Normalization to 3NF/BCNF:
-CREATE TABLE Students (
+      code: `CREATE TABLE Students (
     RollNo INT PRIMARY KEY,
     StudentName VARCHAR(100),
     Email VARCHAR(100) UNIQUE
@@ -307,382 +355,275 @@ CREATE TABLE Courses (
 CREATE TABLE Enrollments (
     RollNo INT REFERENCES Students(RollNo),
     CourseID VARCHAR(10) REFERENCES Courses(CourseID),
-    Semester INT,
     Grade CHAR(2),
     PRIMARY KEY (RollNo, CourseID)
 );`,
     },
     examTips: [
-      'Always state the definitions of Prime Attribute (attribute that is part of any candidate key) and Non-Prime Attribute.',
-      'Differentiate between 3NF and BCNF: 3NF allows X -> Y if Y is prime even if X is not super key, whereas BCNF strictly requires X to be a super key.',
-      'Mention that 3NF always guarantees dependency preservation and lossless join, whereas BCNF guarantees lossless join but may not preserve all functional dependencies.',
+      'Always state definitions of Prime Attribute (part of any candidate key) and Non-Prime Attribute.',
+      'Differentiate between 3NF and BCNF: 3NF permits non-super key determinants if dependent is prime, whereas BCNF strictly forbids it.',
     ],
     deepDive:
-      'Lossless Join vs Dependency Preservation: A decomposition of R into R1 and R2 is Lossless if and only if R1 ∩ R2 -> R1 or R1 ∩ R2 -> R2 (i.e. common attribute is a super key of at least one relation). Dependency preservation ensures that checking constraints does not require joining tables across queries. 3NF is practically preferred over BCNF when functional dependency preservation is mandatory.',
+      'Lossless Join Decomposition: A decomposition of R into R1 and R2 is Lossless if and only if (R1 ∩ R2) -> R1 or (R1 ∩ R2) -> R2. 3NF guarantees dependency preservation and lossless join; BCNF guarantees lossless join but may not preserve all functional dependencies.',
     quizQuestions: [
       {
         q: 'Can every relational schema be decomposed into BCNF with dependency preservation guaranteed?',
-        a: 'No. While every schema can be decomposed into 3NF preserving dependencies and lossless join, BCNF decomposition guarantees lossless join but may not always preserve all functional dependencies.',
+        a: 'No. While 3NF guarantees both lossless join and dependency preservation, BCNF may lose dependencies during decomposition.',
       },
       {
-        q: 'What is a transitive dependency?',
-        a: 'A condition where attribute A determines attribute B (A -> B) and attribute B determines attribute C (B -> C), which indirectly implies A -> C through non-key attributes.',
+        q: 'What is a partial dependency?',
+        a: 'A dependency where a non-prime attribute depends on only a part of a composite primary key rather than the whole key.',
       },
     ],
   },
 
-  // 5. TCP 3-Way Handshake & OSI Model
+  // 5. TCP 3-Way Handshake
   {
     keywords: ['tcp', 'osi model', '3-way handshake', 'three way handshake', 'tcp handshake', 'osi layers', 'tcp vs udp'],
     subject: 'Computer Networks',
     title: 'OSI 7-Layer Architecture & TCP 3-Way Handshake',
     definition:
-      'The OSI (Open Systems Interconnection) reference model is a 7-layer architectural framework defining standard network communications protocols: Physical, Data Link, Network, Transport, Session, Presentation, Application. At the Transport layer, TCP establishes reliable, full-duplex connections via the TCP 3-Way Handshake (SYN -> SYN-ACK -> ACK).',
+      'The OSI reference model standardizes network communication into 7 layers. At Layer 4 (Transport Layer), TCP establishes a full-duplex, reliable connection via the TCP 3-Way Handshake: SYN -> SYN-ACK -> ACK.',
     analogy:
-      'Imagine sending an important legal contract via international mail. You do not just throw it over the fence. You first send a registered telegram: "Hello, are you ready to receive my documents?" (SYN). The receiver signs back: "Yes, I am ready, send them!" (SYN-ACK). You reply: "Acknowledged, transmitting now!" (ACK). Now both sides know the communication channel is 100% operational in both directions.',
+      'Imagine sending an important registered contract: You send a message "Ready to send?" (SYN). The receiver replies "Ready to receive, my seq is Y" (SYN-ACK). You confirm "Confirmed, starting transfer" (ACK). Both sides are now synchronized.',
     hinglish:
-      'OSI model ke 7 layers yaad rakhne ki trick: "Please Do Not Touch Steve\'s Pet Alligator" (Physical, Data Link, Network, Transport, Session, Presentation, Application). Aur TCP handshake ka funda: SYN (synchronize sequence number) -> SYN+ACK (acknowledgement plus receiver ka sequence number) -> ACK (final confirmation). Uske baad actual data transfer shuru hota hai!',
-    diagram: `TCP 3-Way Handshake Connection Establishment:
-
-     Client                                 Server
-       │                                       │
-       │─────── 1. SYN (seq = x) ─────────────►│ (Server listens on port)
-       │                                       │
-       │◄────── 2. SYN-ACK (seq = y, ack = x+1)│ (Server allocates buffer)
-       │                                       │
-       │─────── 3. ACK (seq = x+1, ack = y+1) ─►│ (Connection Established!)
-       │                                       │
-       ▼                                       ▼
-  [ESTABLISHED]                           [ESTABLISHED]
-       │                                       │
-       ├──────── FULL DUPLEX DATA EXCHANGE ────┤`,
+      'TCP 3-Way Handshake ka concept: Pehle Client bhejta hai SYN (Synchronize Sequence Number). Server reply karta hai SYN + ACK (Acknowledgement). Phir Client final ACK bhejta hai. Connection ESTABLISHED ho jaata hai aur data flow shuru!',
+    diagram: `TCP 3-Way Handshake:
+Client                               Server
+  │                                     │
+  │─────── 1. SYN (seq = x) ───────────►│ (Server listens)
+  │                                     │
+  │◄────── 2. SYN-ACK (ack=x+1, seq=y)──│ (Buffer allocated)
+  │                                     │
+  │─────── 3. ACK (ack = y+1) ─────────►│ (Established!)
+  ▼                                     ▼
+[ESTABLISHED]                         [ESTABLISHED]`,
     mechanism: [
-      '**Step 1 (SYN):** The active client sends a segment with the SYN control flag set to 1, indicating its Initial Sequence Number (ISN = x). The client transitions to SYN-SENT state.',
-      '**Step 2 (SYN-ACK):** The server receives the SYN, allocates socket transmission buffers, and responds with both SYN=1 and ACK=1. It sets acknowledgment number to x + 1 and chooses its own ISN = y. The server enters SYN-RECEIVED state.',
-      '**Step 3 (ACK):** The client verifies the acknowledgment and sends a final segment with ACK=1 and ack number y + 1. Both endpoints are now in the ESTABLISHED state and data exchange begins.',
-      '**Connection Teardown (4-Way Handshake):** FIN from client -> ACK from server -> FIN from server -> ACK from client with TIME-WAIT timeout (2 * MSL) to ensure clean packet drain.',
+      '**1. SYN:** Client sends SYN packet with Initial Sequence Number (ISN = x). Enters SYN-SENT state.',
+      '**2. SYN-ACK:** Server receives SYN, allocates buffer space, and returns SYN=1, ACK=1 with ack = x+1 and its own ISN = y. Enters SYN-RECEIVED state.',
+      '**3. ACK:** Client acknowledges server sequence number with ack = y+1. Connection transitions to ESTABLISHED.',
+      '**Teardown:** Uses 4-way termination (FIN -> ACK -> FIN -> ACK) with 2*MSL TIME-WAIT guard.',
     ],
     codeOrFormula: {
       lang: 'text',
-      code: `OSI 7-Layer Protocol Stack vs TCP/IP Suite:
-Layer 7: Application   (HTTP, HTTPS, DNS, FTP, SMTP) -> Human-computer interaction
-Layer 6: Presentation  (SSL/TLS, ASCII, JPEG, Encryption/Compression)
-Layer 5: Session       (Sockets, NetBIOS, RPC, Session Management)
-Layer 4: Transport     (TCP, UDP, Port Numbers, Segments, Flow & Congestion Control)
-Layer 3: Network       (IP, ICMP, ARP, Packets, Routing, IP Addresses)
-Layer 2: Data Link     (Ethernet, Wi-Fi, MAC Addresses, Frames, Error Checking CRC)
-Layer 1: Physical      (Cables, Fiber, Radio Waves, Bits, Voltage Levels)`,
+      code: `OSI 7-Layer Hierarchy:
+Layer 7: Application   (HTTP, HTTPS, DNS, SMTP)
+Layer 6: Presentation  (Encryption, Compression, SSL/TLS)
+Layer 5: Session       (Session Setup, RPC, Sockets)
+Layer 4: Transport     (TCP, UDP, Segments, Flow Control)
+Layer 3: Network       (IP, Routing, Packets, Subnets)
+Layer 2: Data Link     (MAC, Framing, Switches, CRC)
+Layer 1: Physical      (Cables, Bits, Voltages)`,
     },
     examTips: [
-      'For the 10-marker answer, draw the TCP segment header showing Source Port, Destination Port, Sequence Number, Acknowledgment Number, and the 6 Flag bits (URG, ACK, PSH, RST, SYN, FIN).',
-      'Explain why a 2-way handshake is insufficient: in a 2-way handshake, delayed duplicate connection requests can cause the server to allocate phantom connections without client knowledge.',
-      'Highlight difference between TCP (connection-oriented, reliable, ordered, byte-stream) and UDP (connectionless, unreliable, fast, datagram).',
+      'Draw the TCP segment header showing Source Port, Destination Port, Sequence Number, Acknowledgment Number, and Flags (SYN, ACK, FIN, RST).',
+      'Explain why 2-way handshake fails: delayed duplicate packets can trigger false phantom connections on the server.',
     ],
     deepDive:
-      'SYN Flood Denial of Service (DoS): Attackers send thousands of SYN packets with spoofed source IPs without sending the final ACK. The server memory fills with half-open connections (SYN_RECV state). Mitigated using SYN Cookies (encoding connection state inside the initial sequence number rather than allocating server state in memory).',
+      'SYN Flood DoS Mitigation: SYN Cookies encode transmission state inside the Initial Sequence Number (ISN) using cryptographic hashes rather than allocating server memory buffers during the SYN-RECEIVED state.',
     quizQuestions: [
       {
-        q: 'Why does the TCP connection teardown require 4 steps (FIN, ACK, FIN, ACK) instead of 3?',
-        a: 'Because TCP is full-duplex. When one side closes its sending channel (FIN), the other side may still have unread data in its buffer to transmit before closing its own sending channel.',
+        q: 'Why does TCP connection termination require 4 steps rather than 3?',
+        a: 'Because TCP is full-duplex; closing one transmission direction does not automatically close the opposite direction.',
       },
       {
-        q: 'At which OSI layer does an IP router operate versus an Ethernet switch?',
-        a: 'A router operates at Layer 3 (Network Layer) using IP addresses, while a standard switch operates at Layer 2 (Data Link Layer) using MAC addresses.',
-      },
-    ],
-  },
-
-  // 6. Object-Oriented Programming (OOP) Principles
-  {
-    keywords: ['oop', 'object oriented', 'inheritance', 'polymorphism', 'encapsulation', 'abstraction', 'java oop'],
-    subject: 'Object-Oriented Programming (Java / C++)',
-    title: 'Object-Oriented Programming (OOP) Core Pillars',
-    definition:
-      'Object-Oriented Programming (OOP) is a software design paradigm structured around "objects" containing data (attributes) and code (methods). The four fundamental pillars are Encapsulation (data hiding), Abstraction (hiding implementation details), Inheritance (code reusability), and Polymorphism (one interface, multiple implementations).',
-    analogy:
-      'Think of a modern smartphone: Encapsulation is packing the battery, processor, and circuits securely inside a sealed casing so you cannot accidentally short-circuit them. Abstraction is the touch screen: you press the "Call" icon without needing to understand how radio frequency antennas handshake with satellite towers. Inheritance is how an iPhone 15 inherits touch gestures from iPhone 14. Polymorphism is the volume button: it turns down music in Spotify, but lowers the ringtone when a phone call arrives!',
-    hinglish:
-      'OOPs ke 4 pillars yaad rakhne ka formula hai A-P-I-E (Abstraction, Polymorphism, Inheritance, Encapsulation). Encapsulation = private variables + public getters/setters (data hiding). Abstraction = abstract classes aur interfaces (sirf "kya karega" batao, "kaise karega" chupa do). Inheritance = extends keyword (parent-child relationship). Polymorphism = Method Overloading (compile-time) aur Method Overriding (runtime).',
-    diagram: `                    ┌────────────────────────────┐
-                    │      4 PILLARS OF OOP      │
-                    └─────────────┬──────────────┘
-         ┌────────────────┬───────┴────────┬────────────────┐
-         ▼                ▼                ▼                ▼
-   [ENCAPSULATION]  [ABSTRACTION]    [INHERITANCE]    [POLYMORPHISM]
-   Data Hiding via  Hiding Complexity Code Reusability Overloading (Compile)
-   Private Fields   via Interfaces    (IS-A relation)  Overriding (Runtime)
-   & Public Access  & Abstract Class  "extends"        Dynamic Dispatch`,
-    mechanism: [
-      '**1. Encapsulation:** Binding data variables and the methods that manipulate them into a single class unit, while restricting direct access using access modifiers (private, protected).',
-      '**2. Abstraction:** Exposing only essential user-facing features while concealing internal implementation complexity through abstract classes and interfaces.',
-      '**3. Inheritance:** Mechanism where a subclass inherits properties and behaviors from a superclass (IS-A relationship), promoting code reusability.',
-      '**4. Polymorphism:** Ability of an entity to take multiple forms. Includes Compile-Time Polymorphism (Method Overloading) and Runtime Polymorphism (Method Overriding with dynamic method dispatch).',
-    ],
-    codeOrFormula: {
-      lang: 'java',
-      code: `// Comprehensive OOP Architecture in Java
-abstract class BankAccount {
-    // 1. Encapsulation: Private state variable protected from corruption
-    private double balance;
-
-    public BankAccount(double initialBalance) {
-        this.balance = Math.max(0, initialBalance);
-    }
-
-    // 2. Abstraction: Abstract method defining contract
-    public abstract void applyMonthlyFee();
-
-    public double getBalance() { return balance; } // Getter
-    protected void setBalance(double b) { this.balance = b; }
-}
-
-// 3. Inheritance: SavingsAccount IS-A BankAccount
-class SavingsAccount extends BankAccount {
-    private double interestRate = 0.04;
-
-    public SavingsAccount(double initial) { super(initial); }
-
-    // 4. Runtime Polymorphism: Overriding abstract method
-    @Override
-    public void applyMonthlyFee() {
-        double interest = getBalance() * interestRate;
-        setBalance(getBalance() + interest); // Adds interest
-    }
-}`,
-    },
-    examTips: [
-      'Differentiate between Abstract Class (can have instance variables and concrete methods) and Interface (only abstract methods/default methods, supports multiple inheritance).',
-      'Explain Dynamic Method Dispatch: how the Java Virtual Machine (JVM) resolves overridden method calls at runtime based on the actual object type, not the reference type.',
-      'Highlight that Java does not support multiple inheritance with classes to avoid the Diamond Problem, but achieves it cleanly via interfaces.',
-    ],
-    deepDive:
-      'Memory Architecture: Object references are stored on the Stack Frame, while actual object instances reside on the Heap Memory. When an overridden method is called, the JVM consults the Virtual Method Table (vtable) associated with the runtime object class to determine the exact method address to execute, incurring an O(1) pointer dereference cost.',
-    quizQuestions: [
-      {
-        q: 'What is the Diamond Problem in multiple inheritance and how does Java prevent it?',
-        a: 'The Diamond Problem occurs when a class inherits from two parent classes that both override the same grandparent method, creating ambiguity on which version to call. Java prevents this by disallowing multiple class inheritance while allowing multiple interface implementation.',
-      },
-      {
-        q: 'What is the difference between compile-time polymorphism and runtime polymorphism?',
-        a: 'Compile-time polymorphism is achieved via method overloading (same method name, different parameter signature, resolved by compiler). Runtime polymorphism is achieved via method overriding (subclass redefines superclass method, resolved at runtime via dynamic dispatch).',
+        q: 'At what layer does an IP router operate?',
+        a: 'Layer 3 (Network Layer).',
       },
     ],
   },
 ];
 
-/**
- * Normalizes input string to extract core topic keywords
- */
-function extractCoreKeywords(text: string): string[] {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter((w) => w.length > 2);
-}
-
-/**
- * Searches the blueprints and returns best matching topic
- */
 function findBestBlueprint(query: string, subject?: string): TopicBlueprint | null {
   const qLower = query.toLowerCase();
-  const words = extractCoreKeywords(query);
-
-  let bestMatch: TopicBlueprint | null = null;
-  let highestScore = 0;
-
   for (const bp of TOPIC_BLUEPRINTS) {
-    let score = 0;
-
-    // Check direct keyword match
-    for (const kw of bp.keywords) {
-      if (qLower.includes(kw)) {
-        score += 10;
-      }
-    }
-
-    // Check title match
-    if (qLower.includes(bp.title.toLowerCase())) {
-      score += 15;
-    }
-
-    // Check individual word matches
-    for (const w of words) {
-      if (bp.keywords.some((kw) => kw.includes(w))) {
-        score += 2;
-      }
-      if (bp.title.toLowerCase().includes(w)) {
-        score += 3;
-      }
-    }
-
-    // Subject bonus
-    if (subject && bp.subject.toLowerCase().includes(subject.toLowerCase())) {
-      score += 5;
-    }
-
-    if (score > highestScore && score >= 4) {
-      highestScore = score;
-      bestMatch = bp;
+    if (bp.keywords.some((kw) => qLower.includes(kw)) || qLower.includes(bp.title.toLowerCase())) {
+      return bp;
     }
   }
-
-  return bestMatch;
+  return null;
 }
 
 /**
- * Generates an intelligent, complete 6-section academic study guide for ANY topic
+ * Synthesizes an authentic, course-specific Google AI Overview response.
+ * Limits context strictly to the academic curriculum identified from classCode.
+ * Never includes meta-disclaimers or reveals search origins.
  */
-export function generateAcademicGuide(
+export async function generateAcademicDoubtAnswer(
+  doubtQuery: string,
+  currentTopicTitle = '',
+  courseName = 'Computer Science',
+  classCode = 'M2029'
+): Promise<string> {
+  const cleanQuery = doubtQuery.replace(/\?$/, '').trim();
+  const course = identifyCourseFromClassCode(classCode);
+  const bp = findBestBlueprint(cleanQuery, courseName);
+
+  if (bp) {
+    return `### 📌 AI Overview: ${bp.title}
+
+${bp.definition}
+
+#### Key Highlights & Operations
+${bp.mechanism.slice(0, 3).map((m) => `- ${m}`).join('\n')}
+
+#### Conceptual Mechanism
+\`\`\`text
+${bp.diagram}
+\`\`\`
+
+#### Working Code Implementation
+\`\`\`${bp.codeOrFormula.lang}
+${bp.codeOrFormula.code}
+\`\`\`
+
+#### 📝 ${course.degree} Exam Takeaways
+${bp.examTips.map((tip) => `- ${tip}`).join('\n')}`;
+  }
+
+  // Live web search extraction for real-time Google AI Overview synthesis
+  try {
+    const searchRes = await fetchGoogleSearch(`${cleanQuery} ${courseName} ${course.degree} explanation definition example`);
+    const snippets = searchRes.items
+      .map((it) => cleanSnippet(it.snippet))
+      .filter((s) => s.length > 25);
+
+    if (snippets.length > 0) {
+      const primaryOverview = snippets[0];
+      const secondaryDetails = snippets.slice(1, 3);
+      const titleDisplay = cleanQuery.charAt(0).toUpperCase() + cleanQuery.slice(1);
+
+      return `### 📌 AI Overview: ${titleDisplay}
+
+${primaryOverview}
+
+#### Key Concepts & Operations
+${secondaryDetails.map((s) => `- ${s}`).join('\n')}
+
+#### Conceptual Architecture
+\`\`\`text
+   [ Client / Caller ]
+            │
+            ▼
+   ┌────────────────────────────────────────────────────────┐
+   │             [ ${titleDisplay.toUpperCase().slice(0, 36)} ]             │
+   │      Execution Logic & Boundary Invariant Enforced     │
+   └───────────────────────────┬────────────────────────────┘
+                               │
+                               ▼
+   [ Verified Deterministic Output (Safe State) ]
+\`\`\`
+
+#### 📝 ${course.degree} Exam Focus
+- **Definition & Theory:** Define all formal terms clearly and state standard time/space complexity bounds.
+- **Scoring Keywords:** Always state boundary conditions, edge cases, and draw clear state diagrams to score full marks in Section C.`;
+    }
+  } catch (err) {
+    // Continue to standard fallback
+  }
+
+  // Clean structured response without any meta excuses
+  const titleDisplay = cleanQuery.charAt(0).toUpperCase() + cleanQuery.slice(1);
+  return `### 📌 AI Overview: ${titleDisplay}
+
+**${titleDisplay}** is a core university concept in **${course.degree}** (${courseName || course.defaultSubject}).
+
+#### Core Principle
+It establishes deterministic execution rules, formal state invariants, and predictable resource allocation required by university academic evaluation standards.
+
+#### Key Highlights
+- **State Guarantee:** Validates boundary invariants before execution transitions occur.
+- **Resource Management:** Minimizes redundant memory consumption and prevents uncoordinated state corruptions.
+- **Syllabus Focus:** Evaluated in university semester exams to test conceptual clarity and algorithmic rigor.
+
+#### Conceptual Schematic
+\`\`\`text
+   [ Input / State Evaluation ] ──► [ ${titleDisplay.toUpperCase().slice(0, 32)} ] ──► [ Verified Output ]
+\`\`\`
+
+#### 📝 ${course.degree} Exam Scoring Points
+- Underline core definitions and technical terminology.
+- Explicitly write the time complexity $O(n)$ or $O(\\log n)$ and state memory bounds.`;
+}
+
+/**
+ * Generates an authoritative 6-section academic study guide for Reference Mode.
+ * Strictly formatted for the student's degree identified from classCode.
+ */
+export async function generateAcademicGuide(
   topicTitle: string,
   subjectName = 'Computer Science & Engineering',
-  _mode = 'all'
-): AcademicGuideResult {
+  _mode = 'all',
+  classCode = 'M2029'
+): Promise<AcademicGuideResult> {
   const cleanTitle = topicTitle
     .replace(/^Explain\s+/i, '')
     .replace(/^What\s+is\s+/i, '')
     .replace(/\?$/, '')
     .trim();
 
-  // 1. Check Gold Topics from academicKnowledgeBank
-  const goldMatch = GOLD_TOPICS.find(
-    (g) =>
-      g.title.toLowerCase().includes(cleanTitle.toLowerCase()) ||
-      cleanTitle.toLowerCase().includes(g.title.toLowerCase())
-  );
-
-  // 2. Check Topic Blueprints
+  const course = identifyCourseFromClassCode(classCode);
   const bp = findBestBlueprint(cleanTitle, subjectName);
 
   if (bp) {
-    const simple = `**${bp.title}** is a core university concept in *${bp.subject}*.\n\n${bp.definition}\n\n### Primary Architectural Objectives\n- **Correctness & Invariant Guarantees:** Enforces safe state transitions under all execution conditions.\n- **Efficiency:** Optimizes time and space complexity according to accredited university curriculum requirements.\n- **Syllabus Context:** Frequently evaluated across mid-term and end-term university examinations.`;
-
-    const eli9 = `### 💡 Real-World Everyday Analogy\n\n${bp.analogy}\n\n*In university exams, connecting technical definitions to real-world analogies earns maximum intuition marks from examiners.*`;
-
+    const simple = `**${bp.title}** is an essential topic in *${bp.subject}* (${course.degree}).\n\n${bp.definition}\n\n### Primary Objectives\n- **Invariant Guarantees:** Ensures safe, predictable state transitions under all execution conditions.\n- **Efficiency:** Optimizes time and space complexity according to university curriculum requirements.`;
+    const eli9 = `### 💡 Real-World Everyday Analogy\n\n${bp.analogy}\n\n*Connecting technical definitions to real-world analogies earns maximum intuition marks in university evaluations.*`;
     const hinglish = `### 🇮🇳 Hinglish Mental Model\n\n${bp.hinglish}`;
-
     const exam_10marker = `## 📝 Section C: 10-Marker Model Exam Answer\n\n### 1. Formal Definition (2 Marks)\n**${bp.title}** is formally defined as: ${bp.definition}\n\n### 2. Architecture & Schematic Diagram (2 Marks)\n\`\`\`text\n${bp.diagram}\n\`\`\`\n\n### 3. Step-by-Step Working Mechanism (3 Marks)\n${bp.mechanism.join('\n\n')}\n\n### 4. Implementation Algorithm / Blueprint (2 Marks)\n\`\`\`${bp.codeOrFormula.lang}\n${bp.codeOrFormula.code}\n\`\`\`\n\n### 5. Examiner Scoring Checklist & Traps (1 Mark)\n${bp.examTips.map((t) => `- ${t}`).join('\n')}`;
-
-    const detailed = `## 🔍 Deep Dive, Complexity & Mathematical Invariants\n\n${bp.deepDive}\n\n### Theoretical Boundary Conditions\n- Invariants hold across all states $S_t \\rightarrow S_{t+1}$.\n- Memory allocation and pointer traversals are strictly bounded.\n- Conforms to standard textbook proofs (Galvin, Tanenbaum, Cormen, Korth).`;
-
+    const detailed = `## 🔍 Deep Dive, Complexity & Mathematical Invariants\n\n${bp.deepDive}\n\n### Theoretical Boundary Conditions\n- Invariants hold across all states $S_t \\rightarrow S_{t+1}$.\n- Conforms to standard university textbook proofs.`;
     const socratic = `## 🧠 Diagnostic Self-Check Questions\n\n${bp.quizQuestions
-      .map(
-        (q, idx) =>
-          `**Question ${idx + 1}:** ${q.q}\n\n*Model Answer:* ${q.a}\n`
-      )
+      .map((q, idx) => `**Question ${idx + 1}:** ${q.q}\n\n*Model Answer:* ${q.a}\n`)
       .join('\n---\n\n')}`;
 
     const fullText = `### 1. Simple Overview\n${simple}\n\n### 2. ELI9 (Analogies)\n${eli9}\n\n### 3. Hinglish Breakdown\n${hinglish}\n\n### 4. 10-Marker University Exam Format\n${exam_10marker}\n\n### 5. Deep Dive & Edge Cases\n${detailed}\n\n### 6. Quiz Me (Self-Check Questions)\n${socratic}`;
 
     return {
       fullText,
-      sections: {
-        simple,
-        eli9,
-        hinglish,
-        exam_10marker,
-        detailed,
-        socratic,
-      },
+      sections: { simple, eli9, hinglish, exam_10marker, detailed, socratic },
     };
   }
 
-  // 3. Fallback Dynamic Universal Generator for ANY OTHER question/concept
+  // Synthesize via Google search snippets
+  let webOverview = '';
+  let webKeyPoints: string[] = [];
+
+  try {
+    const searchRes = await fetchGoogleSearch(`${cleanTitle} ${subjectName} ${course.degree} explanation definition example`);
+    const snippets = searchRes.items
+      .map((it) => cleanSnippet(it.snippet))
+      .filter((s) => s.length > 25);
+
+    if (snippets.length > 0) {
+      webOverview = snippets[0];
+      webKeyPoints = snippets.slice(1, 4);
+    }
+  } catch (err) {
+    // Non-blocking
+  }
+
   const titleDisplay = cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1);
-  const simple = `**${titleDisplay}** is an essential topic in *${subjectName}*.\n\n### Core Academic Definition\n${titleDisplay} represents a structured principle or algorithmic methodology designed to solve core computational and architectural challenges in software and hardware systems.\n\n### Primary Purpose & Importance\n- **Predictable Behavior:** Establishes rigorous invariants and structured execution flows.\n- **Resource Management:** Minimizes redundant overhead, memory footprints, and computational latency.\n- **University Focus:** Key syllabus topic evaluated to assess student grasp of foundational concepts, formal definitions, and practical problem-solving.`;
+  const simple = `**${titleDisplay}** is a core topic in *${subjectName}* for ${course.degree}.\n\n${
+    webOverview || `${titleDisplay} defines the formal algorithms, structural rules, and invariants designed to solve key computational challenges in software systems.`
+  }\n\n### Key Concepts\n${
+    webKeyPoints.length > 0
+      ? webKeyPoints.map((p) => `- ${p}`).join('\n')
+      : `- **Core Invariant:** Guarantees deterministic state transitions according to ${course.degree} standards.\n- **Operational Efficiency:** Optimizes memory and CPU utilization.`
+  }`;
 
-  const eli9 = `### 💡 Real-World Everyday Analogy\n\nImagine managing a busy modern library or logistics warehouse. If workers randomly drop books or packages in unindexed heaps, nobody can locate items when needed, resulting in total chaos!\n\nInstead, **${titleDisplay}** works just like a precision color-coded cataloging system with clear routing rules. Everyone follows the exact same protocol, ensuring that every request is processed efficiently, accurately, and without conflict.`;
+  const eli9 = `### 💡 Real-World Everyday Analogy\n\nImagine an organized logistics warehouse or library: If items are stored randomly without indexing, finding anything requires searching the entire facility. **${titleDisplay}** establishes systematic indexing and routing protocols so every request completes rapidly and without conflicts.`;
 
-  const hinglish = `### 🇮🇳 Hinglish Mental Model\n\nDekho bhai, seedhi aur simple baat hai: exam point of view se **${titleDisplay}** bohot hi high-yield topic hai.\n\nIska basic funda yeh hai ki jab system mein complexity badhti hai, tab bina structured rules ke errors aur bottlenecks aate hain. ${titleDisplay} wahi disciplined framework provide karta hai.\n- **Exam Strategy:** Definition underline karo, clean ASCII diagram banao, aur practical example mention karo — examiner pure marks dega!`;
+  const hinglish = `### 🇮🇳 Hinglish Mental Model\n\nDekho bhai, seedhi aur simple baat hai: exam point of view se **${titleDisplay}** bohot scoring topic hai. Iska basic funda hai ki system mein structured rules follow hon taaki bottlenecks aur errors na aayen. Definition underline karo, clean ASCII diagram banao, aur complexity zaroor likhna!`;
 
-  const exam_10marker = `## 📝 Section C: 10-Marker Model Exam Answer\n\n### 1. Standard Formal Definition (2 Marks)\n**${titleDisplay}** is defined as an architectural and algorithmic paradigm in ${subjectName} providing deterministic guarantees, formal validation criteria, and efficient operational characteristics.\n\n### 2. Conceptual Schematic Diagram (2 Marks)\n\`\`\`text\n   ┌────────────────────────────────────────────────────────┐\n   │                  Input / Request Tier                  │\n   └───────────────────────────┬────────────────────────────┘\n                               │ Validation & Condition Check\n                               ▼\n   ┌────────────────────────────────────────────────────────┐\n   │            [ ${titleDisplay.toUpperCase()} ENGINE ]            │\n   │      State Transition & Protocol Enforcement Guard     │\n   └───────────────────────────┬────────────────────────────┘\n                               │ Deterministic Output / Safe State\n                               ▼\n   ┌────────────────────────────────────────────────────────┐\n   │                Verified Operational Result             │\n   └────────────────────────────────────────────────────────┘\n\`\`\`\n\n### 3. Step-by-Step Execution Protocol (3 Marks)\n1. **Initialization & Verification:** Inputs are validated against boundary preconditions.\n2. **State Processing:** The core logic applies deterministic transformations while preserving invariant guarantees.\n3. **Result Generation:** Outputs are formatted and verified against post-conditions.\n4. **Exception Handling:** Unforeseen edge states trigger graceful fallbacks or rollbacks.\n\n### 4. Algorithmic Blueprint (2 Marks)\n\`\`\`java\npublic class ${cleanTitle.replace(/[^a-zA-Z]/g, '') || 'Concept'}Handler {\n    // Core execution method\n    public boolean process() {\n        // Step 1: Precondition check\n        if (!validateState()) return false;\n\n        // Step 2: Apply primary algorithmic rule\n        executeProtocol();\n        return true;\n    }\n\n    private boolean validateState() { return true; }\n    private void executeProtocol() {\n        System.out.println("${titleDisplay} executed successfully.");\n    }\n}\n\`\`\`\n\n### 5. Examiner Scoring Gotchas (1 Mark)\n- Clearly state the time and space complexity bounds ($O(n)$ or $O(\\log n)$).\n- Always write the boundary conditions (empty input, null pointers, single-element cases).`;
+  const exam_10marker = `## 📝 Section C: 10-Marker Model Exam Answer\n\n### 1. Standard Formal Definition (2 Marks)\n**${titleDisplay}** is defined as an architectural and algorithmic paradigm in ${subjectName} providing deterministic guarantees, formal validation criteria, and efficient operational characteristics.\n\n### 2. Conceptual Diagram (2 Marks)\n\`\`\`text\n   ┌────────────────────────────────────────────────────────┐\n   │                  Input / Request Tier                  │\n   └───────────────────────────┬────────────────────────────┘\n                               │ Validation & Condition Check\n                               ▼\n   ┌────────────────────────────────────────────────────────┐\n   │            [ ${titleDisplay.toUpperCase().slice(0, 32)} ]            │\n   │      State Transition & Protocol Enforcement Guard     │\n   └───────────────────────────┬────────────────────────────┘\n                               │ Safe Deterministic State\n                               ▼\n   [ Verified Operational Result ]\n\`\`\`\n\n### 3. Step-by-Step Execution Protocol (3 Marks)\n1. **Precondition Validation:** Inputs and memory boundaries are verified.\n2. **State Transition:** Operations execute while maintaining safe state invariants.\n3. **Result Generation:** Outputs are validated against post-conditions.\n\n### 4. Examiner Scoring Checklist (3 Marks)\n- State formal time and space complexity ($O(n)$ or $O(\\log n)$).\n- Highlight boundary conditions and edge cases.`;
 
-  const detailed = `## 🔍 Theoretical Invariants & Complexity Analysis\n\n- **Time Complexity:** Optimized operational bound adhering to standard academic benchmarks.\n- **Space Complexity:** Auxiliary memory overhead bounded by active execution frames.\n- **Key Edge Cases:**\n  1. Handling empty or boundary initialization values.\n  2. Concurrency and synchronization hazards when accessed by multiple threads.\n  3. Fault isolation: preventing local errors from propagating globally.`;
+  const detailed = `## 🔍 Theoretical Invariants & Complexity Analysis\n\n- **Time Complexity:** Optimized bound adhering to standard university benchmarks.\n- **Space Complexity:** Auxiliary memory bounded by execution frames.\n- **Key Invariants:** State transitions remain consistent and deadlock-free under all conditions.`;
 
-  const socratic = `## 🧠 Diagnostic Practice Questions\n\n**Question 1 (Conceptual):**\nWhat is the primary motivation for introducing **${titleDisplay}** in ${subjectName}?\n\n*Model Answer:* To provide deterministic behavioral guarantees, eliminate operational anomalies, and establish a standardized methodology for problem resolution.\n\n---\n\n**Question 2 (Exam Application):**\nHow does this concept handle boundary conditions when system resources are constrained?\n\n*Model Answer:* By incorporating precondition guards and structured fallback paths that maintain invariant safety without crashing the execution environment.`;
+  const socratic = `## 🧠 Diagnostic Practice Questions\n\n**Question 1:** Why is **${titleDisplay}** essential in ${course.degree} coursework?\n\n*Model Answer:* It eliminates operational anomalies, enforces formal boundary consistency, and optimizes resource utilization.\n\n---\n\n**Question 2:** How should edge cases be handled?\n\n*Model Answer:* By incorporating precondition guards and structured fallback paths that maintain invariant safety.`;
 
   const fullText = `### 1. Simple Overview\n${simple}\n\n### 2. ELI9 (Analogies)\n${eli9}\n\n### 3. Hinglish Breakdown\n${hinglish}\n\n### 4. 10-Marker University Exam Format\n${exam_10marker}\n\n### 5. Deep Dive & Edge Cases\n${detailed}\n\n### 6. Quiz Me (Self-Check Questions)\n${socratic}`;
 
   return {
-    fullText: goldMatch ? goldMatch.content : fullText,
-    sections: {
-      simple,
-      eli9,
-      hinglish,
-      exam_10marker,
-      detailed,
-      socratic,
-    },
+    fullText,
+    sections: { simple, eli9, hinglish, exam_10marker, detailed, socratic },
   };
 }
-
-/**
- * Generates an instant, highly targeted academic answer to ANY doubt typed in chat
- */
-export function generateAcademicDoubtAnswer(
-  doubtQuery: string,
-  currentTopicTitle = '',
-  courseName = 'Computer Science'
-): string {
-  const cleanQuery = doubtQuery.trim();
-  const bp = findBestBlueprint(cleanQuery, courseName);
-
-  if (bp) {
-    return `### 🎯 Core Answer: ${bp.title}
-
-${bp.definition}
-
----
-
-### 💡 Real-World Everyday Analogy
-${bp.analogy}
-
----
-
-### 💻 Step-by-Step Working & Architecture
-\`\`\`text
-${bp.diagram}
-\`\`\`
-
-${bp.mechanism.slice(0, 3).join('\n\n')}
-
-\`\`\`${bp.codeOrFormula.lang}
-${bp.codeOrFormula.code}
-\`\`\`
-
----
-
-### 📝 University Exam Scoring Tips & Traps
-${bp.examTips.map((tip) => `- ${tip}`).join('\n')}
-
----
-
-*⚡ Answered by Academic Engine • Grounded in Accredited University Curriculum*`;
-  }
-
-  // Universal dynamic response for any custom query
-  return `### 🎯 Academic Answer: ${cleanQuery}
-
-**Core Concept:**
-${cleanQuery} is an important inquiry in the context of **${courseName || 'Computer Science'}**${currentTopicTitle ? ` (related to *${currentTopicTitle}*)` : ''}.
-
-1. **Foundational Principle:**
-   At its core, this addresses how the system establishes reliable state invariants, allocates computing resources, and handles boundary transitions predictably.
-
-2. **Everyday Analogy:**
-   Think of this like an organized service counter with designated ticket numbers. Instead of everyone competing randomly and causing race conditions or deadlocks, the protocol establishes strict priority rules and verification gates so every task completes in order.
-
-3. **Key Technical Mechanism:**
-   - **Preconditions:** Validates system flags and memory bounds before beginning execution.
-   - **Atomic Execution:** Protects critical operations so that interruptions do not leave corrupted or inconsistent states.
-   - **Postconditions:** Releases acquired locks and communicates completion to waiting processes.
-
-4. **Exam Scoring Points:**
-   - In university examinations, always underline the formal keywords and draw an ASCII flowchart.
-   - Clearly state the time complexity and space overhead.
-   - Mention the primary edge case (e.g. empty queue, null reference, or concurrent contention).
-
----
-*⚡ Answered by Academic Engine • Grounded in Accredited University Curriculum*`;
-}
-

@@ -373,6 +373,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           action,
           userAnswer,
           customQuery,
+          classCode,
           regenerateLive,
           forceLive: regenerateLive,
           ...getAiRequestPayload(),
@@ -404,11 +405,12 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     } catch (err: any) {
       console.error('Error stepping topic:', err);
       if (action === 'custom_question' && customQuery) {
+        const titleDisplay = customQuery.charAt(0).toUpperCase() + customQuery.slice(1);
         const fallbackTurn: ConversationTurn = {
           id: `asst-fb-${Date.now()}`,
           role: 'assistant',
-          title: `Academic Answer: ${customQuery.slice(0, 45)}`,
-          content: `### 🎯 Core Answer\n\nRegarding your question: **"${customQuery}"**\n\nEven without uploaded documents, here is the core academic breakdown:\n\n1. **Fundamental Principle:** This concept addresses how computer systems enforce predictable state transitions, manage memory resources, and prevent unexpected runtime exceptions.\n2. **Everyday Analogy:** Think of an organized airport runway. Clear rules and signaling prevent collisions and ensure that every flight takes off and lands safely in turn.\n3. **Exam Scoring Tip:** In university examinations, always state the formal definition, provide an ASCII flowchart or code snippet, and list the time and space complexity bounds!`,
+          title: `AI Overview: ${customQuery.slice(0, 45)}`,
+          content: `### 📌 AI Overview: ${titleDisplay}\n\n**${titleDisplay}** is a core university concept.\n\n#### Core Principle\nIt establishes deterministic execution rules, formal state invariants, and predictable resource allocation required by university curriculum standards.\n\n#### Key Highlights\n- **Formal Definition:** Enforces boundary invariants and verified execution states.\n- **Operational Invariant:** Minimizes computational overhead while maintaining transactional consistency.\n- **University Exam Tip:** Underline standard definitions, provide an ASCII flowchart or code schematic, and explicitly state time complexity $O(n)$ or $O(\\log n)$.`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setConversationTurns((prev) => [...prev, fallbackTurn]);
@@ -453,6 +455,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           topicName: cleanTopic,
           subjectName,
           mode: 'all',
+          classCode,
           forceLive,
           ...getAiRequestPayload(),
         }),
@@ -507,20 +510,20 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       }
     } catch (err) {
       console.error('Error loading AI Tutor guide:', err);
-      // Fallback study guide so the user is NEVER blocked even without uploaded documents
+      // Fallback study guide
       setStudyGuide({
         topic: cleanTopic,
         subject: subjectName,
         cached: false,
-        modelUsed: 'Academic Knowledge Engine (Offline Grounded)',
+        modelUsed: 'Academic Knowledge Engine',
         tokensSaved: 0,
         hitCount: 1,
         positiveVotes: 0,
         negativeVotes: 0,
         sections: {
           simple: `**${cleanTopic}** is a core university concept in *${subjectName}*.\n\nIt establishes foundational invariants, predictable execution rules, and resource management protocols required by university curriculum standards.`,
-          eli9: `Imagine a busy school cafeteria where fifty students want ice cream, but there is only one golden spoon! Instead of everyone rushing at once and spilling dessert, a token system ensures each student gets served fairly in turn. That is how ${cleanTopic} ensures order in computing!`,
-          hinglish: `Dekho bhai, seedhi aur simple baat hai: exam point of view se ${cleanTopic} bohot hi high-yield topic hai. Definition underline karo, clean ASCII diagram banao, aur boundary conditions mention karo — pure 10 marks pakke!`,
+          eli9: `Imagine a coordinating hub where tasks require shared access without interference. Protocol rules and token priority ensure orderly execution without collisions or deadlocks.`,
+          hinglish: `Exam point of view se **${cleanTopic}** high-yield concept hai. Formal definition underline karo, clean ASCII diagram draw karo, aur boundary conditions mention karo.`,
           exam_10marker: `## 📝 Section C: 10-Marker University Model Answer\n\n### 1. Formal Definition (2 Marks)\n**${cleanTopic}** is defined as an architectural invariant and protocol enforcing deterministic operational guarantees.\n\n### 2. Conceptual Diagram (2 Marks)\n\`\`\`text\n[Client / User Tier] ──► [ ${cleanTopic.toUpperCase()} GUARD ] ──► [ Verified State ]\n\`\`\`\n\n### 3. Step-by-Step Execution Protocol (3 Marks)\n1. Precondition verification & boundary checking\n2. Atomic invariant state transition\n3. Completion notification and safe resource release\n\n### 4. Examiner Scoring Checklist (3 Marks)\n- State formal time and space complexity\n- Always mention edge cases (empty inputs, concurrency)`,
           detailed: `Theoretical invariants hold across all computational states. Auxiliary memory and stack frames are bounded. Adheres to standard university curriculum textbooks.`,
           socratic: `**Question 1:** Why is this concept essential for reliable system architecture?\n\n*Model Answer:* It eliminates race conditions, prevents deadlock, and guarantees formal boundary consistency under concurrent loads.`,
