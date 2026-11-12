@@ -398,13 +398,13 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
             className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
             title="Manage Profile & Settings"
           >
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
+            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white group-hover:border-zinc-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
+            <span className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
+            <span className="text-[10px] text-zinc-500 font-mono group-hover:text-zinc-400 transition-colors">
               • {classCode || 'M2029'}
             </span>
           </button>
@@ -419,7 +419,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-500 hover:text-cyan-400 cursor-pointer transition"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-zinc-500 hover:text-white cursor-pointer transition"
               title="Search Materials"
             >
               <Search className="w-3.5 h-3.5" />
@@ -429,14 +429,14 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search notes..."
-              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-500/50 transition"
+              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-600 transition"
             />
           </div>
 
           {/* GitHub Fetch */}
           <button
             onClick={() => setShowGithubModal(true)}
-            className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-indigo-300 hover:text-white hover:border-indigo-500/40 flex items-center gap-1.5 cursor-pointer font-semibold transition"
+            className="h-8 px-3 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-indigo-300 hover:text-white hover:border-indigo-500/40 flex items-center gap-1.5 cursor-pointer font-semibold transition"
           >
             <Github className="w-3.5 h-3.5 text-indigo-400" />
             <span className="hidden sm:inline">GitHub</span>
@@ -445,7 +445,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           {/* Upload Button */}
           <button
             onClick={() => setIsUploading(true)}
-            className="h-8 px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm shadow-cyan-500/20"
+            className="h-8 px-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm"
           >
             <UploadCloud className="w-3.5 h-3.5" />
             <span>Upload</span>
@@ -455,23 +455,23 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           <div className="relative">
             <button
               onClick={() => setIsFilterDropdownOpen((prev) => !prev)}
-              className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-300 hover:text-white flex items-center gap-1.5 cursor-pointer font-semibold"
+              className="h-8 px-3 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-zinc-300 hover:text-white flex items-center gap-1.5 cursor-pointer font-semibold"
             >
               <span className="max-w-[100px] truncate">
                 {selectedSubjectFilter === 'all'
                   ? 'All Subjects'
                   : subjects.find((s) => s.id === selectedSubjectFilter)?.name || 'Subject'}
               </span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
+              <ChevronDown className="w-3 h-3 text-zinc-400" />
             </button>
             {isFilterDropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 w-44 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1 z-30 text-xs max-h-60 overflow-y-auto">
+              <div className="absolute right-0 top-full mt-1 w-44 rounded-xl bg-[#18181b] border border-zinc-800 shadow-xl py-1 z-30 text-xs max-h-60 overflow-y-auto">
                 <button
                   onClick={() => {
                     setSelectedSubjectFilter('all');
                     setIsFilterDropdownOpen(false);
                   }}
-                  className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 cursor-pointer"
+                  className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-300 cursor-pointer"
                 >
                   All Subjects ({materials.length})
                 </button>
@@ -482,7 +482,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                       setSelectedSubjectFilter(sub.id);
                       setIsFilterDropdownOpen(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 truncate cursor-pointer"
+                    className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-300 truncate cursor-pointer"
                   >
                     {sub.name}
                   </button>
@@ -496,15 +496,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
       {/* 2. 3-COLUMN CARDS GRID (Matching Lucas Bennett / fitness reference layout) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
         {/* CARD 1: Vault Overview & Quick Drop */}
-        <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
+        <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <UploadCloud className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-slate-100">Vault Overview</h2>
+              <UploadCloud className="w-4 h-4 text-zinc-300" />
+              <h2 className="text-sm font-bold text-white">Vault Overview</h2>
             </div>
             <button
               onClick={() => setIsUploading(true)}
-              className="text-xs text-cyan-400 hover:text-cyan-300 cursor-pointer"
+              className="text-xs text-zinc-300 hover:text-white cursor-pointer font-semibold"
             >
               + New
             </button>
@@ -515,7 +515,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 {materials.length}
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-bold border border-zinc-700">
                 {materials.length > 0 ? 'Active' : 'Empty'}
               </span>
             </div>
@@ -540,17 +540,17 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               type="button"
               onClick={() => setIsFilterDropdownOpen((prev) => !prev)}
               title="Filter by Subject"
-              className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+              className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#18181b] border border-zinc-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
             >
               <span className="text-base font-extrabold">{subjects.length}</span>
-              <span className="text-[10px] text-slate-400">Subjects</span>
+              <span className="text-[10px] text-zinc-400">Subjects</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowRagModal(true)}
               title="Open Class RAG Vector Engine"
-              className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+              className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-zinc-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
             >
               <span className="text-sm font-black">100%</span>
               <span className="text-[8px] uppercase tracking-wider">Sync</span>
@@ -560,30 +560,30 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           {/* Quick Dropzone Widget */}
           <div
             onClick={() => setIsUploading(true)}
-            className="p-3.5 rounded-2xl border-2 border-dashed border-slate-800 hover:border-cyan-500/40 bg-[#0d111a] cursor-pointer flex flex-col items-center justify-center text-center gap-1 transition"
+            className="p-3.5 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-zinc-600 bg-[#18181b] cursor-pointer flex flex-col items-center justify-center text-center gap-1 transition"
           >
-            <UploadCloud className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs font-semibold text-slate-300">Drop files to add notes</span>
-            <span className="text-[10px] text-slate-500 font-mono">PDF • DOCX • PPTX</span>
+            <UploadCloud className="w-4 h-4 text-zinc-400" />
+            <span className="text-xs font-semibold text-zinc-200">Drop files to add notes</span>
+            <span className="text-[10px] text-zinc-500 font-mono">PDF • DOCX • PPTX</span>
           </div>
         </div>
 
         {/* CARD 2: File Archive List */}
-        <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-3 shadow-sm">
+        <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-3 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FolderOpen className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-slate-100">Documents</h2>
+              <FolderOpen className="w-4 h-4 text-zinc-300" />
+              <h2 className="text-sm font-bold text-white">Documents</h2>
             </div>
-            <span className="text-xs font-mono text-slate-400">
+            <span className="text-xs font-mono text-zinc-400">
               {filteredMaterials.length} files
             </span>
           </div>
 
           <div className="flex-1 overflow-y-auto space-y-2 max-h-80 pr-1 no-scrollbar">
             {filteredMaterials.length === 0 ? (
-              <div className="h-48 flex flex-col items-center justify-center text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-2xl gap-2">
-                <FileText className="w-6 h-6 text-slate-600" />
+              <div className="h-48 flex flex-col items-center justify-center text-center text-xs text-zinc-500 border border-dashed border-zinc-800 rounded-2xl gap-2">
+                <FileText className="w-6 h-6 text-zinc-600" />
                 <span>No files found</span>
               </div>
             ) : (
@@ -597,8 +597,8 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                       setShowFullAnswer(false);
                     }}
                     className={`p-3 rounded-2xl border cursor-pointer transition text-xs space-y-1 ${isSelected
-                      ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md'
-                      : 'bg-[#0d111a] border-slate-800/80 hover:border-slate-700 text-slate-300'
+                      ? 'bg-zinc-800/90 border-white/20 text-white shadow-md'
+                      : 'bg-[#18181b] border-zinc-800/80 hover:border-zinc-700 text-zinc-300'
                       }`}
                   >
                     <div className="flex items-center justify-between gap-1.5">
@@ -610,18 +610,18 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="p-1 rounded hover:bg-slate-700 text-slate-400 hover:text-cyan-300 transition"
+                            className="p-1 rounded hover:bg-zinc-700 text-zinc-400 hover:text-white transition"
                             title="Open original question paper PDF"
                           >
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
-                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">
+                        <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300">
                           {mat.fileType || 'PDF'}
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                    <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
                       <span className="truncate">{mat.subjectName}</span>
                       <span>{mat.fileSize || '2.4 MB'}</span>
                     </div>
@@ -633,14 +633,14 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
           <button
             onClick={() => setIsUploading(true)}
-            className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-bold text-slate-200 transition cursor-pointer text-center"
+            className="w-full py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-bold text-white transition cursor-pointer text-center"
           >
             + Upload Document
           </button>
         </div>
 
         {/* CARD 3: Document Intel & RAG */}
-        <div className="bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
+        <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
@@ -653,10 +653,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                     href={selectedMaterial.downloadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                    className="px-2.5 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-750 border border-zinc-700 text-zinc-200 text-xs font-semibold transition cursor-pointer flex items-center gap-1"
                     title="Open original question paper PDF"
                   >
-                    <ExternalLink className="w-3 h-3 text-cyan-400" />
+                    <ExternalLink className="w-3 h-3 text-zinc-400" />
                     <span>View PDF</span>
                   </a>
                 )}
@@ -671,7 +671,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 )}
                 <button
                   onClick={() => setShowRagModal(true)}
-                  className="px-2.5 py-1 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition cursor-pointer flex items-center gap-1"
+                  className="px-2.5 py-1 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 text-xs font-bold transition cursor-pointer flex items-center gap-1"
                 >
                   <span>RAG</span>
                 </button>
@@ -682,7 +682,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           {selectedMaterial ? (
             <div className="space-y-3 overflow-y-auto max-h-80 pr-1 no-scrollbar text-xs">
               <div>
-                <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider block">
+                <span className="text-[10px] font-mono text-indigo-400 uppercase tracking-wider block">
                   {selectedMaterial.subjectName}
                 </span>
                 <h3 className="text-base font-bold text-white mt-0.5 truncate">
@@ -690,15 +690,15 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 </h3>
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1">
-                <span className="text-[10px] font-mono text-slate-400 uppercase">Core Invariant</span>
-                <p className="text-xs text-slate-200 leading-relaxed">
+              <div className="p-3 rounded-2xl bg-[#18181b] border border-zinc-800 space-y-1">
+                <span className="text-[10px] font-mono text-zinc-400 uppercase">Core Invariant</span>
+                <p className="text-xs text-zinc-200 leading-relaxed">
                   {selectedMaterial.resources.summary}
                 </p>
               </div>
 
               {selectedMaterial.resources.exam10Marker && (
-                <div className="p-3 rounded-2xl bg-[#141926] border border-amber-500/30 space-y-2">
+                <div className="p-3 rounded-2xl bg-[#18181b] border border-amber-500/30 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-amber-400 font-bold uppercase">10-Marker Model Question</span>
                     <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300">GGSIPU Pattern</span>
@@ -728,7 +728,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               )}
 
               {selectedMaterial.resources.importantDefinitions?.length > 0 && (
-                <div className="p-3 rounded-2xl bg-[#121724] border border-slate-800 space-y-1.5">
+                <div className="p-3 rounded-2xl bg-[#18181b] border border-zinc-800 space-y-1.5">
                   <span className="text-[10px] font-mono text-slate-400 uppercase">Key Definitions</span>
                   {selectedMaterial.resources.importantDefinitions.slice(0, 2).map((d, i) => (
                     <button
@@ -816,19 +816,19 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           aria-modal="true"
         >
           <div
-            className="w-full max-w-lg rounded-3xl bg-[#121724] border border-slate-800 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[92vh] overflow-y-auto"
+            className="w-full max-w-lg rounded-3xl bg-[#121215] border border-zinc-800 p-5 sm:p-6 shadow-2xl text-zinc-100 space-y-4 max-h-[92vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
               <div className="flex items-center gap-2">
-                <UploadCloud className="w-4 h-4 text-cyan-400" />
+                <UploadCloud className="w-4 h-4 text-zinc-400" />
                 <h3 className="font-bold text-sm text-white">Upload Material & Notes</h3>
               </div>
               {processingStage === 'idle' && (
                 <button
                   type="button"
                   onClick={() => setIsUploading(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -837,17 +837,17 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
             {processingStage !== 'idle' ? (
               <div className="py-8 flex flex-col items-center justify-center gap-3 text-center">
-                <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+                <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
                 <div>
                   <span className="text-sm font-bold text-white block capitalize">
                     {processingStage === 'uploading' ? 'Uploading & Streaming...' : processingStage === 'generating' ? 'Generating Class Intel...' : 'Indexing with AI...'}
                   </span>
-                  <span className="text-xs text-slate-400 mt-1 block">
+                  <span className="text-xs text-zinc-400 mt-1 block">
                     Extracting 10-markers, formulas, and syllabus linkages.
                   </span>
                 </div>
-                <div className="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden mt-2">
-                  <div className="h-full bg-cyan-400 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                <div className="w-48 h-1.5 bg-zinc-800 rounded-full overflow-hidden mt-2">
+                  <div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
                 </div>
               </div>
             ) : (
@@ -868,10 +868,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                     }
                   }}
                   className={`p-6 rounded-2xl border-2 border-dashed transition cursor-pointer flex flex-col items-center justify-center text-center gap-2 ${isDragOver
-                    ? 'border-cyan-400 bg-cyan-950/20'
+                    ? 'border-indigo-400 bg-indigo-950/20'
                     : uploadFileName
                       ? 'border-emerald-500/50 bg-emerald-950/15'
-                      : 'border-slate-800 hover:border-slate-700 bg-[#0d111a]'
+                      : 'border-zinc-800 hover:border-zinc-700 bg-[#18181b]'
                     }`}
                 >
                   {uploadFileName ? (
@@ -879,26 +879,26 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                       <CheckCircle2 className="w-6 h-6 text-emerald-400" />
                       <div>
                         <span className="font-bold text-emerald-300 block truncate max-w-xs">{uploadFileName}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">{uploadFileSize} • {uploadFileType.toUpperCase()}</span>
+                        <span className="text-[10px] text-zinc-400 font-mono">{uploadFileSize} • {uploadFileType.toUpperCase()}</span>
                       </div>
-                      <span className="text-[10px] text-slate-500">Tap to choose a different file</span>
+                      <span className="text-[10px] text-zinc-500">Tap to choose a different file</span>
                     </>
                   ) : (
                     <>
-                      <UploadCloud className="w-6 h-6 text-cyan-400" />
-                      <span className="font-semibold text-slate-200">Drag & drop paper or tap to browse</span>
-                      <span className="text-[10px] text-slate-500 font-mono">PDF • DOCX • PPTX • IMAGES • TXT</span>
+                      <UploadCloud className="w-6 h-6 text-zinc-400" />
+                      <span className="font-semibold text-zinc-200">Drag & drop paper or tap to browse</span>
+                      <span className="text-[10px] text-zinc-500 font-mono">PDF • DOCX • PPTX • IMAGES • TXT</span>
                     </>
                   )}
                 </div>
 
                 {/* Subject Selection */}
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Subject *</label>
+                  <label className="block text-zinc-300 font-medium mb-1">Subject *</label>
                   <select
                     value={uploadSubjectId}
                     onChange={(e) => setUploadSubjectId(e.target.value)}
-                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                    className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 transition cursor-pointer"
                   >
                     {subjects.map((sub) => (
                       <option key={sub.id} value={sub.id}>
@@ -910,29 +910,29 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
                 {/* Title Input */}
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Document Title *</label>
+                  <label className="block text-zinc-300 font-medium mb-1">Document Title *</label>
                   <input
                     type="text"
                     value={uploadTitle}
                     onChange={(e) => setUploadTitle(e.target.value)}
                     placeholder="e.g. DBMS Unit 1 Question Bank 2024"
                     required
-                    className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                    className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 transition"
                   />
                 </div>
 
-                <div className="pt-2 flex justify-end gap-2 border-t border-slate-800/80">
+                <div className="pt-2 flex justify-end gap-2 border-t border-zinc-800/80">
                   <button
                     type="button"
                     onClick={() => setIsUploading(false)}
-                    className="px-3 py-2 rounded-xl border border-slate-800 hover:bg-slate-800 text-slate-300 transition text-xs font-semibold cursor-pointer"
+                    className="px-3 py-2 rounded-xl border border-zinc-800 hover:bg-zinc-800 text-zinc-300 transition text-xs font-semibold cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={!uploadTitle.trim()}
-                    className="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-slate-950 font-bold transition text-xs cursor-pointer shadow-sm shadow-cyan-500/20"
+                    className="px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 disabled:opacity-40 text-zinc-950 font-bold transition text-xs cursor-pointer shadow-sm"
                   >
                     Add Document to Vault
                   </button>
@@ -954,10 +954,10 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
           aria-modal="true"
         >
           <div
-            className="w-full max-w-lg rounded-3xl bg-[#121724] border border-slate-800 p-5 sm:p-6 shadow-2xl text-slate-100 space-y-4 max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-lg rounded-3xl bg-[#121215] border border-zinc-800 p-5 sm:p-6 shadow-2xl text-zinc-100 space-y-4 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
               <div className="flex items-center gap-2">
                 <Github className="w-4 h-4 text-indigo-400" />
                 <h3 className="font-bold text-sm text-white">Import from GitHub</h3>
@@ -966,7 +966,7 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowGithubModal(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -982,23 +982,23 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
 
             <form onSubmit={handleGitHubFetch} className="space-y-3.5 text-xs">
               <div>
-                <label className="block text-slate-300 font-medium mb-1">GitHub File / Raw URL *</label>
+                <label className="block text-zinc-300 font-medium mb-1">GitHub File / Raw URL *</label>
                 <input
                   type="url"
                   value={githubFetchUrl}
                   onChange={(e) => setGithubFetchUrl(e.target.value)}
                   placeholder="https://raw.githubusercontent.com/.../lecture_notes.pdf"
                   required
-                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                  className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-300 font-medium mb-1">Subject *</label>
+                <label className="block text-zinc-300 font-medium mb-1">Subject *</label>
                 <select
                   value={githubFetchSubjectId}
                   onChange={(e) => setGithubFetchSubjectId(e.target.value)}
-                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition cursor-pointer"
+                  className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 transition cursor-pointer"
                 >
                   {subjects.map((sub) => (
                     <option key={sub.id} value={sub.id}>
@@ -1009,13 +1009,13 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-slate-300 font-medium mb-1">Custom Title (Optional)</label>
+                <label className="block text-zinc-300 font-medium mb-1">Custom Title (Optional)</label>
                 <input
                   type="text"
                   value={githubFetchTitle}
                   onChange={(e) => setGithubFetchTitle(e.target.value)}
                   placeholder="Auto-derived from file if left blank"
-                  className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500/50 transition"
+                  className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 transition"
                 />
               </div>
 

@@ -393,7 +393,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white">
               {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'S'}
             </div>
             <span className="text-xs font-semibold text-slate-300">
@@ -443,17 +443,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {/* 2. THREE-COLUMN SYSTEM */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* CARD 1: PROFILE & WORKSPACE OVERVIEW (col-span-4) */}
-        <div className="lg:col-span-4 bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-4 bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-300">Profile & Cohort</span>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+            <span className="text-xs font-semibold text-zinc-300">Profile & Cohort</span>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
               {currentUser?.role?.toUpperCase() || 'STUDENT'}
             </span>
           </div>
 
           {/* User Avatar Circle */}
-          <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#141926] border border-slate-800">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+          <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#18181b] border border-zinc-800">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 via-indigo-600 to-zinc-900 border border-zinc-700 text-white flex items-center justify-center font-bold text-lg shadow-md">
               {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'S'}
             </div>
             <div className="flex-1 min-w-0">
@@ -517,25 +517,25 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           {/* Academic Info Matrix */}
           <div className="space-y-2 pt-2">
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#141926] border border-slate-800/80 text-xs">
-              <span className="text-slate-400">Class Code</span>
-              <span className="font-mono font-bold text-cyan-400">{classCode || 'M2029'}</span>
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#18181b] border border-zinc-800/80 text-xs">
+              <span className="text-zinc-400">Class Code</span>
+              <span className="font-mono font-bold text-white">{classCode || 'M2029'}</span>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#141926] border border-slate-800/80 text-xs">
-              <span className="text-slate-400">Current Semester</span>
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#18181b] border border-zinc-800/80 text-xs">
+              <span className="text-zinc-400">Current Semester</span>
               <span className="font-mono font-bold text-white">Semester {semesterNumber}</span>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#141926] border border-slate-800/80 text-xs">
-              <span className="text-slate-400">Enrolled Subjects</span>
+            <div className="flex items-center justify-between p-3 rounded-2xl bg-[#18181b] border border-zinc-800/80 text-xs">
+              <span className="text-zinc-400">Enrolled Subjects</span>
               <span className="font-mono font-bold text-white">{subjects.length} Subjects</span>
             </div>
           </div>
         </div>
 
         {/* CARD 2: AI STUDY ENGINE (col-span-4) */}
-        <div className="lg:col-span-4 bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-4 bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-300">AI Intelligence Engine</span>
+            <span className="text-xs font-semibold text-zinc-300">AI Intelligence Engine</span>
             <span
               className={`text-[10px] font-mono px-2 py-0.5 rounded-full border ${
                 aiStatus.hasCustomKey
@@ -547,7 +547,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </span>
           </div>
 
-          <div className="p-3 rounded-2xl bg-[#141926] border border-slate-800">
+          <div className="p-3 rounded-2xl bg-[#18181b] border border-zinc-800">
             <h4 className="text-sm font-bold text-white">
               {aiStatus.hasCustomKey ? aiStatus.providerName : 'Built-in Academic AI'}
             </h4>
@@ -555,11 +555,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           {/* Provider Selection */}
           <div className="space-y-1.5 pt-1">
-            <label className="text-xs text-slate-400 font-medium block">AI Provider</label>
+            <label className="text-xs text-zinc-400 font-medium block">AI Provider</label>
             <select
               value={provider}
               onChange={(e) => handleProviderSelect(e.target.value as any)}
-              className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-slate-600"
+              className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 outline-none focus:border-zinc-600"
             >
               {PROVIDERS.filter((p) => p.id !== 'sandbox').map((prov) => (
                 <option key={prov.id} value={prov.id}>
@@ -572,7 +572,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           {/* API Key Input */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <label className="text-slate-400 font-medium">
+              <label className="text-zinc-400 font-medium">
                 {activeProviderBadge.name} API Key
               </label>
               {activeProviderBadge.url && (
@@ -580,7 +580,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   href={activeProviderBadge.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-cyan-400 hover:underline text-[10px] inline-flex items-center gap-1"
+                  className="text-indigo-400 hover:text-indigo-300 hover:underline text-[10px] inline-flex items-center gap-1"
                 >
                   <span>Get Free Key</span>
                   <ExternalLink className="w-2.5 h-2.5" />
@@ -594,7 +594,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="Paste key here..."
-                className="w-full bg-[#141926] border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 font-mono pr-9 outline-none focus:border-slate-600"
+                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 font-mono pr-9 outline-none focus:border-zinc-600"
               />
               <button
                 type="button"
@@ -628,23 +628,23 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </div>
 
-        {/* CARD 3: STORAGE & SYSTEM INTEL (col-span-4, #090d18 Dark Accent Card) */}
-        <div className="lg:col-span-4 bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md space-y-4">
+        {/* CARD 3: STORAGE & SYSTEM INTEL (col-span-4, #121215 Obsidian Card) */}
+        <div className="lg:col-span-4 bg-[#121215] border border-zinc-800/90 rounded-3xl p-5 sm:p-6 shadow-md space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-300">App Cache & Storage</span>
+            <span className="text-xs font-semibold text-zinc-300">App Cache & Storage</span>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           </div>
 
           {/* Sidebar Dock & Auto-Collapse Settings */}
-          <div className="p-3.5 rounded-2xl bg-[#141926] border border-slate-800 space-y-3 text-xs">
+          <div className="p-3.5 rounded-2xl bg-[#18181b] border border-zinc-800 space-y-3 text-xs">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-slate-200 font-semibold text-xs block">Navigation Dock Position</span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
+                <span className="text-zinc-200 font-semibold text-xs block">Navigation Dock Position</span>
+                <span className="text-[11px] text-zinc-400 block mt-0.5">
                   Customize the desktop bar position. On mobile phones, navigation is tucked into the minimal edge arrow.
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-cyan-400 capitalize px-2 py-0.5 rounded-full bg-slate-900 border border-slate-800 shrink-0">
+              <span className="text-[10px] font-mono text-zinc-300 capitalize px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 shrink-0">
                 {sidebarPosition}
               </span>
             </div>
@@ -656,8 +656,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   onClick={() => onChangeSidebarPosition?.(pos)}
                   className={`py-2 px-1 rounded-xl text-xs font-semibold capitalize transition flex flex-col items-center gap-1 cursor-pointer ${
                     sidebarPosition === pos
-                      ? 'bg-white text-slate-950 font-bold shadow-md'
-                      : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                      ? 'bg-white text-zinc-950 font-bold shadow-md'
+                      : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
                   }`}
                 >
                   {pos === 'left' && <PanelLeft className="w-3.5 h-3.5" />}
@@ -704,7 +704,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   window.location.reload();
                 }
               }}
-              className="w-full py-2 rounded-xl bg-[#141926] hover:bg-slate-850 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
+              className="w-full py-2 rounded-xl bg-[#18181b] hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-2"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Clear Local Cache & Reload</span>
@@ -714,7 +714,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             {onOpenVideoTutorial && (
               <button
                 onClick={onOpenVideoTutorial}
-                className="w-full py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 hover:text-cyan-200 text-xs font-bold transition cursor-pointer flex items-center justify-center gap-2 mt-2"
+                className="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white text-xs font-bold transition cursor-pointer flex items-center justify-center gap-2 mt-2"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Replay Video Tutorial</span>
@@ -723,13 +723,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
 
           {/* Cloud Database (Collapsible) */}
-          <details className="mt-3 pt-3 border-t border-slate-800/80 group">
-            <summary className="text-xs text-slate-400 hover:text-slate-200 cursor-pointer list-none flex items-center justify-between select-none">
+          <details className="mt-3 pt-3 border-t border-zinc-800/80 group">
+            <summary className="text-xs text-zinc-400 hover:text-zinc-200 cursor-pointer list-none flex items-center justify-between select-none">
               <span className="flex items-center gap-1.5">
-                <Database className="w-3.5 h-3.5 text-slate-500" />
+                <Database className="w-3.5 h-3.5 text-zinc-500" />
                 <span>Supabase Sync (Optional)</span>
               </span>
-              <span className="text-[10px] text-slate-500 font-mono group-open:rotate-180 transition-transform">▼</span>
+              <span className="text-[10px] text-zinc-500 font-mono group-open:rotate-180 transition-transform">▼</span>
             </summary>
             <div className="pt-3 space-y-2 text-xs">
               <input
@@ -737,26 +737,26 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 value={supabaseUrl}
                 onChange={(e) => setSupabaseUrl(e.target.value)}
                 placeholder="https://xyz.supabase.co"
-                className="w-full bg-[#141926] border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-100 outline-none"
+                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-2.5 py-1.5 text-xs font-mono text-zinc-100 outline-none"
               />
               <input
                 type="password"
                 value={supabaseKey}
                 onChange={(e) => setSupabaseKey(e.target.value)}
                 placeholder="Supabase Anon Key"
-                className="w-full bg-[#141926] border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs font-mono text-slate-100 outline-none"
+                className="w-full bg-[#18181b] border border-zinc-800 rounded-xl px-2.5 py-1.5 text-xs font-mono text-zinc-100 outline-none"
               />
               <button
                 onClick={handleSaveSupabase}
-                className="w-full py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition cursor-pointer"
+                className="w-full py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition cursor-pointer"
               >
                 Save Cloud Config
               </button>
             </div>
           </details>
 
-          <div className="pt-2 border-t border-slate-800/60 text-center">
-            <span className="text-[10px] font-mono text-slate-500">
+          <div className="pt-2 border-t border-zinc-800/60 text-center">
+            <span className="text-[10px] font-mono text-zinc-500">
               M2029 • Academic OS • Offline Ready
             </span>
           </div>

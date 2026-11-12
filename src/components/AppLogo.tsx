@@ -21,7 +21,7 @@ export const AppLogo: React.FC<AppLogoProps> = ({
       {/* Ambient Neural Backlight Glow */}
       {withGlow && (
         <div
-          className={`absolute inset-0 rounded-xl bg-gradient-to-tr from-cyan-500/30 via-indigo-500/20 to-sky-400/30 blur-md pointer-events-none transition-opacity duration-300 ${
+          className={`absolute inset-0 rounded-xl bg-gradient-to-tr from-indigo-500/25 via-violet-500/20 to-zinc-400/20 blur-md pointer-events-none transition-opacity duration-300 ${
             animated ? 'animate-pulse' : 'opacity-70 group-hover:opacity-100'
           }`}
           aria-hidden="true"
@@ -39,25 +39,25 @@ export const AppLogo: React.FC<AppLogoProps> = ({
       >
         <defs>
           <linearGradient id="m2029Bg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0f172a" />
-            <stop offset="50%" stopColor="#090d16" />
-            <stop offset="100%" stopColor="#040711" />
+            <stop offset="0%" stopColor="#18181b" />
+            <stop offset="50%" stopColor="#0f0f12" />
+            <stop offset="100%" stopColor="#09090b" />
           </linearGradient>
 
           <linearGradient id="m2029Border" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#22d3ee" />
-            <stop offset="50%" stopColor="#818cf8" />
-            <stop offset="100%" stopColor="#06b6d4" />
+            <stop offset="0%" stopColor="#e4e4e7" />
+            <stop offset="50%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#27272a" />
           </linearGradient>
 
           <linearGradient id="m2029MGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="55%" stopColor="#e0f2fe" />
-            <stop offset="100%" stopColor="#38bdf8" />
+            <stop offset="60%" stopColor="#f4f4f5" />
+            <stop offset="100%" stopColor="#a1a1aa" />
           </linearGradient>
 
           <linearGradient id="m2029Prism" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#38bdf8" />
+            <stop offset="0%" stopColor="#818cf8" />
             <stop offset="100%" stopColor="#6366f1" />
           </linearGradient>
 
@@ -80,13 +80,13 @@ export const AppLogo: React.FC<AppLogoProps> = ({
         />
 
         {/* Ambient Core Laser Ray */}
-        <circle cx="256" cy="240" r="140" fill="#06b6d4" opacity="0.16" filter="url(#m2029CoreGlow)" />
+        <circle cx="256" cy="240" r="140" fill="#6366f1" opacity="0.18" filter="url(#m2029CoreGlow)" />
 
         {/* High-Tech Cyber Grid Accent */}
         <path
           d="M60 256 H452 M256 60 V452"
-          stroke="#38bdf8"
-          strokeOpacity="0.08"
+          stroke="#71717a"
+          strokeOpacity="0.12"
           strokeWidth="2"
           strokeDasharray="8 8"
         />
@@ -105,7 +105,7 @@ export const AppLogo: React.FC<AppLogoProps> = ({
           <polygon
             points="256,216 290,264 256,306 222,264"
             fill="url(#m2029Prism)"
-            stroke="#67e8f9"
+            stroke="#a5b4fc"
             strokeWidth="3"
             filter="url(#m2029CoreGlow)"
           />
@@ -119,14 +119,14 @@ export const AppLogo: React.FC<AppLogoProps> = ({
             width="228"
             height="44"
             rx="22"
-            fill="#0c1322"
+            fill="#121215"
             stroke="url(#m2029Border)"
             strokeWidth="4"
           />
           <text
             x="114"
             y="29"
-            fill="#38bdf8"
+            fill="#ffffff"
             fontFamily="system-ui, -apple-system, sans-serif"
             fontSize="22"
             fontWeight="900"

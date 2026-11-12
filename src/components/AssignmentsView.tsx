@@ -628,7 +628,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     >();
 
     const accents: Record<string, string> = {
-      'database management systems': 'text-cyan-400 bg-cyan-950/40 border-cyan-500/30',
+      'database management systems': 'text-indigo-400 bg-indigo-950/40 border-indigo-500/30',
       'java programming': 'text-amber-400 bg-amber-950/40 border-amber-500/30',
       'operating systems': 'text-purple-400 bg-purple-950/40 border-purple-500/30',
       'web development': 'text-neutral-300 bg-neutral-900 border-neutral-700',
@@ -641,7 +641,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
         id: s.id,
         name: s.name,
         code: s.code || 'BCA',
-        accentColor: accents[key] || 'text-cyan-400 bg-cyan-950/40 border-cyan-500/30',
+        accentColor: accents[key] || 'text-indigo-400 bg-indigo-950/40 border-indigo-500/30',
         assignments: [],
         totalCount: 0,
         completedCount: 0,
@@ -657,7 +657,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           id: a.subjectId || `sub-${key.replace(/\s+/g, '-')}`,
           name: a.subjectName || 'General Studies',
           code: 'BCA',
-          accentColor: accents[key] || 'text-cyan-400 bg-cyan-950/40 border-cyan-500/30',
+          accentColor: accents[key] || 'text-indigo-400 bg-indigo-950/40 border-indigo-500/30',
           assignments: [],
           totalCount: 0,
           completedCount: 0,
@@ -759,8 +759,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                 viewMode === 'board'
-                  ? 'bg-slate-800 text-cyan-300 font-semibold shadow-xs'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-800 text-white font-semibold shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <Kanban className="w-3.5 h-3.5" />
@@ -774,8 +774,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                 viewMode === 'table'
-                  ? 'bg-slate-800 text-cyan-300 font-semibold shadow-xs'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-800 text-white font-semibold shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <TableIcon className="w-3.5 h-3.5" />
@@ -789,8 +789,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               }}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${
                 viewMode === 'folders'
-                  ? 'bg-slate-800 text-cyan-300 font-semibold shadow-xs'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-zinc-800 text-white font-semibold shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <Folder className="w-3.5 h-3.5" />
@@ -800,10 +800,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
           <button
             onClick={() => setIsCRPortalOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-850 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
             title="Class Representative 1-Click Sync"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-zinc-400" />
             <span>CR Sync</span>
           </button>
 
@@ -812,7 +812,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               if (selectedFolder !== 'all') setNewSubject(selectedFolder);
               setIsAddModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 hover:text-white text-xs font-medium transition cursor-pointer font-sans-ui"
           >
             <Plus className="w-4 h-4" />
             <span>Detailed Add</span>
@@ -821,9 +821,9 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
       </div>
 
       {/* 2. Fast Inline Task Add Bar (Zero Modal Friction) */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 shadow-xs">
         <div className="flex items-center gap-2 flex-1 min-w-0 px-1">
-          <Plus className="w-4 h-4 text-cyan-400 shrink-0" />
+          <Plus className="w-4 h-4 text-zinc-400 shrink-0" />
           <input
             type="text"
             placeholder="Quick add task: e.g. DBMS Normalization Assignment 3, Lab 4 Record... (Press Enter)"
@@ -832,7 +832,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             onKeyDown={(e) => {
               if (e.key === 'Enter') handleQuickAdd();
             }}
-            className="w-full bg-transparent text-xs text-slate-100 placeholder-slate-500 outline-none"
+            className="w-full bg-transparent text-xs text-zinc-100 placeholder-zinc-500 outline-none"
           />
         </div>
 
@@ -840,7 +840,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           <select
             value={quickAddSubject}
             onChange={(e) => setQuickAddSubject(e.target.value)}
-            className="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-cyan-500/50 max-w-[140px] truncate"
+            className="bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-zinc-600 max-w-[140px] truncate"
           >
             <option value="">Subject (Auto)</option>
             {availableSubjects.map((s) => (
@@ -854,7 +854,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           <select
             value={quickAddType}
             onChange={(e) => setQuickAddType(e.target.value as ClassworkType)}
-            className="bg-slate-950 border border-slate-800 text-slate-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-cyan-500/50"
+            className="bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px] rounded-lg px-2.5 py-1.5 outline-none cursor-pointer focus:border-zinc-600"
           >
             <option value="assignment">Assignment</option>
             <option value="lab_record">Lab Record</option>
@@ -864,10 +864,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
           <button
             onClick={() => handleQuickAdd()}
             disabled={!quickAddTitle.trim()}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer shrink-0 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer shrink-0 ${
               quickAddTitle.trim()
-                ? 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold shadow-xs'
-                : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                ? 'bg-white hover:bg-zinc-200 text-zinc-950 shadow-sm'
+                : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
             }`}
           >
             + Add
@@ -891,8 +891,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               onClick={() => setFilterType(pill.id as any)}
               className={`px-3 py-1.5 rounded-lg transition cursor-pointer shrink-0 font-medium ${
                 filterType === pill.id
-                  ? 'bg-slate-800 text-cyan-300 font-semibold border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                  ? 'bg-zinc-800 text-white font-semibold border border-zinc-700'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
               }`}
             >
               {pill.label}
@@ -902,13 +902,13 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
         {/* Search Input */}
         <div className="relative w-full md:w-64">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-2.5" />
           <input
             type="text"
             placeholder="Search assignments..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/50 rounded-xl pl-8 pr-8 py-2 text-xs text-slate-200 outline-none transition"
+            className="w-full bg-zinc-900 border border-zinc-800 focus:border-zinc-600 rounded-xl pl-8 pr-8 py-2 text-xs text-zinc-100 outline-none transition"
           />
           {searchQuery && (
             <button
@@ -992,13 +992,13 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                               ? 'bg-slate-900/30 border-slate-800/70 opacity-85'
                               : isUrgent
                               ? 'bg-amber-950/15 border-amber-500/30'
-                              : 'bg-slate-900/70 border-slate-800 hover:border-cyan-500/30'
+                              : 'bg-zinc-900/70 border-zinc-800 hover:border-zinc-700'
                           }`}
                         >
                           <div className="space-y-1.5">
                             {/* Badges strip */}
                             <div className="flex items-center justify-between gap-1.5 text-[10px] flex-wrap">
-                              <span className="font-mono px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300 truncate max-w-[130px]">
+                              <span className="font-mono px-1.5 py-0.5 rounded bg-zinc-950 border border-zinc-800 text-zinc-300 truncate max-w-[130px]">
                                 {item.subjectName}
                               </span>
 
@@ -1011,7 +1011,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                     ? 'text-rose-400'
                                     : daysLeft <= 1
                                     ? 'text-amber-400 font-semibold'
-                                    : 'text-slate-400'
+                                    : 'text-zinc-400'
                                 }`}
                               >
                                 {item.completed
@@ -1027,7 +1027,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                             </div>
 
                             {/* Card Title */}
-                            <h4 className="font-medium text-xs text-slate-100 group-hover:text-cyan-300 transition line-clamp-2">
+                            <h4 className="font-medium text-xs text-white group-hover:text-zinc-200 transition line-clamp-2">
                               {item.title}
                             </h4>
 
@@ -1047,7 +1047,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                           </div>
 
                           {/* Card Footer Actions */}
-                          <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+                          <div className="flex items-center justify-between pt-2 border-t border-zinc-800/60 text-xs">
                             {/* Status Tag Pill (Click to cycle status) */}
                             <button
                               onClick={(e) => handleCycleStatus(item.id, e)}
@@ -1066,7 +1066,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                   setReviewResult('');
                                   setAssistantTab('ai_solver');
                                 }}
-                                className="text-[11px] text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1"
+                                className="text-[11px] text-indigo-400 hover:text-white cursor-pointer flex items-center gap-1"
                                 title="Solve with AI"
                               >
                                 <Sparkles className="w-3 h-3" />
@@ -1183,8 +1183,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         <td className="py-2.5 px-3">
                           <div className="flex items-center gap-2">
                             <span
-                              className={`font-medium text-xs group-hover:text-cyan-300 transition ${
-                                item.completed ? 'line-through text-slate-500' : 'text-slate-100'
+                              className={`font-medium text-xs group-hover:text-white transition ${
+                                item.completed ? 'line-through text-zinc-500' : 'text-zinc-100'
                               }`}
                             >
                               {item.title}
@@ -1263,7 +1263,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                 setReviewResult('');
                                 setAssistantTab('ai_solver');
                               }}
-                              className="text-[11px] text-cyan-400 hover:text-cyan-300 cursor-pointer flex items-center gap-1"
+                              className="text-[11px] text-indigo-400 hover:text-white cursor-pointer flex items-center gap-1"
                             >
                               <Sparkles className="w-3 h-3" />
                               <span>Solve</span>
@@ -1403,39 +1403,39 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   {selectedFolder !== 'all' ? (
                     <button
                       onClick={() => setSelectedFolder('all')}
-                      className="flex items-center gap-1.5 text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer group"
+                      className="flex items-center gap-1.5 text-zinc-300 hover:text-white font-semibold cursor-pointer group"
                     >
                       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                       <span>All Folders</span>
                     </button>
                   ) : (
-                    <span className="text-slate-400">All Subjects</span>
+                    <span className="text-zinc-400">All Subjects</span>
                   )}
 
                   {selectedFolder !== 'all' && (
                     <>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-                      <span className="font-bold text-slate-100 flex items-center gap-1.5">
-                        <FolderOpen className="w-4 h-4 text-cyan-400" />
+                      <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+                      <span className="font-bold text-white flex items-center gap-1.5">
+                        <FolderOpen className="w-4 h-4 text-indigo-400" />
                         <span>{selectedFolder}</span>
                       </span>
                     </>
                   )}
                 </div>
 
-                <span className="text-slate-400 font-mono text-[11px]">
+                <span className="text-zinc-400 font-mono text-[11px]">
                   {filteredAssignments.length} {filteredAssignments.length === 1 ? 'item' : 'items'}
                 </span>
               </div>
 
               {filteredAssignments.length === 0 ? (
-                <div className="p-10 rounded-2xl bg-slate-900/30 border border-slate-800 text-center space-y-3">
-                  <Folder className="w-8 h-8 text-slate-600 mx-auto" />
-                  <p className="text-xs text-slate-400">No assignments found matching this filter.</p>
+                <div className="p-10 rounded-2xl bg-zinc-900/30 border border-zinc-800 text-center space-y-3">
+                  <Folder className="w-8 h-8 text-zinc-600 mx-auto" />
+                  <p className="text-xs text-zinc-400">No assignments found matching this filter.</p>
                   {selectedFolder !== 'all' && (
                     <button
                       onClick={() => setSelectedFolder('all')}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs cursor-pointer"
+                      className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs cursor-pointer"
                     >
                       Return to All Folders
                     </button>
@@ -1458,10 +1458,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         }}
                         className={`p-4 rounded-xl border transition cursor-pointer flex flex-col justify-between gap-3 ${
                           item.completed
-                            ? 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700 opacity-80'
+                            ? 'bg-zinc-900/40 border-zinc-800/80 hover:border-zinc-700 opacity-80'
                             : isUrgent
                             ? 'bg-amber-950/20 border-amber-500/30 hover:border-amber-500/60 shadow-sm'
-                            : 'bg-slate-900/70 border-slate-800 hover:border-cyan-500/40'
+                            : 'bg-zinc-900/70 border-zinc-800 hover:border-zinc-700'
                         }`}
                       >
                         <div className="space-y-2">
@@ -1471,7 +1471,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                 className={`font-mono px-2 py-0.5 rounded border ${
                                   item.type === 'ppt_presentation'
                                     ? 'bg-indigo-950/80 text-indigo-300 border-indigo-500/30'
-                                    : 'bg-slate-950 text-slate-400 border-slate-800'
+                                    : 'bg-zinc-950 text-zinc-400 border-zinc-800'
                                 }`}
                               >
                                 {item.type === 'ppt_presentation' ? 'PPT Presentation' : 'Written Assignment'}
@@ -1491,7 +1491,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                                   ? 'text-neutral-300'
                                   : isUrgent
                                   ? 'text-amber-400 font-semibold'
-                                  : 'text-slate-400'
+                                  : 'text-zinc-400'
                               }`}
                             >
                               {item.completed
@@ -1505,10 +1505,10 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                           </div>
 
                           <div>
-                            <h4 className="font-bold text-sm text-slate-100 hover:text-cyan-300 transition line-clamp-2">
+                            <h4 className="font-bold text-sm text-white hover:text-zinc-200 transition line-clamp-2">
                               {item.title}
                             </h4>
-                            <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
+                            <span className="text-[11px] text-zinc-400 font-mono mt-0.5 block">
                               {item.subjectName}
                             </span>
                           </div>
@@ -1521,7 +1521,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         </div>
 
                         {/* Bottom Actions */}
-                        <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/60 text-xs">
+                        <div className="flex items-center justify-between pt-2.5 border-t border-zinc-800/60 text-xs">
                           {/* Status cycle tag */}
                           <button
                             onClick={(e) => handleCycleStatus(item.id, e)}
@@ -1542,7 +1542,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                               className={`flex items-center gap-1.5 font-medium text-xs cursor-pointer hover:underline ${
                                 item.solution || item.aiSolvedAnswer
                                   ? 'text-emerald-400 hover:text-emerald-300 font-semibold'
-                                  : 'text-cyan-400 hover:text-cyan-300'
+                                  : 'text-zinc-300 hover:text-white'
                               }`}
                             >
                               <Sparkles className="w-3.5 h-3.5" />
@@ -1588,12 +1588,12 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
             {/* Modal Header */}
             <div className="flex items-start justify-between pb-3 border-b border-slate-800">
               <div className="space-y-1 pr-3">
-                <div className="flex items-center gap-2 text-[11px] font-mono text-cyan-400">
+                <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-400">
                   <span>{activeModalItem.subjectName}</span>
                   <span>·</span>
                   <span className="text-amber-300 font-medium">Due: {activeModalItem.dueDate}</span>
                 </div>
-                <h3 className="font-bold text-base md:text-lg text-slate-100">
+                <h3 className="font-bold text-base md:text-lg text-white">
                   {activeModalItem.title}
                 </h3>
                 {activeModalItem.presenterName && (
@@ -1605,7 +1605,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
 
               <button
                 onClick={() => setActiveModalItem(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer shrink-0"
+                className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1635,29 +1635,29 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   )}
                 </button>
 
-                <span className="text-[11px] text-slate-400 font-mono">
+                <span className="text-[11px] text-zinc-400 font-mono">
                   Assigned by {activeModalItem.assignedBy || 'Faculty'}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-200 leading-relaxed">
-                <strong className="text-slate-300 block mb-0.5">Details:</strong>
+              <div className="p-3.5 rounded-xl bg-zinc-950/80 border border-zinc-800 text-xs text-zinc-200 leading-relaxed">
+                <strong className="text-zinc-300 block mb-0.5">Details:</strong>
                 {activeModalItem.instructions}
               </div>
             </div>
 
             {/* Assistant Tabs: AI Solver / Critique / Suggested Structure */}
-            <div className="space-y-3 pt-2 border-t border-slate-800">
-              <div className="flex items-center gap-1.5 border-b border-slate-800 pb-2 text-xs">
+            <div className="space-y-3 pt-2 border-t border-zinc-800">
+              <div className="flex items-center gap-1.5 border-b border-zinc-800 pb-2 text-xs">
                 <button
                   onClick={() => setAssistantTab('ai_solver')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                     assistantTab === 'ai_solver'
-                      ? 'bg-cyan-950 text-cyan-300 border border-cyan-500/40 font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-indigo-950 text-indigo-300 border border-indigo-500/40 font-semibold'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                   <span>AI Solver (Full-Mark Solution)</span>
                 </button>
 
@@ -1665,8 +1665,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   onClick={() => setAssistantTab('structure')}
                   className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                     assistantTab === 'structure'
-                      ? 'bg-slate-800 text-white font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-zinc-800 text-white font-semibold'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
                 >
                   Suggested Steps
@@ -1676,8 +1676,8 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   onClick={() => setAssistantTab('draft_critique')}
                   className={`px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${
                     assistantTab === 'draft_critique'
-                      ? 'bg-slate-800 text-white font-semibold'
-                      : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-zinc-800 text-white font-semibold'
+                      : 'text-zinc-400 hover:text-white'
                   }`}
                 >
                   Critique My Draft
@@ -1688,7 +1688,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
               {assistantTab === 'ai_solver' && (
                 <div className="space-y-3 animate-fade-in text-xs">
                      {aiSolution ? (
-                    <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-slate-900 to-emerald-950/20 border border-amber-500/30 rounded-xl flex items-center justify-between gap-3 shadow-sm">
+                    <div className="p-3.5 bg-gradient-to-r from-amber-500/15 via-zinc-900 to-emerald-950/20 border border-amber-500/30 rounded-xl flex items-center justify-between gap-3 shadow-sm">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0">
                           <Trophy className="w-4 h-4 text-amber-400" />
@@ -1700,7 +1700,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                               100% Exam Aligned
                             </span>
                           </div>
-                          <div className="text-[11px] text-slate-300 leading-snug">
+                          <div className="text-[11px] text-zinc-300 leading-snug">
                             Iteratively refined across 60 student peers. Zero AI tokens spent for whole class.
                           </div>
                         </div>
@@ -1718,19 +1718,19 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         <button
                           onClick={() => handleSolveWithAI(true)}
                           disabled={isSolving}
-                          className="px-2 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded border border-slate-700 transition cursor-pointer"
+                          className="px-2 py-1 text-[11px] bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded border border-zinc-700 transition cursor-pointer"
                         >
                           Re-solve
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="p-3.5 bg-gradient-to-r from-indigo-950/30 via-slate-900 to-amber-950/20 border border-indigo-500/30 rounded-xl text-slate-300 space-y-1">
+                    <div className="p-3.5 bg-gradient-to-r from-indigo-950/30 via-zinc-900 to-amber-950/20 border border-indigo-500/30 rounded-xl text-zinc-300 space-y-1">
                       <div className="font-semibold text-amber-300 text-xs flex items-center gap-1.5">
                         <Trophy className="w-3.5 h-3.5 text-amber-400" />
                         <span>60-Student Compounding Intelligence Enabled</span>
                       </div>
-                      <div className="text-[11px] text-slate-400 leading-relaxed">
+                      <div className="text-[11px] text-zinc-400 leading-relaxed">
                         Solving this will synthesize peer refinements through the 60th student gold standard, caching it permanently for every student across the entire batch!
                       </div>
                     </div>
@@ -1743,31 +1743,31 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         placeholder="Optional constraints (e.g. 'Use Python code', 'Include BCNF decomposition proof')..."
                         value={studentNotes}
                         onChange={(e) => setStudentNotes(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500/50"
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-zinc-600"
                       />
 
                       <button
                         onClick={() => handleSolveWithAI(false)}
                         disabled={isSolving}
-                        className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                        className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                       >
-                        <Sparkles className={`w-4 h-4 text-cyan-400 ${isSolving ? 'animate-spin' : ''}`} />
+                        <Sparkles className={`w-4 h-4 text-zinc-950 ${isSolving ? 'animate-spin' : ''}`} />
                         <span>{isSolving ? 'Generating Answer...' : 'Generate Model Answer'}</span>
                       </button>
                     </>
                   )}
 
                   {aiSolution && (
-                    <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden space-y-2 animate-fade-in">
-                      <div className="p-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs">
-                        <span className="font-semibold text-cyan-300 flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <div className="rounded-xl bg-zinc-950 border border-zinc-800 overflow-hidden space-y-2 animate-fade-in">
+                      <div className="p-3 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between text-xs">
+                        <span className="font-semibold text-white flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                           Academic Model Submission (Verified Solution)
                         </span>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={handleCopySolution}
-                            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer"
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 cursor-pointer"
                           >
                             {copiedSolution ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
                             <span>{copiedSolution ? 'Copied' : 'Copy Solution'}</span>
@@ -1775,7 +1775,7 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                         </div>
                       </div>
 
-                      <div className="p-4 max-h-[400px] overflow-y-auto text-xs text-slate-200 whitespace-pre-wrap leading-relaxed font-sans select-text">
+                      <div className="p-4 max-h-[400px] overflow-y-auto text-xs text-zinc-200 whitespace-pre-wrap leading-relaxed font-sans select-text">
                         {aiSolution}
                       </div>
                     </div>
@@ -1789,9 +1789,9 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
                   {activeModalItem.outlineSteps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-slate-300 flex items-start gap-2.5"
+                      className="p-3 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 flex items-start gap-2.5"
                     >
-                      <span className="font-mono text-cyan-400 font-semibold">{idx + 1}.</span>
+                      <span className="font-mono text-indigo-400 font-semibold">{idx + 1}.</span>
                       <span>{step}</span>
                     </div>
                   ))}

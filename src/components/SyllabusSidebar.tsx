@@ -308,7 +308,7 @@ export const SyllabusSidebar: React.FC<SyllabusSidebarProps> = ({
                         >
                           <FileText
                             className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${
-                              isActive ? 'text-cyan-400' : 'text-slate-500'
+                              isActive ? 'text-indigo-400' : 'text-zinc-500'
                             }`}
                           />
 

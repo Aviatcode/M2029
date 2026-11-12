@@ -704,7 +704,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
         <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-2.5 shadow-xl">
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
             <div className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-cyan-400" />
+              <FileText className="w-4 h-4 text-white" />
               <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
                 Uploaded Materials Vault ({materials.length})
               </h2>
@@ -724,18 +724,18 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   onClick={() => handleSelectItem(mat)}
                   className={`px-3 py-2 rounded-xl border text-left shrink-0 transition cursor-pointer flex items-center gap-2.5 ${
                     isSelected
-                      ? 'bg-slate-800/90 border-cyan-500/60 text-white shadow-md ring-1 ring-cyan-500/30'
+                      ? 'bg-zinc-800 border-zinc-500 text-white shadow-md ring-1 ring-white/10'
                       : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
                   }`}
                 >
                   <div className="w-7 h-7 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center shrink-0">
-                    <FileText className={`w-3.5 h-3.5 ${isSelected ? 'text-cyan-400' : 'text-slate-400'}`} />
+                    <FileText className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-slate-400'}`} />
                   </div>
                   <div className="space-y-0.5 max-w-[180px] sm:max-w-[220px]">
                     <div className="text-xs font-medium truncate leading-tight flex items-center gap-1.5">
                       <span className="truncate">{mat.title}</span>
                       {isJustAdded && (
-                        <span className="px-1 py-0.2 rounded text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
+                        <span className="px-1 py-0.2 rounded text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shrink-0">
                           New
                         </span>
                       )}
@@ -765,7 +765,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono-code bg-slate-900 border border-slate-800 text-slate-400">
                     {activeItem.unitTitle || (activeItem.unitNumber ? `Unit ${activeItem.unitNumber}` : 'General')}
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase bg-slate-900 border border-slate-800 text-cyan-400">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase bg-slate-900 border border-slate-800 text-zinc-300">
                     {activeItem.detectedCategory || 'Notes'}
                   </span>
                 </div>
@@ -801,29 +801,29 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                 onClick={() => setActiveDetailTab('notes')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                   activeDetailTab === 'notes'
-                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    ? 'bg-zinc-800 text-white border border-zinc-700/60 shadow-xs ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 border border-transparent'
                 }`}
               >
-                <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                <BookOpen className="w-3.5 h-3.5 text-white" />
                 <span>Notes & Summary</span>
               </button>
               <button
                 onClick={() => setActiveDetailTab('mindmap')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                   activeDetailTab === 'mindmap'
-                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    ? 'bg-zinc-800 text-white border border-zinc-700/60 shadow-xs ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 border border-transparent'
                 }`}
               >
-                <Network className="w-3.5 h-3.5 text-cyan-400" />
+                <Network className="w-3.5 h-3.5 text-white" />
                 <span>Visual Mindmap</span>
               </button>
               <button
                 onClick={() => setActiveDetailTab('mnemonics')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                   activeDetailTab === 'mnemonics'
-                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    ? 'bg-zinc-800 text-white border border-zinc-700/60 shadow-xs ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 border border-transparent'
                 }`}
               >
@@ -834,7 +834,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                 onClick={() => setActiveDetailTab('10marker')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                   activeDetailTab === '10marker'
-                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    ? 'bg-zinc-800 text-white border border-zinc-700/60 shadow-xs ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 border border-transparent'
                 }`}
               >
@@ -845,7 +845,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                 onClick={() => setActiveDetailTab('quiz')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
                   activeDetailTab === 'quiz'
-                    ? 'bg-slate-800 text-white border border-slate-700/60 shadow-xs ring-1 ring-cyan-500/20'
+                    ? 'bg-zinc-800 text-white border border-zinc-700/60 shadow-xs ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 border border-transparent'
                 }`}
               >
@@ -880,7 +880,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
                   <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
+                    <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
                     <span>Executive Summary</span>
                   </h3>
                   <p className="text-xs text-slate-200 leading-relaxed font-sans-ui">
@@ -1367,7 +1367,7 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                                     onClick={() => handleSelectItem(item)}
                                     className={`flex items-center justify-between p-2.5 rounded-lg text-xs transition cursor-pointer ${
                                       isSelected
-                                        ? 'bg-slate-800 text-white border border-cyan-500/60 font-medium shadow-xs'
+                                        ? 'bg-zinc-800 text-white border border-zinc-600 font-medium shadow-xs'
                                         : 'hover:bg-slate-900/60 text-slate-400 hover:text-slate-200 border border-transparent'
                                     }`}
                                   >
@@ -1377,18 +1377,18 @@ export const SmartDumpView: React.FC<SmartDumpViewProps> = ({
                                       ) : isAssign ? (
                                         <FileCheck className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                                       ) : (
-                                        <FileText className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                        <FileText className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                                       )}
                                       <span className="truncate">{item.title}</span>
                                       {isJustAdded && (
-                                        <span className="px-1 py-0.2 rounded text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shrink-0">
+                                        <span className="px-1 py-0.2 rounded text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shrink-0">
                                           New
                                         </span>
                                       )}
                                     </div>
                                     <div className="flex items-center gap-2 shrink-0 ml-1">
                                       {isSelected && (
-                                        <span className="text-[10px] text-cyan-400 font-medium">Viewing Output</span>
+                                        <span className="text-[10px] text-zinc-300 font-medium">Viewing Output</span>
                                       )}
                                       <span className="text-[10px] font-mono-code text-slate-500 uppercase">
                                         {item.fileType}

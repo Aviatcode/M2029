@@ -706,13 +706,13 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
             title="Manage Profile & Settings"
           >
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
+            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white group-hover:border-zinc-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
+            <span className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
+            <span className="text-[10px] text-zinc-500 font-mono group-hover:text-zinc-400 transition-colors">
               • {classCode || 'M2029'}
             </span>
           </button>
@@ -720,8 +720,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               AI Tutor
             </h1>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 shadow-[0_0_12px_rgba(99,102,241,0.2)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-zinc-800 border border-zinc-700 text-zinc-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               NEURAL AGENT
             </span>
           </div>
@@ -729,13 +729,13 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
           {/* View Mode Switcher */}
-          <div className="flex items-center gap-1 bg-[#141926] p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 bg-[#18181b] p-1 rounded-xl border border-zinc-800">
             <button
               onClick={() => setViewMode('guided')}
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                 viewMode === 'guided'
-                  ? 'bg-slate-800 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-zinc-800 text-white shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <ListOrdered className="w-3.5 h-3.5" />
@@ -745,8 +745,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
               onClick={() => setViewMode('reference')}
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
                 viewMode === 'reference'
-                  ? 'bg-slate-800 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-zinc-800 text-white shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               <BookMarked className="w-3.5 h-3.5" />
@@ -757,12 +757,12 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           {/* Model Keys */}
           <button
             onClick={() => setIsKeyModalOpen(true)}
-            className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-amber-300 hover:text-white hover:border-amber-500/40 flex items-center gap-1.5 cursor-pointer font-semibold transition"
+            className="h-8 px-3 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-amber-300 hover:text-white hover:border-amber-500/40 flex items-center gap-1.5 cursor-pointer font-semibold transition"
             title="Configure Multi-Model Auto-Failover Pool (OpenCode Style)"
           >
             <Zap className="w-3.5 h-3.5 text-amber-400" />
             <span className="font-semibold">{activeModel.displayName}</span>
-            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">
+            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-zinc-800 text-zinc-400">
               {activeModel.badge}
             </span>
           </button>
@@ -770,7 +770,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
       </div>
 
       {/* 2. MAIN AI DESK CONTAINER (Rounded-3xl obsidian card) */}
-      <div className="w-full h-[calc(100dvh-11.5rem)] min-h-[480px] flex flex-col rounded-3xl bg-[#121724] border border-slate-800/80 shadow-md overflow-hidden">
+      <div className="w-full h-[calc(100dvh-11.5rem)] min-h-[480px] flex flex-col rounded-3xl bg-[#121215] border border-zinc-800/80 shadow-md overflow-hidden">
 
       {/* 2. SUB-HEADER: Syllabus Track & Progress Bar (Guided Mode) */}
       {viewMode === 'guided' && activeTrack && (

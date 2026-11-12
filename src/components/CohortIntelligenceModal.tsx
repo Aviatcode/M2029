@@ -119,23 +119,23 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
         </div>
 
         {/* 2. Mechanism Banner: How It Compounds */}
-        <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+        <div className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-slate-300 font-medium font-sans-ui">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+            <div className="flex items-center gap-2 text-zinc-300 font-medium font-sans-ui">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
               <span>How 60-Student Compounding Intelligence Works:</span>
             </div>
-            <span className="font-mono text-cyan-400 text-[11px] font-semibold">
+            <span className="font-mono text-indigo-400 text-[11px] font-semibold">
               Perfection Score: {perfectionScore}%
             </span>
           </div>
-          <p className="text-xs text-slate-400 leading-relaxed font-sans-ui">
+          <p className="text-xs text-zinc-400 leading-relaxed font-sans-ui">
             When Student 1 queries a topic, the baseline draft is generated. When Student 2 studies it, the AI improves and refines it. By the 60th student, definitions, ASCII flowcharts, algorithms, 10-marker exam traps, and real-world code are completely perfected. This flawless master output is then surfaced to <strong>everyone across the entire website and PWA with 0 tokens spent</strong>!
           </p>
         </div>
 
         {/* 3. Tab Switcher */}
-        <div className="flex items-center gap-2 border-b border-slate-800 text-xs">
+        <div className="flex items-center gap-2 border-b border-zinc-800 text-xs">
           {[
             { id: 'timeline', label: `Evolution History (${evolutionHistory.length || 7} Steps)`, icon: History },
             { id: 'how_it_works', label: '60-Student Pipeline Architecture', icon: Layers },
@@ -148,8 +148,8 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`pb-2.5 px-2 font-medium transition cursor-pointer relative flex items-center gap-1.5 ${
                   activeTab === tab.id
-                    ? 'text-cyan-300 font-semibold border-b-2 border-cyan-400'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-white font-semibold border-b-2 border-indigo-500'
+                    : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -178,12 +178,12 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
 
                     <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-semibold text-slate-200 flex items-center gap-1.5 font-sans-ui">
+                        <span className="font-semibold text-zinc-200 flex items-center gap-1.5 font-sans-ui">
                           <span>{step.studentLabel}</span>
-                          <span className="text-slate-500">·</span>
-                          <span className="text-cyan-400 font-normal">{step.focus}</span>
+                          <span className="text-zinc-500">·</span>
+                          <span className="text-indigo-400 font-normal">{step.focus}</span>
                         </span>
-                        <span className="text-[10px] font-mono text-slate-500">
+                        <span className="text-[10px] font-mono text-zinc-500">
                           {new Date(step.improvedAt).toLocaleDateString()}
                         </span>
                       </div>
@@ -216,7 +216,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
                   tier: 'Students 11 – 25',
                   title: 'Visual Flow & Mathematical Proofs',
                   desc: 'Embeds complete ASCII architecture flowcharts, state transitions, equations, and Turnaround/Wait time formulas.',
-                  color: 'border-cyan-500/30 bg-cyan-950/20 text-cyan-300',
+                  color: 'border-indigo-500/30 bg-indigo-950/20 text-indigo-300',
                 },
                 {
                   tier: 'Students 26 – 40',
@@ -259,7 +259,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
                 onChange={(e) => setFeedbackInput(e.target.value)}
                 placeholder="What nuance, code clarification, or exam gotcha should be improved for this topic? e.g., 'Add a quick mnemonic for Coffman conditions' or 'Clarify race conditions in line 12 of code'..."
                 rows={4}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500/50 rounded-xl p-3 text-xs text-slate-100 placeholder-slate-500 outline-none transition"
+                className="w-full bg-slate-950 border border-slate-800 focus:border-zinc-500 rounded-xl p-3 text-xs text-slate-100 placeholder-slate-500 outline-none transition"
               />
             </div>
 
@@ -281,7 +281,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
               <button
                 type="submit"
                 disabled={!feedbackInput.trim() || isSubmittingFeedback}
-                className="px-4 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-xs"
+                className="px-4 py-1.5 rounded-lg bg-white hover:bg-zinc-200 disabled:opacity-50 text-zinc-950 text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{isSubmittingFeedback ? 'Synthesizing...' : `Elevate to Iteration ${currentIteration + 1}`}</span>
@@ -293,7 +293,7 @@ export const CohortIntelligenceModal: React.FC<CohortIntelligenceModalProps> = (
         {/* 5. Footer Actions */}
         <div className="flex items-center justify-between pt-3 border-t border-slate-800 text-xs">
           <div className="flex items-center gap-2 text-slate-400 text-[11px] font-mono">
-            <Users className="w-3.5 h-3.5 text-cyan-400" />
+            <Users className="w-3.5 h-3.5 text-zinc-400" />
             <span>Shared across Class Batch (60 Students)</span>
           </div>
 

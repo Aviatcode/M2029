@@ -198,8 +198,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-900/80 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 text-xs font-medium transition cursor-pointer"
             title="Configure AI API Keys & Multi-Model Failover Pool"
           >
-            <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="text-[11px] font-mono text-cyan-300 truncate max-w-[120px]">{currentAiModel}</span>
+            <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="text-[11px] font-mono text-zinc-200 truncate max-w-[120px]">{currentAiModel}</span>
           </button>
         )}
 

@@ -155,28 +155,28 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
       aria-label="Video Tutorial Modal"
     >
       <div
-        className="w-full max-w-4xl bg-[#070a0f] border border-cyan-500/30 rounded-3xl p-5 sm:p-7 shadow-2xl text-slate-100 flex flex-col space-y-5 cursor-default relative overflow-hidden"
+        className="w-full max-w-4xl bg-[#09090b] border border-zinc-800 rounded-3xl p-5 sm:p-7 shadow-2xl text-zinc-100 flex flex-col space-y-5 cursor-default relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Glow ambient background accent */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
         {/* 1. Header with Video Game HUD styling */}
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
+            <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center text-white">
               <Gamepad2 className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-extrabold text-white tracking-wider font-sans uppercase">
-                  M2028 // SYSTEM TUTORIAL
+                  M2029 // SYSTEM TUTORIAL
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold">
                   DIRECTIVE v2.0
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-mono">
+              <p className="text-[11px] text-zinc-400 font-mono">
                 Watch once, master the system, and figure the rest out.
               </p>
             </div>
@@ -184,7 +184,7 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
 
           <button
             onClick={handleFinish}
-            className="p-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+            className="p-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
             title="Close Tutorial"
           >
             <X className="w-4 h-4" />
@@ -192,19 +192,19 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
         </div>
 
         {/* 2. Interactive Video Viewport (16:9 arcade simulation) */}
-        <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-[#0d121f] aspect-video sm:aspect-21/9 flex flex-col justify-between p-4 sm:p-6 select-none shadow-inner">
+        <div className="relative rounded-2xl overflow-hidden border border-zinc-800 bg-[#121215] aspect-video sm:aspect-21/9 flex flex-col justify-between p-4 sm:p-6 select-none shadow-inner">
           {/* Top HUD overlay */}
           <div className="flex items-center justify-between text-xs font-mono z-10">
-            <span className="px-2.5 py-1 rounded-md bg-slate-950/80 border border-cyan-500/40 text-cyan-300 font-bold tracking-wider">
+            <span className="px-2.5 py-1 rounded-md bg-zinc-950/80 border border-zinc-700 text-zinc-200 font-bold tracking-wider">
               {chapter.badge}
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800">
+              <span className="text-[10px] text-zinc-400 bg-zinc-950/80 px-2 py-0.5 rounded border border-zinc-800">
                 REC • 60 FPS
               </span>
               <button
                 onClick={() => setIsMuted((prev) => !prev)}
-                className="p-1.5 rounded-md bg-slate-950/80 border border-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                className="p-1.5 rounded-md bg-zinc-950/80 border border-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer"
                 title={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -216,14 +216,14 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
           <div className="my-auto flex flex-col items-center justify-center text-center space-y-3 z-10 px-4">
             {chapter.visualScene === 'share' && (
               <div className="space-y-2 animate-fade-in">
-                <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-400/50 flex items-center justify-center text-cyan-300 mx-auto shadow-lg shadow-cyan-500/20">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-400/50 flex items-center justify-center text-indigo-300 mx-auto shadow-lg shadow-indigo-500/20">
                   <Share2 className="w-7 h-7 animate-pulse" />
                 </div>
                 <div className="text-base sm:text-lg font-bold text-white tracking-tight">
                   Share from WhatsApp or Drop Any Document
                 </div>
-                <div className="text-xs text-slate-300 max-w-md mx-auto">
-                  Click share in WhatsApp, choose M2028, and it indexes directly into the backend with zero manual sorting.
+                <div className="text-xs text-zinc-300 max-w-md mx-auto">
+                  Click share in WhatsApp, choose M2029, and it indexes directly into the backend with zero manual sorting.
                 </div>
               </div>
             )}
@@ -274,9 +274,9 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
           {/* Bottom Video Controls & Scrubber */}
           <div className="space-y-2 z-10">
             {/* Progress Bar */}
-            <div className="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-zinc-800/80 rounded-full h-1.5 overflow-hidden">
               <div
-                className="bg-cyan-400 h-full transition-all duration-100 ease-linear shadow-xs shadow-cyan-400"
+                className="bg-indigo-500 h-full transition-all duration-100 ease-linear shadow-xs shadow-indigo-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -285,7 +285,7 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsPlaying((prev) => !prev)}
-                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-white hover:bg-slate-800 transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-white hover:bg-zinc-800 transition cursor-pointer"
                   title={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -295,17 +295,17 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
                     setProgress(0);
                     setIsPlaying(true);
                   }}
-                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer"
                   title="Replay Chapter"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
-                <span className="text-[11px] font-mono text-slate-300 font-semibold">
+                <span className="text-[11px] font-mono text-zinc-300 font-semibold">
                   {chapter.title}
                 </span>
               </div>
 
-              <div className="flex items-center gap-1 font-mono text-[10px] text-slate-400">
+              <div className="flex items-center gap-1 font-mono text-[10px] text-zinc-400">
                 <span>Chapter {currentChapterIndex + 1}/{CHAPTERS.length}</span>
               </div>
             </div>
@@ -322,15 +322,15 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
                 onClick={() => handleSelectChapter(idx)}
                 className={`p-3 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-1.5 ${
                   isCurrent
-                    ? 'bg-cyan-500/10 border-cyan-400/60 shadow-md shadow-cyan-500/10'
-                    : 'bg-[#101522] border-slate-800/80 hover:border-slate-700 text-slate-400 hover:text-white'
+                    ? 'bg-zinc-800 border-zinc-600 text-white shadow-md'
+                    : 'bg-[#18181b] border-zinc-800 hover:border-zinc-700 text-zinc-400 hover:text-white'
                 }`}
               >
                 <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className={isCurrent ? 'text-cyan-300 font-bold' : 'text-slate-500'}>
+                  <span className={isCurrent ? 'text-white font-bold' : 'text-zinc-500'}>
                     {ch.badge}
                   </span>
-                  {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />}
+                  {isCurrent && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
                 </div>
                 <div className="text-xs font-bold text-white tracking-tight line-clamp-1">
                   {ch.title}
@@ -341,37 +341,37 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
         </div>
 
         {/* 4. Controls HUD & Hotkeys Cheat Sheet */}
-        <div className="p-3.5 rounded-2xl bg-[#0f1420] border border-slate-800/90 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="p-3.5 rounded-2xl bg-[#121215] border border-zinc-800 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-cyan-400 shrink-0" />
-            <span className="font-semibold text-slate-200">Game Controls:</span>
+            <Zap className="w-4 h-4 text-white shrink-0" />
+            <span className="font-semibold text-zinc-200">Game Controls:</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-slate-300">
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-cyan-300">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono text-zinc-300">
+            <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-200">
               ⌘K / Ctrl+K
             </span>
-            <span className="text-slate-500">Universal Search</span>
+            <span className="text-zinc-500">Universal Search</span>
 
-            <span className="text-slate-600">•</span>
+            <span className="text-zinc-600">•</span>
 
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-cyan-300">
+            <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-200">
               Alt+Shift+M
             </span>
-            <span className="text-slate-500">Productivity Hub</span>
+            <span className="text-zinc-500">Productivity Hub</span>
 
-            <span className="text-slate-600">•</span>
+            <span className="text-zinc-600">•</span>
 
-            <span className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-cyan-300">
+            <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-200">
               Drag & Drop
             </span>
-            <span className="text-slate-500">Any File Anywhere</span>
+            <span className="text-zinc-500">Any File Anywhere</span>
           </div>
         </div>
 
         {/* 5. Bottom Actions: "I'll figure it out" and Start Playing */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-800/80">
-          <span className="text-[11px] text-slate-500 font-mono">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-zinc-800/80">
+          <span className="text-[11px] text-zinc-500 font-mono">
             Always accessible later in Settings
           </span>
 
@@ -381,7 +381,7 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
                 const nextIdx = (currentChapterIndex + 1) % CHAPTERS.length;
                 handleSelectChapter(nextIdx);
               }}
-              className="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
+              className="py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 text-xs font-semibold transition cursor-pointer flex items-center justify-center gap-1.5"
             >
               <span>Next Scene</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -389,7 +389,7 @@ export const VideoTutorialModal: React.FC<VideoTutorialModalProps> = ({
 
             <button
               onClick={handleFinish}
-              className="flex-1 sm:flex-none py-2.5 px-6 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
+              className="flex-1 sm:flex-none py-2.5 px-6 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-md"
             >
               <span>Start / Figure It Out</span>
               <ChevronRight className="w-4 h-4 stroke-[2.5]" />

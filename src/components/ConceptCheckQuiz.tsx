@@ -137,7 +137,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
 
             if (!hasSubmittedOption) {
               buttonClass +=
-                'border-slate-800 bg-slate-950/70 hover:border-cyan-500 hover:bg-slate-900 text-slate-200 cursor-pointer';
+                'border-slate-800 bg-slate-950/70 hover:border-zinc-500 hover:bg-slate-900 text-slate-200 cursor-pointer';
             } else if (isCorrect) {
               buttonClass +=
                 'border-neutral-500 bg-neutral-800 text-neutral-100 font-semibold shadow-md';
@@ -189,7 +189,7 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
       {/* Open-Ended Active Recall Prompt */}
       {quiz.openEndedPrompt && (
         <div className="pt-5 border-t border-slate-800/80 space-y-3">
-          <div className="flex items-center gap-2 text-cyan-300 text-xs font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
             <Sparkles className="w-4 h-4" />
             <span>Active Recall Drill (Explain In Your Own Words)</span>
           </div>
@@ -201,12 +201,12 @@ export const ConceptCheckQuiz: React.FC<ConceptCheckQuizProps> = ({
               value={openAnswer}
               onChange={(e) => setOpenAnswer(e.target.value)}
               placeholder="Type your explanation here to have the AI evaluate your exam readiness..."
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 resize-none"
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 resize-none"
             />
             <button
               onClick={handleSubmitOpenAnswer}
               disabled={evaluatingOpen || !openAnswer.trim()}
-              className="mt-2 flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md transition ml-auto cursor-pointer"
+              className="mt-2 flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 disabled:opacity-50 text-zinc-950 text-xs font-bold shadow-md transition ml-auto cursor-pointer"
             >
               <Send className="w-3.5 h-3.5" />
               <span>{evaluatingOpen ? 'Evaluating Answer...' : 'Evaluate My Answer'}</span>

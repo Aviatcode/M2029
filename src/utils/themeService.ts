@@ -21,16 +21,16 @@ export const THEMES: ThemeConfig[] = [
   // -------------------------------------------------------------
   {
     id: 'midnight',
-    name: 'Midnight Slate',
+    name: 'Obsidian Studio',
     mode: 'black',
-    description: 'Deep cosmic slate with electric cyan highlights and optimal contrast.',
+    description: 'Ultra-clean obsidian black with high-contrast titanium typography and refined indigo accents.',
     badge: 'Default Dark',
     colors: {
-      bg: '#090d16',
-      card: '#0f172a',
-      border: '#1e293b',
-      accent: '#06b6d4',
-      text: '#f8fafc',
+      bg: '#09090b',
+      card: '#121215',
+      border: '#222226',
+      accent: '#6366f1',
+      text: '#ffffff',
     },
   },
   {

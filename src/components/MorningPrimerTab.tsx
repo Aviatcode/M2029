@@ -82,8 +82,8 @@ export const MorningPrimerTab: React.FC<MorningPrimerTabProps> = ({ lesson, topi
 
       {/* The Hook Card */}
       <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-5 md:p-6 shadow-lg">
-        <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs uppercase tracking-wider mb-2">
-          <Sparkles className="w-4 h-4 text-cyan-400" />
+        <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs uppercase tracking-wider mb-2">
+          <Sparkles className="w-4 h-4 text-indigo-400" />
           <span>The Conceptual Hook</span>
         </div>
         <p className="text-base md:text-lg font-medium text-slate-100 leading-relaxed italic">

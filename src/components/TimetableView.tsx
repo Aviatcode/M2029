@@ -191,13 +191,13 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
             title="Manage Profile & Settings"
           >
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
+            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white group-hover:border-zinc-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
+            <span className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
+            <span className="text-[10px] text-zinc-500 font-mono group-hover:text-zinc-400 transition-colors">
               • {classCode || 'M2029'}
             </span>
           </button>
@@ -212,7 +212,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-500 hover:text-cyan-400 cursor-pointer transition"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-zinc-500 hover:text-white cursor-pointer transition"
               title="Search Schedule"
             >
               <Search className="w-3.5 h-3.5" />
@@ -222,17 +222,17 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search classes..."
-              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-500/50 transition"
+              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-600 transition"
             />
           </div>
 
           {/* View Mode Toggle Pill */}
-          <div className="flex items-center gap-1 bg-[#141926] p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center gap-1 bg-[#18181b] p-1 rounded-xl border border-zinc-800">
             <button
               onClick={() => setViewMode('daily')}
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${viewMode === 'daily'
-                ? 'bg-slate-800 text-white shadow-xs'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-zinc-800 text-white shadow-xs'
+                : 'text-zinc-400 hover:text-white'
                 }`}
             >
               Daily
@@ -240,8 +240,8 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             <button
               onClick={() => setViewMode('matrix')}
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${viewMode === 'matrix'
-                ? 'bg-slate-800 text-white shadow-xs'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-zinc-800 text-white shadow-xs'
+                : 'text-zinc-400 hover:text-white'
                 }`}
             >
               Matrix
@@ -253,7 +253,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             onClick={() => setLabFilter(labFilter === 'all' ? 'labs' : 'all')}
             className={`h-8 px-3 rounded-xl border text-xs font-semibold transition cursor-pointer ${labFilter === 'labs'
               ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
-              : 'bg-[#141926] text-slate-400 border-slate-800 hover:text-slate-200'
+              : 'bg-[#18181b] text-zinc-400 border-zinc-800 hover:text-zinc-200'
               }`}
           >
             {labFilter === 'labs' ? 'Labs Only' : 'All Classes'}
@@ -263,7 +263,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
           {onAddClass && (
             <button
               onClick={() => handleOpenAddModal()}
-              className="h-8 px-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm shadow-cyan-500/20"
+              className="h-8 px-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Class</span>
@@ -276,13 +276,13 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
       {viewMode === 'daily' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
           {/* CARD 1: Day Overview & Selectors */}
-          <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
+          <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-cyan-400" />
-                <h2 className="text-sm font-bold text-slate-100">Schedule Day</h2>
+                <Clock className="w-4 h-4 text-zinc-300" />
+                <h2 className="text-sm font-bold text-white">Schedule Day</h2>
               </div>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-bold border border-zinc-700">
                 {selectedDay}
               </span>
             </div>
@@ -292,7 +292,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                 <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                   {searchedFilteredClasses.length}
                 </span>
-                <span className="text-xs text-slate-400 font-semibold">
+                <span className="text-xs text-zinc-400 font-semibold">
                   Classes on {selectedDay.slice(0, 3)}
                 </span>
               </div>
@@ -314,17 +314,17 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                 type="button"
                 onClick={() => handleOpenAddModal()}
                 title="Add Class Slot"
-                className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+                className="absolute right-6 top-4 w-20 h-20 rounded-full bg-[#18181b] border border-zinc-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
               >
                 <span className="text-base font-extrabold">{subjects.length}</span>
-                <span className="text-[10px] text-slate-400">Subjects</span>
+                <span className="text-[10px] text-zinc-400">Subjects</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setLabFilter(labFilter === 'all' ? 'labs' : 'all')}
                 title="Filter Labs / Attendance"
-                className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+                className="absolute bottom-1 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-zinc-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
               >
                 <span className="text-sm font-black">{attendanceRate}%</span>
                 <span className="text-[8px] uppercase tracking-wider">Attend</span>
@@ -332,14 +332,14 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             </div>
 
             {/* Day Selector Pills */}
-            <div className="grid grid-cols-6 gap-1 pt-2 border-t border-slate-800/60">
+            <div className="grid grid-cols-6 gap-1 pt-2 border-t border-zinc-800/60">
               {daysList.map((d) => (
                 <button
                   key={d}
                   onClick={() => setSelectedDay(d)}
                   className={`py-1.5 rounded-xl text-xs font-mono font-bold transition cursor-pointer text-center ${selectedDay === d
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
-                    : 'bg-slate-900/60 text-slate-400 hover:text-white'
+                    ? 'bg-white text-zinc-950 shadow-sm'
+                    : 'bg-zinc-900/60 text-zinc-400 hover:text-white'
                     }`}
                 >
                   {d.slice(0, 1)}
@@ -349,13 +349,13 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
           </div>
 
           {/* CARD 2: Daily Agenda Classes */}
-          <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-3 shadow-sm">
+          <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-3 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-cyan-400" />
-                <h2 className="text-sm font-bold text-slate-100">Lectures Agenda</h2>
+                <Calendar className="w-4 h-4 text-zinc-300" />
+                <h2 className="text-sm font-bold text-white">Lectures Agenda</h2>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs font-mono text-zinc-400">
                 Room & Time
               </span>
             </div>
@@ -364,36 +364,36 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               {searchedFilteredClasses.length === 0 ? (
                 <div
                   onClick={() => handleOpenAddModal(selectedDay)}
-                  className="h-48 flex flex-col items-center justify-center text-center text-xs text-slate-500 border border-dashed border-slate-800 hover:border-slate-700 rounded-2xl gap-2 cursor-pointer transition"
+                  className="h-48 flex flex-col items-center justify-center text-center text-xs text-zinc-500 border border-dashed border-zinc-800 hover:border-zinc-700 rounded-2xl gap-2 cursor-pointer transition"
                   title="Click to add lecture for this day"
                 >
-                  <Clock className="w-6 h-6 text-slate-600" />
+                  <Clock className="w-6 h-6 text-zinc-600" />
                   <span>No lectures on {selectedDay} (Tap to add)</span>
                 </div>
               ) : (
                 searchedFilteredClasses.map((cls) => (
                   <div
                     key={cls.id}
-                    className="p-3 rounded-2xl bg-[#0d111a] border border-slate-800/80 hover:border-slate-700 transition text-xs space-y-1.5"
+                    className="p-3 rounded-2xl bg-[#18181b] border border-zinc-800/80 hover:border-zinc-700 transition text-xs space-y-1.5"
                   >
                     <div className="flex items-center justify-between gap-1.5">
                       <span className="font-semibold text-white truncate">{cls.subjectName}</span>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
                         {cls.room}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                    <div className="flex items-center justify-between text-[10px] text-zinc-400 font-mono">
                       <span>{cls.time}</span>
                       <span>{cls.teacherName}</span>
                     </div>
                     {cls.likelyTopic && (
-                      <div className="pt-1 flex items-center justify-between gap-2 border-t border-slate-800/60">
-                        <span className="text-[10px] text-slate-400 truncate">
+                      <div className="pt-1 flex items-center justify-between gap-2 border-t border-zinc-800/60">
+                        <span className="text-[10px] text-zinc-400 truncate">
                           Focus: {cls.likelyTopic.title}
                         </span>
                         <button
                           onClick={() => onStudyTopic(cls.likelyTopic!.title, cls.subjectName)}
-                          className="text-[10px] text-cyan-400 hover:text-cyan-300 font-bold cursor-pointer shrink-0"
+                          className="text-[10px] text-zinc-300 hover:text-white font-bold cursor-pointer shrink-0"
                         >
                           Prep →
                         </button>
@@ -407,19 +407,19 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
             {onAddClass && (
               <button
                 onClick={() => handleOpenAddModal()}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-bold text-slate-200 transition cursor-pointer text-center"
+                className="w-full py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-bold text-white transition cursor-pointer text-center"
               >
                 + Add Class Slot
               </button>
             )}
           </div>
 
-          {/* CARD 3: Attendance Buffer (The Dark Accent Card) */}
-          <div className="bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
+          {/* CARD 3: Attendance Buffer (The Obsidian Card) */}
+          <div className="bg-[#121215] border border-zinc-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-amber-400" />
-                <h2 className="text-sm font-bold text-slate-100">Attendance Buffer</h2>
+                <h2 className="text-sm font-bold text-zinc-100">Attendance Buffer</h2>
               </div>
               <button
                 type="button"
@@ -437,22 +437,22 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                 <div className={`w-1 h-8 rounded-full shrink-0 ${attendanceRate >= 75 ? 'bg-emerald-400' : 'bg-rose-400'}`} />
                 <div>
                   <div className="text-xl font-black text-white">{attendanceRate}%</div>
-                  <div className="text-[10px] text-slate-400">Class Attendance</div>
+                  <div className="text-[10px] text-zinc-400">Class Attendance</div>
                 </div>
               </div>
 
               <div className="flex items-start gap-2">
-                <div className="w-1 h-8 rounded-full bg-cyan-400 shrink-0" />
+                <div className="w-1 h-8 rounded-full bg-indigo-500 shrink-0" />
                 <div>
                   <div className="text-xl font-black text-white">{allowedBunks} Bunks</div>
-                  <div className="text-[10px] text-slate-400">Allowed Safely</div>
+                  <div className="text-[10px] text-zinc-400">Allowed Safely</div>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2 overflow-y-auto max-h-56 pr-1 no-scrollbar text-xs">
               {subjects.length === 0 ? (
-                <div className="h-28 flex flex-col items-center justify-center text-center text-xs text-slate-500 gap-1">
+                <div className="h-28 flex flex-col items-center justify-center text-center text-xs text-zinc-500 gap-1">
                   <span>No subjects monitored</span>
                 </div>
               ) : (
@@ -465,13 +465,13 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                       type="button"
                       onClick={() => setSearchQuery(isFiltered ? '' : sub.name)}
                       className={`w-full p-2.5 rounded-2xl border flex items-center justify-between text-left transition cursor-pointer ${isFiltered
-                        ? 'bg-slate-800/90 border-cyan-500/50 shadow-xs'
-                        : 'bg-[#121724] border-slate-800 hover:border-slate-700 hover:bg-[#161c2c]'
+                        ? 'bg-zinc-800/90 border-zinc-500 shadow-xs'
+                        : 'bg-[#18181b] border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800/60'
                         }`}
                       title={`Click to filter lectures for ${sub.name}`}
                     >
-                      <span className="text-xs text-slate-200 font-semibold truncate">{sub.name}</span>
-                      <span className="text-[10px] font-mono text-cyan-300 shrink-0">
+                      <span className="text-xs text-zinc-200 font-semibold truncate">{sub.name}</span>
+                      <span className="text-[10px] font-mono text-zinc-400 shrink-0">
                         {subPercent}% Safe
                       </span>
                     </button>
@@ -480,9 +480,9 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
               )}
             </div>
 
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-mono text-[10px]">75% Minimum Criteria</span>
-              <span className="text-cyan-400 font-bold text-[10px]">Monitored</span>
+            <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-xs">
+              <span className="text-zinc-500 font-mono text-[10px]">75% Minimum Criteria</span>
+              <span className="text-emerald-400 font-bold text-[10px]">Monitored</span>
             </div>
           </div>
         </div>
@@ -527,7 +527,7 @@ export const TimetableView: React.FC<TimetableViewProps> = ({
                       {onAddClass && (
                         <button
                           onClick={() => handleOpenAddModal(day)}
-                          className="p-0.5 rounded hover:bg-slate-800 text-slate-400 hover:text-cyan-300 transition cursor-pointer"
+                          className="p-0.5 rounded hover:bg-zinc-800 text-zinc-400 hover:text-white transition cursor-pointer"
                           title={`Add class for ${day}`}
                         >
                           <Plus className="w-3 h-3" />

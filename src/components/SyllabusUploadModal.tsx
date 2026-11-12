@@ -130,7 +130,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
                   `Unit 1: Linear Data Structures\n- Stack operations, Prefix to Postfix conversion\n- Circular Queue vs Linear Queue & Wrap Around Math\n- Singly vs Doubly Linked Lists & Traversal\n\nUnit 2: Trees & Graph Algorithms\n- Binary Search Tree (BST) Insertion and Deletion\n- AVL Tree Rotations (LL, RR, LR, RL)\n- Graph Traversal: BFS vs DFS & Shortest Path Dijkstra\n\nUnit 3: Sorting & Searching\n- Quick Sort & Merge Sort Time Complexity\n- Hashing Techniques & Collision Resolution Strategies`
                 )
               }
-              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-cyan-300 transition cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-xs text-zinc-200 transition cursor-pointer"
             >
               Data Structures & Algorithms
             </button>
@@ -174,7 +174,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               placeholder="e.g. Data Structures & Algorithms (CS-101)"
               value={subjectName}
               onChange={(e) => setSubjectName(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-cyan-500"
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-zinc-500"
             />
           </div>
 
@@ -183,7 +183,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               <label className="text-xs font-semibold text-slate-300">
                 Paste Syllabus Text or Upload File (.txt / .doc)
               </label>
-              <label className="text-xs text-cyan-400 hover:text-cyan-300 cursor-pointer font-medium">
+              <label className="text-xs text-indigo-400 hover:text-indigo-300 cursor-pointer font-medium">
                 Browse File
                 <input
                   type="file"
@@ -198,7 +198,7 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
               placeholder="Paste units, chapters, and bullet points from your college syllabus PDF or textbook index here..."
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3.5 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-cyan-500 font-mono resize-none leading-relaxed"
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl p-3.5 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-zinc-500 font-mono resize-none leading-relaxed"
             />
           </div>
 
@@ -219,9 +219,9 @@ export const SyllabusUploadModal: React.FC<SyllabusUploadModalProps> = ({
             <button
               type="submit"
               disabled={isParsing || !rawText.trim()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-100 border border-cyan-500/30 hover:border-cyan-400/50 ring-1 ring-cyan-500/15 shadow-[0_0_12px_-3px_rgba(6,182,212,0.15)] text-xs font-medium transition disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold border border-zinc-200 shadow-sm text-xs transition disabled:opacity-50 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <Sparkles className="w-4 h-4 text-zinc-950" />
               <span>{isParsing ? 'Analyzing...' : 'Parse Syllabus'}</span>
             </button>
           </div>

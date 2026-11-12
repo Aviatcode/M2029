@@ -2073,7 +2073,7 @@ apiRouter.post('/timetable/parse', async (req: Request, res: Response) => {
       'from-emerald-500 to-teal-600',
       'from-purple-500 to-pink-600',
       'from-amber-500 to-orange-600',
-      'from-cyan-500 to-blue-600',
+      'from-indigo-500 to-violet-600',
       'from-rose-500 to-red-600',
     ];
 
@@ -2391,7 +2391,7 @@ apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
       'from-emerald-500 to-teal-600',
       'from-purple-500 to-pink-600',
       'from-amber-500 to-orange-600',
-      'from-cyan-500 to-blue-600',
+      'from-indigo-500 to-violet-600',
     ];
 
     Array.from(subNames).slice(0, 5).forEach((name, idx) => {

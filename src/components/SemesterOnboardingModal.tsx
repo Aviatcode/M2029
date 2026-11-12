@@ -312,10 +312,10 @@ Friday:
               <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5">
                 <div className="flex items-center justify-between text-xs text-slate-300">
                   <span className="font-semibold flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                    <Calendar className="w-3.5 h-3.5 text-indigo-400" />
                     Weekly Schedule Configured
                   </span>
-                  <span className="font-mono text-cyan-400">{parsedTimetable.length} lecture slots</span>
+                  <span className="font-mono text-indigo-400">{parsedTimetable.length} lecture slots</span>
                 </div>
                 <div className="text-[11px] text-slate-400 flex flex-wrap gap-2 pt-1">
                   {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((d) => {
@@ -405,7 +405,7 @@ Friday:
             {/* Processing Animation */}
             {isProcessing && (
               <div className="py-8 space-y-3 text-center animate-pulse">
-                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 mx-auto">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mx-auto">
                   <Sparkles className="w-6 h-6 animate-spin" />
                 </div>
                 <div className="space-y-1">
@@ -414,7 +414,7 @@ Friday:
                 </div>
                 <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden max-w-xs mx-auto">
                   <div
-                    className="bg-cyan-400 h-full transition-all duration-300"
+                    className="bg-indigo-500 h-full transition-all duration-300"
                     style={{ width: `${processingProgress}%` }}
                   />
                 </div>
@@ -435,7 +435,7 @@ Friday:
                       onDrop={handleFileDrop}
                       onClick={() => fileInputRef.current?.click()}
                       className={`p-6 sm:p-8 rounded-2xl border-2 border-dashed transition text-center cursor-pointer flex flex-col items-center justify-center gap-3 ${isDragOver
-                        ? 'border-cyan-400 bg-cyan-950/30 scale-[0.99]'
+                        ? 'border-indigo-500 bg-indigo-950/30 scale-[0.99]'
                         : selectedFile
                           ? 'border-emerald-500/60 bg-emerald-950/20'
                           : 'border-slate-800 hover:border-slate-700 bg-slate-950/50'
@@ -470,14 +470,14 @@ Friday:
                         </div>
                       ) : (
                         <>
-                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-cyan-400">
+                          <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400">
                             <UploadCloud className="w-6 h-6" />
                           </div>
                           <div>
-                            <span className="font-semibold text-slate-200 text-sm block">
+                            <span className="font-semibold text-zinc-200 text-sm block">
                               Drag & drop your Timetable or Syllabus here
                             </span>
-                            <span className="text-xs text-slate-400 mt-1 block">
+                            <span className="text-xs text-zinc-400 mt-1 block">
                               Supports PDF, PNG/JPG image, Word (.docx), TXT, or CSV
                             </span>
                           </div>
@@ -487,7 +487,7 @@ Friday:
                               e.stopPropagation();
                               fileInputRef.current?.click();
                             }}
-                            className="px-3.5 py-1.5 rounded-lg bg-slate-800 border border-slate-750 text-xs font-semibold text-slate-200 hover:bg-slate-750 transition cursor-pointer"
+                            className="px-3.5 py-1.5 rounded-lg bg-zinc-800 border border-zinc-700 text-xs font-semibold text-zinc-200 hover:bg-zinc-700 transition cursor-pointer"
                           >
                             Browse Computer / Phone
                           </button>
@@ -500,8 +500,8 @@ Friday:
                       disabled={!selectedFile}
                       onClick={() => handleProcessDocument()}
                       className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer ${selectedFile
-                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
-                        : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-750'
+                        ? 'bg-white hover:bg-zinc-200 text-zinc-950 font-bold'
+                        : 'bg-zinc-850 text-zinc-500 cursor-not-allowed border border-zinc-800'
                         }`}
                     >
                       <Sparkles className="w-4 h-4" />
@@ -514,7 +514,7 @@ Friday:
                 {activeTab === 'paste' && (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-xs font-semibold text-slate-400 block mb-1">
+                      <label className="text-xs font-semibold text-zinc-400 block mb-1">
                         Schedule / Document Title (Optional)
                       </label>
                       <input
@@ -522,11 +522,11 @@ Friday:
                         value={pastedTitle}
                         onChange={(e) => setPastedTitle(e.target.value)}
                         placeholder="e.g. Weekly Class Timetable"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                        className="w-full bg-slate-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-500"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-400 block mb-1">
+                      <label className="text-xs font-semibold text-zinc-400 block mb-1">
                         Paste Timetable or Syllabus Content
                       </label>
                       <textarea
@@ -534,7 +534,7 @@ Friday:
                         value={pastedText}
                         onChange={(e) => setPastedText(e.target.value)}
                         placeholder={`Paste timetable or syllabus text here...\n\ne.g.\nMonday:\n09:00 - 10:00 AM: Data Structures & Algorithms (CS-301) - Room 302\n10:00 - 11:00 AM: Operating Systems (CS-302) - Room 304\n\nTuesday:\n09:00 - 10:00 AM: Database Management Systems (CS-303)...`}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-cyan-500 leading-relaxed resize-none"
+                        className="w-full bg-slate-950 border border-zinc-800 rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-zinc-500 leading-relaxed resize-none"
                       />
                     </div>
 
@@ -543,8 +543,8 @@ Friday:
                       disabled={!pastedText.trim()}
                       onClick={() => handleProcessDocument(pastedText)}
                       className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg transition flex items-center justify-center gap-2 cursor-pointer ${pastedText.trim()
-                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white'
-                        : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-750'
+                        ? 'bg-white hover:bg-zinc-200 text-zinc-950 font-bold'
+                        : 'bg-zinc-850 text-zinc-500 cursor-not-allowed border border-zinc-800'
                         }`}
                     >
                       <Sparkles className="w-4 h-4" />
@@ -556,24 +556,24 @@ Friday:
                 {/* TAB 3: SAMPLE PRESETS */}
                 {activeTab === 'preset' && (
                   <div className="space-y-3">
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-zinc-400">
                       Want to see SyllabusOS in action instantly? Click a sample timetable to test the AI scheduling engine:
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
                         type="button"
                         onClick={() => loadSamplePreset('bca')}
-                        className="p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-cyan-500/50 text-left transition cursor-pointer space-y-1.5 group"
+                        className="p-4 rounded-xl bg-slate-950 border border-zinc-800 hover:border-zinc-600 text-left transition cursor-pointer space-y-1.5 group"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-xs text-white group-hover:text-cyan-300">
+                          <span className="font-semibold text-xs text-white group-hover:text-zinc-200">
                             Core Weekly Schedule
                           </span>
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800 text-cyan-300">
+                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-850 border border-zinc-700 text-zinc-300">
                             5 Subjects
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-400 leading-relaxed">
+                        <p className="text-[11px] text-zinc-400 leading-relaxed">
                           Data Structures, Operating Systems, DBMS, Networks, Discrete Math + Practical Labs.
                         </p>
                       </button>
@@ -581,7 +581,7 @@ Friday:
                       <button
                         type="button"
                         onClick={() => loadSamplePreset('cse')}
-                        className="p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-left transition cursor-pointer space-y-1.5 group"
+                        className="p-4 rounded-xl bg-slate-950 border border-zinc-800 hover:border-emerald-500/50 text-left transition cursor-pointer space-y-1.5 group"
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-semibold text-xs text-white group-hover:text-emerald-300">
@@ -591,7 +591,7 @@ Friday:
                             5 Subjects
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-400 leading-relaxed">
+                        <p className="text-[11px] text-zinc-400 leading-relaxed">
                           Algorithms, Computer Architecture, AI & ML, Web Tech, Software Engineering.
                         </p>
                       </button>
@@ -602,7 +602,7 @@ Friday:
             )}
 
             {/* Manual Skip / Escape */}
-            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <div className="pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
               <span>No document on hand?</span>
               <div className="flex items-center gap-3">
                 {onOpenManualSetup && (
@@ -612,7 +612,7 @@ Friday:
                       onClose();
                       onOpenManualSetup();
                     }}
-                    className="text-cyan-400 hover:text-cyan-300 font-medium underline transition cursor-pointer"
+                    className="text-indigo-400 hover:text-indigo-300 font-medium underline transition cursor-pointer"
                   >
                     Add subjects manually
                   </button>

@@ -178,7 +178,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const activeChartBars = radarFilter === 'Monthly' ? monthlyChartBars : semesterChartBars;
 
   return (
-    <div className="w-full space-y-5 font-sans-ui text-slate-100 animate-fade-in select-none">
+    <div className="w-full space-y-5 font-sans-ui text-zinc-100 animate-fade-in select-none">
       {/* 1. MINIMAL TOP HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
         <div>
@@ -188,13 +188,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
             title="Manage Profile & Settings"
           >
-            <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400 group-hover:border-cyan-500 transition-colors">
+            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white group-hover:border-zinc-500 transition-colors">
               {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
+            <span className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono group-hover:text-slate-400 transition-colors">
+            <span className="text-[10px] text-zinc-500 font-mono group-hover:text-zinc-400 transition-colors">
               • {classCode || 'M2029'}
             </span>
           </button>
@@ -202,8 +202,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Academic Overview
             </h1>
-            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-cyan-950/70 border border-cyan-500/30 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.2)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-zinc-800/80 border border-zinc-700 text-zinc-200 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               AI OS ONLINE
             </span>
           </div>
@@ -216,7 +216,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               onClick={() => {
                 if (searchQuery.trim()) onNavigateTab('materials');
               }}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-500 hover:text-cyan-400 cursor-pointer transition"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 p-0.5 text-zinc-400 hover:text-white cursor-pointer transition"
               title="Search Materials"
             >
               <Search className="w-3.5 h-3.5" />
@@ -227,7 +227,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search..."
-              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-200 placeholder-slate-500 outline-none focus:border-cyan-500/50 transition"
+              className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-zinc-100 placeholder-zinc-500 outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition"
             />
           </div>
 
@@ -237,22 +237,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               else onNavigateTab('daily-update');
             }}
             title="Notifications"
-            className="w-8 h-8 rounded-xl bg-[#141926] border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center relative cursor-pointer"
+            className="w-8 h-8 rounded-xl bg-[#18181b] border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center relative cursor-pointer"
           >
             <Bell className="w-3.5 h-3.5" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" />
           </button>
 
           <div className="relative">
             <button
               onClick={() => setIsPeriodDropdownOpen((prev) => !prev)}
-              className="h-8 px-3 rounded-xl bg-[#141926] border border-slate-800 text-xs text-slate-300 hover:text-white flex items-center gap-1.5 cursor-pointer capitalize font-semibold"
+              className="h-8 px-3 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-zinc-200 hover:text-white flex items-center gap-1.5 cursor-pointer capitalize font-semibold"
             >
               <span>{timePeriod}</span>
-              <ChevronDown className="w-3 h-3 text-slate-400" />
+              <ChevronDown className="w-3 h-3 text-zinc-400" />
             </button>
             {isPeriodDropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 w-28 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1 z-30 text-xs">
+              <div className="absolute right-0 top-full mt-1 w-28 rounded-xl bg-[#18181b] border border-zinc-800 shadow-xl py-1 z-30 text-xs">
                 {(['today', 'tomorrow', 'week'] as const).map((p) => (
                   <button
                     key={p}
@@ -260,7 +260,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       setTimePeriod(p);
                       setIsPeriodDropdownOpen(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 capitalize cursor-pointer"
+                    className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-200 capitalize cursor-pointer"
                   >
                     {p}
                   </button>
@@ -274,15 +274,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* 2. DASHBOARD CARDS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
         {/* CARD 1: Attendance ("Energy Used" style) */}
-        <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
+        <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-slate-100">Attendance</h2>
+              <Zap className="w-4 h-4 text-indigo-400" />
+              <h2 className="text-sm font-bold text-white">Attendance</h2>
             </div>
             <button
               onClick={() => onNavigateTab('timetable')}
-              className="text-slate-600 hover:text-cyan-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+              className="text-zinc-500 hover:text-white transition cursor-pointer p-1 rounded-lg hover:bg-zinc-800"
               title="View Attendance in Timetable"
             >
               <MoreVertical className="w-3.5 h-3.5" />
@@ -294,7 +294,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                 {overallProgressPercent > 0 ? `${overallProgressPercent}%` : subjects.length > 0 ? `${subjects.length} Subs` : '0%'}
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-bold border border-zinc-700">
                 {subjects.length > 0 ? 'Active' : 'Empty'}
               </span>
             </div>
@@ -316,17 +316,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               type="button"
               onClick={() => onNavigateTab('timetable')}
               title="View Subjects & Weekly Schedule"
-              className="absolute right-6 top-5 w-24 h-24 rounded-full bg-[#181d2a] border border-slate-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+              className="absolute right-6 top-5 w-24 h-24 rounded-full bg-[#18181b] border border-zinc-700 text-white flex flex-col items-center justify-center shadow-lg z-20 cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
             >
               <span className="text-lg font-extrabold">{subjects.length}</span>
-              <span className="text-[10px] text-slate-400">Subjects</span>
+              <span className="text-[10px] text-zinc-400">Subjects</span>
             </button>
 
             <button
               type="button"
               onClick={() => onNavigateTab('materials')}
               title="Open Study Materials Vault"
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
+              className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-zinc-950 flex flex-col items-center justify-center shadow-lg z-30 font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform focus:outline-none"
             >
               <span className="text-base font-black">{recentMaterials.length}</span>
               <span className="text-[9px] uppercase tracking-wider">Docs</span>
@@ -334,19 +334,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* 3 Progress Bars */}
-          <div className="space-y-2.5 pt-2 border-t border-slate-800/60 text-xs">
+          <div className="space-y-2.5 pt-2 border-t border-zinc-800/80 text-xs">
             <div
               onClick={() => onNavigateTab('knowledge-dashboard')}
               className="space-y-1 cursor-pointer hover:opacity-85 transition group"
               title="Click to view Syllabus Breakdown"
             >
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono group-hover:text-cyan-300 transition-colors">{overallProgressPercent}%</span>
-                <span className="text-slate-400 flex items-center gap-1.5 group-hover:text-slate-200 transition-colors">
+                <span className="font-bold text-white font-mono group-hover:text-indigo-300 transition-colors">{overallProgressPercent}%</span>
+                <span className="text-zinc-400 flex items-center gap-1.5 group-hover:text-zinc-200 transition-colors">
                   Syllabus <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
                 </span>
               </div>
-              <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
                 <div className="h-full bg-violet-500 rounded-full" style={{ width: `${overallProgressPercent}%` }} />
               </div>
             </div>
@@ -357,16 +357,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               title="Click to view Materials Vault"
             >
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono group-hover:text-cyan-300 transition-colors">
+                <span className="font-bold text-white font-mono group-hover:text-indigo-300 transition-colors">
                   {recentMaterials.length > 0 ? `${Math.min(100, recentMaterials.length * 15)}%` : '0%'}
                 </span>
-                <span className="text-slate-400 flex items-center gap-1.5 group-hover:text-slate-200 transition-colors">
-                  Materials <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                <span className="text-zinc-400 flex items-center gap-1.5 group-hover:text-zinc-200 transition-colors">
+                  Materials <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
                 </span>
               </div>
-              <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-slate-500 rounded-full"
+                  className="h-full bg-zinc-500 rounded-full"
                   style={{ width: `${Math.min(100, recentMaterials.length * 15)}%` }}
                 />
               </div>
@@ -378,14 +378,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               title="Click to view Exam Radar"
             >
               <div className="flex justify-between text-[11px]">
-                <span className="font-bold text-white font-mono group-hover:text-cyan-300 transition-colors">
+                <span className="font-bold text-white font-mono group-hover:text-indigo-300 transition-colors">
                   {upcomingExams.length > 0 ? `${upcomingExams.length} Exams` : '0 Exams'}
                 </span>
-                <span className="text-slate-400 flex items-center gap-1.5 group-hover:text-slate-200 transition-colors">
+                <span className="text-zinc-400 flex items-center gap-1.5 group-hover:text-zinc-200 transition-colors">
                   Exam Radar <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                 </span>
               </div>
-              <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+              <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-amber-400 rounded-full"
                   style={{ width: `${Math.min(100, upcomingExams.length * 33)}%` }}
@@ -400,20 +400,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* CARD 2: Streak */}
           <div
             onClick={() => onNavigateTab('ai-tutor')}
-            className="bg-[#121724] border border-slate-800/80 hover:border-slate-700/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-2 cursor-pointer transition"
+            className="bg-[#121215] border border-zinc-800/80 hover:border-zinc-700/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-2 cursor-pointer transition"
             title="Study with AI Tutor to extend streak"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-amber-400" />
-                <h2 className="text-sm font-bold text-slate-100">Study Streak</h2>
+                <h2 className="text-sm font-bold text-white">Study Streak</h2>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onNavigateTab('ai-tutor');
                 }}
-                className="text-slate-600 hover:text-amber-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+                className="text-zinc-500 hover:text-amber-400 transition cursor-pointer p-1 rounded-lg hover:bg-zinc-800"
                 title="Open AI Tutor"
               >
                 <MoreVertical className="w-3.5 h-3.5" />
@@ -423,24 +423,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-baseline justify-between pt-1">
               <div>
                 <span className="text-3xl sm:text-4xl font-extrabold text-white">{studyStreak}</span>
-                <span className="text-xs text-slate-400 ml-1">Days</span>
+                <span className="text-xs text-zinc-400 ml-1">Days</span>
               </div>
               <span className="text-[11px] font-mono text-amber-400 font-bold">Avg {(studyStreak * 0.9).toFixed(1)}d</span>
             </div>
           </div>
 
           {/* CARD 3: Next Lecture */}
-          <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-2">
+          <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-cyan-400" />
-                <h2 className="text-sm font-bold text-slate-100">
+                <Clock className="w-4 h-4 text-zinc-300" />
+                <h2 className="text-sm font-bold text-white">
                   {timePeriod === 'today' ? "Today's Lecture" : timePeriod === 'tomorrow' ? "Tomorrow's Lecture" : 'Weekly Schedule'}
                 </h2>
               </div>
               <button
                 onClick={() => onNavigateTab('timetable')}
-                className="text-slate-600 hover:text-cyan-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+                className="text-zinc-500 hover:text-white transition cursor-pointer p-1 rounded-lg hover:bg-zinc-800"
                 title="View Weekly Schedule"
               >
                 <MoreVertical className="w-3.5 h-3.5" />
@@ -455,18 +455,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   ? activeClass.time.split(' - ')[0]
                   : 'Free Period'}
               </span>
-              <span className="text-xs font-mono text-cyan-300">
+              <span className="text-xs font-mono text-zinc-400">
                 {timePeriod === 'week' ? 'Mon – Sat' : activeClass.room !== '--' ? `Room ${activeClass.room}` : 'Campus'}
               </span>
             </div>
 
-            <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-800/60">
-              <span className="text-xs text-slate-300 truncate">
+            <div className="pt-2 flex items-center justify-between gap-2 border-t border-zinc-800/80">
+              <span className="text-xs text-zinc-300 truncate">
                 {timePeriod === 'week' ? `${subjects.length} active subjects` : activeClass.subjectName}
               </span>
               <button
                 onClick={timePeriod === 'week' ? () => onNavigateTab('timetable') : onOpenTomorrowPrep}
-                className="px-2.5 py-1 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer shrink-0 flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-bold text-xs transition cursor-pointer shrink-0 flex items-center gap-1 shadow-sm"
               >
                 <span>{timePeriod === 'week' ? 'Schedule' : 'Prep'}</span>
                 <ArrowRight className="w-3 h-3" />
@@ -476,15 +476,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* CARD 4: Mastery Index ("% Wellness Index" style) */}
-        <div className="bg-[#121724] border border-slate-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
+        <div className="bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 flex flex-col justify-between space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-violet-400" />
-              <h2 className="text-sm font-bold text-slate-100">Syllabus Progress</h2>
+              <Trophy className="w-4 h-4 text-indigo-400" />
+              <h2 className="text-sm font-bold text-white">Syllabus Progress</h2>
             </div>
             <button
               onClick={() => onNavigateTab('knowledge-dashboard')}
-              className="text-slate-600 hover:text-violet-400 transition cursor-pointer p-1 rounded-lg hover:bg-slate-900"
+              className="text-zinc-500 hover:text-indigo-400 transition cursor-pointer p-1 rounded-lg hover:bg-zinc-800"
               title="Explore Class Brain"
             >
               <MoreVertical className="w-3.5 h-3.5" />
@@ -494,7 +494,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl sm:text-4xl font-extrabold text-white">{overallProgressPercent}%</span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-violet-500/15 text-violet-300 font-bold">+10%</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 font-bold">+10%</span>
             </div>
           </div>
 
@@ -507,19 +507,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   type="button"
                   onClick={() => onNavigateTab('timetable')}
                   title={`View schedule for ${['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][colIdx]}`}
-                  className="flex flex-col gap-2 items-center group cursor-pointer p-1 rounded-xl hover:bg-slate-850/60 transition"
+                  className="flex flex-col gap-2 items-center group cursor-pointer p-1 rounded-xl hover:bg-zinc-850/60 transition"
                 >
                   {col.map((isActive, rowIdx) => (
                     <div
                       key={rowIdx}
                       className={`w-3.5 h-3.5 rounded-full transition-transform group-hover:scale-110 ${
                         isActive
-                          ? 'bg-violet-400 shadow-sm shadow-violet-500/60'
-                          : 'bg-slate-800'
+                          ? 'bg-indigo-400 shadow-sm shadow-indigo-500/60'
+                          : 'bg-zinc-800'
                       }`}
                     />
                   ))}
-                  <span className="text-[10px] font-mono text-slate-500 group-hover:text-cyan-300 transition-colors mt-1">
+                  <span className="text-[10px] font-mono text-zinc-400 group-hover:text-white transition-colors mt-1">
                     {daysOfWeek[colIdx]}
                   </span>
                 </button>
@@ -541,8 +541,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           onDrop={handleWidgetDrop}
           className={`col-span-1 rounded-3xl p-5 transition-all shadow-sm flex flex-col justify-between space-y-3 ${
             isWidgetDragging
-              ? 'bg-cyan-950/30 border-2 border-dashed border-cyan-400 scale-[1.01]'
-              : 'bg-[#121724] border border-slate-800/80'
+              ? 'bg-indigo-950/30 border-2 border-dashed border-indigo-400 scale-[1.01]'
+              : 'bg-[#121215] border border-zinc-800/80'
           }`}
         >
           <input
@@ -556,12 +556,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <UploadCloud className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-slate-100">Files Vault</h2>
+              <UploadCloud className="w-4 h-4 text-zinc-300" />
+              <h2 className="text-sm font-bold text-white">Files Vault</h2>
             </div>
             <button
               onClick={() => onNavigateTab('materials')}
-              className="text-xs text-cyan-400 hover:text-cyan-300 cursor-pointer"
+              className="text-xs text-zinc-300 hover:text-white font-semibold cursor-pointer"
             >
               Open →
             </button>
@@ -569,31 +569,31 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="p-4 rounded-2xl border-2 border-dashed border-slate-800 hover:border-cyan-500/40 bg-[#0d111a] cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 transition"
+            className="p-4 rounded-2xl border-2 border-dashed border-zinc-800 hover:border-zinc-600 bg-[#18181b] cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 transition"
           >
             {isProcessingFile ? (
-              <span className="text-xs text-cyan-300 font-bold">Processing...</span>
+              <span className="text-xs text-indigo-300 font-bold">Processing...</span>
             ) : isWidgetDragging ? (
-              <span className="text-xs text-cyan-300 font-bold">Drop files here</span>
+              <span className="text-xs text-indigo-300 font-bold">Drop files here</span>
             ) : (
               <>
-                <UploadCloud className="w-5 h-5 text-cyan-400" />
-                <span className="text-xs font-semibold text-slate-300">Drop files here</span>
-                <span className="text-[10px] text-slate-500 font-mono">PDF • DOCX • PPTX</span>
+                <UploadCloud className="w-5 h-5 text-zinc-400" />
+                <span className="text-xs font-semibold text-zinc-200">Drop files here</span>
+                <span className="text-[10px] text-zinc-500 font-mono">PDF • DOCX • PPTX</span>
               </>
             )}
           </div>
 
           {recentMaterials.length > 0 && (
-            <div className="space-y-1 pt-1 border-t border-slate-800/60">
+            <div className="space-y-1 pt-1 border-t border-zinc-800/80">
               {recentMaterials.slice(0, 2).map((mat) => (
                 <div
                   key={mat.id}
                   onClick={() => (onOpenMaterial ? onOpenMaterial(mat) : onNavigateTab('materials'))}
-                  className="p-1.5 rounded-lg bg-slate-900 text-xs flex items-center justify-between gap-2 cursor-pointer"
+                  className="p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-xs flex items-center justify-between gap-2 cursor-pointer hover:bg-zinc-800/80 transition"
                 >
-                  <span className="truncate text-[11px] text-slate-300">{mat.title}</span>
-                  <span className="text-[9px] font-mono text-cyan-400">{mat.fileType || 'pdf'}</span>
+                  <span className="truncate text-[11px] text-zinc-300">{mat.title}</span>
+                  <span className="text-[9px] font-mono text-zinc-400">{mat.fileType || 'pdf'}</span>
                 </div>
               ))}
             </div>
@@ -601,23 +601,23 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* CARD 5: Minimal Exam Radar Chart (The Dark Card) */}
-        <div className="col-span-1 lg:col-span-2 bg-[#090d18] border border-slate-800/90 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
+        <div className="col-span-1 lg:col-span-2 bg-[#121215] border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-md flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-cyan-400" />
-              <h2 className="text-sm font-bold text-slate-100">Study Activity</h2>
+              <TrendingUp className="w-4 h-4 text-amber-400" />
+              <h2 className="text-sm font-bold text-white">Study Activity</h2>
             </div>
 
             <div className="relative">
               <button
                 onClick={() => setIsRadarDropdownOpen((prev) => !prev)}
-                className="h-7 px-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 flex items-center gap-1 cursor-pointer font-semibold"
+                className="h-7 px-2.5 rounded-xl bg-[#18181b] border border-zinc-800 text-xs text-zinc-200 flex items-center gap-1 cursor-pointer font-semibold"
               >
                 <span>{radarFilter}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
+                <ChevronDown className="w-3 h-3 text-zinc-400" />
               </button>
               {isRadarDropdownOpen && (
-                <div className="absolute right-0 top-full mt-1 w-28 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1 z-30 text-xs">
+                <div className="absolute right-0 top-full mt-1 w-28 rounded-xl bg-[#18181b] border border-zinc-800 shadow-xl py-1 z-30 text-xs">
                   {(['Monthly', 'Semester'] as const).map((opt) => (
                     <button
                       key={opt}
@@ -625,7 +625,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         setRadarFilter(opt);
                         setIsRadarDropdownOpen(false);
                       }}
-                      className="w-full text-left px-3 py-1.5 hover:bg-slate-800 text-slate-300 cursor-pointer"
+                      className="w-full text-left px-3 py-1.5 hover:bg-zinc-800 text-zinc-200 cursor-pointer"
                     >
                       {opt}
                     </button>
@@ -640,7 +640,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <button
               type="button"
               onClick={() => onNavigateTab('exams')}
-              className="flex items-start gap-2 text-left p-1 rounded-xl hover:bg-slate-900/60 transition cursor-pointer"
+              className="flex items-start gap-2 text-left p-1 rounded-xl hover:bg-zinc-800/60 transition cursor-pointer"
               title="Open Exam Datesheet"
             >
               <div className="w-1 h-8 rounded-full bg-amber-400 shrink-0" />
@@ -648,29 +648,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="text-xl font-black text-white">
                   {upcomingExams.length > 0 ? `${overallProgressPercent}%` : subjects.length > 0 ? '100%' : '0%'}
                 </div>
-                <div className="text-[10px] text-slate-400">Exam Readiness →</div>
+                <div className="text-[10px] text-zinc-400">Exam Readiness →</div>
               </div>
             </button>
 
             <button
               type="button"
               onClick={() => onNavigateTab('ai-tutor')}
-              className="flex items-start gap-2 text-left p-1 rounded-xl hover:bg-slate-900/60 transition cursor-pointer"
+              className="flex items-start gap-2 text-left p-1 rounded-xl hover:bg-zinc-800/60 transition cursor-pointer"
               title="Open AI Tutor to study"
             >
-              <div className="w-1 h-8 rounded-full bg-cyan-400 shrink-0" />
+              <div className="w-1 h-8 rounded-full bg-indigo-400 shrink-0" />
               <div>
                 <div className="text-xl font-black text-white">
                   {totalCompletedTopics > 0 ? `${Math.round(totalCompletedTopics * 1.5)}h` : '0h'}
                 </div>
-                <div className="text-[10px] text-slate-400">Weekly Study →</div>
+                <div className="text-[10px] text-zinc-400">Weekly Study →</div>
               </div>
             </button>
           </div>
 
           {/* Bar Chart */}
           <div className="pt-2 select-none overflow-x-auto no-scrollbar">
-            <div className="min-w-[280px] flex items-end justify-between gap-3 h-28 border-b border-slate-800/80 px-2 pb-1">
+            <div className="min-w-[280px] flex items-end justify-between gap-3 h-28 border-b border-zinc-800/80 px-2 pb-1">
               {activeChartBars.map((bar, idx) => (
                 <button
                   key={idx}
@@ -683,21 +683,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     {bar.isDualActive ? (
                       <div className="flex items-end gap-1 h-full group-hover:scale-105 transition-transform">
                         <div className="w-3 bg-amber-400 rounded-t-lg shadow-sm shadow-amber-500/40" style={{ height: '90%' }} />
-                        <div className="w-3 bg-cyan-400 rounded-t-lg shadow-sm shadow-cyan-500/40" style={{ height: '70%' }} />
+                        <div className="w-3 bg-indigo-500 rounded-t-lg shadow-sm shadow-indigo-500/40" style={{ height: '70%' }} />
                       </div>
                     ) : (
                       <div
                         className="w-4 rounded-t-lg group-hover:brightness-125 transition"
                         style={{
                           height: `${bar.value}%`,
-                          backgroundColor: '#161d2d',
+                          backgroundColor: '#18181b',
                           backgroundImage:
                             'repeating-linear-gradient(45deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 2px, transparent 2px, transparent 6px)',
                         }}
                       />
                     )}
                   </div>
-                  <span className={`text-[10px] font-mono group-hover:text-cyan-300 transition-colors ${bar.isDualActive ? 'text-white font-bold' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] font-mono group-hover:text-white transition-colors ${bar.isDualActive ? 'text-white font-bold' : 'text-zinc-500'}`}>
                     {bar.label}{bar.isDualActive ? ' ↗' : ''}
                   </span>
                 </button>

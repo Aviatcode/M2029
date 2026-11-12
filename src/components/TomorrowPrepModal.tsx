@@ -102,13 +102,12 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
             <div
               key={s.num}
               onClick={() => setCurrentStep(s.num)}
-              className={`p-2 rounded-xl border text-center cursor-pointer transition text-xs font-semibold ${
-                currentStep === s.num
+              className={`p-2 rounded-xl border text-center cursor-pointer transition text-xs font-semibold ${currentStep === s.num
                   ? 'border-amber-400 bg-amber-500/15 text-amber-300 shadow-md'
                   : currentStep > s.num
-                  ? 'border-neutral-700 bg-neutral-800 text-neutral-200'
-                  : 'border-slate-800 bg-slate-950/40 text-slate-500'
-              }`}
+                    ? 'border-neutral-700 bg-neutral-800 text-neutral-200'
+                    : 'border-slate-800 bg-slate-950/40 text-slate-500'
+                }`}
             >
               <span className="block truncate">{s.label}</span>
             </div>
@@ -120,8 +119,8 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
           {/* Step 1 */}
           {currentStep === 1 && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-cyan-400 font-semibold text-xs uppercase tracking-wider">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
+              <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs uppercase tracking-wider">
+                <Sparkles className="w-4 h-4 text-indigo-400" />
                 <span>1. Core Definition</span>
               </div>
               <p className="text-base md:text-lg text-slate-200 leading-relaxed font-medium bg-slate-950/70 p-5 rounded-xl border border-slate-800">
@@ -272,4 +271,5 @@ export const TomorrowPrepModal: React.FC<TomorrowPrepModalProps> = ({ isOpen, on
       </div>
     </div>
   );
+};
 };

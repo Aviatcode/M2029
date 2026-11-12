@@ -6,22 +6,22 @@
 :root,
 html[data-mode="black"][data-theme="midnight"],
 html:not([data-mode]) {
-  --color-slate-950: #090d16;
-  --color-slate-900: #0f172a;
-  --color-slate-800: #1e293b;
-  --color-slate-750: #253349;
-  --color-slate-700: #334155;
-  --color-slate-600: #475569;
-  --color-slate-500: #64748b;
-  --color-slate-400: #94a3b8;
-  --color-slate-300: #cbd5e1;
-  --color-slate-200: #e2e8f0;
-  --color-slate-100: #f8fafc;
-  --theme-bg-app: #090d16;
-  --theme-accent: #06b6d4;
-  --theme-border: #1e293b;
-  --theme-scrollbar-track: rgba(15, 23, 42, 0.6);
-  --theme-scrollbar-thumb: rgba(51, 65, 85, 0.8);
+  --color-slate-950: #09090b;
+  --color-slate-900: #121215;
+  --color-slate-800: #222226;
+  --color-slate-750: #2a2a30;
+  --color-slate-700: #383840;
+  --color-slate-600: #52525c;
+  --color-slate-500: #71717a;
+  --color-slate-400: #a1a1aa;
+  --color-slate-300: #d4d4d8;
+  --color-slate-200: #e4e4e7;
+  --color-slate-100: #ffffff;
+  --theme-bg-app: #09090b;
+  --theme-accent: #6366f1;
+  --theme-border: #222226;
+  --theme-scrollbar-track: #09090b;
+  --theme-scrollbar-thumb: #27272a;
   color-scheme: dark;
 }
 
@@ -218,8 +218,8 @@ html[data-mode="white"][data-theme="rose"] {
     width: 100%;
     margin: 0;
     padding: 0;
-    background-color: var(--theme-bg-app, #090d16);
-    color: var(--color-slate-100, #f1f5f9);
+    background-color: var(--theme-bg-app, #09090b);
+    color: var(--color-slate-100, #ffffff);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
@@ -301,7 +301,7 @@ html[data-mode="white"] .hover\:text-white:hover {
 
 /* Academic marginalia and editorial dividers */
 .marginalia {
-  border-left: 2px solid var(--theme-accent, #06b6d4);
+  border-left: 2px solid var(--theme-accent, #6366f1);
   padding-left: 0.875rem;
 }
 
@@ -325,28 +325,28 @@ html[data-mode="white"] .subtle-academic-border {
 /* 5. Futuristic AI-Generated Visual Utilities             */
 /* ======================================================== */
 .ai-glass {
-  background: rgba(9, 13, 22, 0.82);
+  background: rgba(18, 18, 21, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(34, 211, 238, 0.18);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 .ai-glass-card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(9, 13, 22, 0.88) 100%);
+  background: linear-gradient(135deg, rgba(24, 24, 27, 0.75) 0%, rgba(18, 18, 21, 0.88) 100%);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 .ai-glass-card:hover {
-  border-color: rgba(34, 211, 238, 0.35);
-  box-shadow: 0 14px 40px -10px rgba(6, 182, 212, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
 }
 
 .ai-glow-cyan {
-  box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.35);
+  box-shadow: 0 0 20px -3px rgba(99, 102, 241, 0.35);
 }
 
 .ai-glow-violet {

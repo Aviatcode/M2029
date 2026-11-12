@@ -161,7 +161,7 @@ export const DatesheetModal: React.FC<DatesheetModalProps> = ({
             onClick={() => setShowAddForm(true)}
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-slate-700 hover:border-blue-400 bg-slate-900/60 hover:bg-slate-800 text-slate-300 text-xs font-semibold transition cursor-pointer"
           >
-            <Plus className="w-4 h-4 text-cyan-400" />
+            <Plus className="w-4 h-4 text-white" />
             <span>+ Add Exam Paper to Datesheet</span>
           </button>
         ) : (
@@ -176,14 +176,14 @@ export const DatesheetModal: React.FC<DatesheetModalProps> = ({
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 required
-                className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-zinc-500"
               />
               <input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
-                className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
+                className="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-zinc-500"
               />
             </div>
             <div className="flex items-center justify-between pt-1">
