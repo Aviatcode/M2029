@@ -100,7 +100,7 @@ export class UniversalAIProvider implements AIProvider {
           this.modelName = 'deepseek/deepseek-r1';
           break;
         case 'gemini':
-          this.modelName = 'gemini-1.5-flash';
+          this.modelName = 'gemini-3.5-flash';
           break;
         case 'custom':
           this.modelName = 'llama3:latest';
@@ -112,14 +112,16 @@ export class UniversalAIProvider implements AIProvider {
 
     // Clean up Gemini model names
     if (this.provider === 'gemini') {
-      if (
-        !this.modelName ||
-        this.modelName === 'gemini-3.8-flash' ||
-        this.modelName === 'gemini-3-flash' ||
-        this.modelName === 'gemini-2.5-flash' ||
-        this.modelName === 'gemini-2.0-flash'
-      ) {
-        this.modelName = 'gemini-1.5-flash';
+      const deprecated = [
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',
+        'gemini-2.0-flash',
+        'gemini-2.5-flash',
+        'gemini-3.8-flash',
+        'gemini-3-flash',
+      ];
+      if (!this.modelName || deprecated.includes(this.modelName.trim())) {
+        this.modelName = 'gemini-3.5-flash';
       }
     }
 
@@ -205,71 +207,77 @@ export class UniversalAIProvider implements AIProvider {
     try {
       // 1. Google Gemini via direct REST API (fastest, most reliable) or SDK
       if (this.provider === 'gemini') {
-        const rawModel = this.modelName || 'gemini-1.5-flash';
-        const model =
-          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash' || rawModel === 'gemini-2.5-flash'
-            ? 'gemini-1.5-flash'
-            : rawModel;
-
-        // Direct REST API for Gemini with adaptive thinking budget & instant fallback
         if (this.apiKey) {
-          try {
-            const isDeepRequest =
-              (systemInstruction || '').includes('10-marker') ||
-              (systemInstruction || '').includes('university exam') ||
-              (systemInstruction || '').includes('Section C') ||
-              prompt.length > 500;
+          const candidateModels = [
+            this.modelName,
+            'gemini-3.5-flash',
+            'gemini-3.5-flash-lite',
+            'gemini-3-flash-preview',
+            'gemini-flash-latest',
+            'gemini-flash-lite-latest',
+          ];
+          const deprecated = [
+            'gemini-1.5-flash',
+            'gemini-1.5-pro',
+            'gemini-2.0-flash',
+            'gemini-2.5-flash',
+            'gemini-3.8-flash',
+            'gemini-3-flash',
+          ];
+          const uniqueModels = Array.from(
+            new Set(
+              candidateModels.map((m) => {
+                const trimmed = (m || '').trim();
+                if (deprecated.includes(trimmed)) return 'gemini-3.5-flash';
+                return trimmed || 'gemini-3.5-flash';
+              })
+            )
+          );
 
-            const timeoutMs = isDeepRequest ? 12000 : 5000;
-            const timeoutPromise = new Promise<never>((_, reject) =>
-              setTimeout(() => reject(new Error(`Gemini API timeout (${timeoutMs / 1000}s)`)), timeoutMs)
-            );
-
-            const fetchPromise = (async () => {
+          for (const model of uniqueModels) {
+            try {
               const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
               const body: any = {
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
-                  thinkingConfig: {
-                    thinkingBudget: isDeepRequest ? 8192 : 1024,
-                  },
+                  temperature: 0.7,
+                  maxOutputTokens: 3500,
                 },
               };
               if (systemInstruction) {
                 body.system_instruction = { parts: [{ text: systemInstruction }] };
               }
 
+              const controller = new AbortController();
+              const timeout = setTimeout(() => controller.abort(), 15000);
               const res = await fetch(geminiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
+                signal: controller.signal,
               });
+              clearTimeout(timeout);
 
-              if (!res.ok) {
+              if (res.ok) {
+                const data: any = await res.json();
+                const parts = data.candidates?.[0]?.content?.parts || [];
+                const text =
+                  parts
+                    .filter((p: any) => !p.thought)
+                    .map((p: any) => p.text)
+                    .join('\n')
+                    .trim() || parts[0]?.text;
+                if (text && text.trim().length > 10) {
+                  aiKnowledgeCache.set(prompt, '', 'general', text, undefined, `${this.name} (${model})`);
+                  return text;
+                }
+              } else {
                 const errText = await res.text();
-                throw new Error(`Gemini API returned ${res.status}: ${errText.slice(0, 150)}`);
+                console.warn(`[AI Engine] Gemini (${model}) HTTP ${res.status}: ${errText.slice(0, 120)}`);
               }
-
-              const data: any = await res.json();
-              const parts = data.candidates?.[0]?.content?.parts || [];
-              const text =
-                parts
-                  .filter((p: any) => !p.thought)
-                  .map((p: any) => p.text)
-                  .join('\n')
-                  .trim() || parts[0]?.text;
-              if (text && text.trim().length > 10) {
-                aiKnowledgeCache.set(prompt, '', 'general', text, undefined, this.name);
-                return text;
-              }
-              throw new Error('Gemini API returned empty text response');
-            })();
-
-            const result = await Promise.race([fetchPromise, timeoutPromise]);
-            if (result) return result;
-          } catch (restErr: any) {
-            console.warn(`[AI Engine] Gemini API notice:`, restErr.message);
-            if (throwOnError) throw restErr;
+            } catch (candErr: any) {
+              console.warn(`[AI Engine] Gemini (${model}) candidate notice:`, candErr.message);
+            }
           }
         }
       }
@@ -379,38 +387,63 @@ Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
 
     // Native Gemini structured JSON mode
     if (this.provider === 'gemini' && this.apiKey) {
-      try {
-        const rawModel = this.modelName || 'gemini-1.5-flash';
-        const model =
-          rawModel === 'gemini-3.8-flash' || rawModel === 'gemini-3-flash' || rawModel === 'gemini-2.5-flash'
-            ? 'gemini-1.5-flash'
-            : rawModel;
-        const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
-        const body: any = {
-          contents: [{ parts: [{ text: fullPrompt }] }],
-          generationConfig: {
-            responseMimeType: 'application/json',
-            thinkingConfig: {
-              thinkingBudget: 1024,
+      const candidateModels = [
+        this.modelName,
+        'gemini-3.5-flash',
+        'gemini-3.5-flash-lite',
+        'gemini-3-flash-preview',
+        'gemini-flash-latest',
+        'gemini-flash-lite-latest',
+      ];
+      const deprecated = [
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',
+        'gemini-2.0-flash',
+        'gemini-2.5-flash',
+        'gemini-3.8-flash',
+        'gemini-3-flash',
+      ];
+      const uniqueModels = Array.from(
+        new Set(
+          candidateModels.map((m) => {
+            const trimmed = (m || '').trim();
+            if (deprecated.includes(trimmed)) return 'gemini-3.5-flash';
+            return trimmed || 'gemini-3.5-flash';
+          })
+        )
+      );
+
+      for (const model of uniqueModels) {
+        try {
+          const geminiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+          const body: any = {
+            contents: [{ parts: [{ text: fullPrompt }] }],
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.2,
             },
-          },
-        };
-        const res = await fetch(geminiEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
-        if (res.ok) {
-          const data: any = await res.json();
-          const parts = data.candidates?.[0]?.content?.parts || [];
-          const text = parts.filter((p: any) => !p.thought).map((p: any) => p.text).join('\n').trim() || parts[0]?.text;
-          if (text) {
-            const clean = text.replace(/```json/gi, '').replace(/```/gi, '').trim();
-            return JSON.parse(clean) as T;
+          };
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 15000);
+          const res = await fetch(geminiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+            signal: controller.signal,
+          });
+          clearTimeout(timeout);
+          if (res.ok) {
+            const data: any = await res.json();
+            const parts = data.candidates?.[0]?.content?.parts || [];
+            const text = parts.filter((p: any) => !p.thought).map((p: any) => p.text).join('\n').trim() || parts[0]?.text;
+            if (text) {
+              const clean = text.replace(/```json/gi, '').replace(/```/gi, '').trim();
+              return JSON.parse(clean) as T;
+            }
           }
+        } catch {
+          // Fall back to next candidate model
         }
-      } catch {
-        // Fall back to general generateText
       }
     }
 
@@ -849,7 +882,7 @@ export class AIProviderFactory {
         this.classInstance = new UniversalAIProvider({
           apiKey: this.classConfig.apiKey || envKey,
           provider: this.classConfig.provider || (isGeminiKey ? 'gemini' : 'auto'),
-          modelName: this.classConfig.modelName || 'gemini-1.5-flash',
+          modelName: this.classConfig.modelName || 'gemini-3.5-flash',
           baseUrl: this.classConfig.baseUrl,
         });
       } else {
@@ -909,7 +942,7 @@ export class AIProviderFactory {
       modelType: hasKey ? 'custom_ai' : 'basic',
       providerName: hasKey ? provider.name : 'Built-in Basic Academic Model (Free)',
       provider: this.classConfig.provider || 'gemini',
-      modelName: this.classConfig.modelName || 'gemini-1.5-flash',
+      modelName: this.classConfig.modelName || 'gemini-3.5-flash',
       isClassShared: true,
     };
   }

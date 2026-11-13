@@ -75,7 +75,7 @@ import { ragEngine } from './rag/ragIndex.js';
 import { attendanceService } from './attendanceService.js';
 import { runAcademicAgent } from './ai/academicAgentGraph.js';
 import { fetchGoogleSearch } from './ai/googleFetchService.js';
-import { generateAcademicGuide, generateAcademicDoubtAnswer } from './ai/academicKnowledgeEngine.js';
+import { generateAcademicGuide, generateAcademicDoubtAnswer, identifyCourseFromClassCode } from './ai/academicKnowledgeEngine.js';
 
 export const apiRouter = Router();
 
@@ -1303,7 +1303,14 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
   // Only a cache MISS triggers their personal AI, which then contributes back to the class.
   if (!forceLive) {
     const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
-    if (cached) {
+    const isPoisoned = Boolean(
+      cached &&
+        (cached.answer.includes('deterministic execution rules') ||
+          cached.answer.includes('DuckDuckGo') ||
+          cached.answer.includes('GeeksforGeeks') ||
+          cached.answer.length < 200)
+    );
+    if (cached && !isPoisoned) {
       // Trigger non-blocking background refinement check (Milestones 15, 30, 45, 60 or flagged)
       checkAndTriggerBackgroundRefinement(cached, subjectName || 'Computer Science', tutorMode, userAiConfig);
 
@@ -1745,12 +1752,15 @@ Imagine a hospital emergency room with 1 doctor.
 
 *Now that you see the difference, let's keep moving forward!*`;
 
-      if (hasPersonalKey || forceLive || regenerateLive) {
+      if (hasPersonalKey || forceLive || regenerateLive || true) {
         const eli9Prompt = `The student requested an ELI9 real-world analogy for the topic "${targetTopic.title}" in course "${track.name}".
 Explain this concept using a vivid, intuitive real-world analogy (e.g. cafeteria food, traffic lights, hospital triage, or library queues) with zero intimidation.
 Include a clean Markdown comparison table showing key contrasts.
 End with an encouraging takeaway for university exam scoring.`;
-        content = await ai.generateText(eli9Prompt);
+        try {
+          const liveContent = await ai.generateText(eli9Prompt);
+          if (liveContent && liveContent.length > 50) content = liveContent;
+        } catch {}
       }
 
       return res.json({
@@ -1776,18 +1786,17 @@ End with an encouraging takeaway for university exam scoring.`;
 
 *Dekho bhai, seedhi aur simple baat hai:*
 College exams mein examiner yehi dekhna chahta hai ki tumko formula aur conceptual logic clear hai ya nahi.
-- **Arrival Time (AT):** Process ready queue mein kis time par aakar khadi hui.
-- **Burst Time (BT):** Usko CPU par kitna time chahiye apna kaam khatam karne ke liye.
-- **Completion Time (CT):** Process CPU par poori tarah kab execute hokar nikli.
-- **Turnaround Time (TAT = CT - AT):** Process ne system ke andar total kitna waqt bitaya (Waiting + Running).
-- **Waiting Time (WT = TAT - BT):** Process bechari kitni der tak line mein khadi hokar wait karti rahi!
+- Har point ko bullet points mein structured likho.
+- Clean diagram ya flowchart draw karo.
+- Important technical terms ko underline karo full marks ke liye!`;
 
-*Exam tip:* Pehle Gantt chart banana, phir table mein CT fill karna, aur last mein TAT aur WT nikalna. Full marks pakke!`;
-
-      if (hasPersonalKey || forceLive || regenerateLive) {
+      if (hasPersonalKey || forceLive || regenerateLive || true) {
         const hinglishPrompt = `Explain the topic "${targetTopic.title}" in course "${track.name}" in natural, authentic Indian college student Hinglish (e.g. "Dekho bhai, seedhi baat hai...").
 Highlight the exact mental model, the formulas, and the examiner traps for university examinations.`;
-        content = await ai.generateText(hinglishPrompt);
+        try {
+          const liveContent = await ai.generateText(hinglishPrompt);
+          if (liveContent && liveContent.length > 50) content = liveContent;
+        } catch {}
       }
 
       return res.json({
@@ -1811,7 +1820,14 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
     if (action === 'custom_question' && customQuery) {
       if (!forceLive) {
         const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
-        if (cachedDoubt) {
+        const isPoisoned = Boolean(
+          cachedDoubt &&
+            (cachedDoubt.answer.includes('deterministic execution rules') ||
+              cachedDoubt.answer.includes('DuckDuckGo') ||
+              cachedDoubt.answer.includes('GeeksforGeeks') ||
+              cachedDoubt.answer.length < 150)
+        );
+        if (cachedDoubt && !isPoisoned) {
           return res.json({
             evaluation: null,
             trackId: track.id,
@@ -1834,19 +1850,44 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
         }
       }
 
-      const prompt = `Student asked a doubt during the study of "${targetTopic.title}" in course "${track.name}":
-Question: "${customQuery}"
+      const courseInfo = identifyCourseFromClassCode(classCode);
 
-Respond as the gold-standard academic tutor:
-1. Direct, clear answer in easy English with natural Hinglish intuition.
-2. Real-life analogy or concrete example.
-3. Exam scoring point or trap to avoid.
-4. Keep it focused and conversational.`;
+      const tutorSystemInstruction = `You are the Master University Professor and Lead Academic Tutor for university students in ${courseInfo.degree} (${track.name}).
+You explain complex engineering & computer science concepts with absolute pedagogical clarity, academic rigor, intuitive everyday analogies, and sharp university exam focus.
+
+CORE PEDAGOGICAL GUIDELINES:
+1. DIRECT ANSWER: Deliver an immediate, clear, crystal-cut answer to the question in the opening paragraph. Demystify all jargon without hesitation.
+2. NO ROBOTIC META DISCLAIMERS: NEVER say "I don't have materials", "As an AI", "Even though not provided", or apologize. You are the authoritative professor.
+3. INTUITIVE ANALOGIES: Use relatable real-world analogies (traffic control, restaurant kitchens, library indices, hospital triage, ATM transactions) to anchor every abstract principle into crystal-clear intuition.
+4. ARCHITECTURE / CODE / DIAGRAM: Provide a clear ASCII schematic, state diagram, or practical code snippet (C/Java/Python/SQL) whenever relevant.
+5. EXAM SCORING CHECKLIST: Explicitly provide scoring keywords, Section C 10-marker answer layout points, and common traps students fall into during university exams.
+6. HINGLISH MENTAL MODEL: Close with a friendly 2-3 sentence Indian student Hinglish takeaway ("Dekho bhai, seedhi baat...") that locks in the intuition.`;
+
+      const tutorUserPrompt = `Student Question: "${customQuery}"
+Course Context: "${targetTopic.title}" within "${track.name}"
+Student Degree / Curriculum: ${courseInfo.degree} (Classroom Code: ${classCode})
+
+Provide an authoritative, high-scoring university explanation with:
+### 📌 Core Concept & Direct Answer
+[Clear, crystal-cut answer to the student's question with full academic depth]
+
+### 💡 Real-World Everyday Analogy
+[Vivid everyday analogy that makes the mechanism intuitive with zero intimidation]
+
+### 🛠️ Working Architecture / Code / Flow
+[Clear ASCII schematic, timeline trace, or clean code implementation]
+
+### 📝 University Exam Scoring Tips & Examiner Traps
+[Key keywords to write, Section C marks breakdown, and common mistakes to avoid]
+
+### 🇮🇳 Hinglish Mental Model
+[Friendly 2-3 sentence mental model in natural Hinglish starting with "Dekho bhai..."]`;
 
       let responseText = '';
       try {
-        responseText = await ai.generateText(prompt);
-      } catch {
+        responseText = await ai.generateText(tutorUserPrompt, tutorSystemInstruction);
+      } catch (err: any) {
+        console.warn(`[AI Tutor Step] Live AI notice:`, err?.message);
         responseText = '';
       }
 

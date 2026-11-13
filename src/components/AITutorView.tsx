@@ -409,8 +409,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         const fallbackTurn: ConversationTurn = {
           id: `asst-fb-${Date.now()}`,
           role: 'assistant',
-          title: `AI Overview: ${customQuery.slice(0, 45)}`,
-          content: `### 📌 AI Overview: ${titleDisplay}\n\n**${titleDisplay}** is a core university concept.\n\n#### Core Principle\nIt establishes deterministic execution rules, formal state invariants, and predictable resource allocation required by university curriculum standards.\n\n#### Key Highlights\n- **Formal Definition:** Enforces boundary invariants and verified execution states.\n- **Operational Invariant:** Minimizes computational overhead while maintaining transactional consistency.\n- **University Exam Tip:** Underline standard definitions, provide an ASCII flowchart or code schematic, and explicitly state time complexity $O(n)$ or $O(\\log n)$.`,
+          title: `Doubt Resolved: ${customQuery.slice(0, 45)}`,
+          content: `### 📌 Concept Review: ${titleDisplay}\n\n**${titleDisplay}** is an essential topic in your syllabus.\n\n#### Key Exam Tips\n- Clearly define the primary mechanism and formal terms in the opening lines.\n- Draw a clean diagram or architecture schematic to secure full marks.\n- State standard time and space complexities ($O(n)$ or $O(\\log n)$) where applicable.\n\n*(Tip: If this response was served offline, tap retry to generate a fresh live AI explanation).*`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setConversationTurns((prev) => [...prev, fallbackTurn]);
