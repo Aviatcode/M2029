@@ -1,1 +1,76 @@
-if(!self.define){let e,a={};const i=(i,r)=>(i=new URL(i+".js",r).href,a[i]||new Promise(a=>{if("document"in self){const e=document.createElement("script");e.src=i,e.onload=a,document.head.appendChild(e)}else e=i,importScripts(i),a()}).then(()=>{let e=a[i];if(!e)throw new Error(`Module ${i} didn’t register its module`);return e}));self.define=(r,s)=>{const n=e||("document"in self?document.currentScript.src:"")||location.href;if(a[n])return;let f={};const o=e=>i(e,n),t={module:{uri:n},exports:f,require:o};a[n]=Promise.all(r.map(e=>t[e]||o(e))).then(e=>(s(...e),f))}}define(["./workbox-9c191d2f"],function(e){"use strict";importScripts("./sw-share-target.js"),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"sw-share-target.js",revision:"aa300381ffee5e4a8dd056193b0f4c13"},{url:"registerSW.js",revision:"402b66900e731ca748771b6fc5e7a068"},{url:"index.html",revision:"0e772f020b043e12c7b1d69e28627e5a"},{url:"assets/jszip.min-BCX79w-q.js",revision:null},{url:"assets/index-DGeMhQ6u.css",revision:null},{url:"assets/index-Cr-lq1UD.js",revision:null},{url:"am-logo.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"apple-touch-icon.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"favicon-32.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"favicon.ico",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"icon-192.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"icon-512.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"pwa-192x192.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"pwa-512x512.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"pwa-maskable-512x512.png",revision:"512ca7abfefda9162051a33ef1fb821a"},{url:"sw-share-target.js",revision:"aa300381ffee5e4a8dd056193b0f4c13"},{url:"manifest.webmanifest",revision:"6e069d8cd148e0e06e8403b6d218d97a"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))});
+try {
+  importScripts('/sw-share-target.js');
+} catch {
+  // Offline or relative fallback
+}
+
+const CACHE_NAME = 'm2029-cache-v4';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/sw-share-target.js',
+  '/am-logo.png',
+  '/icon.svg',
+  '/pwa-192x192.png',
+  '/pwa-512x512.png',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE).catch((err) => {
+        console.warn('Pre-caching assets warning:', err);
+      });
+    })
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  // Network-first for API requests, Cache-first fallback for static assets
+  if (event.request.url.includes('/api/')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          return new Response(JSON.stringify({ error: 'Offline mode active' }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => {
+          return cached || caches.match('/');
+        });
+      })
+  );
+});

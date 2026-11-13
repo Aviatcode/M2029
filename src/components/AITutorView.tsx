@@ -405,12 +405,18 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
     } catch (err: any) {
       console.error('Error stepping topic:', err);
       if (action === 'custom_question' && customQuery) {
+        const isConversational = /what can you do|who are you|how can you help|features|capabilities|help|hi|hello/i.test(customQuery);
         const titleDisplay = customQuery.charAt(0).toUpperCase() + customQuery.slice(1);
+
+        const fallbackContent = isConversational
+          ? `### 👋 Welcome to M2029 AI Academic Tutor!\n\nI am your dedicated university academic professor and study assistant. Here is what I can do:\n\n- 🎯 **Explain Any Topic**: Ask any question in Operating Systems, DBMS, Networks, Data Structures, or Linux.\n- 📝 **10-Marker Exam Answers**: Get complete Section C formats with definitions, diagrams, and examiner scoring tips.\n- 💡 **ELI9 & Hinglish**: Understand tricky concepts via everyday analogies and friendly Hinglish breakdowns.\n- 📊 **Solve Numericals**: Step-by-step Gantt charts, Turnaround Time ($TAT$), Waiting Time ($WT$), and formulas.\n\nWhat concept or doubt would you like to master today?`
+          : `### 📌 Concept Overview: ${titleDisplay}\n\n**${titleDisplay}** is an essential topic in your syllabus.\n\n#### Key Exam Tips\n- Clearly define the primary mechanism and formal terms in the opening lines.\n- Draw a clean diagram or architecture schematic to secure full marks.\n- State standard time and space complexities ($O(n)$ or $O(\\log n)$) where applicable.\n\n*(Tip: If this response was served offline, tap retry to generate a fresh live AI explanation).*`;
+
         const fallbackTurn: ConversationTurn = {
           id: `asst-fb-${Date.now()}`,
           role: 'assistant',
-          title: `Doubt Resolved: ${customQuery.slice(0, 45)}`,
-          content: `### 📌 Concept Review: ${titleDisplay}\n\n**${titleDisplay}** is an essential topic in your syllabus.\n\n#### Key Exam Tips\n- Clearly define the primary mechanism and formal terms in the opening lines.\n- Draw a clean diagram or architecture schematic to secure full marks.\n- State standard time and space complexities ($O(n)$ or $O(\\log n)$) where applicable.\n\n*(Tip: If this response was served offline, tap retry to generate a fresh live AI explanation).*`,
+          title: isConversational ? 'Tutor Capabilities & Welcome' : `Doubt Resolved: ${customQuery.slice(0, 45)}`,
+          content: fallbackContent,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setConversationTurns((prev) => [...prev, fallbackTurn]);
@@ -521,12 +527,12 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
         positiveVotes: 0,
         negativeVotes: 0,
         sections: {
-          simple: `**${cleanTopic}** is a core university concept in *${subjectName}*.\n\nIt establishes foundational invariants, predictable execution rules, and resource management protocols required by university curriculum standards.`,
-          eli9: `Imagine a coordinating hub where tasks require shared access without interference. Protocol rules and token priority ensure orderly execution without collisions or deadlocks.`,
-          hinglish: `Exam point of view se **${cleanTopic}** high-yield concept hai. Formal definition underline karo, clean ASCII diagram draw karo, aur boundary conditions mention karo.`,
-          exam_10marker: `## 📝 Section C: 10-Marker University Model Answer\n\n### 1. Formal Definition (2 Marks)\n**${cleanTopic}** is defined as an architectural invariant and protocol enforcing deterministic operational guarantees.\n\n### 2. Conceptual Diagram (2 Marks)\n\`\`\`text\n[Client / User Tier] ──► [ ${cleanTopic.toUpperCase()} GUARD ] ──► [ Verified State ]\n\`\`\`\n\n### 3. Step-by-Step Execution Protocol (3 Marks)\n1. Precondition verification & boundary checking\n2. Atomic invariant state transition\n3. Completion notification and safe resource release\n\n### 4. Examiner Scoring Checklist (3 Marks)\n- State formal time and space complexity\n- Always mention edge cases (empty inputs, concurrency)`,
-          detailed: `Theoretical invariants hold across all computational states. Auxiliary memory and stack frames are bounded. Adheres to standard university curriculum textbooks.`,
-          socratic: `**Question 1:** Why is this concept essential for reliable system architecture?\n\n*Model Answer:* It eliminates race conditions, prevents deadlock, and guarantees formal boundary consistency under concurrent loads.`,
+          simple: `**${cleanTopic}** is an essential topic in *${subjectName}*.\n\nIt provides core computational mechanisms, algorithms, and structural properties necessary for high-scoring university examinations.`,
+          eli9: `Think of **${cleanTopic}** like an everyday coordination protocol (like a kitchen chef or traffic controller): tasks stay organized and finish predictably without collisions.`,
+          hinglish: `Exam point of view se **${cleanTopic}** bohot scoring concept hai. Formal definition underline karo, clean diagram draw karo, aur time/space complexity mention karo.`,
+          exam_10marker: `## 📝 Section C: 10-Marker University Model Answer\n\n### 1. Formal Definition (2 Marks)\n**${cleanTopic}** is defined as an essential structural and operational framework in ${subjectName}.\n\n### 2. Architecture & Diagram (2 Marks)\n\`\`\`text\n[Input / Request Stream] ──► [ ${cleanTopic.toUpperCase()} MODULE ] ──► [ Verified State ]\n\`\`\`\n\n### 3. Step-by-Step Working Mechanism (3 Marks)\n1. Precondition verification & boundary checking\n2. Controlled state transition\n3. Completion notification and resource deallocation\n\n### 4. Examiner Scoring Checklist (3 Marks)\n- State formal time and space complexity\n- Always mention edge cases and draw the block schematic`,
+          detailed: `Theoretical analysis, complexity bounds, and proofs conform to standard university textbooks (Galvin, Cormen, Silberschatz).`,
+          socratic: `**Question 1:** Why is this concept essential in ${subjectName}?\n\n*Model Answer:* It eliminates operational anomalies, enforces data consistency, and optimizes resource allocation.`,
         },
         sourcesUsed: [{ title: `${subjectName} Accredited Syllabus`, type: 'Curriculum Core' }],
         reasoningSteps: [{ step: '1. Academic Engine Response', detail: `Answered ${cleanTopic}`, timestamp: new Date().toLocaleTimeString() }],
@@ -976,7 +982,11 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                     <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-800">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="w-6 h-6 rounded-md bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center font-mono text-xs font-bold text-indigo-400">
-                          {tIdx + 1}
+                          {turn.title?.includes('Doubt') || turn.title?.includes('Tutor') || turn.title?.includes('Capabilities') || turn.title?.includes('Welcome') ? (
+                            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                          ) : (
+                            tIdx + 1
+                          )}
                         </span>
                         <h2 className="text-sm sm:text-base font-bold text-slate-100 font-sans-ui tracking-tight">
                           {turn.title || 'Syllabus Topic'}

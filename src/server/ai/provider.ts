@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import { GoogleGenAI } from '@google/genai';
 import { aiKnowledgeCache } from './aiKnowledgeCache.js';
 import { generateAcademicGuide, generateAcademicDoubtAnswer } from './academicKnowledgeEngine.js';
@@ -249,7 +251,7 @@ export class UniversalAIProvider implements AIProvider {
               }
 
               const controller = new AbortController();
-              const timeout = setTimeout(() => controller.abort(), 15000);
+              const timeout = setTimeout(() => controller.abort(), 25000);
               const res = await fetch(geminiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -424,7 +426,7 @@ Return STRICT JSON ONLY. Do NOT wrap in markdown backticks or explanations.`;
             },
           };
           const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 15000);
+          const timeout = setTimeout(() => controller.abort(), 25000);
           const res = await fetch(geminiEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

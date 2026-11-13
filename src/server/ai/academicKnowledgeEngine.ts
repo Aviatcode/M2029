@@ -65,6 +65,50 @@ export function identifyCourseFromClassCode(code?: string): CourseIdentity {
   };
 }
 
+/**
+ * Detects if a student question is a conversational greeting, question about capabilities,
+ * how the tutor works, or general non-curriculum inquiry.
+ */
+export function isConversationalQuery(query: string): boolean {
+  const q = (query || '').toLowerCase().trim().replace(/[?!.,]/g, '');
+  const conversationalPhrases = [
+    'what can you do',
+    'who are you',
+    'what are you',
+    'what is your name',
+    'what do you do',
+    'what are your features',
+    'what are your capabilities',
+    'how can you help',
+    'how do you work',
+    'how does this work',
+    'help me',
+    'help',
+    'hi',
+    'hello',
+    'hey',
+    'hey there',
+    'good morning',
+    'good afternoon',
+    'good evening',
+    'tell me about yourself',
+    'how to use this',
+    'what courses do you teach',
+    'what subjects do you know',
+    'syllabus help',
+    'how to study',
+    'exam tips',
+    'can you teach me',
+  ];
+  if (conversationalPhrases.some((phrase) => q === phrase || q.startsWith(phrase) || q.includes(phrase))) {
+    return true;
+  }
+  if (q.length <= 4 && (q === 'hi' || q === 'hey' || q === 'yo' || q === 'help')) {
+    return true;
+  }
+  return false;
+}
+
 interface TopicBlueprint {
   keywords: string[];
   subject: string;
@@ -784,7 +828,11 @@ function synthesizeCurriculumTopic(
   course: CourseIdentity,
   courseName: string
 ): string {
-  const titleDisplay = query.charAt(0).toUpperCase() + query.slice(1).replace(/\?$/, '').trim();
+  const cleanTerm = query
+    .replace(/^(what is|explain|what are|how does|why is|tell me about|describe|what can you do about)\s+/i, '')
+    .replace(/[?!.,]/g, '')
+    .trim();
+  const titleDisplay = cleanTerm ? cleanTerm.charAt(0).toUpperCase() + cleanTerm.slice(1) : 'Computer Science Concept';
   const qLower = query.toLowerCase();
 
   // Detect subject domain
@@ -833,7 +881,7 @@ ${analogy}
    └───────────────────────────┬────────────────────────────┘
                                │ Controlled State Transition
                                ▼
-   [ Verified Deterministic Output & Completed Execution ]
+   [ Verified Safe Output & Completed Execution ]
 \`\`\`
 
 #### ⚙️ Step-by-Step Working Mechanism
@@ -862,6 +910,25 @@ export async function generateAcademicDoubtAnswer(
 ): Promise<string> {
   const cleanQuery = doubtQuery.replace(/\?$/, '').trim();
   const course = identifyCourseFromClassCode(classCode);
+
+  if (isConversationalQuery(cleanQuery)) {
+    return `### 👋 Welcome! I'm your M2029 AI Academic Tutor & Professor
+
+I am your dedicated university academic mentor designed to help you master your coursework in **${course.degree}** (${courseName}) and score top marks in your semester examinations.
+
+Here is what I can do for you:
+
+- 🎯 **Demystify Any Concept**: Ask me any technical doubt or conceptual question (e.g. *"What is a Semaphore?"*, *"Explain Virtual Memory & Page Faults"*, *"Difference between Process and Thread"*), and I will break it down with crystal-clear explanations and everyday analogies.
+- 📝 **10-Marker University Exam Layouts**: Get Section C ready answers complete with formal definitions, architectural ASCII diagrams, step-by-step execution mechanisms, and common examiner traps.
+- 💡 **Dual Learning Modes**:
+  - **ELI9 (Real-Life Analogies)**: Demystify complex concepts using vivid analogies (hospital triage, restaurant kitchens, library indices) with zero intimidation.
+  - **Hinglish Mental Models**: Friendly Indian college student intuition (*"Dekho bhai, seedhi baat..."*) so the concept clicks effortlessly.
+- 📊 **Step-by-Step Numericals**: Work through CPU scheduling Gantt charts, Turnaround Time ($TAT$), Waiting Time ($WT$), and database normalization algorithms step by step.
+- 🧠 **Interactive Quick Checks**: Test yourself with instant conceptual quizzes and university PYQ revision checks.
+
+What concept, topic, or doubt would you like to explore right now?`;
+  }
+
   const bp = findBestBlueprint(cleanQuery, courseName);
 
   if (bp) {

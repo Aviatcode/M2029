@@ -75,7 +75,7 @@ import { ragEngine } from './rag/ragIndex.js';
 import { attendanceService } from './attendanceService.js';
 import { runAcademicAgent } from './ai/academicAgentGraph.js';
 import { fetchGoogleSearch } from './ai/googleFetchService.js';
-import { generateAcademicGuide, generateAcademicDoubtAnswer, identifyCourseFromClassCode } from './ai/academicKnowledgeEngine.js';
+import { generateAcademicGuide, generateAcademicDoubtAnswer, identifyCourseFromClassCode, isConversationalQuery } from './ai/academicKnowledgeEngine.js';
 
 export const apiRouter = Router();
 
@@ -1851,8 +1851,22 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
       }
 
       const courseInfo = identifyCourseFromClassCode(classCode);
+      const isConversational = isConversationalQuery(customQuery);
 
-      const tutorSystemInstruction = `You are the Master University Professor and Lead Academic Tutor for university students in ${courseInfo.degree} (${track.name}).
+      let tutorSystemInstruction = '';
+      let tutorUserPrompt = '';
+
+      if (isConversational) {
+        tutorSystemInstruction = `You are the Master University Professor and Lead Academic Tutor for university students studying ${courseInfo.degree} (${track.name}).
+You are inspiring, articulate, encouraging, and deeply knowledgeable across the computer science curriculum.
+When students greet you, ask what you can do, or ask how you can help them, introduce yourself warmly and clearly present your academic tutoring capabilities (explaining concepts from scratch, breaking down 10-marker Section C exam questions, providing real-world analogies, Hinglish mental models, solving numericals like Gantt charts, and testing with quick check quizzes).
+Keep the format clean with bullet points, and invite them to ask their first concept or doubt.`;
+
+        tutorUserPrompt = `Student: "${customQuery}"
+Student Degree / Curriculum: ${courseInfo.degree} (Classroom Code: ${classCode})
+Course Module: ${track.name}`;
+      } else {
+        tutorSystemInstruction = `You are the Master University Professor and Lead Academic Tutor for university students in ${courseInfo.degree} (${track.name}).
 You explain complex engineering & computer science concepts with absolute pedagogical clarity, academic rigor, intuitive everyday analogies, and sharp university exam focus.
 
 CORE PEDAGOGICAL GUIDELINES:
@@ -1863,7 +1877,7 @@ CORE PEDAGOGICAL GUIDELINES:
 5. EXAM SCORING CHECKLIST: Explicitly provide scoring keywords, Section C 10-marker answer layout points, and common traps students fall into during university exams.
 6. HINGLISH MENTAL MODEL: Close with a friendly 2-3 sentence Indian student Hinglish takeaway ("Dekho bhai, seedhi baat...") that locks in the intuition.`;
 
-      const tutorUserPrompt = `Student Question: "${customQuery}"
+        tutorUserPrompt = `Student Question: "${customQuery}"
 Course Context: "${targetTopic.title}" within "${track.name}"
 Student Degree / Curriculum: ${courseInfo.degree} (Classroom Code: ${classCode})
 
@@ -1882,6 +1896,7 @@ Provide an authoritative, high-scoring university explanation with:
 
 ### 🇮🇳 Hinglish Mental Model
 [Friendly 2-3 sentence mental model in natural Hinglish starting with "Dekho bhai..."]`;
+      }
 
       let responseText = '';
       try {
@@ -1917,7 +1932,7 @@ Provide an authoritative, high-scoring university explanation with:
         topic: {
           ...targetTopic,
           id: `doubt-${Date.now()}`,
-          title: `Doubt Resolved: ${customQuery.slice(0, 45)}`,
+          title: isConversational ? 'Tutor Capabilities & Welcome' : `Doubt Resolved: ${customQuery.slice(0, 45)}`,
           content: responseText,
           quickCheck: undefined,
           gantt: undefined,
@@ -2746,7 +2761,7 @@ Return ONLY a valid JSON object matching this structure:
   const final10Marker = aiExtraction?.exam10Marker || {
     question: `Explain ${cleanTitle} in detail with suitable architectural diagrams, mathematical/code models, and real-world trade-offs.`,
     answerStructure: '1. Standard Textbook Definition (2 Marks)\n2. Working Mechanism & Architectural Block Diagram (3 Marks)\n3. Core Algorithm / Mathematical Proof (3 Marks)\n4. Limitations & Real-World Gotchas (2 Marks)',
-    modelAnswerMarkdown: `### 1. Introduction & Formal Definition\n${cleanTitle} represents a fundamental mechanism in modern computing systems. It establishes deterministic constraints to guarantee correctness, concurrency safety, and performance.\n\n### 2. Architectural Mechanism\nWhen executing within the system runtime, state transitions occur according to predefined invariant properties. Block diagrams must illustrate input streams, state verification modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Evaluate boundary invariants and conditions.\n- Step 3: Compute state transitions without partial side-effects.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the state transition diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.`,
+    modelAnswerMarkdown: `### 1. Introduction & Formal Definition\n${cleanTitle} represents a fundamental mechanism in modern computing systems. It establishes clear algorithmic principles and structural guarantees essential for high-scoring university examinations.\n\n### 2. Architectural Mechanism\nState transitions occur according to predefined protocols. Block diagrams illustrate input streams, processing modules, and output dispatchers.\n\n### 3. Step-by-Step Implementation Outline\n- Step 1: Initialize baseline resources and data pointers.\n- Step 2: Validate preconditions and boundary limits.\n- Step 3: Compute state transitions predictably.\n- Step 4: Validate termination and output commitment.\n\n### 4. University Evaluator Scoring Tip\nAlways draw the block diagram with neat labels and write out the formal edge cases to secure full 10/10 marks.`,
     keyDiagramText: `Block Architecture Diagram for ${cleanTitle} illustrating data flow and state verification`,
   };
 
