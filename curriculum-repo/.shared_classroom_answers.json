@@ -1,0 +1,715 @@
+{
+  "totalAnswers": 6,
+  "totalHits": 24,
+  "totalTokensSaved": 10800,
+  "lastUpdated": "2026-11-14T11:32:53.962Z",
+  "answers": [
+    {
+      "id": "ans-1794647157519-m5dz9",
+      "classId": "M2029",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T09:05:57.519Z",
+      "updatedAt": "2026-11-14T09:05:57.801Z",
+      "lastAccessedAt": "2026-11-14T09:07:30.280Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 6,
+      "tokensSaved": 2250,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T09:05:57.519Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794647157801-bq2i",
+          "answerId": "ans-1794647157519-m5dz9",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concept 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T09:05:57.801Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T09:05:57.801Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794647250280",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 90%",
+          "timestamp": "2026-11-14T09:07:30.280Z"
+        },
+        {
+          "id": "audit-1794647157806",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:05:57.806Z"
+        },
+        {
+          "id": "audit-1794647157805",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T09:05:57.805Z"
+        },
+        {
+          "id": "audit-1794647157803",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:05:57.803Z"
+        },
+        {
+          "id": "audit-1794647157801",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concept 10th Edition, Chapter 9, Page 389)",
+          "timestamp": "2026-11-14T09:05:57.801Z"
+        },
+        {
+          "id": "audit-1794647157800",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:05:57.800Z"
+        },
+        {
+          "id": "audit-1794647157797",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:05:57.797Z"
+        },
+        {
+          "id": "audit-1794647157519",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T09:05:57.519Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794647250283-boxwx",
+      "classId": "M2029",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems [Run 50277]?",
+      "normalizedKey": "50277 memory modern operating paging run systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T09:07:30.283Z",
+      "updatedAt": "2026-11-14T09:07:30.377Z",
+      "lastAccessedAt": "2026-11-14T09:07:30.383Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T09:07:30.283Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794647250377-f4ks",
+          "answerId": "ans-1794647250283-boxwx",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concept 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T09:07:30.377Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T09:07:30.377Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794647250383",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:07:30.383Z"
+        },
+        {
+          "id": "audit-1794647250382",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T09:07:30.382Z"
+        },
+        {
+          "id": "audit-1794647250380",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:07:30.380Z"
+        },
+        {
+          "id": "audit-1794647250378",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concept 10th Edition, Chapter 9, Page 389)",
+          "timestamp": "2026-11-14T09:07:30.377Z"
+        },
+        {
+          "id": "audit-1794647250375",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:07:30.375Z"
+        },
+        {
+          "id": "audit-1794647250373",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:07:30.373Z"
+        },
+        {
+          "id": "audit-1794647250283",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T09:07:30.283Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794647286211-cy0of",
+      "classId": "M2029",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Process Synchronization",
+      "originalQuestion": "How does Quantum_Process_Synchronization_1794647286210 guarantee atomic memory locking?",
+      "normalizedKey": "1794647286210 atomic guarantee locking memory process quantum synchronization",
+      "intent": "general",
+      "answer": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647286210 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647286210 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647286210 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols.",
+      "sections": {
+        "definition": "Quantum_Process_Synchronization_1794647286210 guarantees atomic memory locking via test-and-set hardware bus cycles and memory barrier instructions.",
+        "simple": "Quantum_Process_Synchronization_1794647286210 guarantees atomic memory locking via test-and-set hardware bus cycles and memory barrier instructions.",
+        "eli9": "Like a single-person turnstile preventing collisions.",
+        "hinglish": "Dekho bhai, race conditions prevent karne ke liye lock lagaya jata hai.",
+        "exam_10marker": "Complete 10-marker model answer with Mutual Exclusion and Test-And-Set.",
+        "detailed": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647286210 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647286210 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647286210 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T09:08:06.211Z",
+      "updatedAt": "2026-11-14T09:08:06.312Z",
+      "lastAccessedAt": "2026-11-14T09:08:27.752Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647286210 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647286210 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647286210 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols.",
+          "sections": {
+            "definition": "Quantum_Process_Synchronization_1794647286210 is a synchronized coordination primitive guaranteeing atomic lock acquisition.",
+            "simple": "Quantum_Process_Synchronization_1794647286210 is an abstraction decoupling logical from physical synchronization.",
+            "eli9": "Like a single-person turnstile preventing collisions.",
+            "hinglish": "Dekho bhai, race conditions prevent karne ke liye lock lagaya jata hai.",
+            "exam_10marker": "Complete 10-marker model answer with Mutual Exclusion and Test-And-Set.",
+            "detailed": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647286210 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647286210 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647286210 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T09:08:06.211Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794647286312-ewh4",
+          "answerId": "ans-1794647286211-cy0of",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Quantum_Process_Synchronization_1794647286210 is a synchronized coordination primitive guaranteeing atomic lock acquisition.",
+          "proposedContent": "Quantum_Process_Synchronization_1794647286210 guarantees atomic memory locking via test-and-set hardware bus cycles and memory barrier instructions.",
+          "reason": "Underline hardware memory barrier instructions required for full marks in university exam.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 6, Page 268",
+          "status": "approved",
+          "createdAt": "2026-11-14T09:08:06.312Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T09:08:06.312Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794647307752",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 91%",
+          "timestamp": "2026-11-14T09:08:27.752Z"
+        },
+        {
+          "id": "audit-1794647286318",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:08:06.318Z"
+        },
+        {
+          "id": "audit-1794647286316",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T09:08:06.316Z"
+        },
+        {
+          "id": "audit-1794647286312",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware memory barrier instructions required for full marks in university exam. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 6, Page 268)",
+          "timestamp": "2026-11-14T09:08:06.312Z"
+        },
+        {
+          "id": "audit-1794647286310",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:08:06.310Z"
+        },
+        {
+          "id": "audit-1794647286308",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:08:06.308Z"
+        },
+        {
+          "id": "audit-1794647286211",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T09:08:06.211Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794647307754-crul4",
+      "classId": "M2029",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Process Synchronization",
+      "originalQuestion": "How does Quantum_Process_Synchronization_1794647307748 guarantee atomic memory locking?",
+      "normalizedKey": "1794647307748 atomic guarantee locking memory process quantum synchronization",
+      "intent": "general",
+      "answer": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647307748 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647307748 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647307748 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols.",
+      "sections": {
+        "definition": "Quantum_Process_Synchronization_1794647307748 guarantees atomic memory locking via test-and-set hardware bus cycles and memory barrier instructions.",
+        "simple": "Quantum_Process_Synchronization_1794647307748 guarantees atomic memory locking via test-and-set hardware bus cycles and memory barrier instructions.",
+        "eli9": "Like a single-person turnstile preventing collisions.",
+        "hinglish": "Dekho bhai, race conditions prevent karne ke liye lock lagaya jata hai.",
+        "exam_10marker": "Complete 10-marker model answer with Mutual Exclusion and Test-And-Set.",
+        "detailed": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647307748 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647307748 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647307748 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T09:08:27.754Z",
+      "updatedAt": "2026-11-14T09:08:27.852Z",
+      "lastAccessedAt": "2026-11-14T09:08:27.858Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 4,
+      "tokensSaved": 1350,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647307748 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647307748 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647307748 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols.",
+          "sections": {
+            "definition": "Quantum_Process_Synchronization_1794647307748 is a synchronized coordination primitive guaranteeing atomic lock acquisition.",
+            "simple": "Quantum_Process_Synchronization_1794647307748 is an abstraction decoupling logical from physical synchronization.",
+            "eli9": "Like a single-person turnstile preventing collisions.",
+            "hinglish": "Dekho bhai, race conditions prevent karne ke liye lock lagaya jata hai.",
+            "exam_10marker": "Complete 10-marker model answer with Mutual Exclusion and Test-And-Set.",
+            "detailed": "### 1. Simple Overview\nQuantum_Process_Synchronization_1794647307748 is a synchronized coordination primitive guaranteeing atomic lock acquisition across shared memory domains.\n\n### 2. ELI9 Everyday Analogy\nThink of Quantum_Process_Synchronization_1794647307748 like a revolving door with a smart sensor: only one person can pass through at a time, completely preventing collisions!\n\n### 3. Hinglish Mental Model\nDekho bhai, multi-core architecture me jab do process ek sath shared variable ko update karte hain to race condition ho sakti hai. Quantum_Process_Synchronization_1794647307748 guarantee karta hai ki access strictly synchronized ho.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Hardware-enforced atomic synchronization primitive with test-and-set semantics.\n- Working Principle: Enforces Mutual Exclusion, Progress, and Bounded Waiting.\n- Examiner Traps: Watch out for priority inversion and deadlocks if lock release is omitted.\n\n### 5. Detailed & Gotchas\nAtomic memory operations bypass L1/L2 cache write-backs via bus snooping protocols."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T09:08:27.754Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794647307852-f6ry",
+          "answerId": "ans-1794647307754-crul4",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Quantum_Process_Synchronization_1794647307748 is a synchronized coordination primitive guaranteeing atomic lock acquisition.",
+          "proposedContent": "Quantum_Process_Synchronization_1794647307748 guarantees atomic memory locking via test-and-set hardware bus cycles and memory barrier instructions.",
+          "reason": "Underline hardware memory barrier instructions required for full marks in university exam.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 6, Page 268",
+          "status": "approved",
+          "createdAt": "2026-11-14T09:08:27.852Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T09:08:27.852Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794647307858",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:08:27.858Z"
+        },
+        {
+          "id": "audit-1794647307856",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T09:08:27.856Z"
+        },
+        {
+          "id": "audit-1794647307852",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware memory barrier instructions required for full marks in university exam. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 6, Page 268)",
+          "timestamp": "2026-11-14T09:08:27.852Z"
+        },
+        {
+          "id": "audit-1794647307850",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:08:27.850Z"
+        },
+        {
+          "id": "audit-1794647307847",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:08:27.847Z"
+        },
+        {
+          "id": "audit-1794647307755",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T09:08:27.754Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794647392867-wr4g8",
+      "classId": "M2029_COHORT_1794647392458",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T09:09:52.867Z",
+      "updatedAt": "2026-11-14T09:09:52.978Z",
+      "lastAccessedAt": "2026-11-14T09:09:52.984Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T09:09:52.867Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794647392978-xixj",
+          "answerId": "ans-1794647392867-wr4g8",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T09:09:52.978Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T09:09:52.978Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794647392984",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:09:52.984Z"
+        },
+        {
+          "id": "audit-1794647392982",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T09:09:52.982Z"
+        },
+        {
+          "id": "audit-1794647392980",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:09:52.980Z"
+        },
+        {
+          "id": "audit-1794647392978",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389)",
+          "timestamp": "2026-11-14T09:09:52.978Z"
+        },
+        {
+          "id": "audit-1794647392976",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T09:09:52.976Z"
+        },
+        {
+          "id": "audit-1794647392972",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T09:09:52.972Z"
+        },
+        {
+          "id": "audit-1794647392867",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794647392458 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T09:09:52.867Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794655973837-4ir5r",
+      "classId": "M2029_COHORT_1794655972690",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T11:32:53.837Z",
+      "updatedAt": "2026-11-14T11:32:53.957Z",
+      "lastAccessedAt": "2026-11-14T11:32:53.961Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T11:32:53.837Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794655973957-hlsm",
+          "answerId": "ans-1794655973837-4ir5r",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T11:32:53.957Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T11:32:53.957Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794655973961",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T11:32:53.961Z"
+        },
+        {
+          "id": "audit-1794655973960",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T11:32:53.960Z"
+        },
+        {
+          "id": "audit-1794655973959",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T11:32:53.959Z"
+        },
+        {
+          "id": "audit-1794655973958",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389)",
+          "timestamp": "2026-11-14T11:32:53.957Z"
+        },
+        {
+          "id": "audit-1794655973956",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T11:32:53.956Z"
+        },
+        {
+          "id": "audit-1794655973954",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T11:32:53.954Z"
+        },
+        {
+          "id": "audit-1794655973837",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794655972690 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T11:32:53.837Z"
+        }
+      ]
+    }
+  ]
+}

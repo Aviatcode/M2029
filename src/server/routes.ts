@@ -2,6 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { Router, Request, Response } from 'express';
 import { AIProviderFactory, UniversalKeyConfig, UniversalAIProvider } from './ai/provider.js';
+import { byokVault, maskApiKey } from './ai/byokVault.js';
+import { sharedKnowledgeLibrary } from './ai/sharedKnowledgeLibrary.js';
+import { followUpEngine } from './ai/followUpEngine.js';
+import { graphRagEngine } from './rag/graphRagEngine.js';
 
 export function extractAiConfig(req: Request): UniversalKeyConfig | undefined {
   if (
@@ -11,6 +15,11 @@ export function extractAiConfig(req: Request): UniversalKeyConfig | undefined {
       (Array.isArray(req.body.userAiConfig.keyPool) && req.body.userAiConfig.keyPool.length > 0))
   ) {
     return req.body.userAiConfig;
+  }
+  const userId = (req.headers['x-user-id'] as string) || req.body?.userId || req.query?.userId;
+  if (userId) {
+    const vaultConfig = byokVault.getUserDecryptedConfig(userId);
+    if (vaultConfig) return vaultConfig;
   }
   const headerKey = req.headers['x-ai-key'] as string;
   const headerProvider = req.headers['x-ai-provider'] as any;
@@ -67,6 +76,8 @@ import {
   testNeonConnection,
   getNeonSql,
   initializeNeonSchema,
+  queryNeon,
+  sanitizeDbError,
 } from './db/neonClient.js';
 import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeBank.js';
 import { aiKnowledgeCache, calculateJaccardSimilarity, CachedAIResponse } from './ai/aiKnowledgeCache.js';
@@ -401,6 +412,455 @@ class MemoryStore {
     }
   }
 
+  isHydrated: boolean = false;
+  lastHydratedAt: number = 0;
+
+  /**
+   * Authoritative hydration from Neon PostgreSQL database
+   */
+  async hydrateFromNeon(): Promise<boolean> {
+    if (!isNeonConfigured()) return false;
+    try {
+      const sql = getNeonSql();
+      if (!sql) return false;
+
+      // 1. Workspaces
+      const wsRows = await (sql as any).query(`SELECT * FROM class_workspaces`);
+      for (const r of wsRows) {
+        const cls: ClassWorkspace = {
+          id: r.id,
+          code: r.code,
+          name: r.name,
+          university: r.university,
+          semester: Number(r.semester) || 1,
+          academicYear: r.academic_year || '2026-2027',
+          memberCount: Number(r.member_count) || 1,
+          adminId: r.admin_id || 'user-admin',
+          verifiedByCR: Boolean(r.verified_by_cr),
+          crName: r.cr_name || 'Class Representative (CR)',
+          crRollNo: r.cr_roll_no || 'CR-VERIFIED',
+        };
+        this.classes[r.id] = cls;
+        this.classes[r.code] = cls;
+        this.classes[r.code.toUpperCase()] = cls;
+      }
+
+      // 2. Subjects
+      const subRows = await (sql as any).query(`SELECT * FROM subjects ORDER BY code ASC`);
+      for (const r of subRows) {
+        const sub: Subject = {
+          id: r.id,
+          classId: r.class_id,
+          name: r.name,
+          code: r.code,
+          teacherName: r.teacher_name,
+          credits: Number(r.credits) || 4,
+          color: r.color || 'from-blue-500 to-indigo-600',
+          iconName: r.icon_name || 'BookOpen',
+          totalUnits: Number(r.total_units) || 4,
+          completedTopicsCount: Number(r.completed_topics_count) || 0,
+          totalTopicsCount: Number(r.total_topics_count) || 0,
+        };
+        if (!this.subjects[r.class_id]) this.subjects[r.class_id] = [];
+        const exIdx = this.subjects[r.class_id].findIndex((s) => s.id === sub.id);
+        if (exIdx >= 0) this.subjects[r.class_id][exIdx] = sub;
+        else this.subjects[r.class_id].push(sub);
+      }
+
+      // 3. Units & Topics
+      const unitRows = await (sql as any).query(`SELECT * FROM units ORDER BY number ASC`);
+      const topicRows = await (sql as any).query(`SELECT * FROM topics ORDER BY order_index ASC`);
+      const topicsByUnit: Record<string, Topic[]> = {};
+      for (const tr of topicRows) {
+        if (!topicsByUnit[tr.unit_id]) topicsByUnit[tr.unit_id] = [];
+        topicsByUnit[tr.unit_id].push({
+          id: tr.id,
+          unitId: tr.unit_id,
+          title: tr.title,
+          order: Number(tr.order_index) || 1,
+          difficulty: tr.difficulty || 'Medium',
+          examWeightage: tr.exam_weightage || 'Medium',
+          estimatedMinutes: Number(tr.estimated_minutes) || 5,
+          status: tr.status || 'not_started',
+        });
+      }
+
+      for (const ur of unitRows) {
+        const u: Unit = {
+          id: ur.id,
+          number: Number(ur.number) || 1,
+          title: ur.title,
+          topics: topicsByUnit[ur.id] || [],
+        };
+        if (!this.units[ur.subject_id]) this.units[ur.subject_id] = [];
+        const exIdx = this.units[ur.subject_id].findIndex((x) => x.id === u.id);
+        if (exIdx >= 0) this.units[ur.subject_id][exIdx] = u;
+        else this.units[ur.subject_id].push(u);
+      }
+
+      // 4. Timetable
+      const ttRows = await (sql as any).query(`SELECT * FROM timetable_classes ORDER BY day, time`);
+      for (const tr of ttRows) {
+        const slot = {
+          id: tr.id,
+          day: tr.day,
+          time: tr.time,
+          subjectId: tr.subject_id,
+          subjectName: tr.subject_name,
+          subjectCode: tr.subject_code,
+          room: tr.room,
+          teacherName: tr.teacher_name,
+          likelyTopicTitle: tr.likely_topic_title,
+          likelyTopicConfidence: tr.likely_topic_confidence,
+          likelyTopicReasoning: tr.likely_topic_reasoning,
+        };
+        if (!this.timetable[tr.class_id]) this.timetable[tr.class_id] = [];
+        const exIdx = this.timetable[tr.class_id].findIndex((s) => s.id === slot.id);
+        if (exIdx >= 0) this.timetable[tr.class_id][exIdx] = slot;
+        else this.timetable[tr.class_id].push(slot);
+      }
+
+      // 5. Academic Materials
+      const matRows = await (sql as any).query(`SELECT * FROM academic_materials ORDER BY created_at DESC`);
+      for (const mr of matRows) {
+        const extra = mr.extra_metadata || {};
+        const mat: AcademicMaterial = {
+          id: mr.id,
+          classId: mr.class_id,
+          subjectId: mr.subject_id,
+          subjectName: mr.subject_name,
+          topicId: mr.topic_id || undefined,
+          topicTitle: mr.topic_title || undefined,
+          title: mr.title,
+          fileName: mr.file_name,
+          fileType: mr.file_type || 'pdf',
+          fileSize: mr.file_size || '1.0 MB',
+          uploaderName: mr.uploader_name || 'Faculty',
+          uploaderRole: mr.uploader_role || 'teacher',
+          verificationStatus: mr.verification_status || 'teacher_verified',
+          createdAt: mr.created_at ? new Date(mr.created_at).toISOString() : new Date().toISOString(),
+          resources: typeof mr.resources_json === 'string' ? JSON.parse(mr.resources_json) : (mr.resources_json || {}),
+          downloadUrl: mr.download_url || undefined,
+          ragDocId: mr.rag_doc_id || undefined,
+          chunkCount: Number(mr.chunk_count) || 0,
+          folderPath: extra.folderPath || undefined,
+          detectedCategory: extra.detectedCategory || undefined,
+          unitNumber: extra.unitNumber || undefined,
+          unitTitle: extra.unitTitle || undefined,
+          githubUrl: extra.githubUrl || undefined,
+          source: extra.source || undefined,
+        };
+        if (!this.materials[mr.class_id]) this.materials[mr.class_id] = [];
+        const exIdx = this.materials[mr.class_id].findIndex((m) => m.id === mat.id);
+        if (exIdx >= 0) this.materials[mr.class_id][exIdx] = mat;
+        else this.materials[mr.class_id].push(mat);
+      }
+
+      // 6. PYQs
+      const pyqRows = await (sql as any).query(`SELECT * FROM historical_pyqs ORDER BY year DESC, marks DESC`);
+      for (const pr of pyqRows) {
+        const pyq: HistoricalPYQ = {
+          id: pr.id,
+          subjectId: pr.subject_id,
+          subjectName: pr.subject_name,
+          unitNumber: Number(pr.unit_number) || 1,
+          topicTitle: pr.topic_title,
+          year: Number(pr.year) || 2024,
+          marks: Number(pr.marks) || 10,
+          question: pr.question,
+          modelAnswer: pr.model_answer,
+          source: pr.source,
+          difficulty: pr.difficulty || 'Medium',
+          isVerifiedHistorical: Boolean(pr.is_verified_historical),
+          frequencyCount: Number(pr.frequency_count) || 1,
+        };
+        if (!this.pyqs[pr.subject_id]) this.pyqs[pr.subject_id] = [];
+        const exIdx = this.pyqs[pr.subject_id].findIndex((p) => p.id === pyq.id);
+        if (exIdx >= 0) this.pyqs[pr.subject_id][exIdx] = pyq;
+        else this.pyqs[pr.subject_id].push(pyq);
+      }
+
+      // 7. Exams
+      const examRows = await (sql as any).query(`SELECT * FROM exam_datesheets ORDER BY date ASC`);
+      for (const er of examRows) {
+        const exam: ExamDateSheetItem = {
+          id: er.id,
+          classId: er.class_id,
+          subjectId: er.subject_id,
+          subjectName: er.subject_name,
+          date: er.date ? (typeof er.date === 'string' ? er.date.split('T')[0] : new Date(er.date).toISOString().split('T')[0]) : '2026-12-01',
+          time: er.time,
+          examType: er.exam_type || 'End-Term',
+          priority: er.priority || 'High Priority',
+          revisionDaysPlan: typeof er.revision_days_plan === 'string' ? JSON.parse(er.revision_days_plan) : (er.revision_days_plan || []),
+        };
+        if (!this.exams[er.class_id]) this.exams[er.class_id] = [];
+        const exIdx = this.exams[er.class_id].findIndex((e) => e.id === exam.id);
+        if (exIdx >= 0) this.exams[er.class_id][exIdx] = exam;
+        else this.exams[er.class_id].push(exam);
+      }
+
+      // 8. Announcements
+      const annRows = await (sql as any).query(`SELECT * FROM class_announcements ORDER BY created_at DESC`);
+      for (const ar of annRows) {
+        const ann: ClassAnnouncement = {
+          id: ar.id,
+          classId: ar.class_id,
+          authorName: ar.author_name,
+          authorRole: (ar.author_role === 'Faculty' || ar.author_role === 'teacher') ? 'teacher' : 'cr',
+          title: ar.title,
+          content: ar.content,
+          createdAt: ar.timestamp_text || (ar.created_at ? new Date(ar.created_at).toISOString() : new Date().toISOString()),
+          badge: ar.priority === 'urgent' ? 'Teacher Notice' : 'CR Update',
+        };
+        const exIdx = this.announcements.findIndex((a) => a.id === ann.id);
+        if (exIdx >= 0) this.announcements[exIdx] = ann;
+        else this.announcements.push(ann);
+      }
+
+      // 9. Assignments
+      const assignRows = await (sql as any).query(`SELECT * FROM academic_assignments ORDER BY due_date ASC`);
+      for (const asr of assignRows) {
+        const assign: AcademicAssignment = {
+          id: asr.id,
+          classId: asr.class_id,
+          subjectId: asr.subject_id,
+          subjectName: asr.subject_name,
+          title: asr.title,
+          type: asr.type || 'assignment',
+          dueDate: asr.due_date,
+          instructions: asr.instructions || '',
+          integrityMode: asr.integrity_mode || 'teach_me',
+          assignedBy: asr.assigned_by || 'Faculty',
+          presenterName: asr.presenter_name || undefined,
+          rollNumber: asr.roll_number || undefined,
+          completed: Boolean(asr.completed),
+          outlineSteps: typeof asr.outline_steps === 'string' ? JSON.parse(asr.outline_steps) : (asr.outline_steps || []),
+          keyReferences: typeof asr.key_references === 'string' ? JSON.parse(asr.key_references) : (asr.key_references || []),
+        };
+        const exIdx = this.assignments.findIndex((a) => a.id === assign.id);
+        if (exIdx >= 0) this.assignments[exIdx] = assign;
+        else this.assignments.push(assign);
+      }
+
+      this.isHydrated = true;
+      this.lastHydratedAt = Date.now();
+      this.saveToDisk();
+      console.log(`[Classroom Store] ☁️ Hydrated from Neon: ${Object.keys(this.classes).length} workspaces, ${subRows.length} subjects, ${assignRows.length} assignments, ${matRows.length} materials`);
+      return true;
+    } catch (err: any) {
+      console.warn('[Classroom Store] Neon hydration notice:', sanitizeDbError(err).message);
+      return false;
+    }
+  }
+
+  async ensureFreshData(): Promise<void> {
+    if (!this.isHydrated || (Date.now() - this.lastHydratedAt > 20000)) {
+      await this.hydrateFromNeon();
+    }
+  }
+
+  async ensureClassWorkspace(classId: string, code = 'M2029'): Promise<void> {
+    if (!isNeonConfigured() || !classId) return;
+    try {
+      const sql = getNeonSql();
+      if (sql) {
+        await (sql as any).query(`
+          INSERT INTO class_workspaces (
+            id, code, name, university, semester, academic_year, member_count, admin_id, verified_by_cr, cr_name, cr_roll_no
+          ) VALUES (
+            $1, $2, $3, 'State University', 1, '2026-2027', 1, 'user-admin', true, 'Class Representative (CR)', 'CR-VERIFIED'
+          ) ON CONFLICT (id) DO NOTHING;
+        `, [classId, code, `${code} Workspace`]);
+      }
+    } catch (err: any) {
+      console.warn('[Classroom Store] Workspace ensure notice:', sanitizeDbError(err).message);
+    }
+  }
+
+  async addMaterial(material: AcademicMaterial): Promise<AcademicMaterial> {
+    const classId = material.classId || 'class-m2029';
+    await this.ensureClassWorkspace(classId);
+    if (!this.materials[classId]) this.materials[classId] = [];
+    this.materials[classId].unshift(material);
+    this.saveToDisk();
+
+    if (isNeonConfigured()) {
+      try {
+        const sql = getNeonSql();
+        if (sql) {
+          await sql`
+            INSERT INTO academic_materials (
+              id, class_id, subject_id, subject_name, topic_id, topic_title, title,
+              file_name, file_type, file_size, uploader_name, uploader_role,
+              verification_status, resources_json, download_url, rag_doc_id, chunk_count, extra_metadata
+            ) VALUES (
+              ${material.id}, ${classId}, ${material.subjectId || 'sub-dbms'},
+              ${material.subjectName || 'Database Management Systems'}, ${material.topicId || null},
+              ${material.topicTitle || null}, ${material.title}, ${material.fileName},
+              ${material.fileType || 'pdf'}, ${material.fileSize || '1.0 MB'},
+              ${material.uploaderName || 'Student'}, ${material.uploaderRole || 'student'},
+              ${material.verificationStatus || 'teacher_verified'},
+              ${JSON.stringify(material.resources || {})}::jsonb,
+              ${material.downloadUrl || null}, ${material.ragDocId || null},
+              ${material.chunkCount || 0},
+              ${JSON.stringify({
+                folderPath: material.folderPath,
+                detectedCategory: material.detectedCategory,
+                unitNumber: material.unitNumber,
+                unitTitle: material.unitTitle,
+                githubUrl: material.githubUrl,
+                source: material.source,
+              })}::jsonb
+            ) ON CONFLICT (id) DO UPDATE SET
+              title = EXCLUDED.title,
+              verification_status = EXCLUDED.verification_status,
+              resources_json = EXCLUDED.resources_json,
+              download_url = EXCLUDED.download_url;
+          `;
+        }
+      } catch (err: any) {
+        console.error('[Classroom Store] Failed to persist material to Neon:', sanitizeDbError(err).message);
+        throw sanitizeDbError(err);
+      }
+    }
+    return material;
+  }
+
+  async addAssignment(assignment: AcademicAssignment): Promise<AcademicAssignment> {
+    const classId = assignment.classId || 'class-m2029';
+    await this.ensureClassWorkspace(classId);
+    const exIdx = this.assignments.findIndex((a) => a.id === assignment.id);
+    if (exIdx >= 0) this.assignments[exIdx] = assignment;
+    else this.assignments.unshift(assignment);
+    this.saveToDisk();
+
+    if (isNeonConfigured()) {
+      try {
+        const sql = getNeonSql();
+        if (sql) {
+          await sql`
+            INSERT INTO academic_assignments (
+              id, class_id, subject_id, subject_name, title, type, due_date, instructions,
+              integrity_mode, assigned_by, presenter_name, roll_number, completed,
+              outline_steps, key_references
+            ) VALUES (
+              ${assignment.id}, ${classId}, ${assignment.subjectId}, ${assignment.subjectName},
+              ${assignment.title}, ${assignment.type || 'assignment'}, ${assignment.dueDate},
+              ${assignment.instructions || ''}, ${assignment.integrityMode || 'teach_me'},
+              ${assignment.assignedBy || 'Faculty'}, ${assignment.presenterName || null},
+              ${assignment.rollNumber || null}, ${assignment.completed || false},
+              ${JSON.stringify(assignment.outlineSteps || [])}::jsonb,
+              ${JSON.stringify(assignment.keyReferences || [])}::jsonb
+            ) ON CONFLICT (id) DO UPDATE SET
+              title = EXCLUDED.title,
+              due_date = EXCLUDED.due_date,
+              instructions = EXCLUDED.instructions,
+              completed = EXCLUDED.completed,
+              outline_steps = EXCLUDED.outline_steps,
+              key_references = EXCLUDED.key_references;
+          `;
+        }
+      } catch (err: any) {
+        console.error('[Classroom Store] Failed to persist assignment to Neon:', sanitizeDbError(err).message);
+        throw sanitizeDbError(err);
+      }
+    }
+    return assignment;
+  }
+
+  async deleteAssignment(id: string): Promise<boolean> {
+    this.assignments = this.assignments.filter((a) => a.id !== id);
+    this.saveToDisk();
+
+    if (isNeonConfigured()) {
+      try {
+        const sql = getNeonSql();
+        if (sql) {
+          await sql`DELETE FROM academic_assignments WHERE id = ${id}`;
+        }
+      } catch (err: any) {
+        console.error('[Classroom Store] Failed to delete assignment from Neon:', sanitizeDbError(err).message);
+        throw sanitizeDbError(err);
+      }
+    }
+    return true;
+  }
+
+  async updateExamPlan(classId: string, examId: string, dayNumber: number, completed: boolean): Promise<any> {
+    const examList = this.exams[classId] || this.exams['class-m2029'] || [];
+    const exam = examList.find((e) => e.id === examId);
+    if (exam && exam.revisionDaysPlan) {
+      const day = exam.revisionDaysPlan.find((d) => d.dayNumber === dayNumber);
+      if (day) day.completed = completed;
+      this.saveToDisk();
+
+      if (isNeonConfigured()) {
+        try {
+          const sql = getNeonSql();
+          if (sql) {
+            await sql`
+              UPDATE exam_datesheets
+              SET revision_days_plan = ${JSON.stringify(exam.revisionDaysPlan)}::jsonb
+              WHERE id = ${examId}
+            `;
+          }
+        } catch (err: any) {
+          console.error('[Classroom Store] Failed to update exam plan in Neon:', sanitizeDbError(err).message);
+        }
+      }
+      return exam;
+    }
+    return null;
+  }
+
+  async addAnnouncement(ann: ClassAnnouncement): Promise<ClassAnnouncement> {
+    this.announcements.unshift(ann);
+    this.saveToDisk();
+
+    if (isNeonConfigured()) {
+      try {
+        const sql = getNeonSql();
+        if (sql) {
+          await sql`
+            INSERT INTO class_announcements (
+              id, class_id, author_name, author_role, title, content, timestamp_text, priority
+            ) VALUES (
+              ${ann.id}, ${ann.classId || 'class-m2029'}, ${ann.authorName},
+              ${ann.authorRole || 'Class Representative'}, ${ann.title},
+              ${ann.content}, ${ann.createdAt || new Date().toISOString()},
+              ${ann.badge === 'Teacher Notice' ? 'urgent' : 'normal'}
+            ) ON CONFLICT (id) DO NOTHING;
+          `;
+        }
+      } catch (err: any) {
+        console.error('[Classroom Store] Failed to persist announcement to Neon:', sanitizeDbError(err).message);
+      }
+    }
+    return ann;
+  }
+
+  async addDoubt(classCode: string, topicId: string, studentName: string, question: string, answer: string): Promise<any> {
+    const id = `doubt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    if (isNeonConfigured()) {
+      try {
+        const sql = getNeonSql();
+        if (sql) {
+          await sql`
+            INSERT INTO classroom_doubts (
+              id, class_code, topic_id, student_name, question, answer, upvotes
+            ) VALUES (
+              ${id}, ${classCode}, ${topicId}, ${studentName}, ${question}, ${answer}, 1
+            );
+          `;
+        }
+      } catch (err: any) {
+        console.warn('[Classroom Store] Failed to persist doubt to Neon:', sanitizeDbError(err).message);
+      }
+    }
+    return { id, classCode, topicId, studentName, question, answer, upvotes: 1 };
+  }
+
   clearAll() {
     this.classes = { 'class-m2029': { ...SEED_CLASS } };
     this.subjects = { 'class-m2029': [...SEED_SUBJECTS] };
@@ -434,6 +894,15 @@ class MemoryStore {
   }
 }
 
+export function verifyAdminAuth(req: Request): boolean {
+  const adminKey =
+    (req.headers['x-admin-key'] as string) ||
+    req.headers['authorization']?.replace(/^Bearer\s+/i, '');
+  const expectedKey = process.env.ADMIN_API_KEY;
+  if (!expectedKey) return false;
+  return Boolean(adminKey && adminKey === expectedKey);
+}
+
 export const db = new MemoryStore();
 registerDbProvider(() => db);
 setDbReference(db);
@@ -448,11 +917,22 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
     service: 'SyllabusOS Curriculum & Classroom API',
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
+    database: {
+      configured: isNeonConfigured(),
+      hydrated: db.isHydrated,
+      lastHydratedAt: db.lastHydratedAt ? new Date(db.lastHydratedAt).toISOString() : null,
+    },
   });
 });
 
-// Complete Cache & Knowledge Reset Endpoint
-apiRouter.all('/cache/reset-all', (_req: Request, res: Response) => {
+// Complete Cache & Knowledge Reset Endpoint (Admin Protected)
+apiRouter.all('/cache/reset-all', (req: Request, res: Response) => {
+  if (!verifyAdminAuth(req)) {
+    return res.status(403).json({
+      error: 'Forbidden: Administrative reset requires a valid X-Admin-Key header.',
+      code: 'ADMIN_AUTH_REQUIRED',
+    });
+  }
   try {
     aiKnowledgeCache.clearAll();
     db.clearAll();
@@ -467,7 +947,13 @@ apiRouter.all('/cache/reset-all', (_req: Request, res: Response) => {
   }
 });
 
-apiRouter.all('/ai/cache/reset-all', (_req: Request, res: Response) => {
+apiRouter.all('/ai/cache/reset-all', (req: Request, res: Response) => {
+  if (!verifyAdminAuth(req)) {
+    return res.status(403).json({
+      error: 'Forbidden: Administrative reset requires a valid X-Admin-Key header.',
+      code: 'ADMIN_AUTH_REQUIRED',
+    });
+  }
   try {
     aiKnowledgeCache.clearAll();
     db.clearAll();
@@ -502,6 +988,12 @@ apiRouter.get('/neon/status', async (_req: Request, res: Response) => {
 
 // 0.3 Neon PostgreSQL Schema Initialization & Seed Trigger
 apiRouter.post('/neon/init', async (req: Request, res: Response) => {
+  if (process.env.NODE_ENV === 'production' && !verifyAdminAuth(req)) {
+    return res.status(403).json({
+      error: 'Forbidden: Neon schema initialization requires administrative authorization in production.',
+      code: 'ADMIN_AUTH_REQUIRED',
+    });
+  }
   try {
     const seed = req.body.seed !== false;
     const result = await initializeNeonSchema(seed);
@@ -518,7 +1010,8 @@ apiRouter.post('/neon/init', async (req: Request, res: Response) => {
 });
 
 // 1. Get Class Workspace & Overview
-apiRouter.get('/class/:code', (req: Request, res: Response) => {
+apiRouter.get('/class/:code', async (req: Request, res: Response) => {
+  await db.ensureFreshData();
   const code = (req.params.code || 'M2029').toUpperCase().trim();
   let cls = db.classes[code] || db.classes['M2029'];
   if (!cls) {
@@ -1132,18 +1625,34 @@ Return ONLY the improved full answer text, no preamble.`;
 }
 
 // 6.0 AI Knowledge Cache Statistics & Inspection Endpoint
-apiRouter.get('/ai/cache/stats', (_req: Request, res: Response) => {
-  res.json(aiKnowledgeCache.getStats());
+apiRouter.get('/ai/cache/stats', (req: Request, res: Response) => {
+  const classCode = (req.query.classCode as string) || 'M2029';
+  const legacyStats = aiKnowledgeCache.getStats();
+  const libraryAnalytics = sharedKnowledgeLibrary.getLibraryAnalytics(classCode);
+
+  res.json({
+    ...legacyStats,
+    totalLearnedItems: Math.max(legacyStats.totalLearnedItems, libraryAnalytics.totalQuestions),
+    totalHits: legacyStats.totalHits + libraryAnalytics.totalClassHits,
+    estimatedTokensSaved: legacyStats.estimatedTokensSaved + libraryAnalytics.totalTokensSaved,
+    avoidedLlmCalls: libraryAnalytics.avoidedLlmCalls,
+    verifiedCount: libraryAnalytics.verifiedCount,
+    correctionCount: libraryAnalytics.correctionCount,
+    libraryAnalytics,
+  });
 });
 
 // 6.01 Student Answer Voting Endpoint (👍 / 👎)
-apiRouter.post('/ai-tutor/vote', (req: Request, res: Response) => {
+apiRouter.post('/ai-tutor/vote', async (req: Request, res: Response) => {
   const { cacheKey, subjectName, mode, vote, reason } = req.body;
   if (!cacheKey || !vote || (vote !== 'up' && vote !== 'down')) {
     return res.status(400).json({ error: 'Valid cacheKey and vote ("up" | "down") are required.' });
   }
 
-  const result = aiKnowledgeCache.vote(cacheKey, subjectName, mode || 'all', vote, reason);
+  // Update shared knowledge library vote
+  sharedKnowledgeLibrary.voteAnswer(cacheKey, vote, 'Student', reason);
+
+  const result = await aiKnowledgeCache.voteAsync(cacheKey, subjectName, mode || 'all', vote, reason);
   if (!result.entry) {
     return res.status(404).json({ error: 'Topic not found in cache to vote on.' });
   }
@@ -1159,6 +1668,70 @@ apiRouter.post('/ai-tutor/vote', (req: Request, res: Response) => {
     negativeVotes: result.entry.negativeVotes || 0,
     perfectionScore: result.entry.perfectionScore,
   });
+});
+
+// 6.015 Collaborative Answer Correction Endpoint
+apiRouter.post('/ai-tutor/correct', (req: Request, res: Response) => {
+  const { answerId, studentLabel, sectionTargeted, proposedContent, reason, supportingEvidence } = req.body;
+  if (!answerId || !proposedContent || !proposedContent.trim()) {
+    return res.status(400).json({ error: 'answerId and non-empty proposedContent are required.' });
+  }
+
+  const result = sharedKnowledgeLibrary.proposeCorrection({
+    answerId,
+    studentLabel: studentLabel || 'Class Contributor',
+    sectionTargeted: sectionTargeted || 'all',
+    proposedContent,
+    reason: reason || 'Peer academic refinement',
+    supportingEvidence,
+  });
+
+  if (!result.success) {
+    return res.status(404).json({ error: result.error || 'Failed to submit correction.' });
+  }
+
+  res.json({
+    status: 'success',
+    message: 'Correction verified and merged into classroom master answer!',
+    answer: result.answer,
+    correction: result.correction,
+  });
+});
+
+// 6.016 BYOK Key Management Endpoints
+apiRouter.get('/byok/keys', (req: Request, res: Response) => {
+  const userId = (req.headers['x-user-id'] as string) || (req.query.userId as string) || 'student-self';
+  const keys = byokVault.getUserSafeKeys(userId);
+  res.json({ keys });
+});
+
+apiRouter.post('/byok/keys', async (req: Request, res: Response) => {
+  const { userId = 'student-self', apiKey, provider, modelName, baseUrl, label, classId = 'M2029' } = req.body;
+  if (!apiKey || !apiKey.trim()) {
+    return res.status(400).json({ error: 'Valid apiKey is required.' });
+  }
+
+  try {
+    const saved = await byokVault.storeUserKey({
+      userId,
+      apiKey,
+      provider: provider || 'auto',
+      modelName: modelName || 'gemini-3.5-flash',
+      baseUrl,
+      label,
+      classId,
+      isValidated: true,
+    });
+    res.json({ status: 'success', key: saved });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Failed to securely store key.' });
+  }
+});
+
+apiRouter.delete('/byok/keys', (req: Request, res: Response) => {
+  const { userId = 'student-self', provider, label } = req.body;
+  const removed = byokVault.removeUserKey(userId, provider, label);
+  res.json({ status: 'success', removed });
 });
 
 // 6.02 Teacher / CR Curator Endpoint
@@ -1297,11 +1870,63 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
         (Array.isArray(userAiConfig.keyPool) && userAiConfig.keyPool.length > 0))
   );
 
-  // 1. FAST ZERO-TOKEN COHORT-PERFECTED CACHE LOOKUP
-  // Cache is ALWAYS checked first — even for personal-key students.
+  // 1. FAST ZERO-TOKEN SHARED CLASSROOM LIBRARY & COHORT CACHE LOOKUP
+  // Shared library is ALWAYS checked first — even for personal-key students.
   // Students with premium keys still get instant cache hits (0 tokens, 0 rate limits).
-  // Only a cache MISS triggers their personal AI, which then contributes back to the class.
+  // Only a library MISS triggers their personal AI, which then contributes back to the class.
   if (!forceLive) {
+    const libMatch = sharedKnowledgeLibrary.findMatchingAnswer(lookupKey, {
+      classId: classCode,
+      subjectName,
+      topic: topicName,
+      formatPreference: tutorMode === 'all' ? undefined : (tutorMode as any),
+    });
+
+    if (libMatch.found && libMatch.answer) {
+      const stored = libMatch.answer;
+      const sections = stored.sections || parseTutorSections(stored.answer);
+      return res.json({
+        answer: libMatch.adaptedContent || stored.answer,
+        text: libMatch.adaptedContent || stored.answer,
+        sections,
+        modeUsed: tutorMode,
+        modelUsed: `${stored.modelUsed} • Shared Library v${stored.version} (${stored.qualityStatus})`,
+        cached: true,
+        tokensSaved: stored.tokensSaved || 1500,
+        hitCount: stored.hitCount,
+        positiveVotes: stored.positiveVotes || 0,
+        negativeVotes: stored.negativeVotes || 0,
+        isTeacherCurated: stored.qualityStatus === 'VERIFIED',
+        contributingModels: [stored.modelUsed],
+        iterationCount: 60,
+        targetCohortSize: 60,
+        isCohortPerfected: true,
+        perfectionScore: 99,
+        perfectionTier: `Master Gold Standard (Shared Library v${stored.version})`,
+        evolutionHistory: [],
+        reasoningSteps: [
+          {
+            step: '1. Shared Classroom Knowledge Library',
+            detail: `Instant zero-token hit: Matched existing classroom question with ${(libMatch.matchResult?.confidence || 1) * 100}% confidence.`,
+            timestamp: new Date().toLocaleTimeString(),
+          },
+          {
+            step: '2. Multi-Format Adaptive Presentation',
+            detail: `Served presentation variant (${tutorMode}) from stored verified sections.`,
+            timestamp: new Date().toLocaleTimeString(),
+          },
+          {
+            step: '3. Collective Classroom Intelligence',
+            detail: `Answer contributed by ${stored.contributorStudentLabel || 'Class Contributor'} • Version ${stored.version} • Reused across cohort.`,
+            timestamp: new Date().toLocaleTimeString(),
+          },
+        ],
+        sourcesUsed: stored.sourcesUsed && stored.sourcesUsed.length > 0 ? stored.sourcesUsed : [
+          { title: `${subjectName || 'Class'} Shared Classroom Library`, type: 'Classroom Collective Intelligence' },
+        ],
+      });
+    }
+
     const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
     const isPoisoned = Boolean(
       cached &&
@@ -1371,6 +1996,21 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       forceLive: Boolean(forceLive),
       userAiConfig,
     });
+
+    // Save into Shared Classroom Knowledge Library for cohort reuse
+    sharedKnowledgeLibrary.storeAnswer({
+      classId: classCode,
+      course: 'B.Tech / BCA Computer Science',
+      subjectName: subjectName || 'Computer Science',
+      topic: lookupKey,
+      question: question || lookupKey,
+      answer: agentResult.answer,
+      sections: agentResult.sections,
+      sourcesUsed: agentResult.sourcesUsed,
+      modelUsed: agentResult.modelUsed || 'Academic Engine',
+      contributorStudentLabel: hasPersonalKey ? 'Student (BYOK Contributor)' : 'Student 1',
+      qualityStatus: 'GENERATED',
+    }).catch(() => {});
 
     res.json({
       answer: agentResult.answer,
@@ -1818,7 +2458,42 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
 
     // If student asked a custom doubt
     if (action === 'custom_question' && customQuery) {
+      const resolvedQuery = followUpEngine.resolveContextualQuery(customQuery, {
+        parentTopicTitle: targetTopic.title,
+        classId: classCode,
+      });
+
       if (!forceLive) {
+        // Check Shared Classroom Knowledge Library first (semantic & intent matching)
+        const libMatch = sharedKnowledgeLibrary.findMatchingAnswer(resolvedQuery, {
+          classId: classCode,
+          subjectName: track.name,
+          topic: targetTopic.title,
+        });
+
+        if (libMatch.found && libMatch.answer) {
+          const stored = libMatch.answer;
+          return res.json({
+            evaluation: null,
+            trackId: track.id,
+            trackName: track.name,
+            topicIndex: targetIndex,
+            totalTopics,
+            isCompleted: false,
+            cached: true,
+            modelUsed: `${stored.modelUsed} • Shared Library v${stored.version} (${stored.qualityStatus})`,
+            tokensSaved: stored.tokensSaved || 1200,
+            topic: {
+              ...targetTopic,
+              id: `doubt-${Date.now()}`,
+              title: isConversationalQuery(customQuery) ? 'Tutor Capabilities & Welcome' : `Doubt Resolved: ${customQuery.slice(0, 45)}`,
+              content: `${libMatch.adaptedContent || stored.answer}\n\n*(⚡ Shared Classroom Intelligence • Version ${stored.version} • 0 Tokens Spent)*`,
+              quickCheck: undefined,
+              gantt: undefined,
+            },
+          });
+        }
+
         const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
         const isPoisoned = Boolean(
           cachedDoubt &&
@@ -1919,6 +2594,21 @@ Provide an authoritative, high-scoring university explanation with:
         ai.name,
         hasPersonalKey ? [ai.name] : undefined
       );
+
+      // Contribute to Shared Classroom Knowledge Library for cohort reuse
+      if (responseText && responseText.length > 50 && !isConversational) {
+        sharedKnowledgeLibrary.storeAnswer({
+          classId: classCode,
+          course: courseInfo.degree,
+          subjectName: track.name,
+          topic: targetTopic.title,
+          question: customQuery,
+          answer: responseText,
+          modelUsed: ai.name,
+          contributorStudentLabel: hasPersonalKey ? 'Student (BYOK Contributor)' : 'Student 1',
+          qualityStatus: 'GENERATED',
+        }).catch(() => {});
+      }
 
       return res.json({
         evaluation: null,
@@ -2153,8 +2843,7 @@ Provide a clean, high-yield 3-sentence summary of the core concepts for universi
     },
   };
 
-  db.materials[targetClassId].unshift(newMaterial);
-  db.saveToDisk();
+  await db.addMaterial(newMaterial);
 
   res.json({
     status: 'success',
@@ -2923,7 +3612,8 @@ apiRouter.get('/materials/:classId', (req: Request, res: Response) => {
 });
 
 // 8.5 Unified Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)
-apiRouter.get('/sync/classroom/:classCode', (req: Request, res: Response) => {
+apiRouter.get('/sync/classroom/:classCode', async (req: Request, res: Response) => {
+  await db.ensureFreshData();
   const code = (req.params.classCode || 'M2029').toUpperCase();
   const foundClass = db.classes[code] || Object.values(db.classes).find((c) => c.code?.toUpperCase() === code);
   const classId = foundClass?.id || 'class-m2029';
@@ -3024,16 +3714,15 @@ apiRouter.get('/exams/:classId', (req: Request, res: Response) => {
 });
 
 // 11. Toggle Revision Plan Item
-apiRouter.post('/exams/toggle-plan', (req: Request, res: Response) => {
-  const { examId, dayNumber } = req.body;
-  const exams = db.exams['class-m2029'] || [];
+apiRouter.post('/exams/toggle-plan', async (req: Request, res: Response) => {
+  const { examId, dayNumber, classId = 'class-m2029' } = req.body;
+  const exams = db.exams[classId] || db.exams['class-m2029'] || [];
   const found = exams.find((e) => e.id === examId);
   if (found) {
     const day = found.revisionDaysPlan.find((d) => d.dayNumber === dayNumber);
     if (day) {
-      day.completed = !day.completed;
-      db.saveToDisk();
-      return res.json({ status: 'ok', exam: found });
+      const updated = await db.updateExamPlan(classId, examId, dayNumber, !day.completed);
+      return res.json({ status: 'ok', exam: updated || found });
     }
   }
   res.status(404).json({ error: 'Plan item not found' });
@@ -3049,7 +3738,7 @@ apiRouter.get('/assignments/:classId', (_req: Request, res: Response) => {
 });
 
 // 12b. Add single assignment with due date
-apiRouter.post('/assignments/add', (req: Request, res: Response) => {
+apiRouter.post('/assignments/add', async (req: Request, res: Response) => {
   const { title, subjectId, subjectName, dueDate, instructions, type, assignedBy, outlineSteps } =
     req.body;
   if (!title || !dueDate) {
@@ -3078,8 +3767,7 @@ apiRouter.post('/assignments/add', (req: Request, res: Response) => {
     keyReferences: ['Prescribed University Semester Textbook'],
   };
 
-  db.assignments.unshift(newAssignment);
-  db.saveToDisk();
+  await db.addAssignment(newAssignment);
 
   // Publish classwide notification
   db.notifications.unshift({
@@ -3175,14 +3863,10 @@ apiRouter.patch('/assignments/:id/toggle-done', (req: Request, res: Response) =>
 });
 
 // 12d2. Delete assignment
-apiRouter.delete('/assignments/:id', (req: Request, res: Response) => {
+apiRouter.delete('/assignments/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  const initialLength = db.assignments.length;
-  db.assignments = db.assignments.filter((a: AcademicAssignment) => a.id !== id);
-  if (db.assignments.length !== initialLength) {
-    db.saveToDisk();
-    executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
-  }
+  await db.deleteAssignment(id);
+  executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
   res.json({ success: true, count: db.assignments.length });
 });
 

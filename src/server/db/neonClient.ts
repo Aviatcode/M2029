@@ -40,11 +40,43 @@ export const isNeonConfigured = (): boolean => {
   return Boolean(rawDbUrl && !isPlaceholder(rawDbUrl));
 };
 
+let cachedSqlInstance: any = null;
+
+export function sanitizeDbError(err: any): Error {
+  const msg = String(err?.message || err);
+  const sanitized = msg.replace(/postgres(?:ql)?:\/\/[^@]+@/gi, 'postgresql://***:***@');
+  const errorObj = new Error(sanitized);
+  (errorObj as any).code = err?.code;
+  return errorObj;
+}
+
 export function getNeonSql() {
   if (!isNeonConfigured()) {
     return null;
   }
-  return neon(rawDbUrl.trim());
+  if (!cachedSqlInstance) {
+    cachedSqlInstance = neon(rawDbUrl.trim());
+  }
+  return cachedSqlInstance;
+}
+
+/**
+ * Execute parameterized SQL query against Neon PostgreSQL with connection pooling & sanitized errors
+ */
+export async function queryNeon<T = any>(queryText: string, params: any[] = []): Promise<T[]> {
+  if (!isNeonConfigured()) {
+    throw new Error('Neon database is not configured. Set DATABASE_URL in environment.');
+  }
+  const sql = getNeonSql();
+  if (!sql) throw new Error('Neon SQL client is unavailable');
+  try {
+    const res = await (sql as any).query(queryText, params);
+    return (res || []) as T[];
+  } catch (err: any) {
+    const cleanErr = sanitizeDbError(err);
+    console.error('[Neon Query Error]', cleanErr.message);
+    throw cleanErr;
+  }
 }
 
 /**
@@ -364,6 +396,78 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
       ON ai_knowledge_cache(normalized_key, subject_name, mode);
   `;
 
+  // Safe incremental column additions for existing tables
+  try {
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS download_url TEXT;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS rag_doc_id TEXT;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS chunk_count INTEGER DEFAULT 0;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS extra_metadata JSONB DEFAULT '{}'::jsonb;`);
+    await (sql as any).query(`ALTER TABLE ai_knowledge_cache ADD COLUMN IF NOT EXISTS contributing_models JSONB DEFAULT '[]'::jsonb;`);
+  } catch (err: any) {
+    console.warn('[Neon Schema Update Notice]', err?.message || err);
+  }
+
+  // 14. Document Assets (Deduplicated Physical Objects)
+  await sql`
+    CREATE TABLE IF NOT EXISTS document_assets (
+      sha256_hash TEXT PRIMARY KEY,
+      storage_key TEXT NOT NULL,
+      storage_provider TEXT NOT NULL DEFAULT 'local',
+      storage_url TEXT,
+      file_size BIGINT NOT NULL,
+      mime_type TEXT NOT NULL,
+      original_name TEXT NOT NULL,
+      text_fingerprint TEXT,
+      page_count INTEGER DEFAULT 1,
+      word_count INTEGER DEFAULT 0,
+      extracted_summary TEXT,
+      table_of_contents JSONB DEFAULT '[]'::jsonb,
+      reference_count INTEGER DEFAULT 1,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+
+  // 15. Document Uploads (Student & Classroom Associations and Access Permissions)
+  await sql`
+    CREATE TABLE IF NOT EXISTS document_uploads (
+      id TEXT PRIMARY KEY,
+      asset_hash TEXT NOT NULL REFERENCES document_assets(sha256_hash) ON DELETE RESTRICT,
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      subject_id TEXT,
+      subject_name TEXT NOT NULL,
+      topic_id TEXT,
+      topic_title TEXT,
+      title TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      uploader_name TEXT NOT NULL,
+      uploader_role TEXT NOT NULL DEFAULT 'student',
+      verification_status TEXT NOT NULL DEFAULT 'teacher_verified',
+      access_permission TEXT NOT NULL DEFAULT 'class_shared',
+      version INTEGER NOT NULL DEFAULT 1,
+      metadata JSONB DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+
+  // 16. Document Chunks (RAG Ingestion Chunks in Database)
+  await sql`
+    CREATE TABLE IF NOT EXISTS document_chunks (
+      id TEXT PRIMARY KEY,
+      asset_hash TEXT NOT NULL REFERENCES document_assets(sha256_hash) ON DELETE CASCADE,
+      chunk_index INTEGER NOT NULL,
+      section_title TEXT,
+      page_number INTEGER DEFAULT 1,
+      text TEXT NOT NULL,
+      word_count INTEGER NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_chunk_asset_index 
+      ON document_chunks(asset_hash, chunk_index);
+  `;
+
   const tablesCreated = [
     'class_workspaces',
     'subjects',
@@ -378,6 +482,9 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     'classroom_doubts',
     'cached_lessons',
     'ai_knowledge_cache',
+    'document_assets',
+    'document_uploads',
+    'document_chunks',
   ];
 
   let seededCounts: Record<string, number> = {};

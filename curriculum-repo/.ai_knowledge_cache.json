@@ -1,9 +1,9 @@
 {
-  "totalLearnedItems": 10,
+  "totalLearnedItems": 13,
   "cohortPerfectedCount": 3,
-  "totalHits": 0,
-  "totalTokensSaved": 0,
-  "lastUpdated": "2026-11-13T18:48:27.315Z",
+  "totalHits": 12,
+  "totalTokensSaved": 9600,
+  "lastUpdated": "2026-11-14T11:36:01.010Z",
   "entries": [
     {
       "id": "cache-1794438677014-qhsl0",
@@ -494,6 +494,108 @@
         }
       ],
       "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794656033461-p07er",
+      "query": "Phase1 Test Query 1794656033460",
+      "normalizedKey": "phase1 test query 1794656033460",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T11:33:53.463Z",
+      "lastAccessedAt": "2026-11-14T11:33:53.463Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T11:33:53.461Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794656033460\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794656099400-cshot",
+      "query": "Phase1 Test Query 1794656099399",
+      "normalizedKey": "phase1 test query 1794656099399",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T11:34:59.401Z",
+      "lastAccessedAt": "2026-11-14T11:34:59.602Z",
+      "hitCount": 7,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T11:34:59.400Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794656099399\"."
+        }
+      ],
+      "positiveVotes": 5,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794656160289-oq8oh",
+      "query": "Phase1 Test Query 1794656160289",
+      "normalizedKey": "phase1 test query 1794656160289",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T11:36:00.292Z",
+      "lastAccessedAt": "2026-11-14T11:36:00.476Z",
+      "hitCount": 7,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T11:36:00.289Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794656160289\"."
+        }
+      ],
+      "positiveVotes": 5,
       "negativeVotes": 0,
       "needsRefinement": false,
       "isTeacherCurated": false

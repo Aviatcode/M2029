@@ -1,0 +1,17 @@
+[
+  {
+    "id": "class-bca-2028",
+    "code": "BCA-2028",
+    "name": "BCA Batch of 2028",
+    "university": "University School of Information Technology",
+    "semester": 3,
+    "academic_year": "2026-2027",
+    "member_count": 64,
+    "admin_id": "user-admin-1",
+    "verified_by_cr": true,
+    "cr_name": "Class Representative (CR)",
+    "cr_roll_no": "CR-VERIFIED",
+    "created_at": "2026-10-16T22:32:11.669Z",
+    "updated_at": "2026-10-16T22:32:11.669Z"
+  }
+]

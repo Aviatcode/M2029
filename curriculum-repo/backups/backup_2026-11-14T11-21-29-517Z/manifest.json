@@ -1,0 +1,118 @@
+{
+  "timestamp": "2026-11-14T11-21-29-517Z",
+  "backupDir": "C:\\Users\\Acer\\Projects\\m2029\\M2029\\curriculum-repo\\backups\\backup_2026-11-14T11-21-29-517Z",
+  "localFiles": {
+    ".classroom_cache.json": {
+      "size": 142,
+      "sha256": "71ebdf0580acc6b44c01cf6d9df37d2922ff0fe71bba37dd4d369836ba2e3fee",
+      "recordCount": 8
+    },
+    ".ai_knowledge_cache.json": {
+      "size": 93370,
+      "sha256": "e4df27e33b8ac4d3f5e61a88f6eb32168cbd669c2a50cd43f6f6c303200c229c",
+      "recordCount": 10
+    },
+    ".shared_classroom_answers.json": {
+      "size": 50430,
+      "sha256": "fdcf4b8c1685e24e91f34b46c8328fcf4cc6b4419b50b942f947c2bea43bdc0f",
+      "recordCount": 5
+    },
+    ".byok_vault.json": {
+      "size": 639,
+      "sha256": "b0e507ebc9079d64c7cd8bf7bb0b4725d68c0a4e2d38ff68f9dbf53089c5598c",
+      "recordCount": 1
+    },
+    ".last_sync.json": {
+      "size": 1633,
+      "sha256": "e9160a228137e08c02f5ae4d47b45d54e9b646ab4e3bdb2461c0e83d437ea767",
+      "recordCount": 3
+    },
+    "rag_store/registry.json": {
+      "size": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "recordCount": 0
+    },
+    "rag_store/knowledge_graph.json": {
+      "size": 5204,
+      "sha256": "7a162054662868d8a5ba410735efe8ff3a46b7d975427442d1b8c184b3f8764f",
+      "recordCount": 3
+    }
+  },
+  "neonDatabase": {
+    "class_workspaces": {
+      "rowCount": 1,
+      "backupFile": "class_workspaces.json",
+      "sha256": "13bc7f00d384893365166dc9dee78389e197c771312171bf131f71038b9362a9"
+    },
+    "subjects": {
+      "rowCount": 5,
+      "backupFile": "subjects.json",
+      "sha256": "0a7d7baf14b1e7c0951bef23cf7f25add1718ccaa89a27d97c9b8d55dc567681"
+    },
+    "units": {
+      "rowCount": 6,
+      "backupFile": "units.json",
+      "sha256": "b981f9d5eb7eb9bbe775cea1cd1b5fc3d21d4e7412dd2e77e634d12f02d03d14"
+    },
+    "topics": {
+      "rowCount": 12,
+      "backupFile": "topics.json",
+      "sha256": "b00d69729391783d5b057dfe80923a44f2dbc3e85d8e45e120d8726851355bd1"
+    },
+    "timetable_classes": {
+      "rowCount": 5,
+      "backupFile": "timetable_classes.json",
+      "sha256": "382cc082360e52e6b4d078135a7e174e3a378f8af106d64fd9f9f467733aa385"
+    },
+    "academic_materials": {
+      "rowCount": 0,
+      "backupFile": "academic_materials.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "historical_pyqs": {
+      "rowCount": 5,
+      "backupFile": "historical_pyqs.json",
+      "sha256": "ce4a2f8c7dc5e2d063c0dd552052e83ed3460b7f368a28c5a0fd710b9d473a76"
+    },
+    "exam_datesheets": {
+      "rowCount": 3,
+      "backupFile": "exam_datesheets.json",
+      "sha256": "b7d19a6fd405f641a2af16084874225729c43216d775cc5f1f8a7f4c0514af6e"
+    },
+    "class_announcements": {
+      "rowCount": 2,
+      "backupFile": "class_announcements.json",
+      "sha256": "b2fad3b9076182a81c0aa1a7bf4a53081b091545811134806417b823804e3caa"
+    },
+    "academic_assignments": {
+      "rowCount": 4,
+      "backupFile": "academic_assignments.json",
+      "sha256": "c4cdd7812a10d669c486a76d4cffae03f03b87a3474a304631ef55cbc59146fc"
+    },
+    "classroom_doubts": {
+      "rowCount": 0,
+      "backupFile": "classroom_doubts.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "cached_lessons": {
+      "rowCount": 0,
+      "backupFile": "cached_lessons.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "ai_knowledge_cache": {
+      "rowCount": 14,
+      "backupFile": "ai_knowledge_cache.json",
+      "sha256": "9ccfedc000512faf43d0b6543e9be0d97298daf924f317d620aabed590513497"
+    },
+    "byok_credentials": {
+      "rowCount": 4,
+      "backupFile": "byok_credentials.json",
+      "sha256": "7e8ead19de7f45193905beaccb89f6b97c738ced4e1ee3a57c8b23e113fe3da3"
+    },
+    "shared_classroom_answers": {
+      "rowCount": 5,
+      "backupFile": "shared_classroom_answers.json",
+      "sha256": "fbcc21f04596c8d358d594bd28f5c5f957d839e65e74ff326dcdbc235583cfeb"
+    }
+  }
+}

@@ -1,0 +1,103 @@
+[
+  {
+    "id": "assign-1",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-dbms",
+    "subject_name": "Database Management Systems",
+    "title": "Hospital Management System: ER Diagram & Normalization to 3NF",
+    "type": "assignment",
+    "due_date": "2026-10-17",
+    "instructions": "Design an ER diagram with at least 5 entities including Doctors, Patients, Appointments, and Bills. Normalize the tables to 3NF and prove no partial dependencies exist.",
+    "integrity_mode": "teach_me",
+    "assigned_by": "Dr. Rajesh Sharma",
+    "presenter_name": null,
+    "roll_number": null,
+    "completed": false,
+    "outline_steps": [
+      "Step 1: Identify real-world entities and relationship cardinalities (1:M, M:N)",
+      "Step 2: Convert ER diagram into relational schemas with primary and foreign keys",
+      "Step 3: Test functional dependencies and demonstrate 2NF and 3NF decomposition",
+      "Step 4: Provide sample SQL DDL statements (CREATE TABLE with foreign key constraints)"
+    ],
+    "key_references": [
+      "Silberschatz, Korth, Sudarshan - Database System Concepts (Chapter 2 & 7)",
+      "Dr. Verma Class PPT Unit 2 Normalization"
+    ],
+    "created_at": "2026-10-16T22:32:15.397Z"
+  },
+  {
+    "id": "assign-2",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-java",
+    "subject_name": "Java Programming",
+    "title": "Producer-Consumer Problem using synchronized and wait/notify",
+    "type": "assignment",
+    "due_date": "2026-10-20",
+    "instructions": "Implement thread synchronization in Java for a bounded buffer producer-consumer model. Handle buffer overflow and underflow conditions using wait() and notifyAll().",
+    "integrity_mode": "teach_me",
+    "assigned_by": "Prof. Ananya Sen",
+    "presenter_name": null,
+    "roll_number": null,
+    "completed": false,
+    "outline_steps": [
+      "Step 1: Define BoundedBuffer class with shared queue and capacity",
+      "Step 2: Implement synchronized produce() and consume() methods with wait()",
+      "Step 3: Create Producer and Consumer Runnable worker threads",
+      "Step 4: Demonstrate deadlock-free execution in main driver method"
+    ],
+    "key_references": [
+      "Herbert Schildt - Java: The Complete Reference (Chapter 11 Multi-threading)"
+    ],
+    "created_at": "2026-10-16T22:32:15.494Z"
+  },
+  {
+    "id": "ppt-1",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-os",
+    "subject_name": "Operating Systems",
+    "title": "Class Presentation: Deadlock Avoidance using Banker's Algorithm & Safety State Matrix",
+    "type": "ppt_presentation",
+    "due_date": "2026-10-22",
+    "instructions": "Prepare a 10-slide PowerPoint presentation with visual dry-run on 5 processes (P0-P4) and 3 resource types (A, B, C). Explain Need Matrix, Allocation Matrix, and Safe Sequence determination.",
+    "integrity_mode": "teach_me",
+    "assigned_by": "Class Representative (CR) / Faculty Schedule",
+    "presenter_name": "Roll 101 - Aman Kumar & Team",
+    "roll_number": "BCA-01 to BCA-05",
+    "completed": false,
+    "outline_steps": [
+      "Slide 1-2: What is Deadlock & Coffman Conditions",
+      "Slide 3-5: Banker's Algorithm Data Structures (Available, Max, Allocation, Need)",
+      "Slide 6-8: Step-by-Step Trace of Safety Algorithm with numerical example",
+      "Slide 9-10: Resource Request Algorithm & Real-world OS comparison"
+    ],
+    "key_references": [
+      "Galvin, Silberschatz - Operating System Concepts (Chapter 8 Deadlocks)"
+    ],
+    "created_at": "2026-10-16T22:32:15.593Z"
+  },
+  {
+    "id": "ppt-2",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-dbms",
+    "subject_name": "Database Management Systems",
+    "title": "Class Presentation: B-Tree vs B+ Tree Indexing in High-Throughput Databases",
+    "type": "ppt_presentation",
+    "due_date": "2026-10-24",
+    "instructions": "Explain balanced multi-way tree structures, differences between B-Tree and B+ Tree (leaves linked as linked-list for range queries), and performance in disk I/O.",
+    "integrity_mode": "teach_me",
+    "assigned_by": "Class Representative (CR) / Faculty Schedule",
+    "presenter_name": "Roll 106 - Priya Singh & Team",
+    "roll_number": "BCA-06 to BCA-10",
+    "completed": false,
+    "outline_steps": [
+      "Slide 1-3: Linear vs Index file scan disk I/O costs",
+      "Slide 4-6: B+ Tree internal node structure vs leaf node storage",
+      "Slide 7-8: Insert & Split operations with trace",
+      "Slide 9-10: Why MySQL InnoDB and PostgreSQL default to B+ Tree indexes"
+    ],
+    "key_references": [
+      "Database System Concepts Chapter 14 Indexing & Hashing"
+    ],
+    "created_at": "2026-10-16T22:32:15.689Z"
+  }
+]

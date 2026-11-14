@@ -36,25 +36,51 @@ import {
   isNeonConfigured,
   testNeonConnection,
   getNeonSql,
+  initializeNeonSchema,
 } from './src/server/db/neonClient.js';
 
 async function startServer() {
   const app = express();
   const httpServer = http.createServer(app);
 
-  // Enable CORS for all origins (e.g. GitHub Pages, WebAPK clients)
+  // Restricted CORS with Authorized Frontend Origins support
+  const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
+  const configuredOrigins = allowedOriginsEnv
+    ? allowedOriginsEnv.split(',').map((o) => o.trim().toLowerCase())
+    : [];
+
   app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    if (origin) {
+      const lower = origin.toLowerCase();
+      const isAllowed =
+        configuredOrigins.length === 0 ||
+        configuredOrigins.includes(lower) ||
+        lower.endsWith('.vercel.app') ||
+        lower.includes('localhost') ||
+        lower.includes('127.0.0.1');
+
+      if (isAllowed) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Vary', 'Origin');
+      }
+    } else {
+      res.header('Access-Control-Allow-Origin', '*');
+    }
+
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Admin-Key, X-Student-Id, X-Class-Id'
+    );
     if (req.method === 'OPTIONS') {
-      return res.sendStatus(200);
+      return res.sendStatus(204);
     }
     next();
   });
 
-  app.use(express.json({ limit: '100mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
   // Mount M2028 API Router
   app.use('/api', apiRouter);
@@ -884,16 +910,24 @@ Evaluate the answer. Return STRICT JSON only:
             console.log(
               `✅ Connected to Neon PostgreSQL database: ${res.database} (${res.tableCount} tables, ${res.latencyMs}ms latency)`
             );
+            await initializeNeonSchema(false);
             await aiKnowledgeCache.hydrateFromNeon();
+            await db.hydrateFromNeon();
           } else {
             console.warn(`⚠️ Neon connection warning: ${res.message}`);
           }
         })
-        .catch(() => {});
+        .catch((err) => {
+          console.error('❌ Neon startup initialization error:', err?.message || err);
+        });
     } else {
-      console.log(
-        'ℹ️ Running with fast in-memory store. (Configure DATABASE_URL in .env to persist to Neon PostgreSQL)'
-      );
+      if (process.env.NODE_ENV === 'production') {
+        console.error('🚨 CRITICAL WARNING: Running in production without DATABASE_URL configured! Classroom and AI data will not persist across container restarts.');
+      } else {
+        console.log(
+          'ℹ️ Running with fast in-memory store. (Configure DATABASE_URL in .env to persist to Neon PostgreSQL)'
+        );
+      }
     }
     initDailyAutoSyncScheduler();
   });

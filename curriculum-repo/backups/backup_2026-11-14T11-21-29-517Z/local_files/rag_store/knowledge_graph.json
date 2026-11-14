@@ -1,0 +1,195 @@
+{
+  "nodes": [
+    {
+      "id": "node-process",
+      "name": "Process",
+      "type": "concept",
+      "summary": "A program in execution, consisting of program counter, stack, data section, and PCB.",
+      "subjectName": "Operating Systems",
+      "unit": 2,
+      "keywords": [
+        "process",
+        "program",
+        "pcb",
+        "address space"
+      ]
+    },
+    {
+      "id": "node-pcb",
+      "name": "Process Control Block (PCB)",
+      "type": "definition",
+      "summary": "Kernel data structure holding execution context, registers, state, and priority.",
+      "subjectName": "Operating Systems",
+      "unit": 2,
+      "keywords": [
+        "pcb",
+        "process control block",
+        "context",
+        "registers"
+      ]
+    },
+    {
+      "id": "node-cpu-scheduling",
+      "name": "CPU Scheduling",
+      "type": "topic",
+      "summary": "Short-term scheduler dynamic allocation of CPU time to processes in the ready queue.",
+      "subjectName": "Operating Systems",
+      "unit": 2,
+      "keywords": [
+        "cpu scheduling",
+        "scheduler",
+        "ready queue",
+        "allocation"
+      ]
+    },
+    {
+      "id": "node-context-switch",
+      "name": "Context Switching",
+      "type": "algorithm",
+      "summary": "Switching CPU from one process to another, saving old state into PCB and loading new state.",
+      "subjectName": "Operating Systems",
+      "unit": 2,
+      "keywords": [
+        "context switch",
+        "dispatcher",
+        "latency",
+        "pcb save"
+      ]
+    },
+    {
+      "id": "node-deadlock",
+      "name": "Deadlock",
+      "type": "topic",
+      "summary": "A set of processes blocked because each process holds a resource and waits for another resource held by another process.",
+      "subjectName": "Operating Systems",
+      "unit": 3,
+      "keywords": [
+        "deadlock",
+        "starvation",
+        "blocked",
+        "cycle"
+      ]
+    },
+    {
+      "id": "node-coffman-conditions",
+      "name": "4 Coffman Conditions",
+      "type": "formula",
+      "summary": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait. All 4 must hold simultaneously for deadlock.",
+      "subjectName": "Operating Systems",
+      "unit": 3,
+      "keywords": [
+        "coffman",
+        "conditions",
+        "mutual exclusion",
+        "hold and wait",
+        "no preemption",
+        "circular wait"
+      ]
+    },
+    {
+      "id": "node-bankers-algo",
+      "name": "Banker's Algorithm",
+      "type": "algorithm",
+      "summary": "Deadlock avoidance algorithm that simulates resource allocation to check for safe states.",
+      "subjectName": "Operating Systems",
+      "unit": 3,
+      "keywords": [
+        "bankers algorithm",
+        "avoidance",
+        "safe state",
+        "allocation matrix",
+        "need matrix"
+      ]
+    },
+    {
+      "id": "node-virtual-memory",
+      "name": "Virtual Memory & Paging",
+      "type": "topic",
+      "summary": "Decoupling logical memory from physical memory via page tables, TLB, and demand paging.",
+      "subjectName": "Operating Systems",
+      "unit": 4,
+      "keywords": [
+        "virtual memory",
+        "paging",
+        "page table",
+        "tlb",
+        "page fault"
+      ]
+    },
+    {
+      "id": "node-semaphore",
+      "name": "Semaphores & Mutex",
+      "type": "concept",
+      "summary": "Synchronization primitives (Wait/P and Signal/V) used to eliminate race conditions in critical sections.",
+      "subjectName": "Operating Systems",
+      "unit": 3,
+      "keywords": [
+        "semaphore",
+        "mutex",
+        "critical section",
+        "race condition",
+        "wait",
+        "signal"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "node-process",
+      "target": "node-pcb",
+      "relationship": "implements",
+      "label": "maintains state inside"
+    },
+    {
+      "id": "edge-2",
+      "source": "node-cpu-scheduling",
+      "target": "node-context-switch",
+      "relationship": "implements",
+      "label": "triggers dispatcher for"
+    },
+    {
+      "id": "edge-3",
+      "source": "node-context-switch",
+      "target": "node-pcb",
+      "relationship": "shares_resource",
+      "label": "saves and restores"
+    },
+    {
+      "id": "edge-4",
+      "source": "node-process",
+      "target": "node-cpu-scheduling",
+      "relationship": "subtopic_of",
+      "label": "is scheduled by"
+    },
+    {
+      "id": "edge-5",
+      "source": "node-deadlock",
+      "target": "node-coffman-conditions",
+      "relationship": "implements",
+      "label": "requires all 4"
+    },
+    {
+      "id": "edge-6",
+      "source": "node-deadlock",
+      "target": "node-bankers-algo",
+      "relationship": "solves",
+      "label": "avoided dynamically by"
+    },
+    {
+      "id": "edge-7",
+      "source": "node-semaphore",
+      "target": "node-deadlock",
+      "relationship": "causes",
+      "label": "can cause deadlock if misordered"
+    },
+    {
+      "id": "edge-8",
+      "source": "node-cpu-scheduling",
+      "target": "node-virtual-memory",
+      "relationship": "shares_resource",
+      "label": "coordinates memory with"
+    }
+  ],
+  "lastUpdated": "2026-11-14T09:05:56.507Z"
+}

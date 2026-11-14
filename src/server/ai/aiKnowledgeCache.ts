@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { isNeonConfigured, getNeonSql } from '../db/neonClient.js';
+import { isNeonConfigured, getNeonSql, sanitizeDbError } from '../db/neonClient.js';
 
 export interface EvolutionStep {
   iteration: number;
@@ -237,7 +237,8 @@ function targetCohortSize(val = 60) {
   return val;
 }
 
-class AIKnowledgeCacheManager {
+export class AIKnowledgeCacheManager {
+  public static readonly MAX_CACHE_ENTRIES = 250;
   private cache: Map<string, CachedAIResponse> = new Map();
   private totalHits: number = 0;
   private totalTokensSaved: number = 0;
@@ -247,6 +248,16 @@ class AIKnowledgeCacheManager {
     if (this.cache.size === 0) {
       this.seedDefaultCohortMasterEntries();
     }
+  }
+
+  private putInMemory(id: string, entry: CachedAIResponse): void {
+    if (this.cache.has(id)) {
+      this.cache.delete(id);
+    } else if (this.cache.size >= AIKnowledgeCacheManager.MAX_CACHE_ENTRIES) {
+      const oldestKey = this.cache.keys().next().value;
+      if (oldestKey) this.cache.delete(oldestKey);
+    }
+    this.cache.set(id, entry);
   }
 
   private loadFromDisk() {
@@ -272,7 +283,7 @@ class AIKnowledgeCacheManager {
                 ? entry.evolutionHistory
                 : generateEvolutionMilestones(entry.query, iterationCount);
 
-            this.cache.set(entry.id, {
+            this.putInMemory(entry.id, {
               ...entry,
               iterationCount,
               targetCohortSize: 60,
@@ -286,7 +297,7 @@ class AIKnowledgeCacheManager {
         this.totalHits = Number(data.totalHits) || 0;
         this.totalTokensSaved = Number(data.totalTokensSaved) || 0;
         console.log(
-          `[AI Knowledge Cache] 🧠 Loaded ${this.cache.size} cohort lessons. Total Hits: ${this.totalHits}, Tokens Saved: ${this.totalTokensSaved}`
+          `[AI Knowledge Cache] 🧠 Loaded ${this.cache.size} cohort lessons (bounded memory max: ${AIKnowledgeCacheManager.MAX_CACHE_ENTRIES}). Total Hits: ${this.totalHits}, Tokens Saved: ${this.totalTokensSaved}`
         );
       }
     } catch (err) {
@@ -381,16 +392,94 @@ class AIKnowledgeCacheManager {
     return null;
   }
 
+  /**
+   * Authoritative Neon-backed asynchronous retrieval.
+   * Checks bounded memory cache first; if miss, queries Neon PostgreSQL directly.
+   */
+  public async getAsync(query: string, subjectName = '', mode = 'all'): Promise<CachedAIResponse | null> {
+    const memMatch = this.get(query, subjectName, mode);
+    if (memMatch) return memMatch;
+
+    if (!isNeonConfigured()) return null;
+
+    const normalized = normalizeAcademicQuery(query);
+    const cleanMode = (mode || 'all').toLowerCase().trim();
+
+    try {
+      const sql = getNeonSql();
+      if (!sql) return null;
+
+      const rows = await (sql as any).query(`
+        SELECT * FROM ai_knowledge_cache
+        WHERE (normalized_key = $1 OR query ILIKE $2)
+          AND (mode = $3 OR $3 = 'all' OR mode = 'all')
+        ORDER BY perfection_score DESC, hit_count DESC
+        LIMIT 1
+      `, [normalized, `%${query.trim()}%`, cleanMode]);
+
+      if (rows && rows.length > 0) {
+        const r = rows[0];
+        const entry: CachedAIResponse = {
+          id: r.id,
+          query: r.query,
+          normalizedKey: r.normalized_key,
+          subjectName: r.subject_name,
+          mode: r.mode,
+          answer: r.answer,
+          sections: typeof r.sections === 'string' ? JSON.parse(r.sections) : (r.sections || undefined),
+          modelUsed: r.model_used,
+          createdAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
+          lastAccessedAt: new Date().toISOString(),
+          hitCount: (Number(r.hit_count) || 0) + 1,
+          tokensEstimated: Number(r.tokens_estimated) || 1500,
+          iterationCount: Number(r.iteration_count) || 1,
+          targetCohortSize: Number(r.target_cohort_size) || 60,
+          isCohortPerfected: Boolean(r.is_cohort_perfected),
+          perfectionScore: Number(r.perfection_score) || 15,
+          perfectionTier: r.perfection_tier || 'Draft (Student 1)',
+          evolutionHistory: Array.isArray(r.evolution_history)
+            ? r.evolution_history
+            : (typeof r.evolution_history === 'string' ? JSON.parse(r.evolution_history) : []),
+          positiveVotes: Number(r.positive_votes) || 0,
+          negativeVotes: Number(r.negative_votes) || 0,
+          needsRefinement: Boolean(r.needs_refinement),
+          isTeacherCurated: Boolean(r.is_teacher_curated),
+          contributingModels: Array.isArray(r.contributing_models) ? r.contributing_models : undefined,
+        };
+
+        this.putInMemory(entry.id, entry);
+        this.registerHit(entry);
+        return entry;
+      }
+    } catch (err: any) {
+      console.warn('[AI Knowledge Cache] Neon query notice:', sanitizeDbError(err).message);
+    }
+
+    return null;
+  }
+
   private registerHit(entry: CachedAIResponse) {
     entry.hitCount = (entry.hitCount || 0) + 1;
     entry.lastAccessedAt = new Date().toISOString();
     this.totalHits += 1;
     const saved = entry.tokensEstimated || 1500;
     this.totalTokensSaved += saved;
+
+    // Atomically increment hit_count in Neon
+    if (isNeonConfigured()) {
+      const sql = getNeonSql();
+      if (sql) {
+        (sql as any).query(`
+          UPDATE ai_knowledge_cache
+          SET hit_count = hit_count + 1, last_accessed_at = NOW()
+          WHERE id = $1
+        `, [entry.id]).catch(() => {});
+      }
+    }
+
     setTimeout(() => {
       this.saveToDisk();
-      this.syncToNeon(entry).catch(() => {});
-    }, 100);
+    }, 500);
   }
 
   public set(
@@ -464,12 +553,42 @@ class AIKnowledgeCacheManager {
       entry.contributingModels = contributingModels;
     }
 
-    this.cache.set(id, entry);
+    this.putInMemory(id, entry);
     this.saveToDisk();
-    this.syncToNeon(entry).catch(() => {});
+    this.syncToNeon(entry).catch((err) => {
+      console.warn('[AI Knowledge Cache] Neon async background sync notice:', err?.message || err);
+    });
     console.log(
       `[AI Knowledge Cache] 🧠 Stored topic: "${query}" (Iter: ${iterationCount}/60, Perfected: ${isPerfect})`
     );
+    return entry;
+  }
+
+  public async setAsync(
+    query: string,
+    subjectName: string,
+    mode: string,
+    answer: string,
+    sections?: Record<string, string>,
+    modelUsed = 'AI Model',
+    contributingModels?: string[],
+    iterationCount = 1,
+    isCohortPerfected = false,
+    customEvolution?: EvolutionStep[]
+  ): Promise<CachedAIResponse> {
+    const entry = this.set(
+      query,
+      subjectName,
+      mode,
+      answer,
+      sections,
+      modelUsed,
+      contributingModels,
+      iterationCount,
+      isCohortPerfected,
+      customEvolution
+    );
+    await this.syncToNeon(entry);
     return entry;
   }
 
@@ -683,19 +802,78 @@ class AIKnowledgeCacheManager {
   }
 
   /**
+   * Atomic vote recording directly in Neon to prevent race conditions across concurrent students
+   */
+  public async voteAsync(
+    query: string,
+    subjectName = '',
+    mode = 'all',
+    vote: 'up' | 'down',
+    reason?: string
+  ): Promise<{ entry: CachedAIResponse | null; shouldRefine: boolean }> {
+    let entry = await this.getAsync(query, subjectName, mode);
+    if (!entry) return { entry: null, shouldRefine: false };
+
+    // Atomic update in Neon
+    if (isNeonConfigured()) {
+      const sql = getNeonSql();
+      if (sql) {
+        const col = vote === 'up' ? 'positive_votes' : 'negative_votes';
+        try {
+          await (sql as any).query(`
+            UPDATE ai_knowledge_cache
+            SET ${col} = ${col} + 1, last_accessed_at = NOW()
+            WHERE id = $1
+          `, [entry.id]);
+        } catch (err: any) {
+          console.warn('[AI Knowledge Cache] Neon atomic vote notice:', sanitizeDbError(err).message);
+        }
+      }
+    }
+
+    if (vote === 'up') {
+      entry.positiveVotes = (entry.positiveVotes || 0) + 1;
+      if (entry.positiveVotes >= 10 && entry.perfectionScore < 100) {
+        entry.perfectionScore = Math.min(100, (entry.perfectionScore || 50) + 5);
+      }
+    } else {
+      entry.negativeVotes = (entry.negativeVotes || 0) + 1;
+      if (entry.negativeVotes >= 3) {
+        entry.needsRefinement = true;
+      }
+    }
+
+    if (reason && reason.trim()) {
+      entry.evolutionHistory.push({
+        iteration: entry.iterationCount,
+        studentLabel: 'Student Feedback',
+        improvedAt: new Date().toISOString(),
+        focus: vote === 'up' ? 'Positive Student Endorsement' : 'Student Issue Flagged',
+        summary: `Feedback (${vote}): "${reason.trim().slice(0, 150)}"`,
+      });
+      await this.syncToNeon(entry);
+    }
+
+    this.putInMemory(entry.id, entry);
+    this.saveToDisk();
+    return { entry, shouldRefine: Boolean(entry.needsRefinement) };
+  }
+
+  /**
    * Asynchronously synchronize one cache entry to Neon PostgreSQL (optional-safe)
    */
   public async syncToNeon(entry: CachedAIResponse): Promise<void> {
     if (!isNeonConfigured()) return;
     try {
       const sql = getNeonSql();
-      if (!sql) return;
+      if (!sql) throw new Error('Neon client is unavailable');
       await sql`
         INSERT INTO ai_knowledge_cache (
           id, normalized_key, query, subject_name, mode, answer, sections, model_used,
           created_at, last_accessed_at, hit_count, tokens_estimated, iteration_count,
           target_cohort_size, is_cohort_perfected, perfection_score, perfection_tier,
-          evolution_history, positive_votes, negative_votes, needs_refinement, is_teacher_curated
+          evolution_history, positive_votes, negative_votes, needs_refinement, is_teacher_curated,
+          contributing_models
         ) VALUES (
           ${entry.id}, ${entry.normalizedKey}, ${entry.query}, ${entry.subjectName},
           ${entry.mode}, ${entry.answer}, ${JSON.stringify(entry.sections || {})}::jsonb,
@@ -705,7 +883,8 @@ class AIKnowledgeCacheManager {
           ${entry.perfectionScore || 15}, ${entry.perfectionTier},
           ${JSON.stringify(entry.evolutionHistory || [])}::jsonb,
           ${entry.positiveVotes || 0}, ${entry.negativeVotes || 0},
-          ${entry.needsRefinement || false}, ${entry.isTeacherCurated || false}
+          ${entry.needsRefinement || false}, ${entry.isTeacherCurated || false},
+          ${JSON.stringify(entry.contributingModels || [])}::jsonb
         )
         ON CONFLICT (id) DO UPDATE SET
           answer = EXCLUDED.answer,
@@ -721,10 +900,13 @@ class AIKnowledgeCacheManager {
           positive_votes = EXCLUDED.positive_votes,
           negative_votes = EXCLUDED.negative_votes,
           needs_refinement = EXCLUDED.needs_refinement,
-          is_teacher_curated = EXCLUDED.is_teacher_curated;
+          is_teacher_curated = EXCLUDED.is_teacher_curated,
+          contributing_models = EXCLUDED.contributing_models;
       `;
     } catch (err: any) {
-      console.warn('[AI Knowledge Cache] Neon sync notice:', err?.message || err);
+      const cleanErr = sanitizeDbError(err);
+      console.warn('[AI Knowledge Cache] Neon sync notice:', cleanErr.message);
+      throw cleanErr;
     }
   }
 
@@ -761,13 +943,16 @@ class AIKnowledgeCacheManager {
           positive_votes INTEGER NOT NULL DEFAULT 0,
           negative_votes INTEGER NOT NULL DEFAULT 0,
           needs_refinement BOOLEAN NOT NULL DEFAULT FALSE,
-          is_teacher_curated BOOLEAN NOT NULL DEFAULT FALSE
+          is_teacher_curated BOOLEAN NOT NULL DEFAULT FALSE,
+          contributing_models JSONB DEFAULT '[]'::jsonb
         );
       `;
 
-      const rows = await sql`
-        SELECT * FROM ai_knowledge_cache ORDER BY hit_count DESC;
-      `;
+      const rows = await (sql as any).query(`
+        SELECT * FROM ai_knowledge_cache 
+        ORDER BY perfection_score DESC, hit_count DESC 
+        LIMIT ${AIKnowledgeCacheManager.MAX_CACHE_ENTRIES};
+      `);
 
       if (rows && rows.length > 0) {
         let hydratedCount = 0;
@@ -797,16 +982,17 @@ class AIKnowledgeCacheManager {
             negativeVotes: Number(r.negative_votes) || 0,
             needsRefinement: Boolean(r.needs_refinement),
             isTeacherCurated: Boolean(r.is_teacher_curated),
+            contributingModels: Array.isArray(r.contributing_models) ? r.contributing_models : undefined,
           };
-          this.cache.set(entry.id, entry);
+          this.putInMemory(entry.id, entry);
           hydratedCount++;
         }
-        console.log(`[AI Knowledge Cache] ☁️ Hydrated ${hydratedCount} entries from Neon PostgreSQL into active memory!`);
+        console.log(`[AI Knowledge Cache] ☁️ Hydrated ${hydratedCount} entries from Neon PostgreSQL into bounded memory cache!`);
         this.saveToDisk();
         return hydratedCount;
       }
     } catch (err: any) {
-      console.warn('[AI Knowledge Cache] Neon hydration warning:', err?.message || err);
+      console.warn('[AI Knowledge Cache] Neon hydration warning:', sanitizeDbError(err).message);
     }
     return 0;
   }

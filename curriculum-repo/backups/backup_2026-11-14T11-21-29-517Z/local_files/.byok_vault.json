@@ -1,0 +1,18 @@
+{
+  "student-alpha-001": [
+    {
+      "userId": "student-alpha-001",
+      "provider": "gemini",
+      "modelName": "gemini-3.5-flash",
+      "encryptedKey": "def85ee26a493aa8687164e4:a7733285e9a04a3134ccadb69e27401d:fb1bd83f7264a71df11b4ca5f16a1637eee5ea831960674afc4c4439590ba98580b602837a144388a1",
+      "maskedKey": "AIzaSy...cdef",
+      "baseUrl": "",
+      "label": "Student A Personal Studio Key",
+      "classId": "M2029_COHORT_1794647392458",
+      "isValidated": true,
+      "lastValidatedAt": "2026-11-14T09:09:52.459Z",
+      "createdAt": "2026-11-14T09:09:52.459Z",
+      "updatedAt": "2026-11-14T09:09:52.459Z"
+    }
+  ]
+}

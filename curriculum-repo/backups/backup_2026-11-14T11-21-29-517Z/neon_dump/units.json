@@ -1,0 +1,44 @@
+[
+  {
+    "id": "unit-dbms-1",
+    "subject_id": "sub-dbms",
+    "number": 1,
+    "title": "Unit 1: Relational Model & ER Design",
+    "created_at": "2026-10-16T22:32:12.244Z"
+  },
+  {
+    "id": "unit-dbms-2",
+    "subject_id": "sub-dbms",
+    "number": 2,
+    "title": "Unit 2: Normalization & Functional Dependencies",
+    "created_at": "2026-10-16T22:32:12.528Z"
+  },
+  {
+    "id": "unit-dbms-3",
+    "subject_id": "sub-dbms",
+    "number": 3,
+    "title": "Unit 3: Transaction Processing & Concurrency",
+    "created_at": "2026-10-16T22:32:12.813Z"
+  },
+  {
+    "id": "unit-java-1",
+    "subject_id": "sub-java",
+    "number": 1,
+    "title": "Unit 1: OOP Paradigms & JVM Architecture",
+    "created_at": "2026-10-16T22:32:13.100Z"
+  },
+  {
+    "id": "unit-java-2",
+    "subject_id": "sub-java",
+    "number": 2,
+    "title": "Unit 2: Inheritance, Polymorphism & Interfaces",
+    "created_at": "2026-10-16T22:32:13.393Z"
+  },
+  {
+    "id": "unit-os-1",
+    "subject_id": "sub-os",
+    "number": 1,
+    "title": "Unit 1: Process Scheduling & Concurrency",
+    "created_at": "2026-10-16T22:32:13.673Z"
+  }
+]

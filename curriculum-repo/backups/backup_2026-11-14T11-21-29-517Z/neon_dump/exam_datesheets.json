@@ -1,0 +1,139 @@
+[
+  {
+    "id": "exam-1",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-dbms",
+    "subject_name": "Database Management Systems",
+    "date": "2026-11-13T18:30:00.000Z",
+    "time": "10:00 AM - 01:00 PM",
+    "exam_type": "End-Term",
+    "priority": "High Priority",
+    "revision_days_plan": [
+      {
+        "title": "ER Diagrams & Relational Algebra",
+        "topics": [
+          "ER Diagrams",
+          "Relational Algebra Operations"
+        ],
+        "completed": true,
+        "dayNumber": 1
+      },
+      {
+        "title": "Functional Dependencies & Normalization",
+        "topics": [
+          "1NF, 2NF, 3NF",
+          "BCNF Decomposition"
+        ],
+        "completed": false,
+        "dayNumber": 2
+      },
+      {
+        "title": "ACID Properties & Concurrency Protocols",
+        "topics": [
+          "ACID Model",
+          "Two-Phase Locking (2PL)"
+        ],
+        "completed": false,
+        "dayNumber": 3
+      },
+      {
+        "title": "Past 5 Years PYQ Solving",
+        "topics": [
+          "2021-2025 University 10-Markers"
+        ],
+        "completed": false,
+        "dayNumber": 4
+      },
+      {
+        "title": "Full Mock Test & Formula Sheet",
+        "topics": [
+          "Timed 3-Hour Paper",
+          "Quick Revision Sheet"
+        ],
+        "completed": false,
+        "dayNumber": 5
+      }
+    ],
+    "created_at": "2026-10-16T22:32:14.919Z"
+  },
+  {
+    "id": "exam-2",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-java",
+    "subject_name": "Java Programming",
+    "date": "2026-11-19T18:30:00.000Z",
+    "time": "10:00 AM - 01:00 PM",
+    "exam_type": "End-Term",
+    "priority": "Medium Priority",
+    "revision_days_plan": [
+      {
+        "title": "JVM Architecture & Basics",
+        "topics": [
+          "JVM Internals",
+          "Constructors"
+        ],
+        "completed": false,
+        "dayNumber": 1
+      },
+      {
+        "title": "Inheritance & Interfaces",
+        "topics": [
+          "Dynamic Dispatch",
+          "Multiple Inheritance"
+        ],
+        "completed": false,
+        "dayNumber": 2
+      },
+      {
+        "title": "Exception Handling & Multithreading",
+        "topics": [
+          "try-catch-finally",
+          "Thread Lifecycle"
+        ],
+        "completed": false,
+        "dayNumber": 3
+      },
+      {
+        "title": "Java Collections Framework",
+        "topics": [
+          "ArrayList vs LinkedList",
+          "HashMap"
+        ],
+        "completed": false,
+        "dayNumber": 4
+      }
+    ],
+    "created_at": "2026-10-16T22:32:15.013Z"
+  },
+  {
+    "id": "exam-3",
+    "class_id": "class-bca-2028",
+    "subject_id": "sub-os",
+    "subject_name": "Operating Systems",
+    "date": "2026-11-25T18:30:00.000Z",
+    "time": "10:00 AM - 01:00 PM",
+    "exam_type": "End-Term",
+    "priority": "Medium Priority",
+    "revision_days_plan": [
+      {
+        "title": "CPU Scheduling Algorithms",
+        "topics": [
+          "Round Robin",
+          "Shortest Job First"
+        ],
+        "completed": false,
+        "dayNumber": 1
+      },
+      {
+        "title": "Deadlock & Memory Paging",
+        "topics": [
+          "Banker's Algorithm",
+          "Virtual Memory Demand Paging"
+        ],
+        "completed": false,
+        "dayNumber": 2
+      }
+    ],
+    "created_at": "2026-10-16T22:32:15.114Z"
+  }
+]

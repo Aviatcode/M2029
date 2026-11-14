@@ -41,6 +41,15 @@ export interface UniversalKeyConfig {
   keyPool?: KeyPoolEntry[];
 }
 
+export function sanitizeLogMessage(msg: string): string {
+  if (!msg) return '';
+  return msg
+    .replace(/AIzaSy[A-Za-z0-9_-]{15,}/g, 'AIzaSy***REDACTED***')
+    .replace(/sk-ant-[A-Za-z0-9_-]{15,}/g, 'sk-ant-***REDACTED***')
+    .replace(/sk-[A-Za-z0-9_-]{15,}/g, 'sk-***REDACTED***')
+    .replace(/gsk_[A-Za-z0-9_-]{15,}/g, 'gsk_***REDACTED***');
+}
+
 export class UniversalAIProvider implements AIProvider {
   name: string;
   public apiKey: string;
@@ -278,7 +287,7 @@ export class UniversalAIProvider implements AIProvider {
                 console.warn(`[AI Engine] Gemini (${model}) HTTP ${res.status}: ${errText.slice(0, 120)}`);
               }
             } catch (candErr: any) {
-              console.warn(`[AI Engine] Gemini (${model}) candidate notice:`, candErr.message);
+              console.warn(`[AI Engine] Gemini (${model}) candidate notice:`, sanitizeLogMessage(candErr.message));
             }
           }
         }
@@ -371,7 +380,7 @@ export class UniversalAIProvider implements AIProvider {
       if (throwOnError) {
         throw err;
       }
-      console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, err.message);
+      console.warn(`⚠️ [Universal AI Provider: ${this.name}] API call notice:`, sanitizeLogMessage(err.message));
       return new MockAIProvider().generateText(prompt, systemInstruction);
     }
 

@@ -11,6 +11,8 @@ import {
 import { chunkDocument } from './chunker.js';
 import { extractTextFromPdf } from './pdfExtractor.js';
 import { GoogleGenAI } from '@google/genai';
+import { graphRagEngine } from './graphRagEngine.js';
+import { getNeonSql, isNeonConfigured } from '../db/neonClient.js';
 
 const STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
@@ -273,6 +275,30 @@ export class RagKnowledgeEngine {
         if (docXml) {
           extractedText = docXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
         }
+      } else if (doc.fileType === 'pptx') {
+        const JSZip = (await import('jszip')).default;
+        const buffer = fs.readFileSync(params.filePath);
+        const zip = await JSZip.loadAsync(buffer);
+        const slideFiles = Object.keys(zip.files).filter((f) => f.startsWith('ppt/slides/slide') && f.endsWith('.xml'));
+        const slideTexts: string[] = [];
+        for (const sf of slideFiles) {
+          const sXml = await zip.file(sf)?.async('text');
+          if (sXml) {
+            const cleanSlide = sXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            if (cleanSlide.length > 5) slideTexts.push(cleanSlide);
+          }
+        }
+        extractedText = slideTexts.join('\n\n--- [Slide Break] ---\n\n');
+        pageCount = Math.max(1, slideFiles.length);
+      } else if (doc.fileType === 'xlsx') {
+        const JSZip = (await import('jszip')).default;
+        const buffer = fs.readFileSync(params.filePath);
+        const zip = await JSZip.loadAsync(buffer);
+        const sharedXml = await zip.file('xl/sharedStrings.xml')?.async('text');
+        if (sharedXml) {
+          extractedText = sharedXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+        pageCount = 1;
       } else {
         // Plain text, markdown, csv, json, code files
         extractedText = fs.readFileSync(params.filePath, 'utf-8');
@@ -529,6 +555,9 @@ export class RagKnowledgeEngine {
       )
       .join('\n\n---\n\n');
 
+    const graphRes = graphRagEngine.queryGraph(question);
+    const graphSection = graphRes.graphContextText ? `\n\n${graphRes.graphContextText}\n` : '';
+
     const apiKey = options.geminiApiKey || process.env.GEMINI_API_KEY || '';
     const cleanKey = apiKey && !apiKey.includes('MY_GEMINI_API_KEY') && !apiKey.startsWith('your_') ? apiKey.trim() : '';
 
@@ -543,7 +572,7 @@ RELEVANT EXCERPTS FROM UPLOADED ACTIVE MATERIAL:
 """
 ${contextBlocks}
 """
-
+${graphSection}
 INSTRUCTIONS:
 1. Provide an authoritative, crystal-clear explanation grounded in the provided excerpts.
 2. Cite the exact Document and Page/Section where the answer is found (e.g. "[Source 1: Page X]").
