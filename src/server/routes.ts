@@ -1352,63 +1352,102 @@ apiRouter.post('/syllabus/topic-status', (req: Request, res: Response) => {
 });
 
 // 5. Prepare for Tomorrow (7-Minute Prep Feature)
-apiRouter.get('/tomorrow/:classId', async (_req: Request, res: Response) => {
-  const ai = AIProviderFactory.getProvider();
+apiRouter.get('/tomorrow/:classId', async (req: Request, res: Response) => {
+  try {
+    const ai = AIProviderFactory.getProvider();
 
-  // Find tomorrow's premier class from timetable
-  const tomorrowClass = SEED_TIMETABLE.find((t) => t.day === 'Thursday') || SEED_TIMETABLE[0];
-  const topicTitle = tomorrowClass.likelyTopic?.title || 'Object Oriented Inheritance';
+    // Find class from timetable: check class-specific timetable, default class timetable, or flat values
+    const classIdParam = (req.params.classId || '').trim();
+    const availableSlots: TimetableClass[] =
+      (classIdParam && db.timetable[classIdParam] && db.timetable[classIdParam].length > 0)
+        ? db.timetable[classIdParam]
+        : (db.timetable['class-m2029'] && db.timetable['class-m2029'].length > 0)
+          ? db.timetable['class-m2029']
+          : (Array.isArray(SEED_TIMETABLE) && SEED_TIMETABLE.length > 0)
+            ? SEED_TIMETABLE
+            : (Object.values(db.timetable).flat() || []);
 
-  let prepContent: SevenMinutePrep;
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+    const tomorrowDay = dayNames[(new Date().getDay() + 1) % 7];
 
-  if (!ai.isAvailable() || ai instanceof (await import('./ai/provider.js')).MockAIProvider) {
-    prepContent = {
-      subjectName: tomorrowClass.subjectName,
-      topicTitle,
-      room: tomorrowClass.room,
-      time: tomorrowClass.time,
-      step1WhatIsIt:
-        'Inheritance allows a child class to absorb attributes and methods from an existing parent class using the `extends` keyword in Java.',
-      step2WhyUsed:
-        'It eliminates boilerplate code duplication and enforces a clear structural hierarchy (e.g. Car is-a Vehicle).',
-      step3AnalogyAndExample:
-        'Think of inheriting a family smartphone blueprint: you keep the battery and screen architecture, but you add your own custom camera software. In Java: `class Car extends Vehicle`.',
-      step4MiniQuiz: [
-        {
-          question: 'Which keyword establishes inheritance between classes in Java?',
-          options: ['implements', 'extends', 'inherits', 'super'],
-          correctIndex: 1,
-          explanation: '`extends` is used for class-to-class inheritance, while `implements` is for interfaces.',
-        },
-        {
-          question: 'What is the purpose of the `super` keyword?',
-          options: [
-            'Calls parent class constructor or methods',
-            'Destroys memory',
-            'Makes methods private',
-            'Halts thread',
-          ],
-          correctIndex: 0,
-          explanation: '`super` invokes the superclass constructor or accesses overridden parent members.',
-        },
-        {
-          question: 'Why does Java disallow multiple inheritance with classes?',
-          options: [
-            'To avoid the Diamond Ambiguity Problem',
-            'Because memory is too small',
-            'Classes cannot have methods',
-            'None of the above',
-          ],
-          correctIndex: 0,
-          explanation:
-            'When two parents declare the same method, the compiler cannot deduce which to execute.',
-        },
-      ],
-    };
-  } else {
-    try {
-      const prompt = `Generate a 7-minute pre-lecture prep module for:
-Subject: ${tomorrowClass.subjectName}
+    const tomorrowClass: TimetableClass | null =
+      availableSlots.length > 0
+        ? availableSlots.find((t) => t.day === tomorrowDay) || null
+        : null;
+
+    let prepContent: SevenMinutePrep;
+
+    if (!tomorrowClass) {
+      prepContent = {
+        subjectName: 'Upcoming Lecture',
+        topicTitle: 'Lecture Preparation',
+        room: 'Classroom',
+        time: 'Next Lecture',
+        step1WhatIsIt:
+          'Enter your timetable lectures and subjects to generate 7-minute intuition primers before class.',
+        step2WhyUsed:
+          'Pre-class review improves conceptual retention and exam readiness.',
+        step3AnalogyAndExample:
+          'AI will formulate real-world analogies based on your actual syllabus topics.',
+        step4MiniQuiz: [],
+      };
+      return res.json({
+        tomorrowClass: null,
+        prep: prepContent,
+      });
+    }
+
+    const topicTitle = tomorrowClass.likelyTopic?.title || 'Object Oriented Inheritance';
+    const isMock = !ai.isAvailable() || ai instanceof (await import('./ai/provider.js')).MockAIProvider;
+
+    if (isMock) {
+      prepContent = {
+        subjectName: tomorrowClass.subjectName || 'Upcoming Lecture',
+        topicTitle,
+        room: tomorrowClass.room || 'Classroom',
+        time: tomorrowClass.time || 'Next Lecture',
+        step1WhatIsIt:
+          'Inheritance allows a child class to absorb attributes and methods from an existing parent class using the `extends` keyword in Java.',
+        step2WhyUsed:
+          'It eliminates boilerplate code duplication and enforces a clear structural hierarchy (e.g. Car is-a Vehicle).',
+        step3AnalogyAndExample:
+          'Think of inheriting a family smartphone blueprint: you keep the battery and screen architecture, but you add your own custom camera software. In Java: `class Car extends Vehicle`.',
+        step4MiniQuiz: [
+          {
+            question: 'Which keyword establishes inheritance between classes in Java?',
+            options: ['implements', 'extends', 'inherits', 'super'],
+            correctIndex: 1,
+            explanation: '`extends` is used for class-to-class inheritance, while `implements` is for interfaces.',
+          },
+          {
+            question: 'What is the purpose of the `super` keyword?',
+            options: [
+              'Calls parent class constructor or methods',
+              'Destroys memory',
+              'Makes methods private',
+              'Halts thread',
+            ],
+            correctIndex: 0,
+            explanation: '`super` invokes the superclass constructor or accesses overridden parent members.',
+          },
+          {
+            question: 'Why does Java disallow multiple inheritance with classes?',
+            options: [
+              'To avoid the Diamond Ambiguity Problem',
+              'Because memory is too small',
+              'Classes cannot have methods',
+              'None of the above',
+            ],
+            correctIndex: 0,
+            explanation:
+              'When two parents declare the same method, the compiler cannot deduce which to execute.',
+          },
+        ],
+      };
+    } else {
+      try {
+        const prompt = `Generate a 7-minute pre-lecture prep module for:
+Subject: ${tomorrowClass.subjectName || 'Upcoming Lecture'}
 Topic: ${topicTitle}
 
 Format as strict JSON:
@@ -1437,35 +1476,42 @@ Format as strict JSON:
     }
   ]
 }`;
-      const json = await ai.generateStructuredJson<any>(prompt);
-      prepContent = {
-        subjectName: tomorrowClass.subjectName,
-        topicTitle,
-        room: tomorrowClass.room,
-        time: tomorrowClass.time,
-        step1WhatIsIt: json.step1WhatIsIt,
-        step2WhyUsed: json.step2WhyUsed,
-        step3AnalogyAndExample: json.step3AnalogyAndExample,
-        step4MiniQuiz: json.step4MiniQuiz,
-      };
-    } catch {
-      prepContent = {
-        subjectName: tomorrowClass.subjectName,
-        topicTitle,
-        room: tomorrowClass.room,
-        time: tomorrowClass.time,
-        step1WhatIsIt: 'Core concept breakdown before college lecture begins.',
-        step2WhyUsed: 'To prime intuition before the professor writes formal math or code on the board.',
-        step3AnalogyAndExample: 'Everyday intuitive mental model.',
-        step4MiniQuiz: [],
-      };
+        const json = await ai.generateStructuredJson<any>(prompt);
+        prepContent = {
+          subjectName: tomorrowClass.subjectName || 'Upcoming Lecture',
+          topicTitle,
+          room: tomorrowClass.room || 'Classroom',
+          time: tomorrowClass.time || 'Next Lecture',
+          step1WhatIsIt: json.step1WhatIsIt,
+          step2WhyUsed: json.step2WhyUsed,
+          step3AnalogyAndExample: json.step3AnalogyAndExample,
+          step4MiniQuiz: Array.isArray(json.step4MiniQuiz) ? json.step4MiniQuiz : [],
+        };
+      } catch {
+        prepContent = {
+          subjectName: tomorrowClass.subjectName || 'Upcoming Lecture',
+          topicTitle,
+          room: tomorrowClass.room || 'Classroom',
+          time: tomorrowClass.time || 'Next Lecture',
+          step1WhatIsIt: 'Core concept breakdown before college lecture begins.',
+          step2WhyUsed: 'To prime intuition before the professor writes formal math or code on the board.',
+          step3AnalogyAndExample: 'Everyday intuitive mental model.',
+          step4MiniQuiz: [],
+        };
+      }
     }
-  }
 
-  res.json({
-    tomorrowClass,
-    prep: prepContent,
-  });
+    return res.json({
+      tomorrowClass,
+      prep: prepContent,
+    });
+  } catch (err: any) {
+    console.error('[Tomorrow Endpoint Error]:', err);
+    return res.status(500).json({
+      error: 'Failed to generate preparation primer',
+      details: err?.message || 'Unknown error',
+    });
+  }
 });
 
 // 5.4 AI Connection Test Endpoint (Tests latency and validity of personal or class keys)
