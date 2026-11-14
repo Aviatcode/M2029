@@ -13,6 +13,9 @@ export interface QueryIntent {
   primary: 'definition' | 'conditions' | 'comparison' | 'algorithm' | 'numerical' | 'exam_10marker' | 'hinglish' | 'eli9' | 'general';
   specificTargets: string[]; // e.g. ["four conditions", "necessary conditions", "gantt chart", "mutual exclusion"]
   depth: 'short' | 'standard' | 'deep' | 'exam_10marker';
+  marks?: number; // 2, 5, 10, etc.
+  subVariants: string[]; // e.g. ["8:1_mux", "2pc", "lru"]
+  requestedLanguage: 'english' | 'hinglish';
   wantsHinglish: boolean;
   wantsEli9: boolean;
 }
@@ -53,12 +56,44 @@ const STOP_WORDS = new Set([
 /**
  * Extracts student intent and requested depth from query
  */
-export function extractQueryIntent(query: string): QueryIntent {
-  const q = query.toLowerCase().trim();
+export function extractQueryIntent(query: string = ''): QueryIntent {
+  const q = (query || '').toLowerCase().trim();
 
   const wantsHinglish = /hinglish|hindi|samjhao|batao|dekho bhai/i.test(q);
   const wantsEli9 = /eli9|like i'm 9|like im 9|simple analogy|beginner|child/i.test(q);
-  const is10Marker = /10[- ]?marker|section c|university format|full marks|marking scheme/i.test(q);
+  const is10Marker = /10[- ]?marker|section c|university format|full marks|marking scheme|\b10\s*marks\b/i.test(q);
+  const is2Marker = /2[- ]?marker|short definition|brief definition|define only|quick definition|\b2\s*marks\b/i.test(q);
+
+  let marks: number | undefined = undefined;
+  const marksMatch = q.match(/\b(2|5|10|15|20)\s*(?:marks?|marker)\b/i);
+  if (marksMatch) {
+    marks = parseInt(marksMatch[1], 10);
+  } else if (is10Marker) {
+    marks = 10;
+  } else if (is2Marker) {
+    marks = 2;
+  }
+
+  const subVariants: string[] = [];
+  // Detect multiplexer/demultiplexer ratios (e.g. 8:1, 4:1, 2:1, 16:1)
+  const muxMatch = q.match(/\b(\d+)\s*(?::|to)\s*1\s*(?:mux|multiplexer)?\b/i);
+  if (muxMatch) {
+    subVariants.push(`${muxMatch[1]}:1_mux`);
+  }
+  // Detect demux ratios (e.g. 1:4, 1:8)
+  const demuxMatch = q.match(/\b1\s*(?::|to)\s*(\d+)\s*(?:demux|demultiplexer)?\b/i);
+  if (demuxMatch) {
+    subVariants.push(`1:${demuxMatch[1]}_demux`);
+  }
+  // Detect protocol variants
+  if (/\b2pc\b|\btwo[- ]phase\s+commit\b/i.test(q)) subVariants.push('2pc');
+  if (/\b3pc\b|\bthree[- ]phase\s+commit\b/i.test(q)) subVariants.push('3pc');
+  if (/\bround[- ]robin\b|\brr\b/i.test(q)) subVariants.push('round_robin');
+  if (/\bsrtf\b/i.test(q)) subVariants.push('srtf');
+  if (/\bsjf\b/i.test(q)) subVariants.push('sjf');
+  if (/\bfcfs\b/i.test(q)) subVariants.push('fcfs');
+  if (/\bpreemptive\b/i.test(q) && !/non[- ]preemptive/i.test(q)) subVariants.push('preemptive');
+  if (/non[- ]preemptive/i.test(q)) subVariants.push('non_preemptive');
 
   let primary: QueryIntent['primary'] = 'general';
   const specificTargets: string[] = [];
@@ -73,19 +108,19 @@ export function extractQueryIntent(query: string): QueryIntent {
   } else if (/numerical|calculate|gantt|turnaround|waiting time|tat|wt|schedule table/i.test(q)) {
     primary = 'numerical';
     specificTargets.push('numerical');
-  } else if (/algorithm|working|architecture|flow|diagram|schematic|steps/i.test(q)) {
+  } else if (/algorithm|working|mechanism|architecture|flow|diagram|schematic|steps/i.test(q)) {
     primary = 'algorithm';
     specificTargets.push('algorithm');
-  } else if (is10Marker) {
+  } else if (is10Marker || marks === 10) {
     primary = 'exam_10marker';
   } else if (/define|definition|what is|meaning of|concept of/i.test(q)) {
     primary = 'definition';
   }
 
   let depth: QueryIntent['depth'] = 'standard';
-  if (is10Marker || /detailed|in[- ]depth|deep dive|comprehensive/i.test(q)) {
+  if (is10Marker || marks === 10 || /detailed|in[- ]depth|deep dive|comprehensive/i.test(q)) {
     depth = 'exam_10marker';
-  } else if (/short|brief|2 marks|quick/i.test(q)) {
+  } else if (is2Marker || marks === 2 || /short|brief|quick/i.test(q)) {
     depth = 'short';
   }
 
@@ -93,6 +128,9 @@ export function extractQueryIntent(query: string): QueryIntent {
     primary,
     specificTargets,
     depth,
+    marks,
+    subVariants,
+    requestedLanguage: wantsHinglish ? 'hinglish' : 'english',
     wantsHinglish,
     wantsEli9,
   };
@@ -107,8 +145,11 @@ export function extractQueryIntent(query: string): QueryIntent {
  */
 export function normalizeQueryTokens(rawQuery: string): string[] {
   if (!rawQuery) return [];
-  const cleaned = rawQuery
+  // Normalize ratio expressions before splitting (e.g. 8:1 -> 8to1mux, 4:1 -> 4to1mux)
+  let cleaned = rawQuery
     .toLowerCase()
+    .replace(/\b(\d+)\s*(?::|to)\s*1\b/g, '$1to1mux')
+    .replace(/\b1\s*(?::|to)\s*(\d+)\b/g, '1to$1demux')
     .replace(/[^a-z0-9\s]/g, ' ')
     .trim();
 
@@ -124,7 +165,7 @@ export function normalizeQueryTokens(rawQuery: string): string[] {
           }
         }
       }
-    } else if (!STOP_WORDS.has(token) && token.length > 1) {
+    } else if (!STOP_WORDS.has(token) && (token.length > 1 || /\d/.test(token))) {
       result.push(token);
     }
   }
@@ -185,6 +226,59 @@ export function evaluateQuestionMatch(
   const incKey = incTokens.slice().sort().join(' ');
   const stoKey = storedNormalizedKey || stoTokens.slice().sort().join(' ');
 
+  // 3. Intent, Sub-variant & Depth Validation Check
+  const incIntent = extractQueryIntent(incomingQuery);
+  const stoIntent = extractQueryIntent(storedOriginalQuery);
+
+  // Sub-variant check (e.g. "Define a multiplexer" vs "Explain the working of an 8:1 multiplexer")
+  if (incIntent.subVariants.length > 0 || stoIntent.subVariants.length > 0) {
+    const incSet = new Set(incIntent.subVariants);
+    const stoSet = new Set(stoIntent.subVariants);
+    let subMismatch = false;
+    for (const v of incSet) {
+      if (!stoSet.has(v)) { subMismatch = true; break; }
+    }
+    for (const v of stoSet) {
+      if (!incSet.has(v)) { subMismatch = true; break; }
+    }
+    if (subMismatch) {
+      return {
+        isMatch: false,
+        confidence: 0.25,
+        matchType: 'none',
+        intentCompatible: false,
+        reason: `Sub-variant mismatch: incoming specifies [${Array.from(incSet).join(', ')}] whereas stored answer specifies [${Array.from(stoSet).join(', ')}].`,
+      };
+    }
+  }
+
+  // Marks & Depth Expectation Check (e.g. 2-mark definition should not replace a 10-mark explanation)
+  if (
+    (incIntent.marks === 2 && stoIntent.marks === 10) ||
+    (incIntent.marks === 10 && stoIntent.marks === 2) ||
+    (incIntent.depth === 'short' && stoIntent.depth === 'exam_10marker') ||
+    (incIntent.depth === 'exam_10marker' && stoIntent.depth === 'short')
+  ) {
+    return {
+      isMatch: false,
+      confidence: 0.3,
+      matchType: 'none',
+      intentCompatible: false,
+      reason: `Marks/depth expectation mismatch: requested ${incIntent.marks || incIntent.depth} cannot be replaced by stored ${stoIntent.marks || stoIntent.depth}.`,
+    };
+  }
+
+  // Language Expectation Check (e.g. Hinglish vs English)
+  if (incIntent.requestedLanguage === 'hinglish' && stoIntent.requestedLanguage === 'english' && !stoIntent.wantsHinglish) {
+    return {
+      isMatch: false,
+      confidence: 0.3,
+      matchType: 'none',
+      intentCompatible: false,
+      reason: 'Language mismatch: student explicitly requested Hinglish breakdown, but stored answer was generated in standard English.',
+    };
+  }
+
   if (incKey && stoKey && incKey === stoKey) {
     return {
       isMatch: true,
@@ -194,10 +288,6 @@ export function evaluateQuestionMatch(
       reason: 'Identical normalized concept tokens',
     };
   }
-
-  // 3. Intent & Depth Validation Check
-  const incIntent = extractQueryIntent(incomingQuery);
-  const stoIntent = extractQueryIntent(storedOriginalQuery);
 
   // CRITICAL REQUIREMENT: Do NOT blindly match questions with divergent requirements!
   // e.g. "What is deadlock?" must NOT be answered by "Explain 4 conditions of deadlock"

@@ -10,8 +10,8 @@ import {
   PrerequisiteChainResult,
   PrerequisiteStep,
   GraphProposedChange,
+  normalizeConceptCanonicalName,
 } from './graphTypes.js';
-import { graphExtractionService } from './graphExtractionService.js';
 
 const FALLBACK_GRAPH_FILE = path.resolve(
   process.cwd(),
@@ -52,7 +52,7 @@ export class KnowledgeGraphEngine {
         const raw = fs.readFileSync(FALLBACK_GRAPH_FILE, 'utf8');
         const data = JSON.parse(raw);
         for (const n of data.nodes || []) {
-          const canonical = graphExtractionService.normalizeCanonicalName(n.name);
+          const canonical = normalizeConceptCanonicalName(n.name);
           const node: GraphNode = {
             id: n.id,
             classId: n.classId || 'class-m2029',
@@ -317,6 +317,12 @@ export class KnowledgeGraphEngine {
           properties: typeof r.properties === 'string' ? JSON.parse(r.properties) : (r.properties || {}),
         }));
 
+        if (candidateNodes.length === 0) {
+          candidateNodes = Array.from(this.inMemoryNodes.values()).filter(
+            (n) => n.classId === classId || n.classId === 'class-shared' || n.classId === 'public'
+          );
+        }
+
         let edgeSql = `SELECT * FROM graph_edges WHERE (class_id = $1 OR class_id = 'class-shared' OR class_id = 'public')`;
         const edgeParams: any[] = [classId];
         let epIdx = 2;
@@ -384,7 +390,7 @@ export class KnowledgeGraphEngine {
 
       const directCanonMatch = normalizedQuery.includes(canon) || canon.includes(normalizedQuery);
       const tokenMatch = queryTokens.some((t) => name.includes(t) || canon.includes(t));
-      const keywordMatch = node.keywords.some((kw) => normalizedQuery.includes(kw.toLowerCase()));
+      const keywordMatch = (node.keywords || []).some((kw) => normalizedQuery.includes(kw.toLowerCase()));
 
       if (directCanonMatch || tokenMatch || keywordMatch) {
         matchedNodeIds.add(node.id);
@@ -673,6 +679,7 @@ export class KnowledgeGraphEngine {
     );
 
     if (params.status === 'approved') {
+      const { graphExtractionService } = await import('./graphExtractionService.js');
       if (item.change_type === 'add_node') {
         await graphExtractionService.persistGraphElements({
           nodes: [{ ...proposedData, verificationStatus: 'verified' }],

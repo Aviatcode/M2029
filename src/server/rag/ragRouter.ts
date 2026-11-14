@@ -16,10 +16,12 @@ import {
   browseGitHubRepo,
   getGitHubConfig,
 } from './githubStorage.js';
+import { requireFacultyOrAdmin, requireAdmin, verifyDocumentDownloadAccess } from '../security/authGuard.js';
+import { uploadRateLimiter } from '../security/rateLimiter.js';
 
 export const ragRouter = Router();
 
-// Configure Multer with Disk Storage for direct streaming up to 500MB without RAM spikes
+// Configure Multer with Disk Storage for direct streaming up to 50MB (safeguarding Render 512MB RAM tier)
 const uploadDir = ragEngine.getUploadDir();
 
 const storage = multer.diskStorage({
@@ -36,7 +38,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 500 * 1024 * 1024, // 500 Megabytes!
+    fileSize: 50 * 1024 * 1024, // 50 Megabytes safe ceiling
   },
 });
 
@@ -47,10 +49,10 @@ export function setDbReference(db: any) {
 }
 
 /**
- * 1. Stream & Ingest Large Document (up to 500MB) with Intelligent Deduplication
- * Supports multipart/form-data
+ * 1. Stream & Ingest Large Document with Intelligent Deduplication
+ * Supports multipart/form-data with rate limiting
  */
-ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Response) => {
+ragRouter.post('/upload', uploadRateLimiter.middleware(), upload.single('file'), async (req: Request, res: Response) => {
   try {
     const file = req.file;
     if (!file) {
@@ -441,9 +443,9 @@ ragRouter.post('/graph/propose-change', async (req: Request, res: Response) => {
 });
 
 /**
- * 6.8 Phase 4 Graph RAG: Review & Apply Proposed Change (Teacher/Admin)
+ * 6.8 Phase 4 Graph RAG: Review & Apply Proposed Change (Teacher/Admin Required)
  */
-ragRouter.post('/graph/review-change', async (req: Request, res: Response) => {
+ragRouter.post('/graph/review-change', requireFacultyOrAdmin, async (req: Request, res: Response) => {
   try {
     const { changeId, status, reviewerName = 'Teacher', reviewNotes } = req.body;
 
@@ -497,9 +499,17 @@ ragRouter.post('/ask', async (req: Request, res: Response) => {
 });
 
 /**
- * 8. Download / Stream Original File
+ * 8. Download / Stream Original File with Classroom Scoping Authorization
  */
-ragRouter.get('/file/:docId', (req: Request, res: Response) => {
+ragRouter.get('/file/:docId', async (req: Request, res: Response) => {
+  const classId = (req.query.classId as string) || (req.headers['x-class-id'] as string) || 'class-m2029';
+  const studentName = (req.query.studentName as string) || (req.headers['x-student-name'] as string);
+
+  const access = await verifyDocumentDownloadAccess(req.params.docId, classId, studentName);
+  if (!access.authorized) {
+    return res.status(403).json({ error: `Access denied: ${access.reason || 'Document belongs to another classroom'}` });
+  }
+
   const doc = ragEngine.getDocument(req.params.docId);
   if (!doc || !fs.existsSync(doc.storagePath)) {
     return res.status(404).json({ error: 'File not found on backend storage.' });
@@ -546,9 +556,9 @@ ragRouter.get('/stats', (_req: Request, res: Response) => {
 });
 
 /**
- * 10. Delete Document & Chunks
+ * 10. Delete Document & Chunks (Faculty or Admin Required)
  */
-ragRouter.delete('/document/:docId', (req: Request, res: Response) => {
+ragRouter.delete('/document/:docId', requireFacultyOrAdmin, (req: Request, res: Response) => {
   const deleted = ragEngine.deleteDocument(req.params.docId);
   if (!deleted) {
     return res.status(404).json({ error: 'Document not found or could not be deleted.' });

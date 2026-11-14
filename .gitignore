@@ -16,6 +16,9 @@ build/
 .env.*
 !.env.example
 *.env
+curriculum-repo/.byok_vault.json
+*.byok_vault.json
+.byok_vault.json
 
 # Internal Sync State & Cache
 .last_sync.json
@@ -26,6 +29,8 @@ curriculum-repo/.last_sync.json
 *.zip
 *.tar.gz
 public/*.zip
+curriculum-repo/backups/
+backups/
 
 # System & Editor Temporary Files
 .DS_Store

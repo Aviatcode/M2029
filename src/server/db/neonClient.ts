@@ -61,22 +61,55 @@ export function getNeonSql() {
 }
 
 /**
- * Execute parameterized SQL query against Neon PostgreSQL with connection pooling & sanitized errors
+ * Execute parameterized SQL query against Neon PostgreSQL with connection pooling, timeout & bounded retry
  */
-export async function queryNeon<T = any>(queryText: string, params: any[] = []): Promise<T[]> {
+export async function queryNeon<T = any>(
+  queryText: string,
+  params: any[] = [],
+  options: { timeoutMs?: number; maxRetries?: number } = {}
+): Promise<T[]> {
   if (!isNeonConfigured()) {
     throw new Error('Neon database is not configured. Set DATABASE_URL in environment.');
   }
   const sql = getNeonSql();
   if (!sql) throw new Error('Neon SQL client is unavailable');
-  try {
-    const res = await (sql as any).query(queryText, params);
-    return (res || []) as T[];
-  } catch (err: any) {
-    const cleanErr = sanitizeDbError(err);
-    console.error('[Neon Query Error]', cleanErr.message);
-    throw cleanErr;
+
+  const timeoutMs = options.timeoutMs || 8000;
+  const maxRetries = options.maxRetries ?? 2;
+
+  let lastError: any = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      // Execute with timeout race
+      const queryPromise = (sql as any).query(queryText, params);
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error(`Neon query timed out after ${timeoutMs}ms`)), timeoutMs)
+      );
+
+      const res = await Promise.race([queryPromise, timeoutPromise]);
+      return (res || []) as T[];
+    } catch (err: any) {
+      lastError = sanitizeDbError(err);
+      const isTransient =
+        err?.message?.includes('timed out') ||
+        err?.code === 'ECONNRESET' ||
+        err?.code === 'ETIMEDOUT' ||
+        err?.code === '57P01' ||
+        err?.code === '08006' ||
+        err?.code === '08001';
+
+      if (attempt < maxRetries && isTransient) {
+        const delay = 150 * Math.pow(2, attempt) + Math.random() * 50;
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      break;
+    }
   }
+
+  console.error('[Neon Query Error]', lastError?.message || lastError);
+  throw lastError;
 }
 
 /**
@@ -402,7 +435,13 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS rag_doc_id TEXT;`);
     await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS chunk_count INTEGER DEFAULT 0;`);
     await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS extra_metadata JSONB DEFAULT '{}'::jsonb;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS page_count INTEGER DEFAULT 1;`);
+    await (sql as any).query(`ALTER TABLE academic_materials ADD COLUMN IF NOT EXISTS content_hash TEXT;`);
     await (sql as any).query(`ALTER TABLE ai_knowledge_cache ADD COLUMN IF NOT EXISTS contributing_models JSONB DEFAULT '[]'::jsonb;`);
+    await (sql as any).query(`ALTER TABLE chunk_embeddings ADD COLUMN IF NOT EXISTS embedding_version TEXT DEFAULT 'v1';`);
+    await (sql as any).query(`ALTER TABLE chunk_embeddings ADD COLUMN IF NOT EXISTS chunk_hash TEXT;`);
   } catch (err: any) {
     console.warn('[Neon Schema Update Notice]', err?.message || err);
   }
@@ -601,6 +640,217 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
       ON graph_proposed_changes(class_id, status);
   `;
 
+  // 21. Student Learning Profiles (Phase 5 Personalization)
+  await sql`
+    CREATE TABLE IF NOT EXISTS student_learning_profiles (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      student_name TEXT NOT NULL DEFAULT 'Student',
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      enrolled_course TEXT NOT NULL DEFAULT 'BCA',
+      current_subject_id TEXT,
+      current_unit_number INTEGER DEFAULT 1,
+      current_topic_id TEXT,
+      current_topic_title TEXT,
+      preferred_language TEXT NOT NULL DEFAULT 'english',
+      learning_goals JSONB NOT NULL DEFAULT '[]'::jsonb,
+      completed_topics JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_student_profiles_student_class 
+      ON student_learning_profiles(student_id, class_id);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_student_profiles_class 
+      ON student_learning_profiles(class_id);
+  `;
+
+  // 22. Student Concept Mastery (Phase 5 Mastery Model)
+  await sql`
+    CREATE TABLE IF NOT EXISTS student_concept_mastery (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      subject_id TEXT,
+      concept_name TEXT NOT NULL,
+      canonical_concept TEXT NOT NULL,
+      mastery_state TEXT NOT NULL DEFAULT 'NOT_STARTED',
+      consecutive_correct_count INTEGER NOT NULL DEFAULT 0,
+      total_attempts INTEGER NOT NULL DEFAULT 0,
+      total_correct INTEGER NOT NULL DEFAULT 0,
+      last_evidence_source TEXT NOT NULL DEFAULT 'ai_tutor_explanation',
+      last_evidence_confidence NUMERIC(3, 2) NOT NULL DEFAULT 0.85,
+      last_evidence_summary TEXT,
+      history JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_concept_mastery_student_concept 
+      ON student_concept_mastery(student_id, class_id, canonical_concept);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_concept_mastery_student_state 
+      ON student_concept_mastery(student_id, mastery_state);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_concept_mastery_class 
+      ON student_concept_mastery(class_id);
+  `;
+
+  // 23. Student Practice Attempts (Phase 5 Targeted Practice)
+  await sql`
+    CREATE TABLE IF NOT EXISTS student_practice_attempts (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      subject_id TEXT,
+      topic_title TEXT NOT NULL,
+      concept_name TEXT NOT NULL,
+      question_text TEXT NOT NULL,
+      question_source TEXT NOT NULL DEFAULT 'generated_from_rag',
+      source_doc_title TEXT,
+      source_page_number INTEGER,
+      student_answer TEXT,
+      is_correct BOOLEAN NOT NULL DEFAULT false,
+      score INTEGER NOT NULL DEFAULT 0,
+      feedback TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_practice_attempts_student_class 
+      ON student_practice_attempts(student_id, class_id);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_practice_attempts_concept 
+      ON student_practice_attempts(concept_name);
+  `;
+
+  // 24. Student BYOK Credentials (AES-256-GCM Encrypted Provider Keys)
+  await sql`
+    CREATE TABLE IF NOT EXISTS student_byok_credentials (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      provider TEXT NOT NULL,
+      model_name TEXT NOT NULL,
+      encrypted_key TEXT NOT NULL,
+      masked_key TEXT NOT NULL,
+      base_url TEXT,
+      allow_fallback BOOLEAN NOT NULL DEFAULT false,
+      is_active BOOLEAN NOT NULL DEFAULT true,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_byok_student_provider 
+      ON student_byok_credentials(student_id, provider);
+  `;
+
+  // 25. Student AI Usage Accounting (Per-Student Token & Request Telemetry)
+  await sql`
+    CREATE TABLE IF NOT EXISTS student_ai_usage (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      class_id TEXT NOT NULL DEFAULT 'class-m2029',
+      provider TEXT NOT NULL,
+      model_name TEXT NOT NULL,
+      task_category TEXT NOT NULL DEFAULT 'general_qa',
+      input_tokens INTEGER NOT NULL DEFAULT 0,
+      output_tokens INTEGER NOT NULL DEFAULT 0,
+      total_tokens INTEGER NOT NULL DEFAULT 0,
+      is_provider_reported BOOLEAN NOT NULL DEFAULT true,
+      is_success BOOLEAN NOT NULL DEFAULT true,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_usage_student_time 
+      ON student_ai_usage(student_id, created_at);
+  `;
+
+  // 26. Shared Classroom Answers (Collective Classroom Intelligence Repository)
+  await sql`
+    CREATE TABLE IF NOT EXISTS shared_classroom_answers (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL DEFAULT 'M2029',
+      institution TEXT DEFAULT 'University',
+      course TEXT NOT NULL,
+      subject_name TEXT NOT NULL,
+      topic TEXT NOT NULL,
+      original_question TEXT NOT NULL,
+      normalized_key TEXT NOT NULL,
+      intent TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      sections JSONB DEFAULT '{}'::jsonb,
+      sources_used JSONB DEFAULT '[]'::jsonb,
+      model_used TEXT NOT NULL,
+      prompt_version TEXT DEFAULT 'v2.0',
+      version INTEGER NOT NULL DEFAULT 1,
+      quality_status TEXT NOT NULL DEFAULT 'GENERATED',
+      hit_count INTEGER NOT NULL DEFAULT 0,
+      tokens_saved INTEGER NOT NULL DEFAULT 0,
+      positive_votes INTEGER NOT NULL DEFAULT 0,
+      negative_votes INTEGER NOT NULL DEFAULT 0,
+      contributor_student_label TEXT DEFAULT 'Student 1',
+      parent_question_id TEXT,
+      follow_up_question_ids JSONB DEFAULT '[]'::jsonb,
+      previous_versions JSONB DEFAULT '[]'::jsonb,
+      corrections JSONB DEFAULT '[]'::jsonb,
+      audit_trail JSONB DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_accessed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_shared_answers_lookup 
+      ON shared_classroom_answers(class_id, normalized_key, quality_status);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_shared_answers_subject 
+      ON shared_classroom_answers(class_id, subject_name);
+  `;
+
+  // 27. Shared Generation Locks (Cross-Instance Safe Concurrent Generation Coordination)
+  await sql`
+    CREATE TABLE IF NOT EXISTS shared_generation_locks (
+      lock_key TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL,
+      student_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'generating',
+      answer_id TEXT,
+      expires_at TIMESTAMPTZ NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_gen_locks_lookup 
+      ON shared_generation_locks(class_id, status, expires_at);
+  `;
+
+  // 28. Shared Answer Metrics (Defensible Collaborative Learning Analytics)
+  await sql`
+    CREATE TABLE IF NOT EXISTS shared_answer_metrics (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL,
+      metric_type TEXT NOT NULL,
+      metric_value NUMERIC NOT NULL DEFAULT 0,
+      metadata JSONB DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_shared_metrics_class 
+      ON shared_answer_metrics(class_id, metric_type, created_at);
+  `;
+
   const tablesCreated = [
     'class_workspaces',
     'subjects',
@@ -622,6 +872,14 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     'graph_nodes',
     'graph_edges',
     'graph_proposed_changes',
+    'student_learning_profiles',
+    'student_concept_mastery',
+    'student_practice_attempts',
+    'student_byok_credentials',
+    'student_ai_usage',
+    'shared_classroom_answers',
+    'shared_generation_locks',
+    'shared_answer_metrics',
   ];
 
   let seededCounts: Record<string, number> = {};

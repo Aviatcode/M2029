@@ -9,7 +9,23 @@ export async function extractTextFromPdf(filePath: string): Promise<{
   pageCount: number;
   info?: Record<string, any>;
 }> {
-  const dataBuffer = fs.readFileSync(filePath);
+  if (!fs.existsSync(filePath)) {
+    return { text: '', pageCount: 1 };
+  }
+
+  const stat = fs.statSync(filePath);
+  const MAX_MEMORY_SAFE_SIZE = 50 * 1024 * 1024; // 50MB RAM Guard for Render Free Tier
+
+  if (stat.size > MAX_MEMORY_SAFE_SIZE) {
+    console.warn(`[PDF Extractor] File size (${(stat.size / (1024 * 1024)).toFixed(1)} MB) exceeds memory-safe limit of 50MB on Render 512MB RAM tier. Processing first 45MB.`);
+  }
+
+  // Bound buffer read to 45MB max to prevent container OOM termination
+  const bytesToRead = Math.min(stat.size, 45 * 1024 * 1024);
+  const fd = fs.openSync(filePath, 'r');
+  const dataBuffer = Buffer.alloc(bytesToRead);
+  fs.readSync(fd, dataBuffer, 0, bytesToRead, 0);
+  fs.closeSync(fd);
 
   try {
     // Dynamic import to handle CJS/ESM interop smoothly

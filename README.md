@@ -61,6 +61,14 @@ Switch models on the fly with live visual confirmation in the desk header:
 - **Enterprise Relational Storage**: Powered by Neon Serverless PostgreSQL (12 relational tables with foreign keys, indexes, and constraints).
 - **Automated Midnight Sync**: Scheduled automated background sync verifies and persists local academic workspace updates to the cloud database.
 
+### 🛡️ 8. Production Security, Disaster Recovery & Zero-Cost Architecture
+- **₹0/Month Infrastructure Budget**: Zero paid services, zero paid APIs, zero credit-card dependencies. Runs on Render free tier (512MB RAM ceiling) + Vercel free tier + Neon PostgreSQL free tier.
+- **28-Table Authoritative Neon Schema**: Complete relational persistence with foreign key cascades, unique constraints, and indices for classrooms, documents, chunks, vectors, knowledge graphs, and student mastery.
+- **BYOK Multi-Tenant Encryption**: AES-256-GCM encryption with PBKDF2 key derivation protects individual student API keys. Zero cross-student key leakage.
+- **Enterprise Security Hardening**: In-memory token bucket rate limiting (General, AI generation, Auth, Uploads), SSRF protection, path traversal sanitization, and database password redaction.
+- **Disaster Recovery & Point-in-Time Backup**: Automated SHA-256 verified full database and document storage backup/restore CLI utilities (`scripts/backup_production_data.ts`, `scripts/restore_production_data.ts`).
+- **Distributed Concurrency Lock**: In-memory single-generator lock with waiter queues ensures only one student invokes LLM for the same question; all concurrent students reuse the result (0 duplicate tokens).
+
 ---
 
 ## 🏛️ Project Architecture
@@ -156,6 +164,27 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 ```
 The compiled assets will be created in `dist/`.
+
+### 7. Run End-to-End Integration Tests
+```bash
+# Complete Phase 10 integration suite (Workflows A - H)
+npx tsx scripts/test_phase10_e2e_integration.ts
+
+# Production readiness & security resilience (20 Scenarios)
+npx tsx scripts/test_phase9_production_readiness.ts
+
+# Real-world performance benchmarking
+npx tsx scripts/benchmark_phase10_performance.ts
+```
+
+### 8. Production Backup & Disaster Recovery CLI
+```bash
+# Create complete 28-table database + storage backup with SHA-256 verification
+npx tsx scripts/backup_production_data.ts
+
+# Restore from a verified snapshot
+npx tsx scripts/restore_production_data.ts --dir backups/backup_YYYY-MM-DDTHH-mm-ss
+```
 
 ---
 

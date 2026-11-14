@@ -1,0 +1,2 @@
+Database Systems Unit 3: Transaction Processing & ACID Properties.
+Atomicity guarantees all-or-nothing execution. Consistency preserves integrity constraints. Isolation ensures concurrent transactions do not interfere. Durability guarantees committed changes persist.

@@ -1,8 +1,8 @@
 {
-  "totalAnswers": 7,
-  "totalHits": 28,
-  "totalTokensSaved": 12600,
-  "lastUpdated": "2026-11-14T12:06:20.360Z",
+  "totalAnswers": 51,
+  "totalHits": 66,
+  "totalTokensSaved": 29700,
+  "lastUpdated": "2026-11-14T15:55:33.670Z",
   "answers": [
     {
       "id": "ans-1794647157519-m5dz9",
@@ -826,6 +826,3218 @@
           "actor": "Student A (BYOK Contributor)",
           "details": "Initial academic answer created and shared with class M2029_COHORT_1794657979848 using Google Gemini 3.5 Flash.",
           "timestamp": "2026-11-14T12:06:20.242Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664511372-ktn2m",
+      "classId": "class-p6-a-1794664504807",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory Paging",
+      "originalQuestion": "What is paging in operating systems?",
+      "normalizedKey": "operating paging systems",
+      "intent": "definition",
+      "answer": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+      "sections": {
+        "definition": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "simple": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "detailed": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:55:11.372Z",
+      "updatedAt": "2026-11-14T13:55:11.372Z",
+      "lastAccessedAt": "2026-11-14T13:55:11.372Z",
+      "version": 1,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Classmate A",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664511373",
+          "action": "CREATED",
+          "actor": "Classmate A",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664504807 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:55:11.372Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664511468-hbrqu",
+      "classId": "class-p6-a-1794664504807",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Definition",
+      "originalQuestion": "What is deadlock?",
+      "normalizedKey": "deadlock",
+      "intent": "definition",
+      "answer": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+      "sections": {
+        "definition": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "simple": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "detailed": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:55:11.468Z",
+      "updatedAt": "2026-11-14T13:55:11.468Z",
+      "lastAccessedAt": "2026-11-14T13:55:11.468Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664511468",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664504807 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:55:11.468Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664587713-mvt9f",
+      "classId": "class-p6-a-1794664581121",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory Paging",
+      "originalQuestion": "What is paging in operating systems?",
+      "normalizedKey": "operating paging systems",
+      "intent": "definition",
+      "answer": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+      "sections": {
+        "definition": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "simple": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "detailed": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:56:27.713Z",
+      "updatedAt": "2026-11-14T13:56:27.713Z",
+      "lastAccessedAt": "2026-11-14T13:56:27.713Z",
+      "version": 1,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Classmate A",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664587713",
+          "action": "CREATED",
+          "actor": "Classmate A",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664581121 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:56:27.713Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664587797-ugc2v",
+      "classId": "class-p6-a-1794664581121",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Definition",
+      "originalQuestion": "What is deadlock?",
+      "normalizedKey": "deadlock",
+      "intent": "definition",
+      "answer": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+      "sections": {
+        "definition": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "simple": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "detailed": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:56:27.797Z",
+      "updatedAt": "2026-11-14T13:56:27.797Z",
+      "lastAccessedAt": "2026-11-14T13:56:27.797Z",
+      "version": 1,
+      "qualityStatus": "DISPUTED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 3,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664587928",
+          "action": "DOWNVOTED",
+          "actor": "Student 3",
+          "details": "Downvoted by Student 3: \"Incorrect\"",
+          "timestamp": "2026-11-14T13:56:27.928Z"
+        },
+        {
+          "id": "audit-1794664587925",
+          "action": "DOWNVOTED",
+          "actor": "Student 2",
+          "details": "Downvoted by Student 2: \"Does not mention resources or wait\"",
+          "timestamp": "2026-11-14T13:56:27.925Z"
+        },
+        {
+          "id": "audit-1794664587920",
+          "action": "DOWNVOTED",
+          "actor": "Student 1",
+          "details": "Downvoted by Student 1: \"Completely wrong definition\"",
+          "timestamp": "2026-11-14T13:56:27.920Z"
+        },
+        {
+          "id": "audit-1794664587797",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664581121 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:56:27.797Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664610601-szx5s",
+      "classId": "class-p6-a-1794664604701",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory Paging",
+      "originalQuestion": "What is paging in operating systems?",
+      "normalizedKey": "operating paging systems",
+      "intent": "definition",
+      "answer": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+      "sections": {
+        "definition": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "simple": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "detailed": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:56:50.601Z",
+      "updatedAt": "2026-11-14T13:56:50.601Z",
+      "lastAccessedAt": "2026-11-14T13:56:50.601Z",
+      "version": 1,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Classmate A",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664610601",
+          "action": "CREATED",
+          "actor": "Classmate A",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664604701 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:56:50.601Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664610707-y0x6c",
+      "classId": "class-p6-a-1794664604701",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Definition",
+      "originalQuestion": "What is deadlock?",
+      "normalizedKey": "deadlock",
+      "intent": "definition",
+      "answer": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+      "sections": {
+        "definition": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "simple": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "detailed": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:56:50.707Z",
+      "updatedAt": "2026-11-14T13:56:50.707Z",
+      "lastAccessedAt": "2026-11-14T13:56:50.707Z",
+      "version": 1,
+      "qualityStatus": "DISPUTED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 3,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664610795",
+          "action": "DOWNVOTED",
+          "actor": "Student 3",
+          "details": "Downvoted by Student 3: \"Incorrect\"",
+          "timestamp": "2026-11-14T13:56:50.795Z"
+        },
+        {
+          "id": "audit-1794664610791",
+          "action": "DOWNVOTED",
+          "actor": "Student 2",
+          "details": "Downvoted by Student 2: \"Does not mention resources or wait\"",
+          "timestamp": "2026-11-14T13:56:50.791Z"
+        },
+        {
+          "id": "audit-1794664610787",
+          "action": "DOWNVOTED",
+          "actor": "Student 1",
+          "details": "Downvoted by Student 1: \"Completely wrong definition\"",
+          "timestamp": "2026-11-14T13:56:50.787Z"
+        },
+        {
+          "id": "audit-1794664610707",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664604701 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:56:50.707Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664769281-t5nb1",
+      "classId": "class-p6-a-1794664762897",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory Paging",
+      "originalQuestion": "What is paging in operating systems?",
+      "normalizedKey": "operating paging systems",
+      "intent": "definition",
+      "answer": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+      "sections": {
+        "definition": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "simple": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "detailed": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:59:29.281Z",
+      "updatedAt": "2026-11-14T13:59:29.281Z",
+      "lastAccessedAt": "2026-11-14T13:59:29.281Z",
+      "version": 1,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Classmate A",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664769281",
+          "action": "CREATED",
+          "actor": "Classmate A",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664762897 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:59:29.281Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664769390-g55mv",
+      "classId": "class-p6-a-1794664762897",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Definition",
+      "originalQuestion": "What is deadlock?",
+      "normalizedKey": "deadlock",
+      "intent": "definition",
+      "answer": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+      "sections": {
+        "definition": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "simple": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "detailed": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T13:59:29.390Z",
+      "updatedAt": "2026-11-14T13:59:29.390Z",
+      "lastAccessedAt": "2026-11-14T13:59:29.390Z",
+      "version": 1,
+      "qualityStatus": "DISPUTED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 3,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794664769487",
+          "action": "DOWNVOTED",
+          "actor": "Student 3",
+          "details": "Downvoted by Student 3: \"Incorrect\"",
+          "timestamp": "2026-11-14T13:59:29.487Z"
+        },
+        {
+          "id": "audit-1794664769484",
+          "action": "DOWNVOTED",
+          "actor": "Student 2",
+          "details": "Downvoted by Student 2: \"Does not mention resources or wait\"",
+          "timestamp": "2026-11-14T13:59:29.484Z"
+        },
+        {
+          "id": "audit-1794664769481",
+          "action": "DOWNVOTED",
+          "actor": "Student 1",
+          "details": "Downvoted by Student 1: \"Completely wrong definition\"",
+          "timestamp": "2026-11-14T13:59:29.481Z"
+        },
+        {
+          "id": "audit-1794664769390",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794664762897 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T13:59:29.390Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664909923-mm156",
+      "classId": "M2029_COHORT_1794664909283",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+        "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:01:49.923Z",
+      "updatedAt": "2026-11-14T14:01:49.923Z",
+      "lastAccessedAt": "2026-11-14T14:01:50.036Z",
+      "version": 1,
+      "qualityStatus": "CORRECTION_PROPOSED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T14:01:49.923Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794664910026-tpdc",
+          "answerId": "ans-1794664909923-mm156",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "pending",
+          "createdAt": "2026-11-14T14:01:50.026Z",
+          "reviewedBy": "Pending Review"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794664910036",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:01:50.036Z"
+        },
+        {
+          "id": "audit-1794664910033",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T14:01:50.033Z"
+        },
+        {
+          "id": "audit-1794664910028",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:01:50.028Z"
+        },
+        {
+          "id": "audit-1794664910026",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:01:50.026Z"
+        },
+        {
+          "id": "audit-1794664910023",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:01:50.023Z"
+        },
+        {
+          "id": "audit-1794664910020",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:01:50.020Z"
+        },
+        {
+          "id": "audit-1794664909923",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794664909283 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T14:01:49.923Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664963896-wzhjy",
+      "classId": "M2029_COHORT_1794664963494",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:02:43.896Z",
+      "updatedAt": "2026-11-14T14:02:43.984Z",
+      "lastAccessedAt": "2026-11-14T14:02:43.989Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T14:02:43.896Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794664963983-utyw",
+          "answerId": "ans-1794664963896-wzhjy",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:02:43.983Z",
+          "reviewedBy": "Faculty Reviewer",
+          "reviewedAt": "2026-11-14T14:02:43.984Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794664963989",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:02:43.989Z"
+        },
+        {
+          "id": "audit-1794664963988",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T14:02:43.988Z"
+        },
+        {
+          "id": "audit-1794664963986",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:02:43.986Z"
+        },
+        {
+          "id": "audit-1794664963984",
+          "action": "VERIFIED",
+          "actor": "Faculty Reviewer",
+          "details": "Correction corr-1794664963983-utyw approved by Faculty Reviewer. Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:02:43.984Z"
+        },
+        {
+          "id": "audit-1794664963983",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:02:43.983Z"
+        },
+        {
+          "id": "audit-1794664963980",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:02:43.980Z"
+        },
+        {
+          "id": "audit-1794664963977",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:02:43.977Z"
+        },
+        {
+          "id": "audit-1794664963896",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794664963494 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T14:02:43.896Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794664995356-odurf",
+      "classId": "M2029_COHORT_1794664994960",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:03:15.356Z",
+      "updatedAt": "2026-11-14T14:03:15.472Z",
+      "lastAccessedAt": "2026-11-14T14:03:15.476Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T14:03:15.356Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794664995469-fljj",
+          "answerId": "ans-1794664995356-odurf",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:03:15.469Z",
+          "reviewedBy": "Faculty Reviewer",
+          "reviewedAt": "2026-11-14T14:03:15.472Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794664995476",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:03:15.476Z"
+        },
+        {
+          "id": "audit-1794664995475",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T14:03:15.475Z"
+        },
+        {
+          "id": "audit-1794664995473",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:03:15.473Z"
+        },
+        {
+          "id": "audit-1794664995472",
+          "action": "VERIFIED",
+          "actor": "Faculty Reviewer",
+          "details": "Correction corr-1794664995469-fljj approved by Faculty Reviewer. Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:03:15.472Z"
+        },
+        {
+          "id": "audit-1794664995470",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:03:15.469Z"
+        },
+        {
+          "id": "audit-1794664995467",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:03:15.467Z"
+        },
+        {
+          "id": "audit-1794664995464",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:03:15.464Z"
+        },
+        {
+          "id": "audit-1794664995356",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794664994960 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T14:03:15.356Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794665027128-rzbwg",
+      "classId": "M2029_COHORT_1794665026741",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:03:47.128Z",
+      "updatedAt": "2026-11-14T14:03:47.232Z",
+      "lastAccessedAt": "2026-11-14T14:03:47.240Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T14:03:47.128Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794665027230-vhyo",
+          "answerId": "ans-1794665027128-rzbwg",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:03:47.230Z",
+          "reviewedBy": "Faculty Reviewer",
+          "reviewedAt": "2026-11-14T14:03:47.232Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794665027240",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:03:47.240Z"
+        },
+        {
+          "id": "audit-1794665027238",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T14:03:47.238Z"
+        },
+        {
+          "id": "audit-1794665027235",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:03:47.235Z"
+        },
+        {
+          "id": "audit-1794665027233",
+          "action": "VERIFIED",
+          "actor": "Faculty Reviewer",
+          "details": "Correction corr-1794665027230-vhyo approved by Faculty Reviewer. Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:03:47.232Z"
+        },
+        {
+          "id": "audit-1794665027230",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:03:47.230Z"
+        },
+        {
+          "id": "audit-1794665027228",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:03:47.228Z"
+        },
+        {
+          "id": "audit-1794665027224",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:03:47.224Z"
+        },
+        {
+          "id": "audit-1794665027128",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794665026741 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T14:03:47.128Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794665043269-dz8b3",
+      "classId": "M2029_COHORT_1794665042722",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:04:03.269Z",
+      "updatedAt": "2026-11-14T14:04:03.363Z",
+      "lastAccessedAt": "2026-11-14T14:04:03.372Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T14:04:03.269Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794665043360-8l7m",
+          "answerId": "ans-1794665043269-dz8b3",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:04:03.360Z",
+          "reviewedBy": "Faculty Reviewer",
+          "reviewedAt": "2026-11-14T14:04:03.363Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794665043372",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:04:03.372Z"
+        },
+        {
+          "id": "audit-1794665043368",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T14:04:03.368Z"
+        },
+        {
+          "id": "audit-1794665043366",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:04:03.366Z"
+        },
+        {
+          "id": "audit-1794665043363",
+          "action": "VERIFIED",
+          "actor": "Faculty Reviewer",
+          "details": "Correction corr-1794665043360-8l7m approved by Faculty Reviewer. Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:04:03.363Z"
+        },
+        {
+          "id": "audit-1794665043360",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:04:03.360Z"
+        },
+        {
+          "id": "audit-1794665043358",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:04:03.358Z"
+        },
+        {
+          "id": "audit-1794665043355",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:04:03.355Z"
+        },
+        {
+          "id": "audit-1794665043269",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794665042722 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T14:04:03.269Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794666159846-uyhec",
+      "classId": "class-p6-a-1794666152179",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory Paging",
+      "originalQuestion": "What is paging in operating systems?",
+      "normalizedKey": "operating paging systems",
+      "intent": "definition",
+      "answer": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+      "sections": {
+        "definition": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "simple": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "detailed": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:22:39.846Z",
+      "updatedAt": "2026-11-14T14:22:39.846Z",
+      "lastAccessedAt": "2026-11-14T14:22:39.846Z",
+      "version": 1,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Classmate A",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794666159846",
+          "action": "CREATED",
+          "actor": "Classmate A",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794666152179 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T14:22:39.846Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794666159960-6heho",
+      "classId": "class-p6-a-1794666152179",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Definition",
+      "originalQuestion": "What is deadlock?",
+      "normalizedKey": "deadlock",
+      "intent": "definition",
+      "answer": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+      "sections": {
+        "definition": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "simple": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "detailed": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:22:39.960Z",
+      "updatedAt": "2026-11-14T14:22:39.960Z",
+      "lastAccessedAt": "2026-11-14T14:22:39.960Z",
+      "version": 1,
+      "qualityStatus": "DISPUTED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 3,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794666160071",
+          "action": "DOWNVOTED",
+          "actor": "Student 3",
+          "details": "Downvoted by Student 3: \"Incorrect\"",
+          "timestamp": "2026-11-14T14:22:40.071Z"
+        },
+        {
+          "id": "audit-1794666160068",
+          "action": "DOWNVOTED",
+          "actor": "Student 2",
+          "details": "Downvoted by Student 2: \"Does not mention resources or wait\"",
+          "timestamp": "2026-11-14T14:22:40.068Z"
+        },
+        {
+          "id": "audit-1794666160065",
+          "action": "DOWNVOTED",
+          "actor": "Student 1",
+          "details": "Downvoted by Student 1: \"Completely wrong definition\"",
+          "timestamp": "2026-11-14T14:22:40.065Z"
+        },
+        {
+          "id": "audit-1794666159960",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794666152179 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T14:22:39.960Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794666190084-7ok9n",
+      "classId": "M2029_COHORT_1794666189739",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:23:10.084Z",
+      "updatedAt": "2026-11-14T14:23:10.181Z",
+      "lastAccessedAt": "2026-11-14T14:23:10.190Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T14:23:10.084Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794666190178-15m9",
+          "answerId": "ans-1794666190084-7ok9n",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:23:10.178Z",
+          "reviewedBy": "Faculty Reviewer",
+          "reviewedAt": "2026-11-14T14:23:10.181Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794666190190",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:23:10.190Z"
+        },
+        {
+          "id": "audit-1794666190187",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T14:23:10.187Z"
+        },
+        {
+          "id": "audit-1794666190184",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:23:10.184Z"
+        },
+        {
+          "id": "audit-1794666190181",
+          "action": "VERIFIED",
+          "actor": "Faculty Reviewer",
+          "details": "Correction corr-1794666190178-15m9 approved by Faculty Reviewer. Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:23:10.181Z"
+        },
+        {
+          "id": "audit-1794666190179",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:23:10.178Z"
+        },
+        {
+          "id": "audit-1794666190176",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T14:23:10.176Z"
+        },
+        {
+          "id": "audit-1794666190172",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:23:10.172Z"
+        },
+        {
+          "id": "audit-1794666190084",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794666189739 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T14:23:10.084Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667362813-j3gk8",
+      "classId": "class-p8-a-1794667355669",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Avoidance",
+      "originalQuestion": "What is the working of Banker algorithm in Operating Systems?",
+      "normalizedKey": "algorithm banker operating systems working",
+      "intent": "algorithm",
+      "answer": "### 1. Simple Overview\nBanker algorithm tests safety by simulating resource allocation for maximum possible amounts.",
+      "sections": {
+        "definition": "Banker algorithm tests safety by simulating resource allocation.",
+        "simple": "Banker algorithm tests safety by simulating resource allocation.",
+        "exam_10marker": "Complete Banker Algorithm 10-Marker University Format with safety matrix.",
+        "detailed": "### 1. Simple Overview\nBanker algorithm tests safety by simulating resource allocation for maximum possible amounts."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini (gemini-3.5-flash)",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:42:42.810Z",
+      "updatedAt": "2026-11-14T14:42:44.505Z",
+      "lastAccessedAt": "2026-11-14T14:42:44.405Z",
+      "version": 1,
+      "qualityStatus": "SUPERSEDED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1 (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667364505",
+          "action": "SUPERSEDED",
+          "actor": "System / QualityLifecycle",
+          "details": "Invalidated due to curriculum update",
+          "timestamp": "2026-11-14T14:42:44.505Z"
+        },
+        {
+          "id": "audit-1794667364405",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:42:44.405Z"
+        },
+        {
+          "id": "audit-1794667362913",
+          "action": "VERIFIED",
+          "actor": "Prof. A. Sharma (HOD CS)",
+          "details": "Academic verification confirmed by Prof. A. Sharma (HOD CS): Verified against Galvin OS textbook Chapter 7.",
+          "timestamp": "2026-11-14T14:42:42.913Z"
+        },
+        {
+          "id": "audit-1794667362813",
+          "action": "CREATED",
+          "actor": "Student 1 (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667355669 using Google Gemini (gemini-3.5-flash).",
+          "timestamp": "2026-11-14T14:42:42.810Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667362918-fj6eq",
+      "classId": "class-p8-a-1794667355669",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Avoidance",
+      "originalQuestion": "Is Banker algorithm guaranteed to prevent all deadlocks?",
+      "normalizedKey": "algorithm all banker deadlocks guaranteed prevent",
+      "intent": "algorithm",
+      "answer": "Yes, it prevents all deadlocks unconditionally.",
+      "sections": {
+        "definition": "Yes, it prevents all deadlocks unconditionally.",
+        "simple": "Yes, it prevents all deadlocks unconditionally.",
+        "detailed": "Yes, it prevents all deadlocks unconditionally."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Test Model",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:42:42.917Z",
+      "updatedAt": "2026-11-14T14:42:43.027Z",
+      "lastAccessedAt": "2026-11-14T14:42:42.917Z",
+      "version": 1,
+      "qualityStatus": "SUPERSEDED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667363027",
+          "action": "SUPERSEDED",
+          "actor": "System / QualityLifecycle",
+          "details": "Superseded by updated university notes Replaced by answer ans-1794667362813-j3gk8.",
+          "timestamp": "2026-11-14T14:42:43.027Z"
+        },
+        {
+          "id": "audit-1794667363020",
+          "action": "DISPUTED",
+          "actor": "System / SharedAnswerController",
+          "details": "Disputed: Banker algorithm avoids deadlock, does not prevent it.",
+          "timestamp": "2026-11-14T14:42:43.020Z"
+        },
+        {
+          "id": "audit-1794667362918",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667355669 using Test Model.",
+          "timestamp": "2026-11-14T14:42:42.917Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667363278-58ehc",
+      "classId": "class-p8-a-1794667355669",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Concurrency",
+      "originalQuestion": "Explain Critical Section Problem in OS 1794667355669",
+      "normalizedKey": "1794667355669 critical operating problem section system",
+      "intent": "general",
+      "answer": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+      "sections": {
+        "definition": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+        "simple": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+        "detailed": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:42:43.278Z",
+      "updatedAt": "2026-11-14T14:42:43.278Z",
+      "lastAccessedAt": "2026-11-14T14:42:43.278Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667363278",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667355669 using Google Gemini.",
+          "timestamp": "2026-11-14T14:42:43.278Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667364068-csme4",
+      "classId": "class-p8-a-1794667355669",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock",
+      "originalQuestion": "What are Coffman conditions? 1794667355669",
+      "normalizedKey": "1794667355669 coffman conditions",
+      "intent": "conditions",
+      "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+      "sections": {
+        "definition": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+        "simple": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+        "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Claude 3.5 Sonnet",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:42:44.068Z",
+      "updatedAt": "2026-11-14T14:42:44.196Z",
+      "lastAccessedAt": "2026-11-14T14:42:44.068Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "sections": {
+            "definition": "4 necessary conditions for deadlock.",
+            "simple": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+            "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student 1",
+          "modifiedAt": "2026-11-14T14:42:44.068Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        },
+        {
+          "version": 1,
+          "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "sections": {
+            "definition": "4 necessary conditions for deadlock.",
+            "simple": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+            "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student 1",
+          "modifiedAt": "2026-11-14T14:42:44.068Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794667364171-1fsx",
+          "answerId": "ans-1794667364068-csme4",
+          "suggestedBy": "Student 2",
+          "sectionTargeted": "definition",
+          "originalContent": "4 necessary conditions for deadlock.",
+          "proposedContent": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+          "reason": "Include historical author citation for exam Section C.",
+          "supportingEvidence": "Operating System Concepts, 10th Ed, Page 318",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:42:44.171Z",
+          "reviewedBy": "Prof. A. Sharma (HOD CS)",
+          "reviewedAt": "2026-11-14T14:42:44.196Z"
+        },
+        {
+          "id": "corr-1794667364185-0zhn",
+          "answerId": "ans-1794667364068-csme4",
+          "suggestedBy": "Student 3",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "proposedContent": "Include Resource Allocation Graph (RAG) cycle diagram.",
+          "reason": "Examiners expect RAG cycle diagram for full 10 marks.",
+          "supportingEvidence": "University PYQ 2023 Question 4(a)",
+          "status": "pending",
+          "createdAt": "2026-11-14T14:42:44.185Z",
+          "reviewedBy": "Pending Review"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794667364196",
+          "action": "VERIFIED",
+          "actor": "Prof. A. Sharma (HOD CS)",
+          "details": "Correction corr-1794667364171-1fsx approved by Prof. A. Sharma (HOD CS). Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:42:44.196Z"
+        },
+        {
+          "id": "audit-1794667364185",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student 3",
+          "details": "Student proposed correction for \"exam_10marker\": Examiners expect RAG cycle diagram for full 10 marks. (Evidence: University PYQ 2023 Question 4(a)). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:42:44.185Z"
+        },
+        {
+          "id": "audit-1794667364172",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student 2",
+          "details": "Student proposed correction for \"definition\": Include historical author citation for exam Section C. (Evidence: Operating System Concepts, 10th Ed, Page 318). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:42:44.171Z"
+        },
+        {
+          "id": "audit-1794667364068",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667355669 using Claude 3.5 Sonnet.",
+          "timestamp": "2026-11-14T14:42:44.068Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667364207-zwojc",
+      "classId": "class-p8-a-1794667355669",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory",
+      "originalQuestion": "Explain Inverted Page Tables 1794667355669",
+      "normalizedKey": "1794667355669 inverted page tables",
+      "intent": "general",
+      "answer": "Inverted page tables have one entry for each real page of memory.",
+      "sections": {
+        "definition": "Inverted page tables have one entry for each real page of memory.",
+        "simple": "Inverted page tables have one entry for each real page of memory.",
+        "detailed": "Inverted page tables have one entry for each real page of memory."
+      },
+      "sourcesUsed": [
+        {
+          "title": "Operating System Concepts",
+          "docId": "doc-os-textbook-1794667355669",
+          "version": 1,
+          "pageNumber": 345
+        }
+      ],
+      "modelUsed": "Google Gemini",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:42:44.207Z",
+      "updatedAt": "2026-11-14T14:42:44.207Z",
+      "lastAccessedAt": "2026-11-14T14:42:44.207Z",
+      "version": 1,
+      "qualityStatus": "NEEDS_REVIEW",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667364300",
+          "action": "DISPUTED",
+          "actor": "System / DocumentValidityWatcher",
+          "details": "Cited document \"doc-os-textbook-1794667355669\" was updated to version 2 (answer was based on v1). Status changed from VERIFIED to NEEDS_REVIEW.",
+          "timestamp": "2026-11-14T14:42:44.300Z"
+        },
+        {
+          "id": "audit-1794667364207",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667355669 using Google Gemini.",
+          "timestamp": "2026-11-14T14:42:44.207Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667433751-sgac3",
+      "classId": "class-p8-a-1794667427292",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Avoidance",
+      "originalQuestion": "What is the working of Banker algorithm in Operating Systems?",
+      "normalizedKey": "algorithm banker operating systems working",
+      "intent": "algorithm",
+      "answer": "### 1. Simple Overview\nBanker algorithm tests safety by simulating resource allocation for maximum possible amounts.",
+      "sections": {
+        "definition": "Banker algorithm tests safety by simulating resource allocation.",
+        "simple": "Banker algorithm tests safety by simulating resource allocation.",
+        "exam_10marker": "Complete Banker Algorithm 10-Marker University Format with safety matrix.",
+        "detailed": "### 1. Simple Overview\nBanker algorithm tests safety by simulating resource allocation for maximum possible amounts."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini (gemini-3.5-flash)",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:43:53.746Z",
+      "updatedAt": "2026-11-14T14:43:55.366Z",
+      "lastAccessedAt": "2026-11-14T14:43:55.273Z",
+      "version": 1,
+      "qualityStatus": "SUPERSEDED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1 (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667435366",
+          "action": "SUPERSEDED",
+          "actor": "System / QualityLifecycle",
+          "details": "Invalidated due to curriculum update",
+          "timestamp": "2026-11-14T14:43:55.366Z"
+        },
+        {
+          "id": "audit-1794667435273",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T14:43:55.273Z"
+        },
+        {
+          "id": "audit-1794667433854",
+          "action": "VERIFIED",
+          "actor": "Prof. A. Sharma (HOD CS)",
+          "details": "Academic verification confirmed by Prof. A. Sharma (HOD CS): Verified against Galvin OS textbook Chapter 7.",
+          "timestamp": "2026-11-14T14:43:53.854Z"
+        },
+        {
+          "id": "audit-1794667433751",
+          "action": "CREATED",
+          "actor": "Student 1 (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667427292 using Google Gemini (gemini-3.5-flash).",
+          "timestamp": "2026-11-14T14:43:53.746Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667433860-a0lp3",
+      "classId": "class-p8-a-1794667427292",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Avoidance",
+      "originalQuestion": "Is Banker algorithm guaranteed to prevent all deadlocks?",
+      "normalizedKey": "algorithm all banker deadlocks guaranteed prevent",
+      "intent": "algorithm",
+      "answer": "Yes, it prevents all deadlocks unconditionally.",
+      "sections": {
+        "definition": "Yes, it prevents all deadlocks unconditionally.",
+        "simple": "Yes, it prevents all deadlocks unconditionally.",
+        "detailed": "Yes, it prevents all deadlocks unconditionally."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Test Model",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:43:53.860Z",
+      "updatedAt": "2026-11-14T14:43:53.954Z",
+      "lastAccessedAt": "2026-11-14T14:43:53.860Z",
+      "version": 1,
+      "qualityStatus": "SUPERSEDED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667433954",
+          "action": "SUPERSEDED",
+          "actor": "System / QualityLifecycle",
+          "details": "Superseded by updated university notes Replaced by answer ans-1794667433751-sgac3.",
+          "timestamp": "2026-11-14T14:43:53.954Z"
+        },
+        {
+          "id": "audit-1794667433950",
+          "action": "DISPUTED",
+          "actor": "System / SharedAnswerController",
+          "details": "Disputed: Banker algorithm avoids deadlock, does not prevent it.",
+          "timestamp": "2026-11-14T14:43:53.950Z"
+        },
+        {
+          "id": "audit-1794667433860",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667427292 using Test Model.",
+          "timestamp": "2026-11-14T14:43:53.860Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667434210-olt1m",
+      "classId": "class-p8-a-1794667427292",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Concurrency",
+      "originalQuestion": "Explain Critical Section Problem in OS 1794667427292",
+      "normalizedKey": "1794667427292 critical operating problem section system",
+      "intent": "general",
+      "answer": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+      "sections": {
+        "definition": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+        "simple": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+        "detailed": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:43:54.210Z",
+      "updatedAt": "2026-11-14T14:43:54.210Z",
+      "lastAccessedAt": "2026-11-14T14:43:54.210Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667434210",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667427292 using Google Gemini.",
+          "timestamp": "2026-11-14T14:43:54.210Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667434983-jq8og",
+      "classId": "class-p8-a-1794667427292",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock",
+      "originalQuestion": "What are Coffman conditions? 1794667427292",
+      "normalizedKey": "1794667427292 coffman conditions",
+      "intent": "conditions",
+      "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+      "sections": {
+        "definition": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+        "simple": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+        "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Claude 3.5 Sonnet",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:43:54.983Z",
+      "updatedAt": "2026-11-14T14:43:55.086Z",
+      "lastAccessedAt": "2026-11-14T14:43:54.983Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "sections": {
+            "definition": "4 necessary conditions for deadlock.",
+            "simple": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+            "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student 1",
+          "modifiedAt": "2026-11-14T14:43:54.983Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        },
+        {
+          "version": 1,
+          "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "sections": {
+            "definition": "4 necessary conditions for deadlock.",
+            "simple": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+            "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student 1",
+          "modifiedAt": "2026-11-14T14:43:54.983Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794667435075-gfcf",
+          "answerId": "ans-1794667434983-jq8og",
+          "suggestedBy": "Student 2",
+          "sectionTargeted": "definition",
+          "originalContent": "4 necessary conditions for deadlock.",
+          "proposedContent": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+          "reason": "Include historical author citation for exam Section C.",
+          "supportingEvidence": "Operating System Concepts, 10th Ed, Page 318",
+          "status": "approved",
+          "createdAt": "2026-11-14T14:43:55.075Z",
+          "reviewedBy": "Prof. A. Sharma (HOD CS)",
+          "reviewedAt": "2026-11-14T14:43:55.086Z"
+        },
+        {
+          "id": "corr-1794667435080-uhnh",
+          "answerId": "ans-1794667434983-jq8og",
+          "suggestedBy": "Student 3",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "proposedContent": "Include Resource Allocation Graph (RAG) cycle diagram.",
+          "reason": "Examiners expect RAG cycle diagram for full 10 marks.",
+          "supportingEvidence": "University PYQ 2023 Question 4(a)",
+          "status": "pending",
+          "createdAt": "2026-11-14T14:43:55.080Z",
+          "reviewedBy": "Pending Review"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794667435086",
+          "action": "VERIFIED",
+          "actor": "Prof. A. Sharma (HOD CS)",
+          "details": "Correction corr-1794667435075-gfcf approved by Prof. A. Sharma (HOD CS). Master answer updated to v2.",
+          "timestamp": "2026-11-14T14:43:55.086Z"
+        },
+        {
+          "id": "audit-1794667435080",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student 3",
+          "details": "Student proposed correction for \"exam_10marker\": Examiners expect RAG cycle diagram for full 10 marks. (Evidence: University PYQ 2023 Question 4(a)). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:43:55.080Z"
+        },
+        {
+          "id": "audit-1794667435075",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student 2",
+          "details": "Student proposed correction for \"definition\": Include historical author citation for exam Section C. (Evidence: Operating System Concepts, 10th Ed, Page 318). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T14:43:55.075Z"
+        },
+        {
+          "id": "audit-1794667434983",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667427292 using Claude 3.5 Sonnet.",
+          "timestamp": "2026-11-14T14:43:54.983Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794667435092-2ukx3",
+      "classId": "class-p8-a-1794667427292",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory",
+      "originalQuestion": "Explain Inverted Page Tables 1794667427292",
+      "normalizedKey": "1794667427292 inverted page tables",
+      "intent": "general",
+      "answer": "Inverted page tables have one entry for each real page of memory.",
+      "sections": {
+        "definition": "Inverted page tables have one entry for each real page of memory.",
+        "simple": "Inverted page tables have one entry for each real page of memory.",
+        "detailed": "Inverted page tables have one entry for each real page of memory."
+      },
+      "sourcesUsed": [
+        {
+          "title": "Operating System Concepts",
+          "docId": "doc-os-textbook-1794667427292",
+          "version": 1,
+          "pageNumber": 345
+        }
+      ],
+      "modelUsed": "Google Gemini",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T14:43:55.092Z",
+      "updatedAt": "2026-11-14T14:43:55.092Z",
+      "lastAccessedAt": "2026-11-14T14:43:55.092Z",
+      "version": 1,
+      "qualityStatus": "NEEDS_REVIEW",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794667435186",
+          "action": "DISPUTED",
+          "actor": "System / DocumentValidityWatcher",
+          "details": "Cited document \"doc-os-textbook-1794667427292\" was updated to version 2 (answer was based on v1). Status changed from VERIFIED to NEEDS_REVIEW.",
+          "timestamp": "2026-11-14T14:43:55.186Z"
+        },
+        {
+          "id": "audit-1794667435092",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794667427292 using Google Gemini.",
+          "timestamp": "2026-11-14T14:43:55.092Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668447636-c60bi",
+      "classId": "class-p8-a-1794668441510",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Avoidance",
+      "originalQuestion": "What is the working of Banker algorithm in Operating Systems?",
+      "normalizedKey": "algorithm banker operating systems working",
+      "intent": "algorithm",
+      "answer": "### 1. Simple Overview\nBanker algorithm tests safety by simulating resource allocation for maximum possible amounts.",
+      "sections": {
+        "definition": "Banker algorithm tests safety by simulating resource allocation.",
+        "simple": "Banker algorithm tests safety by simulating resource allocation.",
+        "exam_10marker": "Complete Banker Algorithm 10-Marker University Format with safety matrix.",
+        "detailed": "### 1. Simple Overview\nBanker algorithm tests safety by simulating resource allocation for maximum possible amounts."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini (gemini-3.5-flash)",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:00:47.632Z",
+      "updatedAt": "2026-11-14T15:00:49.339Z",
+      "lastAccessedAt": "2026-11-14T15:00:49.174Z",
+      "version": 1,
+      "qualityStatus": "SUPERSEDED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1 (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794668449339",
+          "action": "SUPERSEDED",
+          "actor": "System / QualityLifecycle",
+          "details": "Invalidated due to curriculum update",
+          "timestamp": "2026-11-14T15:00:49.339Z"
+        },
+        {
+          "id": "audit-1794668449174",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:00:49.174Z"
+        },
+        {
+          "id": "audit-1794668447739",
+          "action": "VERIFIED",
+          "actor": "Prof. A. Sharma (HOD CS)",
+          "details": "Academic verification confirmed by Prof. A. Sharma (HOD CS): Verified against Galvin OS textbook Chapter 7.",
+          "timestamp": "2026-11-14T15:00:47.739Z"
+        },
+        {
+          "id": "audit-1794668447637",
+          "action": "CREATED",
+          "actor": "Student 1 (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794668441510 using Google Gemini (gemini-3.5-flash).",
+          "timestamp": "2026-11-14T15:00:47.632Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668447746-c81dw",
+      "classId": "class-p8-a-1794668441510",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Avoidance",
+      "originalQuestion": "Is Banker algorithm guaranteed to prevent all deadlocks?",
+      "normalizedKey": "algorithm all banker deadlocks guaranteed prevent",
+      "intent": "algorithm",
+      "answer": "Yes, it prevents all deadlocks unconditionally.",
+      "sections": {
+        "definition": "Yes, it prevents all deadlocks unconditionally.",
+        "simple": "Yes, it prevents all deadlocks unconditionally.",
+        "detailed": "Yes, it prevents all deadlocks unconditionally."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Test Model",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:00:47.746Z",
+      "updatedAt": "2026-11-14T15:00:47.854Z",
+      "lastAccessedAt": "2026-11-14T15:00:47.746Z",
+      "version": 1,
+      "qualityStatus": "SUPERSEDED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794668447854",
+          "action": "SUPERSEDED",
+          "actor": "System / QualityLifecycle",
+          "details": "Superseded by updated university notes Replaced by answer ans-1794668447636-c60bi.",
+          "timestamp": "2026-11-14T15:00:47.854Z"
+        },
+        {
+          "id": "audit-1794668447849",
+          "action": "DISPUTED",
+          "actor": "System / SharedAnswerController",
+          "details": "Disputed: Banker algorithm avoids deadlock, does not prevent it.",
+          "timestamp": "2026-11-14T15:00:47.849Z"
+        },
+        {
+          "id": "audit-1794668447746",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794668441510 using Test Model.",
+          "timestamp": "2026-11-14T15:00:47.746Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668448103-k7dlj",
+      "classId": "class-p8-a-1794668441510",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Concurrency",
+      "originalQuestion": "Explain Critical Section Problem in OS 1794668441510",
+      "normalizedKey": "1794668441510 critical operating problem section system",
+      "intent": "general",
+      "answer": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+      "sections": {
+        "definition": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+        "simple": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting.",
+        "detailed": "Critical section problem requires Mutual Exclusion, Progress, and Bounded Waiting."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:00:48.103Z",
+      "updatedAt": "2026-11-14T15:00:48.103Z",
+      "lastAccessedAt": "2026-11-14T15:00:48.103Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794668448103",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794668441510 using Google Gemini.",
+          "timestamp": "2026-11-14T15:00:48.103Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668448867-sp7ca",
+      "classId": "class-p8-a-1794668441510",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock",
+      "originalQuestion": "What are Coffman conditions? 1794668441510",
+      "normalizedKey": "1794668441510 coffman conditions",
+      "intent": "conditions",
+      "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+      "sections": {
+        "definition": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+        "simple": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+        "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Claude 3.5 Sonnet",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:00:48.867Z",
+      "updatedAt": "2026-11-14T15:00:48.969Z",
+      "lastAccessedAt": "2026-11-14T15:00:48.867Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "sections": {
+            "definition": "4 necessary conditions for deadlock.",
+            "simple": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+            "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student 1",
+          "modifiedAt": "2026-11-14T15:00:48.867Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        },
+        {
+          "version": 1,
+          "answer": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "sections": {
+            "definition": "4 necessary conditions for deadlock.",
+            "simple": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+            "detailed": "Mutual exclusion, Hold and wait, No preemption, Circular wait."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student 1",
+          "modifiedAt": "2026-11-14T15:00:48.867Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794668448955-44r4",
+          "answerId": "ans-1794668448867-sp7ca",
+          "suggestedBy": "Student 2",
+          "sectionTargeted": "definition",
+          "originalContent": "4 necessary conditions for deadlock.",
+          "proposedContent": "The 4 Coffman conditions were formalized by Edward G. Coffman Jr. in 1971.",
+          "reason": "Include historical author citation for exam Section C.",
+          "supportingEvidence": "Operating System Concepts, 10th Ed, Page 318",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:00:48.955Z",
+          "reviewedBy": "Prof. A. Sharma (HOD CS)",
+          "reviewedAt": "2026-11-14T15:00:48.969Z"
+        },
+        {
+          "id": "corr-1794668448962-4wzh",
+          "answerId": "ans-1794668448867-sp7ca",
+          "suggestedBy": "Student 3",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "Mutual exclusion, Hold and wait, No preemption, Circular wait.",
+          "proposedContent": "Include Resource Allocation Graph (RAG) cycle diagram.",
+          "reason": "Examiners expect RAG cycle diagram for full 10 marks.",
+          "supportingEvidence": "University PYQ 2023 Question 4(a)",
+          "status": "pending",
+          "createdAt": "2026-11-14T15:00:48.962Z",
+          "reviewedBy": "Pending Review"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794668448969",
+          "action": "VERIFIED",
+          "actor": "Prof. A. Sharma (HOD CS)",
+          "details": "Correction corr-1794668448955-44r4 approved by Prof. A. Sharma (HOD CS). Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:00:48.969Z"
+        },
+        {
+          "id": "audit-1794668448962",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student 3",
+          "details": "Student proposed correction for \"exam_10marker\": Examiners expect RAG cycle diagram for full 10 marks. (Evidence: University PYQ 2023 Question 4(a)). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:00:48.962Z"
+        },
+        {
+          "id": "audit-1794668448955",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student 2",
+          "details": "Student proposed correction for \"definition\": Include historical author citation for exam Section C. (Evidence: Operating System Concepts, 10th Ed, Page 318). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:00:48.955Z"
+        },
+        {
+          "id": "audit-1794668448867",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794668441510 using Claude 3.5 Sonnet.",
+          "timestamp": "2026-11-14T15:00:48.867Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668448976-9va5f",
+      "classId": "class-p8-a-1794668441510",
+      "course": "B.Tech CSE",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory",
+      "originalQuestion": "Explain Inverted Page Tables 1794668441510",
+      "normalizedKey": "1794668441510 inverted page tables",
+      "intent": "general",
+      "answer": "Inverted page tables have one entry for each real page of memory.",
+      "sections": {
+        "definition": "Inverted page tables have one entry for each real page of memory.",
+        "simple": "Inverted page tables have one entry for each real page of memory.",
+        "detailed": "Inverted page tables have one entry for each real page of memory."
+      },
+      "sourcesUsed": [
+        {
+          "title": "Operating System Concepts",
+          "docId": "doc-os-textbook-1794668441510",
+          "version": 1,
+          "pageNumber": 345
+        }
+      ],
+      "modelUsed": "Google Gemini",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:00:48.976Z",
+      "updatedAt": "2026-11-14T15:00:48.976Z",
+      "lastAccessedAt": "2026-11-14T15:00:48.976Z",
+      "version": 1,
+      "qualityStatus": "NEEDS_REVIEW",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794668449074",
+          "action": "DISPUTED",
+          "actor": "System / DocumentValidityWatcher",
+          "details": "Cited document \"doc-os-textbook-1794668441510\" was updated to version 2 (answer was based on v1). Status changed from VERIFIED to NEEDS_REVIEW.",
+          "timestamp": "2026-11-14T15:00:49.074Z"
+        },
+        {
+          "id": "audit-1794668448977",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p8-a-1794668441510 using Google Gemini.",
+          "timestamp": "2026-11-14T15:00:48.976Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668486860-lwm34",
+      "classId": "class-p6-a-1794668479892",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory Paging",
+      "originalQuestion": "What is paging in operating systems?",
+      "normalizedKey": "operating paging systems",
+      "intent": "definition",
+      "answer": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+      "sections": {
+        "definition": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "simple": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation.",
+        "detailed": "Paging is a memory management scheme that eliminates the need for contiguous physical memory allocation."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:01:26.860Z",
+      "updatedAt": "2026-11-14T15:01:26.860Z",
+      "lastAccessedAt": "2026-11-14T15:01:26.860Z",
+      "version": 1,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Classmate A",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794668486860",
+          "action": "CREATED",
+          "actor": "Classmate A",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794668479892 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:01:26.860Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668486951-aozq4",
+      "classId": "class-p6-a-1794668479892",
+      "course": "BCA / B.Tech CS",
+      "subjectName": "Operating Systems",
+      "topic": "Deadlock Definition",
+      "originalQuestion": "What is deadlock?",
+      "normalizedKey": "deadlock",
+      "intent": "definition",
+      "answer": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+      "sections": {
+        "definition": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "simple": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly.",
+        "detailed": "Flawed explanation: Deadlock is simply when a process terminates unexpectedly."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:01:26.951Z",
+      "updatedAt": "2026-11-14T15:01:26.951Z",
+      "lastAccessedAt": "2026-11-14T15:01:26.951Z",
+      "version": 1,
+      "qualityStatus": "DISPUTED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 3,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794668487065",
+          "action": "DOWNVOTED",
+          "actor": "Student 3",
+          "details": "Downvoted by Student 3: \"Incorrect\"",
+          "timestamp": "2026-11-14T15:01:27.065Z"
+        },
+        {
+          "id": "audit-1794668487062",
+          "action": "DOWNVOTED",
+          "actor": "Student 2",
+          "details": "Downvoted by Student 2: \"Does not mention resources or wait\"",
+          "timestamp": "2026-11-14T15:01:27.062Z"
+        },
+        {
+          "id": "audit-1794668487057",
+          "action": "DOWNVOTED",
+          "actor": "Student 1",
+          "details": "Downvoted by Student 1: \"Completely wrong definition\"",
+          "timestamp": "2026-11-14T15:01:27.057Z"
+        },
+        {
+          "id": "audit-1794668486951",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-p6-a-1794668479892 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:01:26.951Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794668626277-yhg7r",
+      "classId": "M2029_COHORT_1794668625871",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:03:46.277Z",
+      "updatedAt": "2026-11-14T15:03:46.372Z",
+      "lastAccessedAt": "2026-11-14T15:03:46.379Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T15:03:46.277Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794668626370-xts7",
+          "answerId": "ans-1794668626277-yhg7r",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:03:46.370Z",
+          "reviewedBy": "Faculty Reviewer",
+          "reviewedAt": "2026-11-14T15:03:46.372Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794668626379",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:03:46.379Z"
+        },
+        {
+          "id": "audit-1794668626377",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T15:03:46.377Z"
+        },
+        {
+          "id": "audit-1794668626374",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T15:03:46.374Z"
+        },
+        {
+          "id": "audit-1794668626372",
+          "action": "VERIFIED",
+          "actor": "Faculty Reviewer",
+          "details": "Correction corr-1794668626370-xts7 approved by Faculty Reviewer. Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:03:46.372Z"
+        },
+        {
+          "id": "audit-1794668626370",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:03:46.370Z"
+        },
+        {
+          "id": "audit-1794668626367",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T15:03:46.367Z"
+        },
+        {
+          "id": "audit-1794668626364",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:03:46.364Z"
+        },
+        {
+          "id": "audit-1794668626277",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794668625871 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T15:03:46.277Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794670886361-g4jnw",
+      "classId": "class-e2e-a-1794670884866",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain Banker Algorithm for Deadlock Avoidance in Operating Systems",
+      "normalizedKey": "algorithm avoidance banker deadlock operating systems",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:41:26.359Z",
+      "updatedAt": "2026-11-14T15:41:26.359Z",
+      "lastAccessedAt": "2026-11-14T15:41:26.359Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794670886361",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794670884866 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:41:26.359Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794670886970-3rtba",
+      "classId": "class-e2e-a-1794670884866",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:41:26.970Z",
+      "updatedAt": "2026-11-14T15:41:26.970Z",
+      "lastAccessedAt": "2026-11-14T15:41:26.970Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794670886970",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794670884866 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:41:26.970Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671053680-r2okl",
+      "classId": "class-e2e-a-1794671051776",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain Banker Algorithm for Deadlock Avoidance in Operating Systems",
+      "normalizedKey": "algorithm avoidance banker deadlock operating systems",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:44:13.678Z",
+      "updatedAt": "2026-11-14T15:44:15.246Z",
+      "lastAccessedAt": "2026-11-14T15:44:13.847Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T15:44:13.678Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794671055242-feja",
+          "answerId": "ans-1794671053680-r2okl",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:44:15.242Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T15:44:15.246Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794671055246",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794671055242-feja approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:44:15.246Z"
+        },
+        {
+          "id": "audit-1794671055242",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:44:15.242Z"
+        },
+        {
+          "id": "audit-1794671053847",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:44:13.847Z"
+        },
+        {
+          "id": "audit-1794671053680",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794671051776 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:44:13.678Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671054966-ytk3y",
+      "classId": "class-e2e-a-1794671051776",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:44:14.966Z",
+      "updatedAt": "2026-11-14T15:44:14.966Z",
+      "lastAccessedAt": "2026-11-14T15:44:14.966Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794671054966",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794671051776 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:44:14.966Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671135583-rhndr",
+      "classId": "class-e2e-a-1794671134089",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain Banker Algorithm for Deadlock Avoidance in Operating Systems",
+      "normalizedKey": "algorithm avoidance banker deadlock operating systems",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:45:35.581Z",
+      "updatedAt": "2026-11-14T15:45:37.029Z",
+      "lastAccessedAt": "2026-11-14T15:45:35.752Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T15:45:35.581Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794671137025-y5gw",
+          "answerId": "ans-1794671135583-rhndr",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:45:37.024Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T15:45:37.029Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794671137029",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794671137025-y5gw approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:45:37.029Z"
+        },
+        {
+          "id": "audit-1794671137025",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:45:37.024Z"
+        },
+        {
+          "id": "audit-1794671135752",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:45:35.752Z"
+        },
+        {
+          "id": "audit-1794671135583",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794671134089 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:45:35.581Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671136751-d3klb",
+      "classId": "class-e2e-a-1794671134089",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:45:36.751Z",
+      "updatedAt": "2026-11-14T15:45:36.751Z",
+      "lastAccessedAt": "2026-11-14T15:45:36.751Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794671136751",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794671134089 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:45:36.751Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671238673-9xnbr",
+      "classId": "class-e2e-a-1794671237102",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain Banker Algorithm for Deadlock Avoidance in Operating Systems",
+      "normalizedKey": "algorithm avoidance banker deadlock operating systems",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:47:18.671Z",
+      "updatedAt": "2026-11-14T15:47:20.345Z",
+      "lastAccessedAt": "2026-11-14T15:47:18.860Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T15:47:18.671Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794671240338-owcc",
+          "answerId": "ans-1794671238673-9xnbr",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:47:20.338Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T15:47:20.345Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794671240345",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794671240338-owcc approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:47:20.345Z"
+        },
+        {
+          "id": "audit-1794671240338",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:47:20.338Z"
+        },
+        {
+          "id": "audit-1794671238860",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:47:18.860Z"
+        },
+        {
+          "id": "audit-1794671238673",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794671237102 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:47:18.671Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671240052-fywt3",
+      "classId": "class-e2e-a-1794671237102",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:47:20.052Z",
+      "updatedAt": "2026-11-14T15:47:20.052Z",
+      "lastAccessedAt": "2026-11-14T15:47:20.052Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794671240052",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794671237102 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:47:20.052Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671653944-v3zd0",
+      "classId": "class-release-1794671652287",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Database Management Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain ACID Properties in Database Management Systems",
+      "normalizedKey": "atomicity consistency database durability isolation management properties systems",
+      "intent": "general",
+      "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+      "sections": {
+        "definition": "ACID ensures transactions execute safely and reliably in databases.",
+        "simple": "ACID ensures transactions execute safely and reliably in databases.",
+        "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+        "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+        "exam_10marker": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+        "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "mat-1794671652703-6hu3",
+          "sourceTitle": "DBMS ACID Properties Notes",
+          "version": 1,
+          "pageNumber": 1
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:54:13.944Z",
+      "updatedAt": "2026-11-14T15:54:14.042Z",
+      "lastAccessedAt": "2026-11-14T15:54:14.046Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 3,
+      "tokensSaved": 900,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Arjun Mehta",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+          "sections": {
+            "definition": "ACID ensures transactions execute safely and reliably in databases.",
+            "simple": "ACID ensures transactions execute safely and reliably in databases.",
+            "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+            "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+            "exam_10marker": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+            "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Arjun Mehta",
+          "modifiedAt": "2026-11-14T15:54:13.944Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794671654038-ns4d",
+          "answerId": "ans-1794671653944-v3zd0",
+          "suggestedBy": "Sneha Patel",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+          "proposedContent": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+          "reason": "Added WAL mechanism required for university 10-marker answer scheme.",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:54:14.038Z",
+          "reviewedBy": "Dr. V. Rao (Faculty)",
+          "reviewedAt": "2026-11-14T15:54:14.042Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794671654046",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:54:14.046Z"
+        },
+        {
+          "id": "audit-1794671654042",
+          "action": "VERIFIED",
+          "actor": "Dr. V. Rao (Faculty)",
+          "details": "Correction corr-1794671654038-ns4d approved by Dr. V. Rao (Faculty). Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:54:14.042Z"
+        },
+        {
+          "id": "audit-1794671654038",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Sneha Patel",
+          "details": "Student proposed correction for \"exam_10marker\": Added WAL mechanism required for university 10-marker answer scheme. (Evidence: Course syllabus). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:54:14.038Z"
+        },
+        {
+          "id": "audit-1794671654031",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:54:14.031Z"
+        },
+        {
+          "id": "audit-1794671653944",
+          "action": "CREATED",
+          "actor": "Arjun Mehta",
+          "details": "Initial academic answer created and shared with class class-release-1794671652287 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:54:13.944Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794671733577-n59s8",
+      "classId": "class-release-1794671732064",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Database Management Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain ACID Properties in Database Management Systems",
+      "normalizedKey": "atomicity consistency database durability isolation management properties systems",
+      "intent": "general",
+      "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+      "sections": {
+        "definition": "ACID ensures transactions execute safely and reliably in databases.",
+        "simple": "ACID ensures transactions execute safely and reliably in databases.",
+        "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+        "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+        "exam_10marker": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+        "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "mat-1794671732383-pjn5",
+          "sourceTitle": "DBMS ACID Properties Notes",
+          "version": 1,
+          "pageNumber": 1
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T15:55:33.577Z",
+      "updatedAt": "2026-11-14T15:55:33.667Z",
+      "lastAccessedAt": "2026-11-14T15:55:33.670Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 3,
+      "tokensSaved": 900,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Arjun Mehta",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+          "sections": {
+            "definition": "ACID ensures transactions execute safely and reliably in databases.",
+            "simple": "ACID ensures transactions execute safely and reliably in databases.",
+            "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+            "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+            "exam_10marker": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+            "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Arjun Mehta",
+          "modifiedAt": "2026-11-14T15:55:33.577Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794671733665-8nuy",
+          "answerId": "ans-1794671733577-n59s8",
+          "suggestedBy": "Sneha Patel",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+          "proposedContent": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+          "reason": "Added WAL mechanism required for university 10-marker answer scheme.",
+          "status": "approved",
+          "createdAt": "2026-11-14T15:55:33.665Z",
+          "reviewedBy": "Dr. V. Rao (Faculty)",
+          "reviewedAt": "2026-11-14T15:55:33.667Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794671733670",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:55:33.670Z"
+        },
+        {
+          "id": "audit-1794671733667",
+          "action": "VERIFIED",
+          "actor": "Dr. V. Rao (Faculty)",
+          "details": "Correction corr-1794671733665-8nuy approved by Dr. V. Rao (Faculty). Master answer updated to v2.",
+          "timestamp": "2026-11-14T15:55:33.667Z"
+        },
+        {
+          "id": "audit-1794671733665",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Sneha Patel",
+          "details": "Student proposed correction for \"exam_10marker\": Added WAL mechanism required for university 10-marker answer scheme. (Evidence: Course syllabus). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T15:55:33.665Z"
+        },
+        {
+          "id": "audit-1794671733661",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T15:55:33.661Z"
+        },
+        {
+          "id": "audit-1794671733577",
+          "action": "CREATED",
+          "actor": "Arjun Mehta",
+          "details": "Initial academic answer created and shared with class class-release-1794671732064 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T15:55:33.577Z"
         }
       ]
     }

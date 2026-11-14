@@ -6,6 +6,36 @@ import { byokVault, maskApiKey } from './ai/byokVault.js';
 import { sharedKnowledgeLibrary } from './ai/sharedKnowledgeLibrary.js';
 import { followUpEngine } from './ai/followUpEngine.js';
 import { graphRagEngine } from './rag/graphRagEngine.js';
+import { learningProfileService } from './personalization/learningProfileService.js';
+import { adaptiveTutorService } from './personalization/adaptiveTutorService.js';
+import { personalizedNextTopicService } from './personalization/personalizedNextTopicService.js';
+import { targetedPracticeService } from './personalization/targetedPracticeService.js';
+import { detectPromptInjection, redactSecrets } from './reliability/safetySanitizer.js';
+import { citationValidator } from './reliability/citationValidator.js';
+import { evidenceConfidenceEngine } from './reliability/evidenceConfidenceEngine.js';
+import { responseQualityValidator } from './reliability/responseQualityValidator.js';
+import { providerResilienceService } from './reliability/providerResilienceService.js';
+import { sharedAnswerController } from './reliability/sharedAnswerController.js';
+import { operationalMetrics } from './reliability/operationalMetrics.js';
+import { EVALUATION_DATASET } from './evaluation/evalDataset.js';
+import { byokSecurityService } from './ai/multiProvider/byokSecurityService.js';
+import { usageAccountingService } from './ai/multiProvider/usageAccountingService.js';
+import { providerSelectionService } from './ai/multiProvider/providerSelectionService.js';
+import { embeddingCompatibilityService } from './ai/multiProvider/embeddingCompatibilityService.js';
+import { concurrentGenerationCoordinator } from './ai/concurrentGenerationCoordinator.js';
+import {
+  requireAdmin,
+  requireFacultyOrAdmin,
+  requireStudentOwnership,
+  requireClassroomAccess,
+  verifyAdminAuth,
+} from './security/authGuard.js';
+import {
+  generalRateLimiter,
+  aiRateLimiter,
+  authRateLimiter,
+  uploadRateLimiter,
+} from './security/rateLimiter.js';
 
 export function extractAiConfig(req: Request): UniversalKeyConfig | undefined {
   if (
@@ -896,14 +926,7 @@ class MemoryStore {
   }
 }
 
-export function verifyAdminAuth(req: Request): boolean {
-  const adminKey =
-    (req.headers['x-admin-key'] as string) ||
-    req.headers['authorization']?.replace(/^Bearer\s+/i, '');
-  const expectedKey = process.env.ADMIN_API_KEY;
-  if (!expectedKey) return false;
-  return Boolean(adminKey && adminKey === expectedKey);
-}
+export { verifyAdminAuth };
 
 export const db = new MemoryStore();
 registerDbProvider(() => db);
@@ -1483,7 +1506,7 @@ apiRouter.get('/ai/config', (_req: Request, res: Response) => {
   res.json(AIProviderFactory.getStatus());
 });
 
-apiRouter.post('/ai/config', (req: Request, res: Response) => {
+apiRouter.post('/ai/config', requireAdmin, (req: Request, res: Response) => {
   const { apiKey, provider, modelName, baseUrl } = req.body;
   const result = AIProviderFactory.setConfig({ apiKey, provider, modelName, baseUrl });
   res.json({
@@ -1722,14 +1745,14 @@ apiRouter.post('/ai-tutor/correct', (req: Request, res: Response) => {
 });
 
 // 6.016 BYOK Key Management Endpoints
-apiRouter.get('/byok/keys', (req: Request, res: Response) => {
+apiRouter.get('/byok/keys', requireStudentOwnership('userId'), async (req: Request, res: Response) => {
   const userId = (req.headers['x-user-id'] as string) || (req.query.userId as string) || 'student-self';
-  const keys = byokVault.getUserSafeKeys(userId);
+  const keys = await byokSecurityService.listSafeKeys(userId);
   res.json({ keys });
 });
 
-apiRouter.post('/byok/keys', async (req: Request, res: Response) => {
-  const { userId = 'student-self', apiKey, provider, modelName, baseUrl, label, classId = 'M2029' } = req.body;
+apiRouter.post('/byok/keys', authRateLimiter.middleware(), requireStudentOwnership('userId'), async (req: Request, res: Response) => {
+  const { userId = 'student-self', apiKey, provider, modelName, baseUrl, label, classId = 'M2029', allowFallback = false } = req.body;
   if (!apiKey || !apiKey.trim()) {
     return res.status(400).json({ error: 'Valid apiKey is required.' });
   }
@@ -1743,6 +1766,7 @@ apiRouter.post('/byok/keys', async (req: Request, res: Response) => {
       baseUrl,
       label,
       classId,
+      allowFallback: Boolean(allowFallback),
       isValidated: true,
     });
     res.json({ status: 'success', key: saved });
@@ -1751,14 +1775,43 @@ apiRouter.post('/byok/keys', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.delete('/byok/keys', (req: Request, res: Response) => {
+apiRouter.delete('/byok/keys', requireStudentOwnership('userId'), async (req: Request, res: Response) => {
   const { userId = 'student-self', provider, label } = req.body;
   const removed = byokVault.removeUserKey(userId, provider, label);
+  if (provider) {
+    await byokSecurityService.deleteKey(userId, provider);
+  }
   res.json({ status: 'success', removed });
 });
 
-// 6.02 Teacher / CR Curator Endpoint
-apiRouter.patch('/ai/cache/curate', (req: Request, res: Response) => {
+apiRouter.get('/byok/usage', requireStudentOwnership('studentId'), async (req: Request, res: Response) => {
+  const studentId = (req.headers['x-user-id'] as string) || (req.query.studentId as string) || (req.query.userId as string) || 'student-self';
+  try {
+    const usage = await usageAccountingService.getStudentUsage(studentId);
+    res.json({ status: 'success', usage });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Failed to retrieve usage metrics.' });
+  }
+});
+
+apiRouter.post('/byok/rotate-master-key', authRateLimiter.middleware(), async (req: Request, res: Response) => {
+  if (!verifyAdminAuth(req)) {
+    return res.status(403).json({ error: 'Admin authorization required.' });
+  }
+  const { oldSecret, newSecret } = req.body;
+  if (!oldSecret || !newSecret) {
+    return res.status(400).json({ error: 'Both oldSecret and newSecret are required for rotation.' });
+  }
+  try {
+    const result = await byokSecurityService.rotateMasterEncryptionKey(oldSecret, newSecret);
+    res.json({ status: 'success', ...result });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Failed to rotate master encryption key.' });
+  }
+});
+
+// 6.02 Teacher / CR Curator Endpoint (Faculty/CR Required)
+apiRouter.patch('/ai/cache/curate', requireFacultyOrAdmin, (req: Request, res: Response) => {
   const { cacheKey, subjectName, mode, teacherEditedAnswer, teacherName } = req.body;
   if (!cacheKey || !teacherEditedAnswer || !teacherEditedAnswer.trim()) {
     return res.status(400).json({ error: 'cacheKey and teacherEditedAnswer are required.' });
@@ -1880,12 +1933,24 @@ apiRouter.get('/ai/cache/export', (req: Request, res: Response) => {
 });
 
 // 6. AI Tutor with Ordered Pedagogical Breakdown (Simple -> ELI9 -> Hinglish -> 10-Marker -> Deep Dive -> Quiz Me)
-apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
+apiRouter.post('/ai-tutor/ask', aiRateLimiter.middleware(), async (req: Request, res: Response) => {
   const question = req.body.question || req.body.query || '';
   const { mode, subjectName, topicName, forceLive, classCode = 'M2029' } = req.body;
   const tutorMode: TutorResponseMode = mode || 'all';
   const lookupKey = topicName || question;
   const userAiConfig = extractAiConfig(req);
+  const studentId = (req.headers['x-user-id'] as string) || (req.headers['x-student-id'] as string) || req.body?.studentId || req.body?.userId || 'student-self';
+
+  // Phase 7: Enforce student quota limits before invoking models
+  const quotaCheck = await usageAccountingService.checkQuota(studentId);
+  if (!quotaCheck.isAllowed) {
+    return res.status(429).json({
+      status: 'error',
+      errorCode: 'QUOTA_EXHAUSTED',
+      message: quotaCheck.reason,
+    });
+  }
+
   const hasPersonalKey = Boolean(
     userAiConfig &&
       (userAiConfig.apiKey?.trim() ||
@@ -1907,47 +1972,63 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
 
     if (libMatch.found && libMatch.answer) {
       const stored = libMatch.answer;
-      const sections = stored.sections || parseTutorSections(stored.answer);
-      return res.json({
-        answer: libMatch.adaptedContent || stored.answer,
-        text: libMatch.adaptedContent || stored.answer,
-        sections,
-        modeUsed: tutorMode,
-        modelUsed: `${stored.modelUsed} • Shared Library v${stored.version} (${stored.qualityStatus})`,
-        cached: true,
-        tokensSaved: stored.tokensSaved || 1500,
-        hitCount: stored.hitCount,
-        positiveVotes: stored.positiveVotes || 0,
-        negativeVotes: stored.negativeVotes || 0,
-        isTeacherCurated: stored.qualityStatus === 'VERIFIED',
-        contributingModels: [stored.modelUsed],
-        iterationCount: 60,
-        targetCohortSize: 60,
-        isCohortPerfected: true,
-        perfectionScore: 99,
-        perfectionTier: `Master Gold Standard (Shared Library v${stored.version})`,
-        evolutionHistory: [],
-        reasoningSteps: [
-          {
-            step: '1. Shared Classroom Knowledge Library',
-            detail: `Instant zero-token hit: Matched existing classroom question with ${(libMatch.matchResult?.confidence || 1) * 100}% confidence.`,
-            timestamp: new Date().toLocaleTimeString(),
-          },
-          {
-            step: '2. Multi-Format Adaptive Presentation',
-            detail: `Served presentation variant (${tutorMode}) from stored verified sections.`,
-            timestamp: new Date().toLocaleTimeString(),
-          },
-          {
-            step: '3. Collective Classroom Intelligence',
-            detail: `Answer contributed by ${stored.contributorStudentLabel || 'Class Contributor'} • Version ${stored.version} • Reused across cohort.`,
-            timestamp: new Date().toLocaleTimeString(),
-          },
-        ],
-        sourcesUsed: stored.sourcesUsed && stored.sourcesUsed.length > 0 ? stored.sourcesUsed : [
-          { title: `${subjectName || 'Class'} Shared Classroom Library`, type: 'Classroom Collective Intelligence' },
-        ],
+      const reuseCheck = sharedAnswerController.evaluateReuseEligibility(stored, question || lookupKey, {
+        classId: classCode,
+        subjectName,
+        mode: tutorMode,
       });
+
+      if (reuseCheck.canReuse) {
+        const sections = stored.sections || parseTutorSections(reuseCheck.adaptedContent || stored.answer);
+        operationalMetrics.recordRequest({
+          success: true,
+          cached: true,
+          isSharedLibrary: true,
+          tokensSaved: stored.tokensSaved || 1500,
+          totalLatencyMs: 15,
+        });
+
+        return res.json({
+          answer: reuseCheck.adaptedContent || stored.answer,
+          text: reuseCheck.adaptedContent || stored.answer,
+          sections,
+          modeUsed: tutorMode,
+          modelUsed: `${stored.modelUsed} • Shared Library v${stored.version} (${stored.qualityStatus})`,
+          cached: true,
+          tokensSaved: stored.tokensSaved || 1500,
+          hitCount: stored.hitCount,
+          positiveVotes: stored.positiveVotes || 0,
+          negativeVotes: stored.negativeVotes || 0,
+          isTeacherCurated: stored.qualityStatus === 'VERIFIED',
+          contributingModels: [stored.modelUsed],
+          confidenceTier: 'HIGH_EVIDENCE',
+          confidenceLabel: `Verified Classroom Library (v${stored.version})`,
+          iterationCount: stored.hitCount || 1,
+          isCohortPerfected: stored.qualityStatus === 'VERIFIED',
+          perfectionTier: `Classroom Shared Library (v${stored.version} • ${stored.qualityStatus})`,
+          evolutionHistory: stored.previousVersions || [],
+          reasoningSteps: [
+            {
+              step: '1. Shared Classroom Knowledge Library (Quality Validated)',
+              detail: reuseCheck.reason,
+              timestamp: new Date().toLocaleTimeString(),
+            },
+            {
+              step: '2. Multi-Format Adaptive Presentation',
+              detail: `Served presentation variant (${tutorMode}) from stored verified sections.`,
+              timestamp: new Date().toLocaleTimeString(),
+            },
+            {
+              step: '3. Collective Classroom Intelligence',
+              detail: `Answer contributed by ${stored.contributorStudentLabel || 'Class Contributor'} • Version ${stored.version} • Reused across cohort.`,
+              timestamp: new Date().toLocaleTimeString(),
+            },
+          ],
+          sourcesUsed: stored.sourcesUsed && stored.sourcesUsed.length > 0 ? stored.sourcesUsed : [
+            { title: `${subjectName || 'Class'} Shared Classroom Library`, type: 'Classroom Collective Intelligence' },
+          ],
+        });
+      }
     }
 
     const cached = aiKnowledgeCache.get(lookupKey, subjectName, tutorMode);
@@ -2008,9 +2089,62 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
     }
   }
 
+  const reqStartTime = Date.now();
+
+  // Phase 8: Safe Concurrent Generation Lock (Prevents duplicate simultaneous LLM synthesis)
+  const lockKey = concurrentGenerationCoordinator.computeLockKey({
+    classId: classCode,
+    subjectName,
+    query: question || lookupKey,
+    mode: tutorMode,
+  });
+
+  const lockResult = await concurrentGenerationCoordinator.acquireLockOrWait({
+    lockKey,
+    classId: classCode,
+    studentId,
+    maxWaitMs: 3500,
+  });
+
+  if (!lockResult.isGenerator && lockResult.reused && lockResult.answerId) {
+    const reusedAns = sharedKnowledgeLibrary.getAnswerById(lockResult.answerId);
+    if (reusedAns) {
+      operationalMetrics.recordRequest({
+        success: true,
+        cached: true,
+        isSharedLibrary: true,
+        tokensSaved: reusedAns.tokensSaved || 1500,
+        totalLatencyMs: Date.now() - reqStartTime,
+      });
+
+      return res.json({
+        answer: reusedAns.answer,
+        text: reusedAns.answer,
+        sections: reusedAns.sections,
+        modeUsed: tutorMode,
+        modelUsed: `${reusedAns.modelUsed} • Shared Library v${reusedAns.version} (${reusedAns.qualityStatus})`,
+        cached: true,
+        tokensSaved: reusedAns.tokensSaved || 1500,
+        hitCount: reusedAns.hitCount,
+        positiveVotes: reusedAns.positiveVotes || 0,
+        negativeVotes: reusedAns.negativeVotes || 0,
+        isTeacherCurated: reusedAns.qualityStatus === 'VERIFIED',
+        confidenceTier: 'HIGH_EVIDENCE',
+        confidenceLabel: `Verified Classroom Library (v${reusedAns.version})`,
+        sourcesUsed: reusedAns.sourcesUsed,
+        reasoningSteps: [
+          {
+            step: '1. Concurrent Generation Coordinator',
+            detail: 'Concurrently completed answer safely reused without duplicate model inference.',
+            timestamp: new Date().toLocaleTimeString(),
+          },
+        ],
+      });
+    }
+  }
+
   try {
     // 2. RUN FULL MULTI-STEP LANGGRAPH ACADEMIC AGENT
-    // Controls State Machine: Curriculum Guardrail -> Cache Check -> AI Agent Action Selection -> Local RAG Execution -> Web Search Execution -> LangChain Synthesis -> Reflection & Class Compounding
     const agentResult = await runAcademicAgent({
       question,
       topicName: lookupKey,
@@ -2018,6 +2152,7 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       mode: tutorMode,
       forceLive: Boolean(forceLive),
       userAiConfig,
+      studentId,
       classId: classCode,
       conversationContext: req.body?.conversationContext || {
         previousQuery: req.body?.previousQuery,
@@ -2027,7 +2162,7 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
     });
 
     // Save into Shared Classroom Knowledge Library for cohort reuse
-    sharedKnowledgeLibrary.storeAnswer({
+    const stored = await sharedKnowledgeLibrary.storeAnswer({
       classId: classCode,
       course: 'B.Tech / BCA Computer Science',
       subjectName: subjectName || 'Computer Science',
@@ -2038,8 +2173,22 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       sourcesUsed: agentResult.sourcesUsed,
       modelUsed: agentResult.modelUsed || 'Academic Engine',
       contributorStudentLabel: hasPersonalKey ? 'Student (BYOK Contributor)' : 'Student 1',
-      qualityStatus: 'GENERATED',
-    }).catch(() => {});
+      qualityStatus: agentResult.confidenceTier === 'HIGH_EVIDENCE' && (agentResult.validCitations?.length || 0) > 0 ? 'VERIFIED' : 'GENERATED',
+    });
+
+    // Complete concurrent lock with answer ID
+    await concurrentGenerationCoordinator.releaseLock({
+      lockKey,
+      status: 'completed',
+      answerId: stored.id,
+    });
+
+    operationalMetrics.recordRequest({
+      success: true,
+      cached: agentResult.cached,
+      tokensSaved: agentResult.tokensSaved,
+      totalLatencyMs: Date.now() - reqStartTime,
+    });
 
     res.json({
       answer: agentResult.answer,
@@ -2056,16 +2205,53 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       failoverHistory: [],
       reasoningSteps: agentResult.reasoningSteps,
       sourcesUsed: agentResult.sourcesUsed,
+      confidenceTier: agentResult.confidenceTier || 'PARTIAL_EVIDENCE',
+      confidenceLabel: agentResult.confidenceLabel || 'Curriculum Standard',
+      validCitations: agentResult.validCitations || [],
+      contradictionReport: agentResult.contradictionReport,
       hitCount: agentResult.hitCount || 1,
       positiveVotes: agentResult.positiveVotes || 0,
       negativeVotes: agentResult.negativeVotes || 0,
       isTeacherCurated: agentResult.isTeacherCurated || false,
-      iterationCount: agentResult.iterationCount || 60,
-      isCohortPerfected: agentResult.isCohortPerfected ?? true,
-      perfectionTier: agentResult.perfectionTier || 'Master Gold Standard (LangGraph Verified)',
+      iterationCount: agentResult.iterationCount || 1,
+      isCohortPerfected: agentResult.isCohortPerfected ?? false,
+      perfectionTier: agentResult.perfectionTier || 'Curriculum Standard',
       evolutionHistory: agentResult.evolutionHistory || [],
     });
   } catch (err: any) {
+    await concurrentGenerationCoordinator.releaseLock({
+      lockKey,
+      status: 'failed',
+      errorReason: err.message,
+    });
+
+    operationalMetrics.recordRequest({
+      success: false,
+      totalLatencyMs: Date.now() - reqStartTime,
+    });
+
+    const classified = providerResilienceService.classifyError(err, 'AI Tutor Provider');
+    operationalMetrics.recordError(classified.code);
+
+    // If client supplied an invalid personal API key, no key, or quota is exhausted, report honest error
+    if (classified.code === 'AUTHENTICATION_ERROR' || classified.code === 'QUOTA_EXHAUSTED' || classified.code === 'API_KEY_REQUIRED' || classified.code === 'CAPABILITY_MISMATCH') {
+      return res.status(classified.statusCode || 401).json({
+        status: 'error',
+        errorCode: classified.code,
+        message: classified.message,
+        isRetryable: classified.isRetryable,
+      });
+    }
+
+    if (classified.code === 'RATE_LIMIT_EXCEEDED' || classified.code === 'TIMEOUT') {
+      return res.status(classified.statusCode || 429).json({
+        status: 'error',
+        errorCode: classified.code,
+        message: classified.message,
+        isRetryable: true,
+        retryAfterSeconds: classified.retryAfterSeconds || 3,
+      });
+    }
     // If AI generation failed, check if we have Hybrid RAG hits to provide an instant grounded answer
     const hybridHits = await hybridRetrievalEngine.search(lookupKey, {
       classId: classCode,
@@ -2372,6 +2558,20 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
     const userAiConfig = extractAiConfig(req);
     const hasPersonalKey = Boolean(userAiConfig && (userAiConfig.apiKey?.trim() || userAiConfig.baseUrl?.trim()));
     const ai = AIProviderFactory.getProvider(userAiConfig);
+    const studentId = (req.headers['x-student-id'] as string) || (req.headers['x-user-id'] as string) || req.body.studentId || req.body.userId || 'student-user-1';
+    const studentName = (req.headers['x-student-name'] as string) || req.body.studentName || 'Student';
+
+    // Phase 7: Check quota before live model generation
+    if (forceLive || regenerateLive || action === 'custom_question') {
+      const quotaCheck = await usageAccountingService.checkQuota(studentId);
+      if (!quotaCheck.isAllowed) {
+        return res.status(429).json({
+          status: 'error',
+          errorCode: 'QUOTA_EXHAUSTED',
+          message: quotaCheck.reason,
+        });
+      }
+    }
 
     const track = SYLLABUS_TRACKS.find((t) => t.id === trackId) || SYLLABUS_TRACKS[0];
     const totalTopics = track.topics.length;
@@ -2398,6 +2598,18 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
           : `❌ **Incorrect. The correct answer is Option ${expectedKey}: ${chosenLabel}**\n\n${qc?.explanation || 'Remember this core distinction for university examinations.'}`,
       };
 
+      // Phase 5: Record evidence in personal learning profile
+      learningProfileService.recordEvidence({
+        studentId,
+        classId: classCode,
+        subjectId: track.id,
+        conceptName: currentTopic.title,
+        evidenceSource: 'quiz_evaluation',
+        isCorrect,
+        confidence: 0.90,
+        summary: isCorrect ? 'Quick check answered correctly' : 'Quick check answered incorrectly',
+      }).catch(() => {});
+
       // Auto-advance to next topic if answer was checked
       nextIndex = currentIndex + 1;
     } else if (action === 'next') {
@@ -2409,8 +2621,45 @@ apiRouter.post('/ai-tutor/step', async (req: Request, res: Response) => {
     const targetIndex = isCompleted ? totalTopics - 1 : nextIndex;
     const targetTopic = track.topics[targetIndex];
 
+    // Phase 5: Update current topic in student profile & record explanation view
+    learningProfileService.updateProfile(studentId, classCode, {
+      currentSubjectId: track.id,
+      currentTopicId: targetTopic.id,
+      currentTopicTitle: targetTopic.title,
+    }).catch(() => {});
+
+    learningProfileService.recordEvidence({
+      studentId,
+      classId: classCode,
+      subjectId: track.id,
+      conceptName: targetTopic.title,
+      evidenceSource: 'ai_tutor_explanation',
+      confidence: 0.80,
+      summary: `Viewed explanation for ${targetTopic.title}`,
+    }).catch(() => {});
+
+    // Phase 5: Build adaptive explanation context based on mastery and Graph RAG
+    const adaptiveContext = await adaptiveTutorService.buildAdaptiveContext({
+      studentId,
+      classId: classCode,
+      topicTitle: customQuery ? customQuery.slice(0, 50) : targetTopic.title,
+      rawQuery: customQuery,
+      action,
+    }).catch(() => null);
+
     // If student asked for ELI9 remediation
     if (action === 'did_not_understand' || action === 'eli9') {
+      // Phase 5: Record explicit confusion in personal learning profile
+      learningProfileService.recordEvidence({
+        studentId,
+        classId: classCode,
+        subjectId: track.id,
+        conceptName: targetTopic.title,
+        evidenceSource: 'did_not_understand_click',
+        confidence: 0.95,
+        summary: 'Student clicked Did Not Understand / requested ELI9 remediation',
+      }).catch(() => {});
+
       let content = `### 💡 Real-World ELI9 Analogy (Zero Intimidation)
 
 Imagine a hospital emergency room with 1 doctor. 
@@ -2448,6 +2697,7 @@ End with an encouraging takeaway for university exam scoring.`;
         isCompleted: false,
         remediationType: 'eli9',
         modelUsed: ai.name,
+        adaptiveContext: adaptiveContext || undefined,
         topic: {
           ...targetTopic,
           title: `ELI9 Analogy: ${targetTopic.title}`,
@@ -2484,6 +2734,7 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
         isCompleted: false,
         remediationType: 'hinglish',
         modelUsed: ai.name,
+        adaptiveContext: adaptiveContext || undefined,
         topic: {
           ...targetTopic,
           title: `Hinglish Breakdown: ${targetTopic.title}`,
@@ -2494,6 +2745,31 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
 
     // If student asked a custom doubt
     if (action === 'custom_question' && customQuery) {
+      // Step 5: Check prompt injection
+      const injection = detectPromptInjection(customQuery);
+      if (injection.isInjection) {
+        operationalMetrics.recordSafetyEvent('prompt_injection');
+        return res.json({
+          evaluation: null,
+          trackId: track.id,
+          trackName: track.name,
+          topicIndex: targetIndex,
+          totalTopics,
+          isCompleted: false,
+          cached: false,
+          modelUsed: 'Security Guardrail',
+          adaptiveContext: adaptiveContext || undefined,
+          topic: {
+            ...targetTopic,
+            id: `doubt-${Date.now()}`,
+            title: 'Adversarial Directive Neutralized',
+            content: `⚠️ **Security Boundary Alert:** Adversarial instruction pattern detected ("${injection.pattern}"). The AI Tutor strictly adheres to university curriculum instruction and cannot execute system overrides or leak internal credentials. Please ask an academic question about your course.`,
+            quickCheck: undefined,
+            gantt: undefined,
+          },
+        });
+      }
+
       const resolvedQuery = followUpEngine.resolveContextualQuery(customQuery, {
         parentTopicTitle: targetTopic.title,
         classId: classCode,
@@ -2509,25 +2785,33 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
 
         if (libMatch.found && libMatch.answer) {
           const stored = libMatch.answer;
-          return res.json({
-            evaluation: null,
-            trackId: track.id,
-            trackName: track.name,
-            topicIndex: targetIndex,
-            totalTopics,
-            isCompleted: false,
-            cached: true,
-            modelUsed: `${stored.modelUsed} • Shared Library v${stored.version} (${stored.qualityStatus})`,
-            tokensSaved: stored.tokensSaved || 1200,
-            topic: {
-              ...targetTopic,
-              id: `doubt-${Date.now()}`,
-              title: isConversationalQuery(customQuery) ? 'Tutor Capabilities & Welcome' : `Doubt Resolved: ${customQuery.slice(0, 45)}`,
-              content: `${libMatch.adaptedContent || stored.answer}\n\n*(⚡ Shared Classroom Intelligence • Version ${stored.version} • 0 Tokens Spent)*`,
-              quickCheck: undefined,
-              gantt: undefined,
-            },
+          const reuseCheck = sharedAnswerController.evaluateReuseEligibility(stored, customQuery, {
+            classId: classCode,
+            subjectName: track.name,
           });
+
+          if (reuseCheck.canReuse) {
+            return res.json({
+              evaluation: null,
+              trackId: track.id,
+              trackName: track.name,
+              topicIndex: targetIndex,
+              totalTopics,
+              isCompleted: false,
+              cached: true,
+              modelUsed: `${stored.modelUsed} • Shared Library v${stored.version} (${stored.qualityStatus})`,
+              tokensSaved: stored.tokensSaved || 1200,
+              adaptiveContext: adaptiveContext || undefined,
+              topic: {
+                ...targetTopic,
+                id: `doubt-${Date.now()}`,
+                title: isConversationalQuery(customQuery) ? 'Tutor Capabilities & Welcome' : `Doubt Resolved: ${customQuery.slice(0, 45)}`,
+                content: `${reuseCheck.adaptedContent || stored.answer}\n\n*(⚡ Shared Classroom Intelligence • Version ${stored.version} • 0 Tokens Spent)*`,
+                quickCheck: undefined,
+                gantt: undefined,
+              },
+            });
+          }
         }
 
         const cachedDoubt = aiKnowledgeCache.get(customQuery, track.name, 'doubt');
@@ -2549,6 +2833,7 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
             cached: true,
             modelUsed: cachedDoubt.modelUsed || '⚡ Stored Knowledge Base (0 Tokens Spent)',
             tokensSaved: cachedDoubt.tokensEstimated || 1200,
+            adaptiveContext: adaptiveContext || undefined,
             topic: {
               ...targetTopic,
               id: `doubt-${Date.now()}`,
@@ -2610,16 +2895,39 @@ Provide an authoritative, high-scoring university explanation with:
       }
 
       let responseText = '';
+      let usedModelName = ai.name;
       try {
-        responseText = await ai.generateText(tutorUserPrompt, tutorSystemInstruction);
+        const dedupeKey = providerResilienceService.getDeduplicationKey(classCode, studentId, customQuery, 'doubt');
+        responseText = await providerResilienceService.executeWithResilience(
+          dedupeKey,
+          () => ai.generateText(tutorUserPrompt, tutorSystemInstruction),
+          { providerName: ai.name }
+        );
       } catch (err: any) {
-        console.warn(`[AI Tutor Step] Live AI notice:`, err?.message);
+        const classified = providerResilienceService.classifyError(err, ai.name);
+        operationalMetrics.recordError(classified.code);
+        if (classified.code === 'AUTHENTICATION_ERROR' || classified.code === 'QUOTA_EXHAUSTED') {
+          return res.status(classified.statusCode || 401).json({
+            error: classified.message,
+            errorCode: classified.code,
+            isRetryable: classified.isRetryable,
+          });
+        }
         responseText = '';
       }
 
       if (!responseText || responseText.length < 50) {
         responseText = await generateAcademicDoubtAnswer(customQuery, targetTopic.title, track.name, classCode);
+        usedModelName = 'Academic Knowledge Bank (Offline Verified)';
       }
+
+      // Step 6: Response Quality Validation & Secret Redaction
+      const quality = responseQualityValidator.validateResponse({
+        responseText,
+        query: customQuery,
+        validCitations: [],
+      });
+      responseText = quality.sanitizedText;
 
       aiKnowledgeCache.set(
         customQuery,
@@ -2627,8 +2935,8 @@ Provide an authoritative, high-scoring university explanation with:
         'doubt',
         responseText,
         undefined,
-        ai.name,
-        hasPersonalKey ? [ai.name] : undefined
+        usedModelName,
+        hasPersonalKey ? [usedModelName] : undefined
       );
 
       // Contribute to Shared Classroom Knowledge Library for cohort reuse
@@ -2640,7 +2948,7 @@ Provide an authoritative, high-scoring university explanation with:
           topic: targetTopic.title,
           question: customQuery,
           answer: responseText,
-          modelUsed: ai.name,
+          modelUsed: usedModelName,
           contributorStudentLabel: hasPersonalKey ? 'Student (BYOK Contributor)' : 'Student 1',
           qualityStatus: 'GENERATED',
         }).catch(() => {});
@@ -2654,7 +2962,8 @@ Provide an authoritative, high-scoring university explanation with:
         totalTopics,
         isCompleted: false,
         cached: false,
-        modelUsed: ai.name,
+        modelUsed: usedModelName,
+        adaptiveContext: adaptiveContext || undefined,
         topic: {
           ...targetTopic,
           id: `doubt-${Date.now()}`,
@@ -2691,6 +3000,7 @@ Provide:
       totalTopics,
       isCompleted,
       modelUsed: ai.name,
+      adaptiveContext: adaptiveContext || undefined,
       topic: topicToReturn,
       nextPrompt: targetTopic.quickCheck
         ? `My answer is ${targetTopic.quickCheck.correctKey || 'B'}. Check it and continue to next topic.`
@@ -2705,9 +3015,23 @@ Provide:
 apiRouter.post('/quiz/evaluate', async (req: Request, res: Response) => {
   try {
     const { topicTitle, question, studentAnswer, correctOption, isOption } = req.body;
+    const studentId = (req.headers['x-student-id'] as string) || req.body.studentId || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || req.body.classId || 'class-m2029';
 
     if (isOption) {
       const passed = studentAnswer === correctOption;
+
+      // Phase 5: Record evidence in personal learning profile
+      learningProfileService.recordEvidence({
+        studentId,
+        classId,
+        conceptName: topicTitle,
+        evidenceSource: 'quiz_evaluation',
+        isCorrect: passed,
+        confidence: 0.90,
+        summary: `Concept quiz option evaluated: ${passed ? 'Correct' : 'Incorrect'}`,
+      }).catch(() => {});
+
       return res.json({
         score: passed ? 10 : 0,
         passed,
@@ -2725,6 +3049,17 @@ apiRouter.post('/quiz/evaluate', async (req: Request, res: Response) => {
     const ai = AIProviderFactory.getProvider(extractAiConfig(req));
     if (!ai.isAvailable()) {
       const passed = studentAnswer.length > 25;
+
+      learningProfileService.recordEvidence({
+        studentId,
+        classId,
+        conceptName: topicTitle,
+        evidenceSource: 'quiz_evaluation',
+        isCorrect: passed,
+        confidence: 0.85,
+        summary: `Offline concept attempt: ${passed ? 'Passed' : 'Needs Practice'}`,
+      }).catch(() => {});
+
       return res.json({
         score: passed ? 8 : 4,
         passed,
@@ -2755,15 +3090,202 @@ Evaluate the answer. Return STRICT JSON only:
       misconceptions: string[];
     }>(prompt);
 
+    const isPassed = Boolean(evaluated.passed);
+    learningProfileService.recordEvidence({
+      studentId,
+      classId,
+      conceptName: topicTitle,
+      evidenceSource: 'quiz_evaluation',
+      isCorrect: isPassed,
+      confidence: 0.90,
+      summary: `Typed explanation evaluated: score ${evaluated.score ?? 7}/10`,
+    }).catch(() => {});
+
     res.json({
       score: evaluated.score ?? 7,
-      passed: Boolean(evaluated.passed),
+      passed: isPassed,
       feedback: evaluated.feedback || 'Answer evaluated based on university syllabus requirements.',
       misconceptions: evaluated.misconceptions || [],
       evaluatedBy: ai.name,
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Quiz evaluation error' });
+  }
+});
+
+// =========================================================================
+// PHASE 5: PERSONALIZED LEARNING INTELLIGENCE ENDPOINTS
+// =========================================================================
+
+// 1. Get Student Learning Profile & Mastery Records (Private Student Boundary)
+apiRouter.get('/learning-profile', requireStudentOwnership('studentId'), async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || (req.query.studentId as string) || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || (req.query.classId as string) || 'class-m2029';
+
+    const profile = await learningProfileService.getOrCreateProfile(studentId, classId);
+    const weakConcepts = await learningProfileService.getConceptsNeedingPractice(studentId, classId);
+
+    res.json({
+      status: 'success',
+      profile,
+      needsPracticeConcepts: weakConcepts,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to fetch learning profile' });
+  }
+});
+
+// 2. Get Concepts Needing Practice
+apiRouter.get('/learning-profile/needs-practice', requireStudentOwnership('studentId'), async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || (req.query.studentId as string) || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || (req.query.classId as string) || 'class-m2029';
+    const subjectId = req.query.subjectId as string;
+
+    const weakConcepts = await learningProfileService.getConceptsNeedingPractice(studentId, classId, subjectId);
+
+    res.json({
+      status: 'success',
+      count: weakConcepts.length,
+      concepts: weakConcepts,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to fetch practice concepts' });
+  }
+});
+
+// 3. Generate Targeted Practice Question Grounded in Uploaded Materials
+apiRouter.post('/learning-profile/practice/generate', async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || req.body.studentId || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || req.body.classId || 'class-m2029';
+    const { subjectId, targetConcept } = req.body;
+
+    const question = await targetedPracticeService.generatePractice({
+      studentId,
+      classId,
+      subjectId,
+      targetConcept,
+    });
+
+    res.json({
+      status: 'success',
+      question,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to generate practice question' });
+  }
+});
+
+// 4. Submit Practice Question Attempt & Update Mastery
+apiRouter.post('/learning-profile/practice/submit', async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || req.body.studentId || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || req.body.classId || 'class-m2029';
+    const {
+      questionId,
+      conceptName,
+      topicTitle,
+      studentAnswer,
+      correctOption,
+      questionText,
+      sourceDocTitle,
+      sourcePageNumber,
+      subjectId,
+    } = req.body;
+
+    if (!conceptName || !studentAnswer || !correctOption) {
+      return res.status(400).json({ error: 'conceptName, studentAnswer, and correctOption are required.' });
+    }
+
+    const result = await targetedPracticeService.submitPracticeAnswer({
+      studentId,
+      classId,
+      subjectId,
+      questionId: questionId || `q-${Date.now()}`,
+      conceptName,
+      topicTitle: topicTitle || conceptName,
+      studentAnswer,
+      correctOption,
+      questionText: questionText || `Question on ${conceptName}`,
+      sourceDocTitle,
+      sourcePageNumber,
+    });
+
+    res.json({
+      status: 'success',
+      ...result,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to submit practice attempt' });
+  }
+});
+
+// 5. Reset Individual Student Progress (Private Data Only)
+apiRouter.post('/learning-profile/reset', requireStudentOwnership('studentId'), async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || req.body.studentId || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || req.body.classId || 'class-m2029';
+
+    const result = await learningProfileService.resetStudentProgress(studentId, classId);
+
+    res.json({
+      status: 'success',
+      ...result,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to reset learning progress' });
+  }
+});
+
+// 6. Get Personalized Next Topic Recommendation
+apiRouter.get('/ai-tutor/next-recommended-topic', async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || (req.query.studentId as string) || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || (req.query.classId as string) || 'class-m2029';
+    const trackId = req.query.trackId as string;
+    const currentTopicIndex = parseInt(req.query.currentTopicIndex as string) || 0;
+
+    const recommendation = await personalizedNextTopicService.getNextRecommendedTopic({
+      studentId,
+      classId,
+      trackId,
+      currentTopicIndex,
+    });
+
+    res.json({
+      status: 'success',
+      recommendation,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to get next recommended topic' });
+  }
+});
+
+// 7. Get Adaptive Explanation Context
+apiRouter.get('/ai-tutor/adaptive-context', async (req: Request, res: Response) => {
+  try {
+    const studentId = (req.headers['x-student-id'] as string) || (req.query.studentId as string) || 'student-user-1';
+    const classId = (req.headers['x-class-id'] as string) || (req.query.classId as string) || 'class-m2029';
+    const topicTitle = (req.query.topicTitle as string) || 'CPU Scheduling Preemption';
+    const rawQuery = req.query.query as string;
+    const action = req.query.action as string;
+
+    const adaptiveContext = await adaptiveTutorService.buildAdaptiveContext({
+      studentId,
+      classId,
+      topicTitle,
+      rawQuery,
+      action,
+    });
+
+    res.json({
+      status: 'success',
+      adaptiveContext,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to build adaptive context' });
   }
 });
 
@@ -4006,8 +4528,8 @@ apiRouter.patch('/assignments/:id/toggle-done', (req: Request, res: Response) =>
   res.json({ success: true, completed: assignment.completed, assignment });
 });
 
-// 12d2. Delete assignment
-apiRouter.delete('/assignments/:id', async (req: Request, res: Response) => {
+// 12d2. Delete assignment (Faculty or Admin Required)
+apiRouter.delete('/assignments/:id', requireFacultyOrAdmin, async (req: Request, res: Response) => {
   const { id } = req.params;
   await db.deleteAssignment(id);
   executeAutoSync(true).catch((e) => console.error('[AutoSync Background] Error:', e));
@@ -4431,8 +4953,8 @@ apiRouter.get('/sync/status', (_req: Request, res: Response) => {
   res.json(getAutoSyncStatus());
 });
 
-// 20. Trigger Immediate Auto-Sync
-apiRouter.post('/sync/now', async (_req: Request, res: Response) => {
+// 20. Trigger Immediate Auto-Sync (Faculty or Admin Required)
+apiRouter.post('/sync/now', requireFacultyOrAdmin, async (_req: Request, res: Response) => {
   try {
     const result = await executeAutoSync(true);
     res.json({ ...result, status: getAutoSyncStatus() });
@@ -4517,4 +5039,147 @@ apiRouter.get('/github/download-zip', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to generate zip file', details: err.message });
   }
 });
+
+// ==========================================
+// PHASE 6: RELIABILITY & MONITORING ENDPOINTS
+// ==========================================
+
+// 1. Get Operational Telemetry Snapshot (Privacy-First, Zero Cost)
+apiRouter.get('/ai-tutor/metrics', (req: Request, res: Response) => {
+  try {
+    const snapshot = operationalMetrics.getSnapshot();
+    res.json({
+      status: 'success',
+      metrics: snapshot,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to retrieve operational metrics' });
+  }
+});
+
+// 2. Reset Operational Telemetry
+apiRouter.post('/ai-tutor/metrics/reset', (req: Request, res: Response) => {
+  try {
+    operationalMetrics.reset();
+    res.json({ status: 'success', message: 'Operational metrics reset' });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to reset metrics' });
+  }
+});
+
+// 3. Directly Validate Citation Reference against Database / Class Context
+apiRouter.post('/ai-tutor/validate-citation', async (req: Request, res: Response) => {
+  try {
+    const { citation, classId, claimText } = req.body;
+    if (!citation || !citation.documentTitle) {
+      return res.status(400).json({ error: 'citation object with documentTitle is required' });
+    }
+
+    const validation = await citationValidator.validateCitation(citation, classId, claimText);
+    res.json({
+      status: 'success',
+      validation,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to validate citation' });
+  }
+});
+
+// 4. Propose Answer Correction with Prompt Injection Safety Check
+apiRouter.post('/ai-tutor/propose-correction', async (req: Request, res: Response) => {
+  try {
+    const { answerId, studentLabel, sectionTargeted, proposedContent, reason, supportingEvidence } = req.body;
+
+    if (!answerId || !proposedContent || !reason) {
+      return res.status(400).json({ error: 'answerId, proposedContent, and reason are required' });
+    }
+
+    // Safety guard: Detect prompt injection inside user-submitted corrections
+    const injectionCheck = detectPromptInjection(`${proposedContent} ${reason}`);
+    if (injectionCheck.isInjection) {
+      operationalMetrics.recordSafetyEvent('prompt_injection');
+      return res.status(400).json({
+        status: 'error',
+        errorCode: 'UNSAFE_INSTRUCTION_DETECTED',
+        message: 'Proposed correction contains prohibited instructions or prompt injection patterns.',
+      });
+    }
+
+    const result = sharedKnowledgeLibrary.proposeCorrection({
+      answerId,
+      studentLabel: studentLabel || 'Student Contributor',
+      sectionTargeted: sectionTargeted || 'general',
+      proposedContent,
+      reason,
+      supportingEvidence,
+    });
+
+    if (!result.success) {
+      return res.status(404).json({ error: result.error });
+    }
+
+    res.json({
+      status: 'success',
+      ...result,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to propose answer correction' });
+  }
+});
+
+// 5. Approve Pending Answer Correction (Faculty or Admin Required)
+apiRouter.post('/ai-tutor/approve-correction', requireFacultyOrAdmin, async (req: Request, res: Response) => {
+  try {
+    const { answerId, correctionId, reviewer } = req.body;
+    if (!answerId || !correctionId) {
+      return res.status(400).json({ error: 'answerId and correctionId are required' });
+    }
+
+    const result = sharedKnowledgeLibrary.approveCorrection(
+      answerId,
+      correctionId,
+      reviewer || 'Faculty Reviewer'
+    );
+
+    if (!result.success) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    res.json({
+      status: 'success',
+      ...result,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to approve correction' });
+  }
+});
+
+// 6. Collaborative Knowledge Library Metrics (Avoided Calls, Verified Count, Tokens Saved)
+apiRouter.get('/ai-tutor/collaborative-metrics', (req: Request, res: Response) => {
+  const classId = (req.query.classId as string) || (req.headers['x-class-id'] as string) || 'M2029';
+  const analytics = sharedKnowledgeLibrary.getLibraryAnalytics(classId);
+  res.json({
+    status: 'success',
+    ...analytics,
+  });
+});
+
+// 6. Evaluation Benchmark Dataset
+apiRouter.get('/ai-tutor/benchmark-dataset', (req: Request, res: Response) => {
+  try {
+    const category = req.query.category as string;
+    const testCases = category
+      ? EVALUATION_DATASET.filter((tc) => tc.category === category)
+      : EVALUATION_DATASET;
+
+    res.json({
+      status: 'success',
+      totalCount: testCases.length,
+      dataset: testCases,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to fetch benchmark dataset' });
+  }
+});
+
 

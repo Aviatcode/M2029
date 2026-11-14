@@ -25,6 +25,8 @@ export interface AnswerSectionMap {
 
 export interface AnswerSourceRef {
   title: string;
+  docId?: string;
+  version?: number;
   fileName?: string;
   pageNumber?: number | string;
   snippet?: string;
@@ -236,6 +238,11 @@ export class SharedClassroomKnowledgeLibrary {
         continue;
       }
 
+      // Quality Status Guard: Strictly reject DISPUTED or SUPERSEDED answers
+      if (item.qualityStatus === 'DISPUTED' || item.qualityStatus === 'SUPERSEDED') {
+        continue;
+      }
+
       // Check subject match if specified
       if (options.subjectName && item.subjectName) {
         const subA = options.subjectName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -308,37 +315,41 @@ export class SharedClassroomKnowledgeLibrary {
    * Stores a newly generated answer into the shared classroom library
    */
   public async storeAnswer(params: {
-    classId: string;
-    course: string;
-    subjectName: string;
-    topic: string;
-    question: string;
+    classId?: string;
+    course?: string;
+    subjectName?: string;
+    topic?: string;
+    question?: string;
+    query?: string;
     answer: string;
     sections?: AnswerSectionMap;
+    citations?: any[];
+    tags?: string[];
+    contributor?: { id: string; name: string; role: string };
     sourcesUsed?: AnswerSourceRef[];
-    modelUsed: string;
+    modelUsed?: string;
     contributorStudentLabel?: string;
     parentQuestionId?: string;
     qualityStatus?: QualityStatus;
   }): Promise<SharedAcademicAnswer> {
+    const effectiveQuestion = (params.question || params.query || '').trim();
     const {
       classId = 'M2029',
       course = 'B.Tech / BCA Computer Science',
       subjectName,
       topic,
-      question,
       answer,
       sections = {},
-      sourcesUsed = [],
-      modelUsed,
-      contributorStudentLabel = 'Student 1',
+      sourcesUsed = params.citations || [],
+      modelUsed = 'gemini-1.5-flash',
+      contributorStudentLabel = params.contributor?.name || 'Student 1',
       parentQuestionId,
       qualityStatus = 'GENERATED',
     } = params;
 
-    const normalizedTokens = normalizeQueryTokens(question);
+    const normalizedTokens = normalizeQueryTokens(effectiveQuestion);
     const normalizedKey = normalizedTokens.sort().join(' ');
-    const intent = extractQueryIntent(question).primary;
+    const intent = extractQueryIntent(effectiveQuestion).primary;
     const now = new Date().toISOString();
     const id = `ans-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
@@ -348,7 +359,7 @@ export class SharedClassroomKnowledgeLibrary {
       course,
       subjectName: subjectName || 'Computer Science',
       topic: topic || 'Academic Concept',
-      originalQuestion: question.trim(),
+      originalQuestion: effectiveQuestion,
       normalizedKey,
       intent,
       answer: answer.trim(),
@@ -421,22 +432,72 @@ export class SharedClassroomKnowledgeLibrary {
       }
     }
 
-    console.log(`[Shared Library] Stored new academic answer for "${question.slice(0, 45)}" (Class ${classId})`);
+    console.log(`[Shared Library] Stored new academic answer for "${effectiveQuestion.slice(0, 45)}" (Class ${classId})`);
     return newAnswer;
+  }
+
+  /**
+   * Returns all stored answers, optionally filtered by classId
+   */
+  public getAllAnswers(classId?: string): SharedAcademicAnswer[] {
+    const list = Array.from(this.answers.values());
+    if (!classId) return list;
+    return list.filter((a) => a.classId === classId || a.classId === 'universal');
   }
 
   /**
    * Proposes a collaborative correction or improvement to an existing answer
    */
-  public proposeCorrection(params: {
-    answerId: string;
-    studentLabel: string;
-    sectionTargeted: string; // "definition" | "diagram" | "code" | "analogy" | "scoring" | "all"
-    proposedContent: string;
-    reason: string;
-    supportingEvidence?: string;
-  }): { success: boolean; answer?: SharedAcademicAnswer; correction?: AnswerCorrectionRecord; error?: string } {
-    const { answerId, studentLabel, sectionTargeted, proposedContent, reason, supportingEvidence } = params;
+  public proposeCorrection(
+    arg1: string | {
+      answerId?: string;
+      studentLabel?: string;
+      sectionTargeted?: string;
+      proposedContent?: string;
+      reason?: string;
+      supportingEvidence?: string;
+      targetSection?: string;
+      proposedText?: string;
+      contributor?: { id?: string; name?: string; role?: string };
+      citationDocId?: string;
+      citationPage?: number;
+    },
+    arg2?: {
+      studentLabel?: string;
+      sectionTargeted?: string;
+      proposedContent?: string;
+      reason?: string;
+      supportingEvidence?: string;
+      targetSection?: string;
+      proposedText?: string;
+      contributor?: { id?: string; name?: string; role?: string };
+      citationDocId?: string;
+      citationPage?: number;
+    }
+  ): {
+    success: boolean;
+    answer?: SharedAcademicAnswer;
+    correction?: AnswerCorrectionRecord;
+    correctionId?: string;
+    error?: string;
+  } {
+    let answerId: string;
+    let params: any;
+
+    if (typeof arg1 === 'string') {
+      answerId = arg1;
+      params = arg2 || {};
+    } else {
+      params = arg1 || {};
+      answerId = params.answerId || '';
+    }
+
+    const studentLabel = params.studentLabel || params.contributor?.name || 'Student Contributor';
+    const sectionTargeted = params.sectionTargeted || params.targetSection || 'all';
+    const proposedContent = (params.proposedContent || params.proposedText || '').trim();
+    const reason = (params.reason || '').trim();
+    const supportingEvidence = (params.supportingEvidence || params.citationDocId ? `Doc: ${params.citationDocId || ''} Page: ${params.citationPage || ''}` : '').trim();
+
     const item = this.answers.get(answerId);
     if (!item) {
       return { success: false, error: 'Answer ID not found in shared library' };
@@ -448,12 +509,12 @@ export class SharedClassroomKnowledgeLibrary {
     const correction: AnswerCorrectionRecord = {
       id: corrId,
       answerId,
-      suggestedBy: studentLabel || 'Student Contributor',
+      suggestedBy: studentLabel,
       sectionTargeted,
       originalContent: (item.sections as any)[sectionTargeted] || item.answer,
-      proposedContent: proposedContent.trim(),
-      reason: reason.trim(),
-      supportingEvidence: supportingEvidence?.trim(),
+      proposedContent,
+      reason,
+      supportingEvidence: supportingEvidence || undefined,
       status: 'pending',
       createdAt: now,
     };
@@ -461,7 +522,7 @@ export class SharedClassroomKnowledgeLibrary {
     item.corrections.push(correction);
     item.qualityStatus = 'CORRECTION_PROPOSED';
 
-    // Snapshot previous version before applying validated update
+    // Snapshot previous version before proposing correction
     const snapshot: AnswerVersionSnapshot = {
       version: item.version,
       answer: item.answer,
@@ -469,40 +530,100 @@ export class SharedClassroomKnowledgeLibrary {
       qualityStatus: item.qualityStatus,
       modifiedBy: item.contributorStudentLabel,
       modifiedAt: item.updatedAt,
-      changeSummary: `Version ${item.version} snapshot before correction on ${sectionTargeted}`,
+      changeSummary: `Version ${item.version} snapshot: Student proposed correction on ${sectionTargeted}`,
     };
     item.previousVersions.unshift(snapshot);
 
-    // Apply the correction to update the current master answer
-    item.version += 1;
-    if (sectionTargeted === 'all' || sectionTargeted === 'general') {
-      item.answer = proposedContent.trim();
-    } else {
-      (item.sections as any)[sectionTargeted] = proposedContent.trim();
-      if (sectionTargeted === 'definition') {
-        item.sections.simple = proposedContent.trim();
-      }
-    }
-    item.updatedAt = now;
-    item.qualityStatus = 'VERIFIED';
-    correction.status = 'approved';
-    correction.reviewedBy = 'Auto-Verified with Peer Evidence';
-    correction.reviewedAt = now;
+    // Guard: Do NOT silently overwrite an existing verified master answer!
+    // Stored as pending for peer review / faculty approval
+    correction.status = 'pending';
+    correction.reviewedBy = 'Pending Review';
 
     item.auditTrail.unshift({
       id: `audit-${Date.now()}`,
       action: 'CORRECTION_PROPOSED',
       actor: studentLabel,
-      details: `Student proposed correction for "${sectionTargeted}": ${reason} (Evidence: ${supportingEvidence || 'Course syllabus'})`,
+      details: `Student proposed correction for "${sectionTargeted}": ${reason} (Evidence: ${supportingEvidence || 'Course syllabus'}). Pending peer/faculty review.`,
       timestamp: now,
     });
 
     this.saveToDisk();
-    return { success: true, answer: item, correction };
+    return { success: true, answer: item, correction, correctionId: correction.id };
   }
 
   /**
-   * Registers a student vote (upvote or downvote) on a shared answer
+   * Approves a pending correction after peer or faculty review
+   */
+  public approveCorrection(
+    answerId: string,
+    correctionId: string,
+    reviewer: string = 'Faculty Reviewer'
+  ): { success: boolean; answer?: SharedAcademicAnswer; error?: string } {
+    const item = this.answers.get(answerId);
+    if (!item) return { success: false, error: 'Answer not found' };
+
+    const corr = item.corrections.find((c) => c.id === correctionId);
+    if (!corr) return { success: false, error: 'Correction not found' };
+
+    const now = new Date().toISOString();
+    corr.status = 'approved';
+    corr.reviewedBy = reviewer;
+    corr.reviewedAt = now;
+
+    // Apply the correction to update the current master answer
+    item.version += 1;
+    if (corr.sectionTargeted === 'all' || corr.sectionTargeted === 'general') {
+      item.answer = corr.proposedContent;
+    } else {
+      (item.sections as any)[corr.sectionTargeted] = corr.proposedContent;
+      if (corr.sectionTargeted === 'definition') {
+        item.sections.simple = corr.proposedContent;
+      }
+    }
+    item.updatedAt = now;
+    item.qualityStatus = 'VERIFIED';
+
+    item.auditTrail.unshift({
+      id: `audit-${Date.now()}`,
+      action: 'VERIFIED',
+      actor: reviewer,
+      details: `Correction ${correctionId} approved by ${reviewer}. Master answer updated to v${item.version}.`,
+      timestamp: now,
+    });
+
+    this.saveToDisk();
+    return { success: true, answer: item };
+  }
+
+  /**
+   * Retrieves an answer directly by its ID
+   */
+  public getAnswerById(answerId: string): SharedAcademicAnswer | undefined {
+    return this.answers.get(answerId);
+  }
+
+  /**
+   * Explicitly flags an answer as DISPUTED with an audit trail entry
+   */
+  public flagAnswerDisputed(answerId: string, reason: string): boolean {
+    const item = this.answers.get(answerId);
+    if (!item) return false;
+    item.qualityStatus = 'DISPUTED';
+    item.auditTrail.unshift({
+      id: `audit-${Date.now()}`,
+      action: 'DISPUTED',
+      actor: 'System / SharedAnswerController',
+      details: reason,
+      timestamp: new Date().toISOString(),
+    });
+    this.saveToDisk();
+    return true;
+  }
+
+  /**
+   * Registers a student vote (upvote or downvote) on a shared answer.
+   * Student votes never automatically label an answer VERIFIED; verification requires
+   * formal faculty review or ground-truth curriculum citation evidence.
    */
   public voteAnswer(
     answerId: string,
@@ -515,12 +636,13 @@ export class SharedClassroomKnowledgeLibrary {
 
     if (vote === 'up') {
       item.positiveVotes += 1;
-      if (item.positiveVotes >= 3 && item.qualityStatus === 'GENERATED') {
-        item.qualityStatus = 'VERIFIED';
-      }
+      // Step 4 non-negotiable rule: Never label an answer VERIFIED simply because students upvoted or viewed it.
+      // Upvotes track peer appreciation, but VERIFIED status strictly requires faculty review or textbook citation verification.
     } else {
       item.negativeVotes += 1;
-      if (item.negativeVotes >= 2) {
+      if (item.negativeVotes >= 3 && item.negativeVotes > item.positiveVotes) {
+        item.qualityStatus = 'DISPUTED';
+      } else if (item.negativeVotes >= 2) {
         item.qualityStatus = 'NEEDS_REVIEW';
       }
     }
@@ -535,6 +657,96 @@ export class SharedClassroomKnowledgeLibrary {
 
     this.saveToDisk();
     return { success: true, answer: item, newStatus: item.qualityStatus };
+  }
+
+  /**
+   * Formally verifies an answer through faculty review or verified textbook citations
+   */
+  public verifyAnswer(
+    answerId: string,
+    verifier: string = 'Faculty / Course In-Charge',
+    evidenceSummary?: string
+  ): boolean {
+    const item = this.answers.get(answerId);
+    if (!item) return false;
+
+    item.qualityStatus = 'VERIFIED';
+    item.updatedAt = new Date().toISOString();
+    item.auditTrail.unshift({
+      id: `audit-${Date.now()}`,
+      action: 'VERIFIED',
+      actor: verifier,
+      details: `Academic verification confirmed by ${verifier}${evidenceSummary ? `: ${evidenceSummary}` : ''}.`,
+      timestamp: new Date().toISOString(),
+    });
+
+    this.saveToDisk();
+    return true;
+  }
+
+  /**
+   * Watches for document version changes and flags dependent shared answers as NEEDS_REVIEW
+   */
+  public checkAndFlagOutdatedDocumentReferences(docId: string, newVersion: number): {
+    flaggedAnswerIds: string[];
+    count: number;
+  } {
+    const flaggedAnswerIds: string[] = [];
+
+    for (const item of this.answers.values()) {
+      if (!Array.isArray(item.sourcesUsed)) continue;
+
+      const matchedSource = item.sourcesUsed.find(
+        (src: any) =>
+          src.docId === docId ||
+          (src.fileName && docId.includes(src.fileName)) ||
+          (src.title && docId.includes(src.title))
+      );
+
+      if (matchedSource) {
+        const citedVersion = matchedSource.version || 1;
+        if (citedVersion < newVersion) {
+          const oldStatus = item.qualityStatus;
+          item.qualityStatus = 'NEEDS_REVIEW';
+          flaggedAnswerIds.push(item.id);
+
+          item.auditTrail.unshift({
+            id: `audit-${Date.now()}`,
+            action: 'DISPUTED' as any,
+            actor: 'System / DocumentValidityWatcher',
+            details: `Cited document "${docId}" was updated to version ${newVersion} (answer was based on v${citedVersion}). Status changed from ${oldStatus} to NEEDS_REVIEW.`,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }
+    }
+
+    if (flaggedAnswerIds.length > 0) {
+      this.saveToDisk();
+    }
+
+    return { flaggedAnswerIds, count: flaggedAnswerIds.length };
+  }
+
+  /**
+   * Marks an answer as SUPERSEDED when a newer approved version replaces it
+   */
+  public invalidateOrSupersedeAnswer(answerId: string, reason: string, newAnswerId?: string): boolean {
+    const item = this.answers.get(answerId);
+    if (!item) return false;
+
+    item.qualityStatus = 'SUPERSEDED';
+    item.updatedAt = new Date().toISOString();
+    item.auditTrail.unshift({
+      id: `audit-${Date.now()}`,
+      action: 'SUPERSEDED',
+      actor: 'System / QualityLifecycle',
+      details: `${reason}${newAnswerId ? ` Replaced by answer ${newAnswerId}.` : ''}`,
+      timestamp: new Date().toISOString(),
+    });
+
+    this.saveToDisk();
+    return true;
   }
 
   /**

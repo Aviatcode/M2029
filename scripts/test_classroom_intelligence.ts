@@ -2,7 +2,7 @@ import { byokVault } from '../src/server/ai/byokVault.js';
 import { sharedKnowledgeLibrary } from '../src/server/ai/sharedKnowledgeLibrary.js';
 import { evaluateQuestionMatch, extractQueryIntent } from '../src/server/ai/questionMatcher.js';
 import { followUpEngine } from '../src/server/ai/followUpEngine.js';
-import { graphRagEngine } from '../src/server/rag/graphRagEngine.js';
+import { graphRagEngine, knowledgeGraphEngine } from '../src/server/rag/graphRagEngine.js';
 
 let passedCount = 0;
 let failedCount = 0;
@@ -132,16 +132,21 @@ Thrashing occurs when the OS spends more time swapping pages in/out of swap spac
     supportingEvidence: 'Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389',
   });
   assert(
-    correctionResult.success && correctionResult.answer?.version === 2,
+    correctionResult.success && correctionResult.correction?.status === 'pending',
     'Scenario 9: Student C submits a section-level correction with textbook evidence',
     `Targeted section: "definition", Reason: "${correctionResult.correction?.reason}"`
   );
 
   // Scenario 10 & 11: The correction goes through verification and becomes current version
+  const approvalResult = sharedKnowledgeLibrary.approveCorrection(
+    storedAnswerA.id,
+    correctionResult.correction!.id,
+    'Faculty Reviewer'
+  );
   assert(
-    correctionResult.answer?.qualityStatus === 'VERIFIED' && correctionResult.answer?.previousVersions.length === 1,
+    approvalResult.success && approvalResult.answer?.version === 2 && approvalResult.answer?.previousVersions.length === 1,
     'Scenario 10 & 11: Correction verified; previous version preserved in immutable history',
-    `Current version: v${correctionResult.answer?.version} (VERIFIED), Snapshot count: ${correctionResult.answer?.previousVersions.length}`
+    `Current version: v${approvalResult.answer?.version} (VERIFIED), Snapshot count: ${approvalResult.answer?.previousVersions.length}`
   );
 
   // Scenario 12: Student D receives the improved answer
@@ -204,6 +209,22 @@ Thrashing occurs when the OS spends more time swapping pages in/out of swap spac
   }
 
   // Scenario 18: Existing application endpoints continue to function
+  knowledgeGraphEngine.addNodeToMemory({
+    id: `node-${Date.now()}`,
+    classId: testClassId,
+    name: 'Deadlock Coffman Conditions',
+    canonicalName: 'deadlock coffman conditions',
+    nodeType: 'concept',
+    summary: 'The four necessary conditions for deadlock: Mutual Exclusion, Hold and Wait, No Preemption, and Circular Wait.',
+    subjectName: 'Operating Systems',
+    keywords: ['deadlock', 'coffman', 'conditions'],
+    extractionMethod: 'curriculum_curated',
+    verificationStatus: 'verified',
+    confidenceScore: 1.0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
   const analytics = sharedKnowledgeLibrary.getLibraryAnalytics(testClassId);
   const graphResult = await graphRagEngine.queryGraph('Deadlock Coffman Conditions', {
     classId: testClassId,

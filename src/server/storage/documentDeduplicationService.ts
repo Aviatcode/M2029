@@ -316,6 +316,19 @@ export class DocumentDeduplicationService {
       }
       extractedText = slideTexts.join('\n\n--- [Slide Break] ---\n\n');
       pageCount = Math.max(1, slideFiles.length);
+    } else if (fileExt === 'xlsx') {
+      try {
+        const JSZip = (await import('jszip')).default;
+        const buffer = fs.readFileSync(filePath);
+        const zip = await JSZip.loadAsync(buffer);
+        const sharedXml = await zip.file('xl/sharedStrings.xml')?.async('text');
+        if (sharedXml) {
+          extractedText = sharedXml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+        pageCount = 1;
+      } catch {
+        extractedText = `Spreadsheet Document: ${originalName}\nTitle: ${cleanTitle}`;
+      }
     } else {
       try {
         extractedText = fs.readFileSync(filePath, 'utf-8');
@@ -370,7 +383,7 @@ export class DocumentDeduplicationService {
             const prevV = (vRows && vRows.length > 0 && vRows[0].max_v) ? Number(vRows[0].max_v) : 1;
             documentVersion = prevV + 1;
           }
-        } catch {}
+        } catch { }
       }
     }
 

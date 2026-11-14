@@ -886,7 +886,7 @@ export class AIKnowledgeCacheManager {
           ${entry.needsRefinement || false}, ${entry.isTeacherCurated || false},
           ${JSON.stringify(entry.contributingModels || [])}::jsonb
         )
-        ON CONFLICT (id) DO UPDATE SET
+        ON CONFLICT (normalized_key, subject_name, mode) DO UPDATE SET
           answer = EXCLUDED.answer,
           sections = EXCLUDED.sections,
           last_accessed_at = EXCLUDED.last_accessed_at,

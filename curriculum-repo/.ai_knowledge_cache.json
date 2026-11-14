@@ -1,9 +1,9 @@
 {
-  "totalLearnedItems": 15,
+  "totalLearnedItems": 29,
   "cohortPerfectedCount": 3,
-  "totalHits": 24,
-  "totalTokensSaved": 19200,
-  "lastUpdated": "2026-11-14T12:23:15.927Z",
+  "totalHits": 56,
+  "totalTokensSaved": 44800,
+  "lastUpdated": "2026-11-14T15:03:30.414Z",
   "entries": [
     {
       "id": "cache-1794438677014-qhsl0",
@@ -661,6 +661,479 @@
           "improvedAt": "2026-11-14T12:23:15.204Z",
           "focus": "Initial Q&A Exploration",
           "summary": "Created initial answer draft for \"Phase1 Test Query 1794658995204\"."
+        }
+      ],
+      "positiveVotes": 5,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794660035168-3b3n9",
+      "query": "Phase1 Test Query 1794660035167",
+      "normalizedKey": "phase1 test query 1794660035167",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T12:40:35.171Z",
+      "lastAccessedAt": "2026-11-14T12:40:35.500Z",
+      "hitCount": 7,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T12:40:35.168Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794660035167\"."
+        }
+      ],
+      "positiveVotes": 5,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794662569559-scmvz",
+      "query": "What is an Operating System?",
+      "normalizedKey": "what is an operating system",
+      "subjectName": "Operating Systems",
+      "mode": "doubt",
+      "answer": "An OS manages hardware resources.",
+      "modelUsed": "BYOK",
+      "createdAt": "2026-11-14T13:22:49.559Z",
+      "lastAccessedAt": "2026-11-14T15:01:51.838Z",
+      "hitCount": 6,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T13:22:49.559Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"What is an Operating System?\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794662671580-t1by8",
+      "query": "What is an Operating System?",
+      "normalizedKey": "what is an operating system",
+      "subjectName": "Operating Systems",
+      "mode": "doubt",
+      "answer": "An OS manages hardware resources.",
+      "modelUsed": "BYOK",
+      "createdAt": "2026-11-14T13:24:31.580Z",
+      "lastAccessedAt": "2026-11-14T13:24:31.580Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T13:24:31.580Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"What is an Operating System?\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794664624504-6f0xe",
+      "query": "Phase1 Test Query 1794664624504",
+      "normalizedKey": "phase1 test query 1794664624504",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T13:57:04.506Z",
+      "lastAccessedAt": "2026-11-14T13:57:04.506Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T13:57:04.504Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794664624504\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794664675065-il2yz",
+      "query": "Phase1 Test Query 1794664675064",
+      "normalizedKey": "phase1 test query 1794664675064",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T13:57:55.068Z",
+      "lastAccessedAt": "2026-11-14T13:57:55.255Z",
+      "hitCount": 7,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T13:57:55.065Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794664675064\"."
+        }
+      ],
+      "positiveVotes": 5,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794664753469-hrow4",
+      "query": "What is an Operating System?",
+      "normalizedKey": "what is an operating system",
+      "subjectName": "Operating Systems",
+      "mode": "doubt",
+      "answer": "An OS manages hardware resources.",
+      "modelUsed": "BYOK",
+      "createdAt": "2026-11-14T13:59:13.469Z",
+      "lastAccessedAt": "2026-11-14T13:59:13.469Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T13:59:13.469Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"What is an Operating System?\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794666110338-4ctr6",
+      "query": "Explain Page Replacement FIFO in OS",
+      "normalizedKey": "page replacement first out",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "### 1. Simple Overview\nFIFO replaces the oldest page in memory first.\n\n### 4. 10-Marker University Exam Format\nDefinition, Belady anomaly, example diagram.",
+      "sections": {
+        "simple": "FIFO replaces the oldest page in memory first."
+      },
+      "modelUsed": "⚡ Cohort Master Engine",
+      "createdAt": "2026-11-14T14:21:50.339Z",
+      "lastAccessedAt": "2026-11-14T15:01:07.616Z",
+      "hitCount": 4,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T14:21:50.338Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Explain Page Replacement FIFO in OS\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false,
+      "contributingModels": [
+        "Google Gemini (gemini-3.5-flash)"
+      ]
+    },
+    {
+      "id": "cache-1794666144560-ijklk",
+      "query": "Explain Page Replacement FIFO in OS",
+      "normalizedKey": "page replacement first out",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "### 1. Simple Overview\nFIFO replaces the oldest page in memory first.\n\n### 4. 10-Marker University Exam Format\nDefinition, Belady anomaly, example diagram.",
+      "sections": {
+        "simple": "FIFO replaces the oldest page in memory first."
+      },
+      "modelUsed": "⚡ Cohort Master Engine",
+      "createdAt": "2026-11-14T14:22:24.560Z",
+      "lastAccessedAt": "2026-11-14T14:22:24.560Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T14:22:24.560Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Explain Page Replacement FIFO in OS\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false,
+      "contributingModels": [
+        "Google Gemini (gemini-3.5-flash)"
+      ]
+    },
+    {
+      "id": "cache-1794666178136-mr7jr",
+      "query": "What is an Operating System?",
+      "normalizedKey": "what is an operating system",
+      "subjectName": "Operating Systems",
+      "mode": "doubt",
+      "answer": "An OS manages hardware resources.",
+      "modelUsed": "BYOK",
+      "createdAt": "2026-11-14T14:22:58.136Z",
+      "lastAccessedAt": "2026-11-14T14:22:58.136Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T14:22:58.136Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"What is an Operating System?\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794666287645-ru2nl",
+      "query": "Phase1 Test Query 1794666287644",
+      "normalizedKey": "phase1 test query 1794666287644",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T14:24:47.647Z",
+      "lastAccessedAt": "2026-11-14T14:24:47.835Z",
+      "hitCount": 7,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T14:24:47.645Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794666287644\"."
+        }
+      ],
+      "positiveVotes": 5,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794667382366-47mxy",
+      "query": "Explain Page Replacement FIFO in OS",
+      "normalizedKey": "page replacement first out",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "### 1. Simple Overview\nFIFO replaces the oldest page in memory first.\n\n### 4. 10-Marker University Exam Format\nDefinition, Belady anomaly, example diagram.",
+      "sections": {
+        "simple": "FIFO replaces the oldest page in memory first."
+      },
+      "modelUsed": "⚡ Cohort Master Engine",
+      "createdAt": "2026-11-14T14:43:02.366Z",
+      "lastAccessedAt": "2026-11-14T14:43:02.366Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T14:43:02.366Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Explain Page Replacement FIFO in OS\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false,
+      "contributingModels": [
+        "Google Gemini (gemini-3.5-flash)"
+      ]
+    },
+    {
+      "id": "cache-1794668467606-4r7ye",
+      "query": "Explain Page Replacement FIFO in OS",
+      "normalizedKey": "page replacement first out",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "### 1. Simple Overview\nFIFO replaces the oldest page in memory first.\n\n### 4. 10-Marker University Exam Format\nDefinition, Belady anomaly, example diagram.",
+      "sections": {
+        "simple": "FIFO replaces the oldest page in memory first."
+      },
+      "modelUsed": "⚡ Cohort Master Engine",
+      "createdAt": "2026-11-14T15:01:07.606Z",
+      "lastAccessedAt": "2026-11-14T15:01:07.606Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T15:01:07.606Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Explain Page Replacement FIFO in OS\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false,
+      "contributingModels": [
+        "Google Gemini (gemini-3.5-flash)"
+      ]
+    },
+    {
+      "id": "cache-1794668511059-81w1c",
+      "query": "What is an Operating System?",
+      "normalizedKey": "what is an operating system",
+      "subjectName": "Operating Systems",
+      "mode": "doubt",
+      "answer": "An OS manages hardware resources.",
+      "modelUsed": "BYOK",
+      "createdAt": "2026-11-14T15:01:51.059Z",
+      "lastAccessedAt": "2026-11-14T15:01:51.059Z",
+      "hitCount": 1,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T15:01:51.059Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"What is an Operating System?\"."
+        }
+      ],
+      "positiveVotes": 0,
+      "negativeVotes": 0,
+      "needsRefinement": false,
+      "isTeacherCurated": false
+    },
+    {
+      "id": "cache-1794668609540-x23jj",
+      "query": "Phase1 Test Query 1794668609539",
+      "normalizedKey": "phase1 test query 1794668609539",
+      "subjectName": "Operating Systems",
+      "mode": "all",
+      "answer": "This is a test answer for Phase 1 verification.",
+      "sections": {
+        "simple": "Simple test answer"
+      },
+      "modelUsed": "Phase1 Test Runner",
+      "createdAt": "2026-11-14T15:03:29.543Z",
+      "lastAccessedAt": "2026-11-14T15:03:29.887Z",
+      "hitCount": 7,
+      "tokensEstimated": 800,
+      "iterationCount": 1,
+      "targetCohortSize": 60,
+      "isCohortPerfected": false,
+      "perfectionScore": 51,
+      "perfectionTier": "Draft (Student 1)",
+      "evolutionHistory": [
+        {
+          "iteration": 1,
+          "studentLabel": "Student 1",
+          "improvedAt": "2026-11-14T15:03:29.540Z",
+          "focus": "Initial Q&A Exploration",
+          "summary": "Created initial answer draft for \"Phase1 Test Query 1794668609539\"."
         }
       ],
       "positiveVotes": 5,

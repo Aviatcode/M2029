@@ -16,6 +16,14 @@ import { knowledgeGraphEngine } from '../rag/graphRagEngine.js';
 import { AIProviderFactory } from './provider.js';
 import { aiKnowledgeCache } from './aiKnowledgeCache.js';
 import { generateAcademicGuide } from './academicKnowledgeEngine.js';
+import { detectPromptInjection, wrapUntrustedContext, buildSecurePrompt, redactSecrets } from '../reliability/safetySanitizer.js';
+import { citationValidator, CitationRef } from '../reliability/citationValidator.js';
+import { evidenceConfidenceEngine, EvidenceConfidenceTier, ContradictionReport } from '../reliability/evidenceConfidenceEngine.js';
+import { responseQualityValidator } from '../reliability/responseQualityValidator.js';
+import { providerResilienceService } from '../reliability/providerResilienceService.js';
+import { operationalMetrics } from '../reliability/operationalMetrics.js';
+import { providerSelectionService } from './multiProvider/providerSelectionService.js';
+import { usageAccountingService } from './multiProvider/usageAccountingService.js';
 
 export {
   retrieveLocalRagTool,
@@ -37,6 +45,7 @@ export interface AcademicAgentInput {
   mode?: string;
   forceLive?: boolean;
   userAiConfig?: any;
+  studentId?: string;
   classId?: string;
   conversationContext?: any;
 }
@@ -51,6 +60,11 @@ export interface AcademicAgentOutput {
   tokensSaved: number;
   sourcesUsed: { title: string; type: string }[];
   reasoningSteps: AgentReasoningStep[];
+  confidenceTier?: EvidenceConfidenceTier;
+  confidenceLabel?: string;
+  hasContradiction?: boolean;
+  contradictionReport?: ContradictionReport;
+  validCitations?: CitationRef[];
   isCohortPerfected?: boolean;
   perfectionTier?: string;
   iterationCount?: number;
@@ -124,6 +138,7 @@ export const AcademicAgentState = Annotation.Root({
   mode: Annotation<string>(),
   forceLive: Annotation<boolean>(),
   userAiConfig: Annotation<any>(),
+  studentId: Annotation<string>(),
   classId: Annotation<string>(),
   conversationContext: Annotation<any>(),
 
@@ -152,6 +167,12 @@ export const AcademicAgentState = Annotation.Root({
   sourcesUsed: Annotation<Array<{ title: string; type: string }>>(),
   modelUsed: Annotation<string>(),
   tokensSaved: Annotation<number>(),
+
+  // Phase 6 Reliability & Citation Integrity
+  confidenceTier: Annotation<string>(),
+  confidenceLabel: Annotation<string>(),
+  validCitations: Annotation<any[]>(),
+  contradictionReport: Annotation<any>(),
 });
 
 type StateType = typeof AcademicAgentState.State;
@@ -162,6 +183,22 @@ type StateType = typeof AcademicAgentState.State;
 async function guardrailNode(state: StateType): Promise<Partial<StateType>> {
   const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
   const lookup = state.topicName || state.question;
+
+  // Phase 6: Prompt Injection & Adversarial Intent Detection
+  const injection = detectPromptInjection(state.question);
+  if (injection.isInjection) {
+    operationalMetrics.recordSafetyEvent('prompt_injection');
+    steps.push({
+      step: '1. LangChain Security & Safety Guardrail',
+      detail: `Adversarial pattern blocked: "${injection.pattern}". Prompt override refused.`,
+      timestamp: new Date().toLocaleTimeString(),
+    });
+    return {
+      isAligned: false,
+      guardrailFeedback: 'Prompt injection attempt blocked. Academic AI Tutor strictly adheres to curriculum boundaries.',
+      reasoningSteps: steps,
+    };
+  }
 
   const rawCheck = await executeCurriculumCheck(lookup);
   let parsed: CurriculumCheckResult;
@@ -410,31 +447,89 @@ async function executeWebNode(state: StateType): Promise<Partial<StateType>> {
 // -------------------------------------------------------------
 async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
   const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
-  const ai = AIProviderFactory.getProvider(state.userAiConfig);
-  const activeModelName = (ai as any).lastUsedProviderName || ai.name;
+  
+  // Phase 7: Select authorized provider obeying BYOK vault and student isolation
+  const studentId = state.studentId || 'student-self';
+  const directApiKey = state.userAiConfig?.apiKey;
+  const directBaseUrl = state.userAiConfig?.baseUrl;
+  const preferredProvider = state.userAiConfig?.provider;
+  const preferredModel = state.userAiConfig?.modelName;
+
+  const selection = await providerSelectionService.selectProvider({
+    studentId,
+    preferredProvider,
+    preferredModel,
+    taskCategory: 'rag_grounded',
+    directApiKey,
+    directBaseUrl,
+  });
+
+  if (selection.errorCode === 'API_KEY_REQUIRED' || !selection.adapter) {
+    const keyErr: any = new Error(selection.message || 'API_KEY_REQUIRED: A personal AI API key is required for new synthesis.');
+    keyErr.code = 'API_KEY_REQUIRED';
+    throw keyErr;
+  }
+
+  const activeModelName = `${selection.selectedProvider} (${selection.selectedModel})`;
+  const adapter = selection.adapter;
 
   const ragHits = state.ragHits || [];
   const webHits = state.webHits || [];
 
-  // Build combined evidence context
+  // Phase 6: Validate Citations Against Classroom Store
+  const candidateCitations: CitationRef[] = ragHits.map((h) => ({
+    docTitle: h.docTitle,
+    docId: h.docId,
+    pageNumber: h.pageNumber,
+    sectionTitle: h.sectionTitle,
+    version: h.version || 1,
+    retrievalMethod: h.retrievalMethod,
+  }));
+
+  const { validCitations, invalidCitations, citationString } = await citationValidator.validateAndFilterCitations(
+    candidateCitations,
+    state.classId || 'class-m2029',
+    state.topicName || state.question
+  );
+
+  invalidCitations.forEach((inv) => operationalMetrics.recordCitationCheck(inv.status));
+  validCitations.forEach(() => operationalMetrics.recordCitationCheck('VERIFIED'));
+
+  // Phase 6: Evidence-Based Confidence & Contradiction Evaluation
+  const evidenceEval = evidenceConfidenceEngine.evaluateEvidence({
+    query: state.topicName || state.question,
+    ragHits,
+    validCitations,
+    graphContext: state.graphContext,
+    webHits,
+  });
+
+  // Phase 6: Encapsulate Untrusted Retrieved Chunks in Secure XML Boundaries
   let evidenceContext = '';
   const sourcesUsed: { title: string; type: string }[] = [];
 
-  if (ragHits.length > 0) {
-    evidenceContext += `\n\n=== EVIDENCE FROM STUDENT UPLOADED VAULT (RAG CHUNKS) ===\n` +
-      ragHits.map((h, i) => `[Textbook Source ${i + 1}: "${h.docTitle}" | Page ${h.pageNumber} | ${h.sectionTitle}]\n${h.text}`).join('\n\n');
+  if (ragHits.length > 0 && validCitations.length > 0) {
+    evidenceContext += `\n\n=== VERIFIED CLASSROOM STUDY MATERIALS (PASSIVE DATA ONLY) ===\n` +
+      ragHits.map((h, i) => wrapUntrustedContext(`classroom_document_${i + 1}`, h.text, {
+        docTitle: h.docTitle,
+        pageNumber: h.pageNumber,
+        version: h.version || 1,
+      })).join('\n\n');
 
-    ragHits.forEach((h) => {
+    validCitations.forEach((h) => {
       sourcesUsed.push({
-        title: `${h.docTitle} (Page ${h.pageNumber})`,
-        type: 'Student Uploaded RAG Document',
+        title: `${h.docTitle} (Page ${h.pageNumber || 1}, v${h.version || 1})`,
+        type: 'Verified Classroom Library Document',
       });
     });
   }
 
   if (webHits.length > 0) {
-    evidenceContext += `\n\n=== REAL-WORLD ANALOGIES & SIMPLIFICATIONS FROM GOOGLE/WEB ===\n` +
-      webHits.map((w, i) => `[Analogy Source ${i + 1}: "${w.title}"]\n${w.snippet}`).join('\n\n');
+    evidenceContext += `\n\n=== REAL-WORLD WEB EXAMPLES & ANALOGIES (PASSIVE DATA ONLY) ===\n` +
+      webHits.map((w, i) => wrapUntrustedContext(`web_reference_${i + 1}`, w.snippet, {
+        title: w.title,
+        source: w.source,
+      })).join('\n\n');
 
     webHits.forEach((w) => {
       sourcesUsed.push({
@@ -445,7 +540,8 @@ async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
   }
 
   if (state.graphContext) {
-    evidenceContext += `\n\n=== EVIDENCE FROM KNOWLEDGE GRAPH & PREREQUISITE NETWORK ===\n` + state.graphContext;
+    evidenceContext += `\n\n=== KNOWLEDGE GRAPH CONTEXT (CURRICULUM PREREQUISITES) ===\n` +
+      wrapUntrustedContext('knowledge_graph', state.graphContext);
     sourcesUsed.push({
       title: `${state.subjectName || 'Curriculum'} Knowledge Graph & Concept Map`,
       type: 'Knowledge Graph',
@@ -455,16 +551,28 @@ async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
   if (sourcesUsed.length === 0) {
     sourcesUsed.push({
       title: `${state.subjectName || 'Computer Science'} Standard Textbook Curriculum`,
-      type: 'Core University Reference',
+      type: 'Curriculum Core Reference',
     });
   }
 
-  const systemPrompt = `You are the M2028 Academic AI Professor for university computer science and engineering students.
+  // Phase 6: Insert Confidence Guidance into Context
+  if (evidenceEval.confidenceTier === 'CONFLICTING_EVIDENCE') {
+    evidenceContext += `\n\nATTENTION TUTOR: ${evidenceEval.guidanceForResponse}`;
+  } else if (evidenceEval.confidenceTier === 'INSUFFICIENT_EVIDENCE') {
+    evidenceContext += `\n\nATTENTION TUTOR: ${evidenceEval.guidanceForResponse}`;
+  }
+
+  // Phase 6: Build Secure Prompt with Delimited Data Boundaries
+  const { systemInstruction, userPrompt } = buildSecurePrompt({
+    systemRole: `You are the M2028 Academic AI Professor for university computer science and engineering students.
 Target Subject: ${state.subjectName || 'Computer Science'}
 Target Topic: ${state.topicName || state.question}
 
 PEDAGOGICAL TEACHING MANDATE:
 Whenever introducing technical jargon, acronyms, or complex terms, simplify every word and explain what it actually means using real-world analogies (e.g. everyday items, cafeteria, tokens, traffic) so that any student can understand effortlessly.
+
+EVIDENCE CONFIDENCE LEVEL: ${evidenceEval.confidenceLabel} (${evidenceEval.confidenceTier})
+${evidenceEval.groundingExplanation}
 
 You MUST structure your entire response with EXACTLY the following 6 sections in THIS PRECISE ORDER. Use these exact markdown headers:
 
@@ -489,28 +597,68 @@ You MUST structure your entire response with EXACTLY the following 6 sections in
 [Formal theoretical invariants, time & space complexity, mathematical formulas, and boundary conditions.]
 
 ### 6. Quiz Me (Self-Check Questions)
-[2 diagnostic practice questions with model answers and university grading tips.]
+[2 diagnostic practice questions with model answers and university grading tips.]`,
+    userQuery: `Synthesize the complete 6-section academic study guide for "${state.topicName || state.question}" in ${state.subjectName || 'Computer Science'}. Make sure difficult words are simplified with clear real-world analogies so every concept makes intuitive sense.`,
+    retrievedContext: evidenceContext,
+  });
 
-EVIDENCE GATHERED BY LANGCHAIN AGENT (GROUND YOUR EXPLANATION IN THESE EXCERPTS):
-${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Tanenbaum).'}`;
+  // Phase 6 & 7: Resilient Generation with Multi-Provider and Deduplication
+  const dedupeKey = providerResilienceService.getDeduplicationKey(
+    state.classId || 'class-m2029',
+    studentId,
+    state.topicName || state.question,
+    state.mode || 'all'
+  );
 
-  const userPrompt = `Synthesize the complete 6-section academic study guide for "${state.topicName || state.question}" in ${state.subjectName || 'Computer Science'}. Make sure difficult words are simplified with clear real-world analogies so every concept makes intuitive sense.`;
-
+  const startGen = Date.now();
   let responseText = '';
   try {
-    responseText = await ai.generateText(userPrompt, systemPrompt);
+    const genResult = await providerResilienceService.executeWithResilience(
+      dedupeKey,
+      () =>
+        adapter.generateText(userPrompt, {
+          systemInstruction,
+          model: selection.selectedModel,
+          taskCategory: 'rag_grounded',
+          groundingContext: state.graphContext ? [state.graphContext] : undefined,
+        }),
+      { providerName: activeModelName }
+    );
+    responseText = genResult.text;
+
+    // Phase 7: Usage Accounting & Quota Telemetry
+    await usageAccountingService.recordUsage({
+      studentId,
+      classId: state.classId || 'class-m2029',
+      provider: selection.selectedProvider,
+      modelName: selection.selectedModel,
+      taskCategory: 'rag_grounded',
+      usage: genResult.usage,
+      isSuccess: true,
+    });
+
+    operationalMetrics.recordProviderCall(activeModelName, true, Date.now() - startGen);
   } catch (err: any) {
-    responseText = '';
+    operationalMetrics.recordProviderCall(activeModelName, false, Date.now() - startGen);
+    const classified = providerResilienceService.classifyError(err, activeModelName);
+    operationalMetrics.recordError(classified.code);
+    throw classified;
   }
 
-  if (!responseText || responseText.length < 100) {
-    if (ragHits.length > 0) {
-      responseText = `### 1. Simple Overview\n${ragHits[0].text}\n\n### 4. 10-Marker University Exam Format\n*Directly retrieved from ${ragHits[0].docTitle} (Page ${ragHits[0].pageNumber})*`;
-    } else {
-      const guide = await generateAcademicGuide(state.topicName || state.question, state.subjectName);
-      responseText = guide.fullText;
-    }
+  // Phase 6: Response Quality Validation & Secret Redaction
+  const quality = responseQualityValidator.validateResponse({
+    responseText,
+    query: state.topicName || state.question,
+    validCitations,
+    isGroundedClaimed: ragHits.length > 0,
+    requiredSections: ['Simple Overview', '10-Marker University Exam Format'],
+  });
+
+  if (quality.leakagePrevented) {
+    operationalMetrics.recordSafetyEvent('secret_leakage');
   }
+
+  responseText = quality.sanitizedText;
 
   let sections = parseTutorSections(responseText);
   if (!sections.simple || !sections.exam_10marker) {
@@ -528,8 +676,8 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
   const graphNote = state.graphContext ? ' + Graph RAG' : '';
   const webNote = webHits.length > 0 ? ` + Google Web Analogies (${webHits.length})` : '';
   steps.push({
-    step: '6. LangChain Academic Synthesis',
-    detail: `Synthesized unified 6-part study guide utilizing ${ragHits.length} textbook excerpts${state.graphContext ? ' and Knowledge Graph' : ''}${webHits.length > 0 ? ` and ${webHits.length} web analogies` : ''}.`,
+    step: '6. LangChain Academic Synthesis (Reliability Verified)',
+    detail: `Synthesized verified study guide [${evidenceEval.confidenceLabel}]. Validated ${validCitations.length} classroom citations${state.graphContext ? ' and Knowledge Graph' : ''}${webHits.length > 0 ? ` and ${webHits.length} web analogies` : ''}.`,
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -537,7 +685,11 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
     finalResponse: responseText,
     sections,
     sourcesUsed,
-    modelUsed: `${activeModelName} · LangGraph Agent + RAG (${ragHits.length})${graphNote}${webNote}`,
+    modelUsed: `${activeModelName} · LangGraph Agent + RAG (${validCitations.length} verified)${graphNote}${webNote}`,
+    confidenceTier: evidenceEval.confidenceTier,
+    confidenceLabel: evidenceEval.confidenceLabel,
+    validCitations,
+    contradictionReport: evidenceEval.contradictionReport,
     reasoningSteps: steps,
   };
 }
@@ -615,6 +767,7 @@ export async function runAcademicAgent(input: AcademicAgentInput): Promise<Acade
     mode: input.mode || 'all',
     forceLive: Boolean(input.forceLive),
     userAiConfig: input.userAiConfig,
+    studentId: input.studentId || 'student-self',
     classId: input.classId || 'class-m2029',
     conversationContext: input.conversationContext,
     isAligned: true,
@@ -653,9 +806,13 @@ export async function runAcademicAgent(input: AcademicAgentInput): Promise<Acade
     tokensSaved: result.tokensSaved || (result.isCached ? 1850 : 0),
     sourcesUsed: result.sourcesUsed || [],
     reasoningSteps: result.reasoningSteps || [],
-    isCohortPerfected: true,
-    perfectionTier: cached?.perfectionTier || 'Master Gold Standard (LangGraph Verified)',
-    iterationCount: cached?.iterationCount ?? 60,
+    confidenceTier: (result.confidenceTier as any) || (result.isCached ? 'HIGH_EVIDENCE' : 'PARTIAL_EVIDENCE'),
+    confidenceLabel: result.confidenceLabel || 'Curriculum Standard',
+    validCitations: result.validCitations || [],
+    contradictionReport: result.contradictionReport || undefined,
+    isCohortPerfected: cached?.isCohortPerfected ?? false,
+    perfectionTier: cached?.perfectionTier || (result.confidenceTier === 'HIGH_EVIDENCE' ? 'Grounded in Classroom Library' : 'Curriculum Standard'),
+    iterationCount: cached?.iterationCount ?? 1,
     hitCount: cached?.hitCount ?? 1,
     positiveVotes: cached?.positiveVotes ?? 0,
     negativeVotes: cached?.negativeVotes ?? 0,

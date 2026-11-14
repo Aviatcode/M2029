@@ -156,7 +156,8 @@ export const CS_SYNONYM_DICTIONARY: Record<string, string> = {
   'coffman conditions for deadlock': 'coffman conditions',
 };
 
-export function normalizeConceptCanonicalName(rawName: string): string {
+export function normalizeConceptCanonicalName(rawName: string = ''): string {
+  if (!rawName) return '';
   const cleaned = rawName
     .trim()
     .toLowerCase()

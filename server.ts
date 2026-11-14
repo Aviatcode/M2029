@@ -39,10 +39,21 @@ import {
   getNeonSql,
   initializeNeonSchema,
 } from './src/server/db/neonClient.js';
+import { applySecurityHeaders } from './src/server/security/securityHeaders.js';
+import { logger } from './src/server/monitoring/productionLogger.js';
+import { generalRateLimiter } from './src/server/security/rateLimiter.js';
+import { printEnvironmentSummary } from './src/server/config/environmentValidator.js';
 
 async function startServer() {
+  // Validate and display environment health summary
+  printEnvironmentSummary();
+
   const app = express();
   const httpServer = http.createServer(app);
+
+  // Apply enterprise security HTTP headers and request ID tracing
+  app.use(applySecurityHeaders);
+  app.use(logger.requestMiddleware());
 
   // Restricted CORS with Authorized Frontend Origins support
   const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
@@ -72,7 +83,7 @@ async function startServer() {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.header(
       'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Admin-Key, X-Student-Id, X-Class-Id'
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Admin-Key, X-Student-Id, X-Class-Id, X-Request-Id, X-User-Role'
     );
     if (req.method === 'OPTIONS') {
       return res.sendStatus(204);
@@ -83,10 +94,42 @@ async function startServer() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+  // Readiness and Liveness Probes for Kubernetes / Render Health Checks
+  app.get('/api/health/ready', async (_req: Request, res: Response) => {
+    if (isNeonConfigured()) {
+      const test = await testNeonConnection();
+      if (!test.ok) {
+        return res.status(503).json({
+          status: 'degraded',
+          ready: false,
+          reason: 'Neon PostgreSQL database is currently unreachable',
+          details: test.message,
+        });
+      }
+    }
+    return res.json({
+      status: 'ready',
+      ready: true,
+      timestamp: new Date().toISOString(),
+      database: isNeonConfigured() ? 'connected' : 'in_memory_only',
+    });
+  });
+
+  app.get('/api/health/live', (_req: Request, res: Response) => {
+    return res.json({
+      status: 'live',
+      uptime: Math.floor(process.uptime()),
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // Apply General Rate Limiter to API routes
+  app.use('/api', generalRateLimiter.middleware());
+
   // Mount M2028 API Router
   app.use('/api', apiRouter);
 
-  // Configure Multer for PWA Web Share Target Level 2 Ingestion
+  // Configure Multer for PWA Web Share Target Level 2 Ingestion (50MB Safe Limit for Render 512MB RAM)
   const shareStorage = multer.diskStorage({
     destination: (_req, _file, cb) => {
       cb(null, ragEngine.getUploadDir());
@@ -101,7 +144,7 @@ async function startServer() {
   const shareUpload = multer({
     storage: shareStorage,
     limits: {
-      fileSize: 500 * 1024 * 1024, // 500MB
+      fileSize: 50 * 1024 * 1024, // 50MB safe boundary
     },
   });
 
@@ -893,6 +936,33 @@ Evaluate the answer. Return STRICT JSON only:
     }
     initDailyAutoSyncScheduler();
   });
+
+  // Graceful Shutdown Coordinator for Container Restarts & Redeployments on Render
+  const handleShutdown = async (signal: string) => {
+    console.log(`\n🛑 [Server Shutdown] Received ${signal}. Starting graceful drain...`);
+    httpServer.close(async () => {
+      console.log('⚡ HTTP listener stopped accepting new connections.');
+      try {
+        if (db && typeof db.saveToDisk === 'function') {
+          db.saveToDisk();
+          console.log('💾 Classroom store successfully flushed to disk.');
+        }
+      } catch (err) {
+        console.warn('⚠️ Non-fatal cache flush notice:', err);
+      }
+      console.log('✅ Graceful shutdown completed cleanly. Exiting.');
+      process.exit(0);
+    });
+
+    // Enforce 10-second hard timeout
+    setTimeout(() => {
+      console.error('⚠️ Shutdown timeout expired after 10s. Forcing exit.');
+      process.exit(1);
+    }, 10000).unref();
+  };
+
+  process.on('SIGTERM', () => handleShutdown('SIGTERM'));
+  process.on('SIGINT', () => handleShutdown('SIGINT'));
 }
 
 startServer().catch((err) => {

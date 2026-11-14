@@ -51,6 +51,656 @@
       "verifiedByCR": true,
       "crName": "Class Representative (CR)",
       "crRollNo": "CR-VERIFIED"
+    },
+    "class-p5-1794662559980": {
+      "id": "class-p5-1794662559980",
+      "code": "P5CS",
+      "name": "Phase 5 Personalization Classroom",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P5CS": {
+      "id": "class-p5-1794662559980",
+      "code": "P5CS",
+      "name": "Phase 5 Personalization Classroom",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664163933": {
+      "id": "class-p6-a-1794664163933",
+      "code": "P6A3933",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A3933": {
+      "id": "class-p6-a-1794664163933",
+      "code": "P6A3933",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664163933": {
+      "id": "class-p6-b-1794664163933",
+      "code": "P6B3933",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B3933": {
+      "id": "class-p6-b-1794664163933",
+      "code": "P6B3933",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664294857": {
+      "id": "class-p6-a-1794664294857",
+      "code": "P6A4857",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A4857": {
+      "id": "class-p6-a-1794664294857",
+      "code": "P6A4857",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664294857": {
+      "id": "class-p6-b-1794664294857",
+      "code": "P6B4857",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B4857": {
+      "id": "class-p6-b-1794664294857",
+      "code": "P6B4857",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664312036": {
+      "id": "class-p6-a-1794664312036",
+      "code": "P6A2036",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A2036": {
+      "id": "class-p6-a-1794664312036",
+      "code": "P6A2036",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664312036": {
+      "id": "class-p6-b-1794664312036",
+      "code": "P6B2036",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B2036": {
+      "id": "class-p6-b-1794664312036",
+      "code": "P6B2036",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664341291": {
+      "id": "class-p6-a-1794664341291",
+      "code": "P6A1291",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A1291": {
+      "id": "class-p6-a-1794664341291",
+      "code": "P6A1291",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664341291": {
+      "id": "class-p6-b-1794664341291",
+      "code": "P6B1291",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B1291": {
+      "id": "class-p6-b-1794664341291",
+      "code": "P6B1291",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664470144": {
+      "id": "class-p6-a-1794664470144",
+      "code": "P6A0144",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A0144": {
+      "id": "class-p6-a-1794664470144",
+      "code": "P6A0144",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664470144": {
+      "id": "class-p6-b-1794664470144",
+      "code": "P6B0144",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B0144": {
+      "id": "class-p6-b-1794664470144",
+      "code": "P6B0144",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664504807": {
+      "id": "class-p6-a-1794664504807",
+      "code": "P6A4807",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A4807": {
+      "id": "class-p6-a-1794664504807",
+      "code": "P6A4807",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664504807": {
+      "id": "class-p6-b-1794664504807",
+      "code": "P6B4807",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B4807": {
+      "id": "class-p6-b-1794664504807",
+      "code": "P6B4807",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664560196": {
+      "id": "class-p6-a-1794664560196",
+      "code": "P6A0196",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A0196": {
+      "id": "class-p6-a-1794664560196",
+      "code": "P6A0196",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664560196": {
+      "id": "class-p6-b-1794664560196",
+      "code": "P6B0196",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B0196": {
+      "id": "class-p6-b-1794664560196",
+      "code": "P6B0196",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664581121": {
+      "id": "class-p6-a-1794664581121",
+      "code": "P6A1121",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A1121": {
+      "id": "class-p6-a-1794664581121",
+      "code": "P6A1121",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664581121": {
+      "id": "class-p6-b-1794664581121",
+      "code": "P6B1121",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B1121": {
+      "id": "class-p6-b-1794664581121",
+      "code": "P6B1121",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664604701": {
+      "id": "class-p6-a-1794664604701",
+      "code": "P6A4701",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A4701": {
+      "id": "class-p6-a-1794664604701",
+      "code": "P6A4701",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664604701": {
+      "id": "class-p6-b-1794664604701",
+      "code": "P6B4701",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B4701": {
+      "id": "class-p6-b-1794664604701",
+      "code": "P6B4701",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794664762897": {
+      "id": "class-p6-a-1794664762897",
+      "code": "P6A2897",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A2897": {
+      "id": "class-p6-a-1794664762897",
+      "code": "P6A2897",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794664762897": {
+      "id": "class-p6-b-1794664762897",
+      "code": "P6B2897",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B2897": {
+      "id": "class-p6-b-1794664762897",
+      "code": "P6B2897",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794666152179": {
+      "id": "class-p6-a-1794666152179",
+      "code": "P6A2179",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A2179": {
+      "id": "class-p6-a-1794666152179",
+      "code": "P6A2179",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794666152179": {
+      "id": "class-p6-b-1794666152179",
+      "code": "P6B2179",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B2179": {
+      "id": "class-p6-b-1794666152179",
+      "code": "P6B2179",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-a-1794668479892": {
+      "id": "class-p6-a-1794668479892",
+      "code": "P6A9892",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6A9892": {
+      "id": "class-p6-a-1794668479892",
+      "code": "P6A9892",
+      "name": "Classroom A - Reliability Test",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "class-p6-b-1794668479892": {
+      "id": "class-p6-b-1794668479892",
+      "code": "P6B9892",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
+    },
+    "P6B9892": {
+      "id": "class-p6-b-1794668479892",
+      "code": "P6B9892",
+      "name": "Classroom B - Isolated Secret Lab",
+      "university": "GGSIPU",
+      "semester": 1,
+      "academicYear": "2026-2027",
+      "memberCount": 1,
+      "adminId": "user-admin-self",
+      "verifiedByCR": true,
+      "crName": "Class Representative (CR)",
+      "crRollNo": "CR-VERIFIED"
     }
   },
   "subjects": {
@@ -119,6 +769,306 @@
         "totalUnits": 4,
         "completedTopicsCount": 4,
         "totalTopicsCount": 15
+      }
+    ],
+    "class-p6-a-1794664470144": [
+      {
+        "id": "sub-a-1794664470144",
+        "classId": "class-p6-a-1794664470144",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664312036": [
+      {
+        "id": "sub-a-1794664312036",
+        "classId": "class-p6-a-1794664312036",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664341291": [
+      {
+        "id": "sub-a-1794664341291",
+        "classId": "class-p6-a-1794664341291",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664504807": [
+      {
+        "id": "sub-a-1794664504807",
+        "classId": "class-p6-a-1794664504807",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664560196": [
+      {
+        "id": "sub-a-1794664560196",
+        "classId": "class-p6-a-1794664560196",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664581121": [
+      {
+        "id": "sub-a-1794664581121",
+        "classId": "class-p6-a-1794664581121",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664604701": [
+      {
+        "id": "sub-a-1794664604701",
+        "classId": "class-p6-a-1794664604701",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664504807": [
+      {
+        "id": "sub-b-1794664504807",
+        "classId": "class-p6-b-1794664504807",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664581121": [
+      {
+        "id": "sub-b-1794664581121",
+        "classId": "class-p6-b-1794664581121",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664560196": [
+      {
+        "id": "sub-b-1794664560196",
+        "classId": "class-p6-b-1794664560196",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664341291": [
+      {
+        "id": "sub-b-1794664341291",
+        "classId": "class-p6-b-1794664341291",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664312036": [
+      {
+        "id": "sub-b-1794664312036",
+        "classId": "class-p6-b-1794664312036",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664470144": [
+      {
+        "id": "sub-b-1794664470144",
+        "classId": "class-p6-b-1794664470144",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664604701": [
+      {
+        "id": "sub-b-1794664604701",
+        "classId": "class-p6-b-1794664604701",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794664762897": [
+      {
+        "id": "sub-a-1794664762897",
+        "classId": "class-p6-a-1794664762897",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794666152179": [
+      {
+        "id": "sub-a-1794666152179",
+        "classId": "class-p6-a-1794666152179",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794666152179": [
+      {
+        "id": "sub-b-1794666152179",
+        "classId": "class-p6-b-1794666152179",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794664762897": [
+      {
+        "id": "sub-b-1794664762897",
+        "classId": "class-p6-b-1794664762897",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-a-1794668479892": [
+      {
+        "id": "sub-a-1794668479892",
+        "classId": "class-p6-a-1794668479892",
+        "name": "Operating Systems",
+        "code": "CS301",
+        "teacherName": "Prof. A. Sharma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
+      }
+    ],
+    "class-p6-b-1794668479892": [
+      {
+        "id": "sub-b-1794668479892",
+        "classId": "class-p6-b-1794668479892",
+        "name": "Advanced Computing",
+        "code": "CS302",
+        "teacherName": "Prof. B. Verma",
+        "credits": 4,
+        "color": "from-blue-500 to-indigo-600",
+        "iconName": "BookOpen",
+        "totalUnits": 4,
+        "completedTopicsCount": 0,
+        "totalTopicsCount": 0
       }
     ]
   },
@@ -361,7 +1311,368 @@
       }
     ]
   },
-  "materials": {},
+  "materials": {
+    "class-p6-b-1794664604701": [
+      {
+        "id": "doc-b-1794664604701",
+        "classId": "class-p6-b-1794664604701",
+        "subjectId": "sub-b-1794664604701",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:56:50.525Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664604701": [
+      {
+        "id": "doc-a-1794664604701",
+        "classId": "class-p6-a-1794664604701",
+        "subjectId": "sub-a-1794664604701",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:56:50.425Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664581121": [
+      {
+        "id": "doc-b-1794664581121",
+        "classId": "class-p6-b-1794664581121",
+        "subjectId": "sub-b-1794664581121",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:56:27.526Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664581121": [
+      {
+        "id": "doc-a-1794664581121",
+        "classId": "class-p6-a-1794664581121",
+        "subjectId": "sub-a-1794664581121",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:56:27.431Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664560196": [
+      {
+        "id": "doc-b-1794664560196",
+        "classId": "class-p6-b-1794664560196",
+        "subjectId": "sub-b-1794664560196",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:56:05.998Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664560196": [
+      {
+        "id": "doc-a-1794664560196",
+        "classId": "class-p6-a-1794664560196",
+        "subjectId": "sub-a-1794664560196",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:56:05.914Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664504807": [
+      {
+        "id": "doc-b-1794664504807",
+        "classId": "class-p6-b-1794664504807",
+        "subjectId": "sub-b-1794664504807",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:55:10.902Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664504807": [
+      {
+        "id": "doc-a-1794664504807",
+        "classId": "class-p6-a-1794664504807",
+        "subjectId": "sub-a-1794664504807",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:55:10.797Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664470144": [
+      {
+        "id": "doc-b-1794664470144",
+        "classId": "class-p6-b-1794664470144",
+        "subjectId": "sub-b-1794664470144",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:54:35.543Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664470144": [
+      {
+        "id": "doc-a-1794664470144",
+        "classId": "class-p6-a-1794664470144",
+        "subjectId": "sub-a-1794664470144",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:54:35.460Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664341291": [
+      {
+        "id": "doc-b-1794664341291",
+        "classId": "class-p6-b-1794664341291",
+        "subjectId": "sub-b-1794664341291",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:52:28.419Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664341291": [
+      {
+        "id": "doc-a-1794664341291",
+        "classId": "class-p6-a-1794664341291",
+        "subjectId": "sub-a-1794664341291",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:52:28.343Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664312036": [
+      {
+        "id": "doc-b-1794664312036",
+        "classId": "class-p6-b-1794664312036",
+        "subjectId": "sub-b-1794664312036",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:51:57.248Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664312036": [
+      {
+        "id": "doc-a-1794664312036",
+        "classId": "class-p6-a-1794664312036",
+        "subjectId": "sub-a-1794664312036",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:51:57.167Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794666152179": [
+      {
+        "id": "doc-b-1794666152179",
+        "classId": "class-p6-b-1794666152179",
+        "subjectId": "sub-b-1794666152179",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T14:22:39.611Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794666152179": [
+      {
+        "id": "doc-a-1794666152179",
+        "classId": "class-p6-a-1794666152179",
+        "subjectId": "sub-a-1794666152179",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T14:22:39.508Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794664762897": [
+      {
+        "id": "doc-b-1794664762897",
+        "classId": "class-p6-b-1794664762897",
+        "subjectId": "sub-b-1794664762897",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:59:29.157Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794664762897": [
+      {
+        "id": "doc-a-1794664762897",
+        "classId": "class-p6-a-1794664762897",
+        "subjectId": "sub-a-1794664762897",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T13:59:29.066Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ],
+    "class-p6-b-1794668479892": [
+      {
+        "id": "doc-b-1794668479892",
+        "classId": "class-p6-b-1794668479892",
+        "subjectId": "sub-b-1794668479892",
+        "subjectName": "Advanced Computing",
+        "title": "Secret Solutions Key Class B",
+        "fileName": "class_b_secret.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "15 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T15:01:26.716Z",
+        "resources": {},
+        "chunkCount": 4
+      }
+    ],
+    "class-p6-a-1794668479892": [
+      {
+        "id": "doc-a-1794668479892",
+        "classId": "class-p6-a-1794668479892",
+        "subjectId": "sub-a-1794668479892",
+        "subjectName": "Operating Systems",
+        "title": "Operating Systems Master Notes",
+        "fileName": "os_master_notes.pdf",
+        "fileType": "application/pdf",
+        "fileSize": "24 KB",
+        "uploaderName": "Faculty",
+        "uploaderRole": "teacher",
+        "verificationStatus": "teacher_verified",
+        "createdAt": "2026-11-14T15:01:26.634Z",
+        "resources": {},
+        "chunkCount": 12
+      }
+    ]
+  },
   "pyqs": {
     "sub-dbms": [
       {
@@ -618,6 +1929,86 @@
       "keyReferences": [
         "Ref 1"
       ]
+    },
+    {
+      "id": "test-assign-1794660037263",
+      "classId": "class-m2029",
+      "subjectId": "sub-os",
+      "subjectName": "Operating Systems",
+      "title": "Phase 1 Automated Test Assignment",
+      "type": "assignment",
+      "dueDate": "2026-11-30",
+      "instructions": "Test instructions",
+      "integrityMode": "teach_me",
+      "assignedBy": "Test Suite",
+      "completed": false,
+      "outlineSteps": [
+        "Step 1",
+        "Step 2"
+      ],
+      "keyReferences": [
+        "Ref 1"
+      ]
+    },
+    {
+      "id": "test-assign-1794664676606",
+      "classId": "class-m2029",
+      "subjectId": "sub-os",
+      "subjectName": "Operating Systems",
+      "title": "Phase 1 Automated Test Assignment",
+      "type": "assignment",
+      "dueDate": "2026-11-30",
+      "instructions": "Test instructions",
+      "integrityMode": "teach_me",
+      "assignedBy": "Test Suite",
+      "completed": false,
+      "outlineSteps": [
+        "Step 1",
+        "Step 2"
+      ],
+      "keyReferences": [
+        "Ref 1"
+      ]
+    },
+    {
+      "id": "test-assign-1794666289312",
+      "classId": "class-m2029",
+      "subjectId": "sub-os",
+      "subjectName": "Operating Systems",
+      "title": "Phase 1 Automated Test Assignment",
+      "type": "assignment",
+      "dueDate": "2026-11-30",
+      "instructions": "Test instructions",
+      "integrityMode": "teach_me",
+      "assignedBy": "Test Suite",
+      "completed": false,
+      "outlineSteps": [
+        "Step 1",
+        "Step 2"
+      ],
+      "keyReferences": [
+        "Ref 1"
+      ]
+    },
+    {
+      "id": "test-assign-1794668611254",
+      "classId": "class-m2029",
+      "subjectId": "sub-os",
+      "subjectName": "Operating Systems",
+      "title": "Phase 1 Automated Test Assignment",
+      "type": "assignment",
+      "dueDate": "2026-11-30",
+      "instructions": "Test instructions",
+      "integrityMode": "teach_me",
+      "assignedBy": "Test Suite",
+      "completed": false,
+      "outlineSteps": [
+        "Step 1",
+        "Step 2"
+      ],
+      "keyReferences": [
+        "Ref 1"
+      ]
     }
   ],
   "exams": {
@@ -781,5 +2172,5 @@
     }
   ],
   "notifications": [],
-  "lastSaved": "2026-11-14T12:23:17.784Z"
+  "lastSaved": "2026-11-14T15:03:32.401Z"
 }

@@ -5,51 +5,19 @@ import {
   GraphRelationshipType,
   GraphExtractionMethod,
   GraphVerificationStatus,
+  normalizeConceptCanonicalName,
 } from './graphTypes.js';
 import { queryNeon, isNeonConfigured } from '../db/neonClient.js';
 import { knowledgeGraphEngine } from './graphRagEngine.js';
 import { UniversalKeyConfig } from '../ai/provider.js';
 import { GoogleGenAI } from '@google/genai';
 
-// Common Computer Science acronym and synonym dictionary for accurate canonical deduplication
-const SYNONYM_DICTIONARY: Record<string, string> = {
-  '2pc': 'two-phase commit protocol',
-  'two phase commit': 'two-phase commit protocol',
-  'two-phase commit': 'two-phase commit protocol',
-  '3pc': 'three-phase commit protocol',
-  'three phase commit': 'three-phase commit protocol',
-  'pcb': 'process control block',
-  'process control block (pcb)': 'process control block',
-  'tlb': 'translation lookaside buffer',
-  'vm': 'virtual memory',
-  'virtual memory & paging': 'virtual memory',
-  'fcfs': 'first come first serve',
-  'sjf': 'shortest job first',
-  'srtf': 'shortest remaining time first',
-  'rr': 'round robin',
-  'pbft': 'practical byzantine fault tolerance',
-  'bft': 'byzantine fault tolerance',
-  'cpu scheduling': 'cpu scheduling algorithms',
-  '4 coffman conditions': 'coffman conditions',
-  'coffman conditions for deadlock': 'coffman conditions',
-};
-
 export class GraphExtractionService {
   /**
    * Normalizes concept names to a canonical slug/string to prevent duplicate nodes
    */
   public normalizeCanonicalName(rawName: string): string {
-    const cleaned = rawName
-      .trim()
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, ' ');
-
-    if (SYNONYM_DICTIONARY[cleaned]) {
-      return SYNONYM_DICTIONARY[cleaned];
-    }
-
-    return cleaned;
+    return normalizeConceptCanonicalName(rawName);
   }
 
   /**
