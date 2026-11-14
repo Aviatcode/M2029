@@ -30,6 +30,7 @@ const classroomsStore: Record<string, Classroom> = {};
 
 import { apiRouter, db } from './src/server/routes.js';
 import { ragEngine } from './src/server/rag/ragIndex.js';
+import { documentDeduplicationService } from './src/server/storage/index.js';
 import { initDailyAutoSyncScheduler } from './src/server/autoSyncService.js';
 import { aiKnowledgeCache } from './src/server/ai/aiKnowledgeCache.js';
 import {
@@ -120,63 +121,23 @@ async function startServer() {
         const fileExt = path.extname(file.originalname).replace(/^\./, '').toLowerCase() || 'pdf';
         const cleanTitle = (req.body.title || file.originalname.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ')).trim();
 
-        console.log(`[PWA Share Target] Direct file ingest: "${file.originalname}" (${(file.size / (1024 * 1024)).toFixed(1)} MB)`);
+        console.log(`[PWA Share Target] Direct file ingest: "${file.originalname}" (${(file.size / (1024 * 1024)).toFixed(1)} MB) via Deduplication Engine`);
 
-        const ragDoc = await ragEngine.ingestFile({
+        const result = await documentDeduplicationService.processUpload({
           filePath: file.path,
-          fileName: file.filename,
           originalName: file.originalname,
-          fileType: fileExt,
+          mimeType: file.mimetype || 'application/pdf',
           fileSize: file.size,
           classId,
           subjectId: 'sub-general',
           subjectName: 'Shared Notes & Documents',
           title: cleanTitle,
-        });
-
-        const materialId = `mat-${Date.now()}-${ingestedCount}`;
-        ragDoc.materialId = materialId;
-
-        const newMaterial: AcademicMaterial = {
-          id: materialId,
-          classId,
-          subjectId: 'sub-general',
-          subjectName: 'Shared Notes & Documents',
-          title: cleanTitle,
-          fileName: file.originalname,
-          fileType: fileExt as any,
-          fileSize: ragDoc.fileSizeFormatted,
           uploaderName: 'PWA Share Sheet',
           uploaderRole: 'student',
-          verificationStatus: 'teacher_verified',
-          createdAt: 'Just now',
-          ragDocId: ragDoc.id,
-          resources: {
-            summary: ragDoc.summary || `Synthesized overview of ${cleanTitle}. Extracted ${ragDoc.chunkCount} active chunks for deep question retrieval.`,
-            hinglishSummary: `Is document (${cleanTitle}) ke chapters backend par active hain, aap direct koi bhi topic ya question search kar sakte ho.`,
-            mindmapMermaid: `graph TD\n  A[${cleanTitle.slice(0, 25)}] --> B[Active RAG Chunks: ${ragDoc.chunkCount}]\n  A --> C[Full Text Indexed]`,
-            keyConcepts: (ragDoc.tableOfContents || []).slice(0, 4).map((toc) => ({
-              concept: toc.title,
-              explanation: `Indexed at Chunk #${toc.chunkIndex} (Page ${toc.page || 1})`,
-            })),
-            importantDefinitions: [
-              {
-                term: cleanTitle,
-                definition: `University study material stored on backend (${ragDoc.fileSizeFormatted}). Accessible via RAG semantic search.`,
-              },
-            ],
-            examples: [],
-            examPoints: [
-              `Contains ${ragDoc.chunkCount} active searchable chunks`,
-              `Estimated ${ragDoc.pageCount || 1} pages parsed & indexed`,
-              'Direct citation retrieval available in AI Tutor',
-            ],
-            flashcards: [],
-            quiz: [],
-            possibleQuestions: [],
-            relatedPYQs: [],
-          },
-        };
+          accessPermission: 'class_shared',
+        });
+
+        const newMaterial = result.material;
 
         if (db && db.materials) {
           if (!db.materials[classId]) {
@@ -913,6 +874,7 @@ Evaluate the answer. Return STRICT JSON only:
             await initializeNeonSchema(false);
             await aiKnowledgeCache.hydrateFromNeon();
             await db.hydrateFromNeon();
+            await ragEngine.hydrateChunksFromNeon();
           } else {
             console.warn(`⚠️ Neon connection warning: ${res.message}`);
           }

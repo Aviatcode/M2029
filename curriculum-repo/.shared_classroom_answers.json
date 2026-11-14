@@ -1,8 +1,8 @@
 {
-  "totalAnswers": 6,
-  "totalHits": 24,
-  "totalTokensSaved": 10800,
-  "lastUpdated": "2026-11-14T11:32:53.962Z",
+  "totalAnswers": 7,
+  "totalHits": 28,
+  "totalTokensSaved": 12600,
+  "lastUpdated": "2026-11-14T12:06:20.360Z",
   "answers": [
     {
       "id": "ans-1794647157519-m5dz9",
@@ -708,6 +708,124 @@
           "actor": "Student A (BYOK Contributor)",
           "details": "Initial academic answer created and shared with class M2029_COHORT_1794655972690 using Google Gemini 3.5 Flash.",
           "timestamp": "2026-11-14T11:32:53.837Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794657980242-78a99",
+      "classId": "M2029_COHORT_1794657979848",
+      "course": "B.Tech Computer Science & Engineering",
+      "subjectName": "Operating Systems",
+      "topic": "Virtual Memory & Paging",
+      "originalQuestion": "What is Virtual Memory and Paging in modern Operating Systems?",
+      "normalizedKey": "memory modern operating paging systems virtual",
+      "intent": "definition",
+      "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+      "sections": {
+        "definition": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "simple": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+        "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+        "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+        "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+        "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "Google Gemini 3.5 Flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T12:06:20.242Z",
+      "updatedAt": "2026-11-14T12:06:20.355Z",
+      "lastAccessedAt": "2026-11-14T12:06:20.360Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 5,
+      "tokensSaved": 1800,
+      "positiveVotes": 1,
+      "negativeVotes": 1,
+      "contributorStudentLabel": "Student A (BYOK Contributor)",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes.",
+          "sections": {
+            "definition": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+            "simple": "Virtual Memory is an abstraction decoupling logical from physical memory.",
+            "eli9": "Like keeping active pages on your desk and other books in your backpack.",
+            "hinglish": "Dekho bhai, RAM limited hoti hai to disk ka hissa virtual memory banta hai.",
+            "exam_10marker": "Complete 10-marker model answer with Page Fault handling and TLB.",
+            "detailed": "### 1. Simple Overview\nVirtual Memory is a storage allocation scheme that allows secondary storage (disk) to be addressed as though it were part of the main memory (RAM).\n\n### 2. ELI9 Everyday Analogy\nThink of Virtual Memory like a student desk with limited space. You only keep the active textbook page on your desk (RAM); the other pages stay in your backpack (Disk) until you need them!\n\n### 3. Hinglish Mental Model\nDekho bhai, RAM costly hoti hai aur size me limited hoti hai, isliye OS hard disk ka ek hissa virtual RAM ki tarah treat karta hai taaki bade programs bina crash hue smoothly chal sakein.\n\n### 4. 10-Marker University Answer\n- Formal Definition: Address space virtualization via page tables and MMU hardware.\n- Working Principle: Translates logical addresses to physical addresses using Page Table and TLB.\n- Page Fault: Interrupt triggered when a referenced page is not currently in physical RAM.\n\n### 5. Detailed & Gotchas\nThrashing occurs when the OS spends more time swapping pages in/out of swap space than executing user processes."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Student A (BYOK Contributor)",
+          "modifiedAt": "2026-11-14T12:06:20.242Z",
+          "changeSummary": "Version 1 snapshot before correction on definition"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794657980355-3wer",
+          "answerId": "ans-1794657980242-78a99",
+          "suggestedBy": "Student C",
+          "sectionTargeted": "definition",
+          "originalContent": "Virtual Memory is an address space virtualization scheme decoupling logical and physical memory.",
+          "proposedContent": "Virtual Memory decouples user logical memory from physical memory via MMU, page tables, and hardware TLB translation.",
+          "reason": "Underline hardware TLB translation which is required by university examiner marking key.",
+          "supportingEvidence": "Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389",
+          "status": "approved",
+          "createdAt": "2026-11-14T12:06:20.355Z",
+          "reviewedBy": "Auto-Verified with Peer Evidence",
+          "reviewedAt": "2026-11-14T12:06:20.355Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794657980360",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T12:06:20.360Z"
+        },
+        {
+          "id": "audit-1794657980358",
+          "action": "DOWNVOTED",
+          "actor": "Student Verifier",
+          "details": "Downvoted by Student Verifier: \"Needs diagram update\"",
+          "timestamp": "2026-11-14T12:06:20.358Z"
+        },
+        {
+          "id": "audit-1794657980356",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T12:06:20.356Z"
+        },
+        {
+          "id": "audit-1794657980355",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Student C",
+          "details": "Student proposed correction for \"definition\": Underline hardware TLB translation which is required by university examiner marking key. (Evidence: Silberschatz OS Concepts 10th Edition, Chapter 9, Page 389)",
+          "timestamp": "2026-11-14T12:06:20.355Z"
+        },
+        {
+          "id": "audit-1794657980353",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 82%",
+          "timestamp": "2026-11-14T12:06:20.353Z"
+        },
+        {
+          "id": "audit-1794657980351",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T12:06:20.351Z"
+        },
+        {
+          "id": "audit-1794657980242",
+          "action": "CREATED",
+          "actor": "Student A (BYOK Contributor)",
+          "details": "Initial academic answer created and shared with class M2029_COHORT_1794657979848 using Google Gemini 3.5 Flash.",
+          "timestamp": "2026-11-14T12:06:20.242Z"
         }
       ]
     }

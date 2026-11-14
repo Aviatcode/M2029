@@ -1,0 +1,45 @@
+
+    University Computer Science Department - Session 1794657929337
+    Unit 4: Quantum Key Distribution Protocol BB84 and E91 Implementation
+    
+    Quantum key distribution uses principles of quantum mechanics to guarantee secure communication.
+    The BB84 protocol uses four polarization states of photons across rectilinear and diagonal bases.
+    The fundamental no-cloning theorem guarantees that an unknown quantum state cannot be copied.
+    Any eavesdropping attempt by Eve inevitably introduces detectable perturbation in the quantum bit error rate.
+    
+    Decoy state method enhances communication distance and security against photon number splitting attacks.
+    Sifting phase discards measurements where Alice and Bob selected different measurement bases.
+  
+    University Computer Science Department - Session 1794657929337
+    Unit 4: Quantum Key Distribution Protocol BB84 and E91 Implementation
+    
+    Quantum key distribution uses principles of quantum mechanics to guarantee secure communication.
+    The BB84 protocol uses four polarization states of photons across rectilinear and diagonal bases.
+    The fundamental no-cloning theorem guarantees that an unknown quantum state cannot be copied.
+    Any eavesdropping attempt by Eve inevitably introduces detectable perturbation in the quantum bit error rate.
+    
+    Decoy state method enhances communication distance and security against photon number splitting attacks.
+    Sifting phase discards measurements where Alice and Bob selected different measurement bases.
+  
+    University Computer Science Department - Session 1794657929337
+    Unit 4: Quantum Key Distribution Protocol BB84 and E91 Implementation
+    
+    Quantum key distribution uses principles of quantum mechanics to guarantee secure communication.
+    The BB84 protocol uses four polarization states of photons across rectilinear and diagonal bases.
+    The fundamental no-cloning theorem guarantees that an unknown quantum state cannot be copied.
+    Any eavesdropping attempt by Eve inevitably introduces detectable perturbation in the quantum bit error rate.
+    
+    Decoy state method enhances communication distance and security against photon number splitting attacks.
+    Sifting phase discards measurements where Alice and Bob selected different measurement bases.
+  
+    University Computer Science Department - Session 1794657929337
+    Unit 4: Quantum Key Distribution Protocol BB84 and E91 Implementation
+    
+    Quantum key distribution uses principles of quantum mechanics to guarantee secure communication.
+    The BB84 protocol uses four polarization states of photons across rectilinear and diagonal bases.
+    The fundamental no-cloning theorem guarantees that an unknown quantum state cannot be copied.
+    Any eavesdropping attempt by Eve inevitably introduces detectable perturbation in the quantum bit error rate.
+    
+    Decoy state method enhances communication distance and security against photon number splitting attacks.
+    Sifting phase discards measurements where Alice and Bob selected different measurement bases.
+  

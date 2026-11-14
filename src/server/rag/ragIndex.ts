@@ -350,6 +350,223 @@ export class RagKnowledgeEngine {
   }
 
   /**
+   * Register pre-chunked or deduplicated asset chunks into the BM25 index and memory cache
+   */
+  public registerAssetChunks(params: {
+    docId: string;
+    title: string;
+    originalName: string;
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+    classId?: string;
+    subjectId?: string;
+    subjectName?: string;
+    pageCount?: number;
+    chunks: RagChunk[];
+    tableOfContents?: { title: string; chunkIndex: number; page?: number }[];
+    summary?: string;
+    materialId?: string;
+  }): RagDocument {
+    const formatBytes = (bytes: number): string => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
+
+    const doc: RagDocument = {
+      id: params.docId,
+      fileName: params.fileName,
+      originalName: params.originalName,
+      fileType: params.fileType.toLowerCase(),
+      fileSize: params.fileSize,
+      fileSizeFormatted: formatBytes(params.fileSize),
+      storagePath: path.join(this.uploadDir, params.fileName),
+      classId: params.classId || 'class-m2029',
+      subjectId: params.subjectId,
+      subjectName: params.subjectName,
+      title: params.title,
+      status: 'active',
+      chunkCount: params.chunks.length,
+      wordCount: params.chunks.reduce((acc, c) => acc + (c.wordCount || 0), 0),
+      pageCount: params.pageCount || 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      summary: params.summary,
+      tableOfContents: params.tableOfContents,
+      materialId: params.materialId,
+    };
+
+    this.documents.set(params.docId, doc);
+    this.chunksCache.set(params.docId, params.chunks);
+    this.saveDocChunks(params.docId, params.chunks);
+    this.saveRegistry();
+
+    // Index into BM25
+    for (const chunk of params.chunks) {
+      this.indexChunk(chunk);
+    }
+    if (this.totalChunksIndexed > 0) {
+      this.avgChunkLength = this.totalChunkLength / this.totalChunksIndexed;
+    }
+
+    return doc;
+  }
+
+  /**
+   * Hydrates document registry and BM25 inverted index from Neon PostgreSQL.
+   * Ensures zero document loss and full RAG retrieval capability across Render container restarts.
+   */
+  public async hydrateChunksFromNeon(): Promise<number> {
+    if (!isNeonConfigured()) {
+      return 0;
+    }
+
+    try {
+      const sql = getNeonSql();
+      if (!sql) return 0;
+
+      // 1. Fetch active assets and their uploads
+      const assetRows = await (sql as any).query(`
+        SELECT 
+          da.sha256_hash,
+          da.storage_key,
+          da.original_name,
+          da.file_size,
+          da.mime_type,
+          da.page_count,
+          da.word_count,
+          da.extracted_summary,
+          da.table_of_contents,
+          du.id as upload_id,
+          du.class_id,
+          du.subject_id,
+          du.subject_name,
+          du.title
+        FROM document_assets da
+        LEFT JOIN document_uploads du ON da.sha256_hash = du.asset_hash
+        WHERE da.reference_count > 0
+      `);
+
+      if (!assetRows || assetRows.length === 0) {
+        return 0;
+      }
+
+      // 2. Fetch all chunks from Neon
+      const chunkRows = await (sql as any).query(`
+        SELECT 
+          id,
+          asset_hash,
+          chunk_index,
+          section_title,
+          page_number,
+          text,
+          word_count
+        FROM document_chunks
+        ORDER BY asset_hash, chunk_index ASC
+      `);
+
+      // Group chunks by asset_hash
+      const chunksByAsset = new Map<string, any[]>();
+      for (const cr of chunkRows || []) {
+        if (!chunksByAsset.has(cr.asset_hash)) {
+          chunksByAsset.set(cr.asset_hash, []);
+        }
+        chunksByAsset.get(cr.asset_hash)!.push(cr);
+      }
+
+      let hydratedDocCount = 0;
+      let hydratedChunkCount = 0;
+
+      // Track processed hashes to avoid duplicates if multiple uploads point to same asset
+      const processedHashes = new Set<string>();
+
+      for (const row of assetRows) {
+        const hash = row.sha256_hash;
+        if (processedHashes.has(hash)) continue;
+        processedHashes.add(hash);
+
+        const docId = `doc-${hash.slice(0, 12)}`;
+        const assetChunks = chunksByAsset.get(hash) || [];
+        const fileExt = path.extname(row.original_name).replace(/^\./, '').toLowerCase() || 'pdf';
+
+        const formatBytes = (bytes: number): string => {
+          if (bytes < 1024) return `${bytes} B`;
+          if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+          return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+        };
+
+        const ragChunks: RagChunk[] = assetChunks.map((c) => ({
+          id: c.id,
+          docId,
+          docTitle: row.title || row.original_name,
+          fileName: row.original_name,
+          chunkIndex: c.chunk_index,
+          pageNumber: c.page_number || 1,
+          sectionTitle: c.section_title || row.title,
+          text: c.text,
+          wordCount: c.word_count || 1,
+          tokenCount: Math.round((c.word_count || 1) * 1.3),
+        }));
+
+        let parsedToc: any[] = [];
+        try {
+          if (row.table_of_contents) {
+            parsedToc = typeof row.table_of_contents === 'string'
+              ? JSON.parse(row.table_of_contents)
+              : row.table_of_contents;
+          }
+        } catch {}
+
+        const doc: RagDocument = {
+          id: docId,
+          fileName: row.storage_key || row.original_name,
+          originalName: row.original_name,
+          fileType: fileExt,
+          fileSize: Number(row.file_size),
+          fileSizeFormatted: formatBytes(Number(row.file_size)),
+          storagePath: path.join(this.uploadDir, row.storage_key || row.original_name),
+          classId: row.class_id || 'class-m2029',
+          subjectId: row.subject_id,
+          subjectName: row.subject_name,
+          title: row.title || row.original_name.replace(/\.[^/.]+$/, ''),
+          status: 'active',
+          chunkCount: ragChunks.length,
+          wordCount: Number(row.word_count) || ragChunks.reduce((acc, c) => acc + c.wordCount, 0),
+          pageCount: Number(row.page_count) || 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          summary: row.extracted_summary,
+          tableOfContents: parsedToc,
+          materialId: row.upload_id,
+        };
+
+        this.documents.set(docId, doc);
+        this.chunksCache.set(docId, ragChunks);
+        this.saveDocChunks(docId, ragChunks);
+
+        for (const chunk of ragChunks) {
+          this.indexChunk(chunk);
+          hydratedChunkCount++;
+        }
+        hydratedDocCount++;
+      }
+
+      if (this.totalChunksIndexed > 0) {
+        this.avgChunkLength = this.totalChunkLength / this.totalChunksIndexed;
+      }
+      this.saveRegistry();
+      this.isReady = true;
+
+      console.log(`[RAG Engine] ☁️ Hydrated from Neon: ${hydratedDocCount} documents, ${hydratedChunkCount} chunks loaded into BM25 index.`);
+      return hydratedChunkCount;
+    } catch (err: any) {
+      console.warn('[RAG Engine] Neon hydration warning:', err?.message || err);
+      return 0;
+    }
+  }
+
+  /**
    * BM25 Search across all active documents or a specific document
    */
   public search(

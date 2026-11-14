@@ -4,15 +4,15 @@
       "userId": "student-alpha-001",
       "provider": "gemini",
       "modelName": "gemini-3.5-flash",
-      "encryptedKey": "84202c126b2b6fd72ae60a6e:2a8389b23c5d2cff56b5e7c1a1dc8ebb:c9e45284566a2dfa55b8e37aca15ec6ddd79b6f59a9aeb6938076d0c9d14194e99982f392ae83f3be1",
+      "encryptedKey": "86abacdc11412456143d5d6a:9d6c69fedcd5f9f183cd2e195fb4c2ed:7ba076f7cea1057fe6f63bd9477c4250cddf450d03dd25b1214ccf2fd8c2d3089596ca32876dbbfc9c",
       "maskedKey": "AIzaSy...cdef",
       "baseUrl": "",
       "label": "Student A Personal Studio Key",
-      "classId": "M2029_COHORT_1794655972690",
+      "classId": "M2029_COHORT_1794657979848",
       "isValidated": true,
-      "lastValidatedAt": "2026-11-14T11:32:52.691Z",
-      "createdAt": "2026-11-14T11:32:52.691Z",
-      "updatedAt": "2026-11-14T11:32:52.691Z"
+      "lastValidatedAt": "2026-11-14T12:06:19.849Z",
+      "createdAt": "2026-11-14T12:06:19.849Z",
+      "updatedAt": "2026-11-14T12:06:19.849Z"
     }
   ]
 }

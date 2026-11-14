@@ -1,0 +1,57 @@
+
+    University Computer Science Department - Session 1794657701383
+    Unit 3: Operating System Deadlock Principles and Handling
+    
+    A deadlock occurs when a set of processes are blocked because each process is holding a resource
+    and waiting for another resource acquired by some other process in the set.
+    
+    Four Necessary Coffman Conditions:
+    1. Mutual Exclusion: At least one resource must be held in a non-shareable mode.
+    2. Hold and Wait: A process must be currently holding at least one resource and requesting additional resources.
+    3. No Preemption: Resources cannot be preempted; a resource can be released only voluntarily by the process.
+    4. Circular Wait: A closed chain of processes exists, such that each process holds at least one resource needed by the next.
+    
+    Banker's Algorithm is used for deadlock avoidance in resource allocation systems.
+  
+    University Computer Science Department - Session 1794657701383
+    Unit 3: Operating System Deadlock Principles and Handling
+    
+    A deadlock occurs when a set of processes are blocked because each process is holding a resource
+    and waiting for another resource acquired by some other process in the set.
+    
+    Four Necessary Coffman Conditions:
+    1. Mutual Exclusion: At least one resource must be held in a non-shareable mode.
+    2. Hold and Wait: A process must be currently holding at least one resource and requesting additional resources.
+    3. No Preemption: Resources cannot be preempted; a resource can be released only voluntarily by the process.
+    4. Circular Wait: A closed chain of processes exists, such that each process holds at least one resource needed by the next.
+    
+    Banker's Algorithm is used for deadlock avoidance in resource allocation systems.
+  
+    University Computer Science Department - Session 1794657701383
+    Unit 3: Operating System Deadlock Principles and Handling
+    
+    A deadlock occurs when a set of processes are blocked because each process is holding a resource
+    and waiting for another resource acquired by some other process in the set.
+    
+    Four Necessary Coffman Conditions:
+    1. Mutual Exclusion: At least one resource must be held in a non-shareable mode.
+    2. Hold and Wait: A process must be currently holding at least one resource and requesting additional resources.
+    3. No Preemption: Resources cannot be preempted; a resource can be released only voluntarily by the process.
+    4. Circular Wait: A closed chain of processes exists, such that each process holds at least one resource needed by the next.
+    
+    Banker's Algorithm is used for deadlock avoidance in resource allocation systems.
+  
+    University Computer Science Department - Session 1794657701383
+    Unit 3: Operating System Deadlock Principles and Handling
+    
+    A deadlock occurs when a set of processes are blocked because each process is holding a resource
+    and waiting for another resource acquired by some other process in the set.
+    
+    Four Necessary Coffman Conditions:
+    1. Mutual Exclusion: At least one resource must be held in a non-shareable mode.
+    2. Hold and Wait: A process must be currently holding at least one resource and requesting additional resources.
+    3. No Preemption: Resources cannot be preempted; a resource can be released only voluntarily by the process.
+    4. Circular Wait: A closed chain of processes exists, such that each process holds at least one resource needed by the next.
+    
+    Banker's Algorithm is used for deadlock avoidance in resource allocation systems.
+  

@@ -6,6 +6,7 @@ import { ragEngine } from './ragIndex.js';
 import { AcademicMaterial } from '../../types/index.js';
 import { aiKnowledgeCache } from '../ai/aiKnowledgeCache.js';
 import { AIProviderFactory } from '../ai/provider.js';
+import { documentDeduplicationService, documentStorageService } from '../storage/index.js';
 import {
   fetchAndIngestFromGitHub,
   uploadDocToGitHubRelease,
@@ -43,7 +44,7 @@ export function setDbReference(db: any) {
 }
 
 /**
- * 1. Stream & Ingest Large Document (up to 500MB)
+ * 1. Stream & Ingest Large Document (up to 500MB) with Intelligent Deduplication
  * Supports multipart/form-data
  */
 ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Response) => {
@@ -65,66 +66,26 @@ ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Respo
     const fileExt = path.extname(file.originalname).replace(/^\./, '').toLowerCase() || 'pdf';
     const cleanTitle = (title || file.originalname.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ')).trim();
 
-    console.log(`[RAG Upload] Received file "${file.originalname}" (${(file.size / (1024 * 1024)).toFixed(1)} MB). Starting RAG ingestion...`);
+    console.log(`[RAG Upload] Received file "${file.originalname}" (${(file.size / (1024 * 1024)).toFixed(1)} MB). Processing via Deduplication Engine...`);
 
-    // Ingest into RAG Engine (chunking, indexing, active in memory)
-    const ragDoc = await ragEngine.ingestFile({
+    // Ingest through Intelligent Deduplication Engine
+    const result = await documentDeduplicationService.processUpload({
       filePath: file.path,
-      fileName: file.filename,
       originalName: file.originalname,
-      fileType: fileExt,
+      mimeType: file.mimetype || 'application/pdf',
       fileSize: file.size,
-      classId,
-      subjectId,
-      subjectName: subjectName || 'Core Curriculum',
-      title: cleanTitle,
-    });
-
-    // Create corresponding AcademicMaterial entry so it shows in Materials & SmartDump
-    const materialId = `mat-${Date.now()}`;
-    ragDoc.materialId = materialId;
-
-    const newMaterial: AcademicMaterial = {
-      id: materialId,
       classId,
       subjectId: subjectId || 'sub-general',
       subjectName: subjectName || 'Core Curriculum',
       title: cleanTitle,
-      fileName: file.originalname,
-      fileType: fileExt as any,
-      fileSize: ragDoc.fileSizeFormatted,
       uploaderName: uploaderName || 'Student',
       uploaderRole: uploaderRole || 'student',
-      verificationStatus: 'teacher_verified',
-      createdAt: 'Just now',
-      ragDocId: ragDoc.id,
-      resources: {
-        summary: ragDoc.summary || `Synthesized overview of ${cleanTitle}. Extracted ${ragDoc.chunkCount} active chunks for deep question retrieval.`,
-        hinglishSummary: `Is textbook (${cleanTitle}) ke saare chapters backend par active hain, aap direct koi bhi topic ya algorithm search kar sakte ho.`,
-        mindmapMermaid: `graph TD\n  A[${cleanTitle.slice(0, 25)}] --> B[Active RAG Chunks: ${ragDoc.chunkCount}]\n  A --> C[Total Pages: ${ragDoc.pageCount || 1}]\n  A --> D[Full Text Indexed]`,
-        keyConcepts: (ragDoc.tableOfContents || []).slice(0, 4).map((toc) => ({
-          concept: toc.title,
-          explanation: `Indexed at Chunk #${toc.chunkIndex} (Page ${toc.page || 1})`,
-        })),
-        importantDefinitions: [
-          {
-            term: cleanTitle,
-            definition: `Active university textbook stored on backend (${ragDoc.fileSizeFormatted}). Accessible via RAG semantic search.`,
-          },
-        ],
-        examples: [],
-        examPoints: [
-          `Contains ${ragDoc.chunkCount} active searchable chunks`,
-          `Estimated ${ragDoc.pageCount || 1} pages parsed & indexed`,
-          'Direct citation retrieval available in AI Tutor',
-        ],
-        flashcards: [],
-        quiz: [],
-        possibleQuestions: [],
-        relatedPYQs: [],
-      },
-    };
+      accessPermission: 'class_shared',
+    });
 
+    const newMaterial = result.material;
+
+    // Attach to classroom store
     if (dbRef && dbRef.materials) {
       if (!dbRef.materials[classId]) {
         dbRef.materials[classId] = [];
@@ -135,18 +96,75 @@ ragRouter.post('/upload', upload.single('file'), async (req: Request, res: Respo
       }
     }
 
-    // Trigger proactive background cache warm-up (fire & forget)
-    triggerCacheWarmUpForDocument(ragDoc, subjectName || 'Core Curriculum');
+    // Trigger proactive background cache warm-up if newly created
+    if (result.status === 'created') {
+      const ragDoc = ragEngine.getDocument(newMaterial.ragDocId || '');
+      if (ragDoc) {
+        triggerCacheWarmUpForDocument(ragDoc, subjectName || 'Core Curriculum');
+      }
+    }
 
+    // Normal upload-success experience (no jarring duplicate error or warning to student)
     res.json({
       status: 'success',
-      message: `⚡ Document indexed successfully! ${ragDoc.chunkCount} chunks are now active on the backend.`,
-      document: ragDoc,
+      message: `⚡ Document indexed successfully! ${result.chunkCount} chunks are now active on the backend.`,
+      document: {
+        id: newMaterial.ragDocId,
+        fileName: file.originalname,
+        originalName: file.originalname,
+        fileType: fileExt,
+        fileSize: file.size,
+        fileSizeFormatted: result.fileSizeFormatted,
+        classId,
+        subjectId,
+        subjectName: subjectName || 'Core Curriculum',
+        title: cleanTitle,
+        status: 'active',
+        chunkCount: result.chunkCount,
+        wordCount: result.chunkCount * 180,
+        pageCount: result.pageCount,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        summary: newMaterial.resources.summary,
+      },
       material: newMaterial,
+      deduplicated: result.isDuplicate,
+      version: result.version,
     });
   } catch (err: any) {
     console.error('[RAG Upload Error]:', err);
     res.status(500).json({ error: err?.message || 'Failed to upload and index document.' });
+  }
+});
+
+/**
+ * 1.1 Secure Binary Download by Storage Key
+ * Verifies classroom authorization and streams binary from storage provider
+ */
+ragRouter.get('/download/:storageKey', async (req: Request, res: Response) => {
+  try {
+    const storageKey = decodeURIComponent(req.params.storageKey);
+    const classId = (req.query.classId as string) || (req.headers['x-class-id'] as string) || 'class-m2029';
+    const studentName = (req.query.studentName as string) || (req.headers['x-student-name'] as string);
+
+    // Verify access permission
+    const isAuthorized = await documentDeduplicationService.verifyStorageKeyAccess(storageKey, classId, studentName);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: 'Access denied: document belongs to another classroom or is private.' });
+    }
+
+    const exists = await documentStorageService.exists(storageKey);
+    if (!exists) {
+      return res.status(404).json({ error: 'Storage object not found.' });
+    }
+
+    const stream = await documentStorageService.getStream(storageKey);
+    const downloadFilename = storageKey.includes('_') ? storageKey.substring(storageKey.indexOf('_') + 1) : storageKey;
+    res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    stream.pipe(res);
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Download error' });
   }
 });
 

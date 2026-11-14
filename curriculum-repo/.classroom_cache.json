@@ -578,6 +578,26 @@
       "keyReferences": [
         "Ref 1"
       ]
+    },
+    {
+      "id": "test-assign-1794657972595",
+      "classId": "class-m2029",
+      "subjectId": "sub-os",
+      "subjectName": "Operating Systems",
+      "title": "Phase 1 Automated Test Assignment",
+      "type": "assignment",
+      "dueDate": "2026-11-30",
+      "instructions": "Test instructions",
+      "integrityMode": "teach_me",
+      "assignedBy": "Test Suite",
+      "completed": false,
+      "outlineSteps": [
+        "Step 1",
+        "Step 2"
+      ],
+      "keyReferences": [
+        "Ref 1"
+      ]
     }
   ],
   "exams": {
@@ -741,5 +761,5 @@
     }
   ],
   "notifications": [],
-  "lastSaved": "2026-11-14T11:36:03.262Z"
+  "lastSaved": "2026-11-14T12:06:13.783Z"
 }

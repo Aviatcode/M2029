@@ -83,6 +83,7 @@ import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeB
 import { aiKnowledgeCache, calculateJaccardSimilarity, CachedAIResponse } from './ai/aiKnowledgeCache.js';
 import { ragRouter, setDbReference } from './rag/ragRouter.js';
 import { ragEngine } from './rag/ragIndex.js';
+import { documentDeduplicationService, documentStorageService } from './storage/index.js';
 import { attendanceService } from './attendanceService.js';
 import { runAcademicAgent } from './ai/academicAgentGraph.js';
 import { fetchGoogleSearch } from './ai/googleFetchService.js';
@@ -2752,8 +2753,88 @@ apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
     db.materials[targetClassId] = [];
   }
 
-  // 1. Zero-Token Classroom Cache Check: If identical document already exists, fetch cached notes!
   const cleanTitle = (title || fileName || 'Lecture Material').trim();
+
+  // 0. Intelligent Binary / Raw File Upload Deduplication Pipeline
+  if (fileDataUrl) {
+    try {
+      const uploadDir = ragEngine.getUploadDir();
+      const base64Data = fileDataUrl.includes(',') ? fileDataUrl.split(',')[1] : fileDataUrl;
+      const buffer = Buffer.from(base64Data, 'base64');
+      const tempFileName = `temp_${Date.now()}_${(fileName || 'upload.pdf').replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const tempPath = path.join(uploadDir, tempFileName);
+      fs.writeFileSync(tempPath, buffer);
+
+      const result = await documentDeduplicationService.processUpload({
+        filePath: tempPath,
+        originalName: fileName || 'upload.pdf',
+        mimeType: fileType === 'pdf' ? 'application/pdf' : 'application/octet-stream',
+        fileSize: buffer.length,
+        classId: targetClassId,
+        subjectId: subjectId || 'sub-general',
+        subjectName: subjectName || 'General Academic Curriculum',
+        title: cleanTitle,
+        uploaderName: uploaderName || 'Student',
+        uploaderRole: uploaderRole || 'student',
+        accessPermission: 'class_shared',
+      });
+
+      await db.addMaterial(result.material);
+
+      return res.json({
+        status: 'success',
+        material: result.material,
+        cached: result.isDuplicate,
+        deduplicated: result.isDuplicate,
+        version: result.version,
+        message: result.isDuplicate
+          ? '⚡ Instant fetch from Shared Classroom Cache (0 tokens consumed).'
+          : '⚡ Material processed and indexed in classroom library.',
+      });
+    } catch (uploadErr: any) {
+      console.warn('[Materials Upload] Deduplication pipeline fallback:', uploadErr?.message || uploadErr);
+    }
+  }
+
+  if (rawTextContent && rawTextContent.length > 50) {
+    try {
+      const uploadDir = ragEngine.getUploadDir();
+      const tempFileName = `temp_${Date.now()}_${(fileName || 'notes.txt').replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const tempPath = path.join(uploadDir, tempFileName);
+      fs.writeFileSync(tempPath, rawTextContent, 'utf-8');
+
+      const result = await documentDeduplicationService.processUpload({
+        filePath: tempPath,
+        originalName: fileName || 'notes.txt',
+        mimeType: 'text/plain',
+        fileSize: Buffer.byteLength(rawTextContent, 'utf-8'),
+        classId: targetClassId,
+        subjectId: subjectId || 'sub-general',
+        subjectName: subjectName || 'General Academic Curriculum',
+        title: cleanTitle,
+        uploaderName: uploaderName || 'Student',
+        uploaderRole: uploaderRole || 'student',
+        accessPermission: 'class_shared',
+      });
+
+      await db.addMaterial(result.material);
+
+      return res.json({
+        status: 'success',
+        material: result.material,
+        cached: result.isDuplicate,
+        deduplicated: result.isDuplicate,
+        version: result.version,
+        message: result.isDuplicate
+          ? '⚡ Instant fetch from Shared Classroom Cache (0 tokens consumed).'
+          : '⚡ Material processed and indexed in classroom library.',
+      });
+    } catch (uploadErr: any) {
+      console.warn('[Materials Upload] Text deduplication fallback:', uploadErr?.message || uploadErr);
+    }
+  }
+
+  // 1. Zero-Token Classroom Cache Check: If identical document already exists, fetch cached notes!
   const existing = db.materials[targetClassId].find(
     (m) => m.title.toLowerCase() === cleanTitle.toLowerCase() || (fileName && m.fileName === fileName)
   );
@@ -3280,9 +3361,9 @@ apiRouter.post('/materials/smart-dump', async (req: Request, res: Response) => {
       status: 'success',
       material: existing,
       cached: true,
-      duplicate: true,
+      duplicate: false,
       tokenCost: 0,
-      message: '⚡ Duplicate detected: Available in the shared classroom vault (0 tokens consumed).',
+      message: '⚡ Material ready and available in shared classroom library (0 tokens consumed).',
     });
   }
 
@@ -3609,6 +3690,34 @@ apiRouter.get('/materials/:classId', (req: Request, res: Response) => {
   const classId = req.params.classId || 'class-m2029';
   const list = db.materials[classId] || [];
   res.json(list);
+});
+
+// 8.1 Stream / Download Physical Material with Classroom Access Authorization
+apiRouter.get('/materials/download/:storageKey', async (req: Request, res: Response) => {
+  try {
+    const storageKey = decodeURIComponent(req.params.storageKey);
+    const classId = (req.query.classId as string) || (req.headers['x-class-id'] as string) || 'class-m2029';
+    const studentName = (req.query.studentName as string) || (req.headers['x-student-name'] as string);
+
+    // Verify access permission
+    const isAuthorized = await documentDeduplicationService.verifyStorageKeyAccess(storageKey, classId, studentName);
+    if (!isAuthorized) {
+      return res.status(403).json({ error: 'Access denied: document belongs to another classroom or is private.' });
+    }
+
+    const exists = await documentStorageService.exists(storageKey);
+    if (!exists) {
+      return res.status(404).json({ error: 'Storage object not found.' });
+    }
+
+    const stream = await documentStorageService.getStream(storageKey);
+    const downloadFilename = storageKey.includes('_') ? storageKey.substring(storageKey.indexOf('_') + 1) : storageKey;
+    res.setHeader('Content-Disposition', `attachment; filename="${downloadFilename}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    stream.pipe(res);
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Download error' });
+  }
 });
 
 // 8.5 Unified Multi-Device Classroom Sync Engine (0 AI Tokens Consumed)

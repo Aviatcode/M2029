@@ -171,12 +171,19 @@ export class DocumentDeduplicationService {
               [sha256]
             );
 
+            // Fetch existing version for this asset
+            const existingUploads = await (sql as any).query(
+              `SELECT version FROM document_uploads WHERE asset_hash = $1 ORDER BY version DESC LIMIT 1`,
+              [sha256]
+            );
+            const existingVersion = (existingUploads && existingUploads.length > 0) ? Number(existingUploads[0].version) : 1;
+
             // Record distinct upload for the student & class
             await (sql as any).query(
               `INSERT INTO document_uploads (
                 id, asset_hash, class_id, subject_id, subject_name, title, file_name,
                 uploader_name, uploader_role, verification_status, access_permission, version, metadata
-              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 1, $12)`,
+              ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
               [
                 uploadId,
                 sha256,
@@ -189,6 +196,7 @@ export class DocumentDeduplicationService {
                 uploaderRole,
                 'teacher_verified',
                 accessPermission,
+                existingVersion,
                 JSON.stringify({
                   originalAssetFileName: asset.original_name,
                   reusedAsset: true,
@@ -262,7 +270,7 @@ export class DocumentDeduplicationService {
               pageCount: Number(asset.page_count) || 1,
               chunkCount: Number(asset.word_count) ? Math.round(Number(asset.word_count) / 180) : 1,
               material,
-              version: 1,
+              version: existingVersion,
               savedProcessingTimeMs,
             };
           }
@@ -333,14 +341,31 @@ export class DocumentDeduplicationService {
           const similarAssets = await (sql as any).query(
             `SELECT sha256_hash, original_name, text_fingerprint FROM document_assets WHERE text_fingerprint IS NOT NULL LIMIT 100`
           );
+
+          let bestSim: any = null;
+          let bestDistance = 64;
+          const matchedHashes: string[] = [];
+
           for (const sim of similarAssets) {
             const distance = calculateSimHashDistance(textFingerprint, sim.text_fingerprint);
             if (distance <= 3) {
-              console.log(`[Deduplication Engine] ℹ️ Textually equivalent document detected (SimHash distance: ${distance}) with asset: "${sim.original_name}"`);
-              nearDuplicateWarning = `Textually equivalent to existing document: "${sim.original_name}"`;
-              documentVersion = 2;
-              break;
+              matchedHashes.push(sim.sha256_hash);
+              if (distance < bestDistance) {
+                bestDistance = distance;
+                bestSim = sim;
+              }
             }
+          }
+
+          if (bestSim && matchedHashes.length > 0) {
+            console.log(`[Deduplication Engine] ℹ️ Textually equivalent document detected (SimHash distance: ${bestDistance}) with asset: "${bestSim.original_name}"`);
+            nearDuplicateWarning = `Textually equivalent to existing document: "${bestSim.original_name}"`;
+            const vRows = await (sql as any).query(
+              `SELECT MAX(version) as max_v FROM document_uploads WHERE asset_hash = ANY($1)`,
+              [matchedHashes]
+            );
+            const prevV = (vRows && vRows.length > 0 && vRows[0].max_v) ? Number(vRows[0].max_v) : 1;
+            documentVersion = prevV + 1;
           }
         } catch {}
       }
@@ -411,7 +436,7 @@ export class DocumentDeduplicationService {
                 sha256,
                 chunk.chunkIndex,
                 chunk.sectionTitle || cleanTitle,
-                chunk.page || 1,
+                chunk.pageNumber || 1,
                 chunk.text,
                 chunk.wordCount || 1,
               ]
@@ -554,6 +579,34 @@ export class DocumentDeduplicationService {
       return false;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Verify whether a student/class is authorized to access a stored object by its storage key
+   */
+  async verifyStorageKeyAccess(storageKey: string, classId: string, studentName?: string): Promise<boolean> {
+    if (!isNeonConfigured()) return true;
+    const sql = getNeonSql();
+    if (!sql) return true;
+
+    try {
+      const rows = await (sql as any).query(
+        `SELECT u.class_id, u.uploader_name, u.access_permission 
+         FROM document_assets a 
+         JOIN document_uploads u ON a.sha256_hash = u.asset_hash 
+         WHERE a.storage_key = $1`,
+        [storageKey]
+      );
+      if (rows.length === 0) return true; // Default fallback if not found in uploads
+      return rows.some(
+        (r: any) =>
+          r.access_permission === 'public' ||
+          r.class_id === classId ||
+          (studentName && r.uploader_name === studentName)
+      );
+    } catch {
+      return true; // Graceful fallback on network glitch
     }
   }
 
