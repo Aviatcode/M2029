@@ -1,8 +1,8 @@
 {
-  "totalAnswers": 51,
-  "totalHits": 66,
-  "totalTokensSaved": 29700,
-  "lastUpdated": "2026-11-14T15:55:33.670Z",
+  "totalAnswers": 62,
+  "totalHits": 76,
+  "totalTokensSaved": 34200,
+  "lastUpdated": "2026-11-14T19:17:02.413Z",
   "answers": [
     {
       "id": "ans-1794647157519-m5dz9",
@@ -4038,6 +4038,924 @@
           "actor": "Arjun Mehta",
           "details": "Initial academic answer created and shared with class class-release-1794671732064 using gemini-1.5-flash.",
           "timestamp": "2026-11-14T15:55:33.577Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683460362-dx823",
+      "classId": "class-release-1794683458731",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Database Management Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain ACID Properties in Database Management Systems",
+      "normalizedKey": "atomicity consistency database durability isolation management properties systems",
+      "intent": "general",
+      "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+      "sections": {
+        "definition": "ACID ensures transactions execute safely and reliably in databases.",
+        "simple": "ACID ensures transactions execute safely and reliably in databases.",
+        "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+        "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+        "exam_10marker": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+        "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "mat-1794683459100-we4t",
+          "sourceTitle": "DBMS ACID Properties Notes",
+          "version": 1,
+          "pageNumber": 1
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:11:00.362Z",
+      "updatedAt": "2026-11-14T19:11:00.458Z",
+      "lastAccessedAt": "2026-11-14T19:11:00.463Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 3,
+      "tokensSaved": 900,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Arjun Mehta",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+          "sections": {
+            "definition": "ACID ensures transactions execute safely and reliably in databases.",
+            "simple": "ACID ensures transactions execute safely and reliably in databases.",
+            "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+            "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+            "exam_10marker": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+            "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Arjun Mehta",
+          "modifiedAt": "2026-11-14T19:11:00.362Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683460453-lsho",
+          "answerId": "ans-1794683460362-dx823",
+          "suggestedBy": "Sneha Patel",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+          "proposedContent": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+          "reason": "Added WAL mechanism required for university 10-marker answer scheme.",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:11:00.453Z",
+          "reviewedBy": "Dr. V. Rao (Faculty)",
+          "reviewedAt": "2026-11-14T19:11:00.458Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683460463",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:11:00.463Z"
+        },
+        {
+          "id": "audit-1794683460458",
+          "action": "VERIFIED",
+          "actor": "Dr. V. Rao (Faculty)",
+          "details": "Correction corr-1794683460453-lsho approved by Dr. V. Rao (Faculty). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:11:00.458Z"
+        },
+        {
+          "id": "audit-1794683460453",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Sneha Patel",
+          "details": "Student proposed correction for \"exam_10marker\": Added WAL mechanism required for university 10-marker answer scheme. (Evidence: Course syllabus). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:11:00.453Z"
+        },
+        {
+          "id": "audit-1794683460447",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:11:00.447Z"
+        },
+        {
+          "id": "audit-1794683460362",
+          "action": "CREATED",
+          "actor": "Arjun Mehta",
+          "details": "Initial academic answer created and shared with class class-release-1794683458731 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:11:00.362Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683496562-fa6k6",
+      "classId": "class-release-1794683495010",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Database Management Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain ACID Properties in Database Management Systems",
+      "normalizedKey": "atomicity consistency database durability isolation management properties systems",
+      "intent": "general",
+      "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+      "sections": {
+        "definition": "ACID ensures transactions execute safely and reliably in databases.",
+        "simple": "ACID ensures transactions execute safely and reliably in databases.",
+        "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+        "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+        "exam_10marker": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+        "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "mat-1794683495353-5yvb",
+          "sourceTitle": "DBMS ACID Properties Notes",
+          "version": 1,
+          "pageNumber": 1
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:11:36.562Z",
+      "updatedAt": "2026-11-14T19:11:36.660Z",
+      "lastAccessedAt": "2026-11-14T19:11:36.663Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 3,
+      "tokensSaved": 900,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Arjun Mehta",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+          "sections": {
+            "definition": "ACID ensures transactions execute safely and reliably in databases.",
+            "simple": "ACID ensures transactions execute safely and reliably in databases.",
+            "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+            "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+            "exam_10marker": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+            "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Arjun Mehta",
+          "modifiedAt": "2026-11-14T19:11:36.562Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683496657-mh4z",
+          "answerId": "ans-1794683496562-fa6k6",
+          "suggestedBy": "Sneha Patel",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+          "proposedContent": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+          "reason": "Added WAL mechanism required for university 10-marker answer scheme.",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:11:36.657Z",
+          "reviewedBy": "Dr. V. Rao (Faculty)",
+          "reviewedAt": "2026-11-14T19:11:36.660Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683496663",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:11:36.663Z"
+        },
+        {
+          "id": "audit-1794683496660",
+          "action": "VERIFIED",
+          "actor": "Dr. V. Rao (Faculty)",
+          "details": "Correction corr-1794683496657-mh4z approved by Dr. V. Rao (Faculty). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:11:36.660Z"
+        },
+        {
+          "id": "audit-1794683496657",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Sneha Patel",
+          "details": "Student proposed correction for \"exam_10marker\": Added WAL mechanism required for university 10-marker answer scheme. (Evidence: Course syllabus). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:11:36.657Z"
+        },
+        {
+          "id": "audit-1794683496653",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:11:36.653Z"
+        },
+        {
+          "id": "audit-1794683496563",
+          "action": "CREATED",
+          "actor": "Arjun Mehta",
+          "details": "Initial academic answer created and shared with class class-release-1794683495010 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:11:36.562Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683510327-83m87",
+      "classId": "class-e2e-a-1794683508856",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain Banker Algorithm for Deadlock Avoidance in Operating Systems",
+      "normalizedKey": "algorithm avoidance banker deadlock operating systems",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:11:50.326Z",
+      "updatedAt": "2026-11-14T19:11:51.399Z",
+      "lastAccessedAt": "2026-11-14T19:11:50.497Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T19:11:50.326Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683511395-3d7y",
+          "answerId": "ans-1794683510327-83m87",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:11:51.395Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T19:11:51.399Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683511399",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794683511395-3d7y approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:11:51.399Z"
+        },
+        {
+          "id": "audit-1794683511395",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:11:51.395Z"
+        },
+        {
+          "id": "audit-1794683510497",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:11:50.497Z"
+        },
+        {
+          "id": "audit-1794683510327",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683508856 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:11:50.326Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683511114-xkwfd",
+      "classId": "class-e2e-a-1794683508856",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:11:51.114Z",
+      "updatedAt": "2026-11-14T19:11:51.114Z",
+      "lastAccessedAt": "2026-11-14T19:11:51.114Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794683511114",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683508856 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:11:51.114Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683563412-l13ns",
+      "classId": "class-e2e-a-1794683562033",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain Banker Algorithm for Deadlock Avoidance in Operating Systems run 1794683562401",
+      "normalizedKey": "1794683562401 algorithm avoidance banker deadlock operating run systems",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:12:43.410Z",
+      "updatedAt": "2026-11-14T19:12:44.916Z",
+      "lastAccessedAt": "2026-11-14T19:12:43.581Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T19:12:43.410Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683564911-h1qz",
+          "answerId": "ans-1794683563412-l13ns",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:12:44.911Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T19:12:44.916Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683564916",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794683564911-h1qz approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:12:44.916Z"
+        },
+        {
+          "id": "audit-1794683564911",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:12:44.911Z"
+        },
+        {
+          "id": "audit-1794683563581",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:12:43.581Z"
+        },
+        {
+          "id": "audit-1794683563412",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683562033 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:12:43.410Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683564652-cgonc",
+      "classId": "class-e2e-a-1794683562033",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:12:44.652Z",
+      "updatedAt": "2026-11-14T19:12:44.652Z",
+      "lastAccessedAt": "2026-11-14T19:12:44.652Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794683564652",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683562033 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:12:44.652Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683601479-jiia3",
+      "classId": "class-e2e-a-1794683600077",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What is the exact asymptotic complexity of Dijkstra shortest path algorithm in sparse graphs with Fibonacci heap 1794683600393",
+      "normalizedKey": "1794683600393 algorithm asymptotic complexity dijkstra exact fibonacci graphs heap path shortest sparse with",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:13:21.478Z",
+      "updatedAt": "2026-11-14T19:13:22.984Z",
+      "lastAccessedAt": "2026-11-14T19:13:21.656Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T19:13:21.478Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683602979-v9o8",
+          "answerId": "ans-1794683601479-jiia3",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:13:22.979Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T19:13:22.984Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683602984",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794683602979-v9o8 approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:13:22.984Z"
+        },
+        {
+          "id": "audit-1794683602979",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:13:22.979Z"
+        },
+        {
+          "id": "audit-1794683601656",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:13:21.656Z"
+        },
+        {
+          "id": "audit-1794683601480",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683600077 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:13:21.478Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683602686-5kyyz",
+      "classId": "class-e2e-a-1794683600077",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:13:22.686Z",
+      "updatedAt": "2026-11-14T19:13:22.686Z",
+      "lastAccessedAt": "2026-11-14T19:13:22.686Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794683602686",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683600077 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:13:22.686Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683648840-y31ui",
+      "classId": "class-e2e-a-1794683647522",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What is the exact asymptotic complexity of Dijkstra shortest path algorithm in sparse graphs with Fibonacci heap 1794683647836",
+      "normalizedKey": "1794683647836 algorithm asymptotic complexity dijkstra exact fibonacci graphs heap path shortest sparse with",
+      "intent": "algorithm",
+      "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+      "sections": {
+        "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+        "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+        "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+        "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+        "exam_10marker": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+        "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "doc-os-silberschatz",
+          "sourceTitle": "Operating System Concepts (Silberschatz)",
+          "version": 1,
+          "pageNumber": 245,
+          "sectionTitle": "Deadlock Avoidance"
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:14:08.838Z",
+      "updatedAt": "2026-11-14T19:14:10.553Z",
+      "lastAccessedAt": "2026-11-14T19:14:09.047Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 2,
+      "tokensSaved": 450,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Aarav Sharma",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests.",
+          "sections": {
+            "definition": "Banker algorithm ensures the system never enters an unsafe state.",
+            "simple": "Banker algorithm ensures the system never enters an unsafe state.",
+            "eli9": "Like a bank checking if it has enough cash reserves before lending.",
+            "hinglish": "Banker algorithm pehle calculate karta hai ki request grant karne se system safe rahega ya nahi.",
+            "exam_10marker": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+            "detailed": "Banker algorithm is a deadlock avoidance algorithm that simulates resource allocation before granting requests."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Aarav Sharma",
+          "modifiedAt": "2026-11-14T19:14:08.838Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683650543-fvml",
+          "answerId": "ans-1794683648840-y31ui",
+          "suggestedBy": "Priya Verma",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### Definition\nFormal deadlock avoidance strategy.\n### Safety Algorithm\nWork = Available, Finish[i] = false.\n### Resource Request Algorithm\nIf Request_i <= Need_i and Request_i <= Available...",
+          "proposedContent": "### Enhanced Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait with Resource Allocation Graph analysis.",
+          "reason": "Included resource allocation graph diagram required by university exam board.",
+          "supportingEvidence": "Doc: doc-os-silberschatz Page: 250",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:14:10.543Z",
+          "reviewedBy": "Prof. K. Sharma (Faculty Lead)",
+          "reviewedAt": "2026-11-14T19:14:10.553Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683650553",
+          "action": "VERIFIED",
+          "actor": "Prof. K. Sharma (Faculty Lead)",
+          "details": "Correction corr-1794683650543-fvml approved by Prof. K. Sharma (Faculty Lead). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:14:10.553Z"
+        },
+        {
+          "id": "audit-1794683650543",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Priya Verma",
+          "details": "Student proposed correction for \"exam_10marker\": Included resource allocation graph diagram required by university exam board. (Evidence: Doc: doc-os-silberschatz Page: 250). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:14:10.543Z"
+        },
+        {
+          "id": "audit-1794683649047",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:14:09.047Z"
+        },
+        {
+          "id": "audit-1794683648840",
+          "action": "CREATED",
+          "actor": "Aarav Sharma",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683647522 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:14:08.838Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683650237-1pbq1",
+      "classId": "class-e2e-a-1794683647522",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Operating Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "What are the four conditions for deadlock to occur?",
+      "normalizedKey": "conditions deadlock four occur",
+      "intent": "conditions",
+      "answer": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait.",
+      "sections": {
+        "definition": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "simple": "Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait.",
+        "exam_10marker": "### Coffman Conditions\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait...",
+        "detailed": "Coffman four conditions: 1. Mutual Exclusion, 2. Hold and Wait, 3. No Preemption, 4. Circular Wait."
+      },
+      "sourcesUsed": [],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:14:10.237Z",
+      "updatedAt": "2026-11-14T19:14:10.237Z",
+      "lastAccessedAt": "2026-11-14T19:14:10.237Z",
+      "version": 1,
+      "qualityStatus": "GENERATED",
+      "hitCount": 1,
+      "tokensSaved": 0,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Student 1",
+      "followUpQuestionIds": [],
+      "previousVersions": [],
+      "corrections": [],
+      "auditTrail": [
+        {
+          "id": "audit-1794683650237",
+          "action": "CREATED",
+          "actor": "Student 1",
+          "details": "Initial academic answer created and shared with class class-e2e-a-1794683647522 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:14:10.237Z"
+        }
+      ]
+    },
+    {
+      "id": "ans-1794683822308-vp244",
+      "classId": "class-release-1794683820781",
+      "course": "B.Tech / BCA Computer Science",
+      "subjectName": "Database Management Systems",
+      "topic": "Academic Concept",
+      "originalQuestion": "Explain ACID Properties in Database Management Systems",
+      "normalizedKey": "atomicity consistency database durability isolation management properties systems",
+      "intent": "general",
+      "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+      "sections": {
+        "definition": "ACID ensures transactions execute safely and reliably in databases.",
+        "simple": "ACID ensures transactions execute safely and reliably in databases.",
+        "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+        "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+        "exam_10marker": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+        "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+      },
+      "sourcesUsed": [
+        {
+          "docId": "mat-1794683821122-fn8s",
+          "sourceTitle": "DBMS ACID Properties Notes",
+          "version": 1,
+          "pageNumber": 1
+        }
+      ],
+      "modelUsed": "gemini-1.5-flash",
+      "promptVersion": "v2.0",
+      "createdAt": "2026-11-14T19:17:02.308Z",
+      "updatedAt": "2026-11-14T19:17:02.406Z",
+      "lastAccessedAt": "2026-11-14T19:17:02.411Z",
+      "version": 2,
+      "qualityStatus": "VERIFIED",
+      "hitCount": 3,
+      "tokensSaved": 900,
+      "positiveVotes": 1,
+      "negativeVotes": 0,
+      "contributorStudentLabel": "Arjun Mehta",
+      "followUpQuestionIds": [],
+      "previousVersions": [
+        {
+          "version": 1,
+          "answer": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions.",
+          "sections": {
+            "definition": "ACID ensures transactions execute safely and reliably in databases.",
+            "simple": "ACID ensures transactions execute safely and reliably in databases.",
+            "eli9": "Like a bank ATM transfer: either your money is safely transferred, or completely refunded.",
+            "hinglish": "ACID properties ensure karti hain ki database transactions hamesha safe aur consistent rahein.",
+            "exam_10marker": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+            "detailed": "ACID stands for Atomicity, Consistency, Isolation, and Durability - the core properties guaranteeing reliable database transactions."
+          },
+          "qualityStatus": "CORRECTION_PROPOSED",
+          "modifiedBy": "Arjun Mehta",
+          "modifiedAt": "2026-11-14T19:17:02.308Z",
+          "changeSummary": "Version 1 snapshot: Student proposed correction on exam_10marker"
+        }
+      ],
+      "corrections": [
+        {
+          "id": "corr-1794683822402-af2m",
+          "answerId": "ans-1794683822308-vp244",
+          "suggestedBy": "Sneha Patel",
+          "sectionTargeted": "exam_10marker",
+          "originalContent": "### 1. Definition\nACID properties define the standard for database transaction reliability.\n### 2. Properties\n- Atomicity: All or nothing.\n- Consistency: State transition maintains constraints.\n- Isolation: Concurrency transparency.\n- Durability: Committed updates persist permanently.",
+          "proposedContent": "### Enhanced ACID Definition\nIncludes Write-Ahead Logging (WAL) and strict two-phase locking for durability and isolation.",
+          "reason": "Added WAL mechanism required for university 10-marker answer scheme.",
+          "status": "approved",
+          "createdAt": "2026-11-14T19:17:02.402Z",
+          "reviewedBy": "Dr. V. Rao (Faculty)",
+          "reviewedAt": "2026-11-14T19:17:02.406Z"
+        }
+      ],
+      "auditTrail": [
+        {
+          "id": "audit-1794683822411",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:17:02.411Z"
+        },
+        {
+          "id": "audit-1794683822406",
+          "action": "VERIFIED",
+          "actor": "Dr. V. Rao (Faculty)",
+          "details": "Correction corr-1794683822402-af2m approved by Dr. V. Rao (Faculty). Master answer updated to v2.",
+          "timestamp": "2026-11-14T19:17:02.406Z"
+        },
+        {
+          "id": "audit-1794683822402",
+          "action": "CORRECTION_PROPOSED",
+          "actor": "Sneha Patel",
+          "details": "Student proposed correction for \"exam_10marker\": Added WAL mechanism required for university 10-marker answer scheme. (Evidence: Course syllabus). Pending peer/faculty review.",
+          "timestamp": "2026-11-14T19:17:02.402Z"
+        },
+        {
+          "id": "audit-1794683822397",
+          "action": "CACHE_HIT",
+          "actor": "Classmate",
+          "details": "Reused answer without LLM inference (450 tokens saved). Match confidence: 100%",
+          "timestamp": "2026-11-14T19:17:02.397Z"
+        },
+        {
+          "id": "audit-1794683822308",
+          "action": "CREATED",
+          "actor": "Arjun Mehta",
+          "details": "Initial academic answer created and shared with class class-release-1794683820781 using gemini-1.5-flash.",
+          "timestamp": "2026-11-14T19:17:02.308Z"
         }
       ]
     }

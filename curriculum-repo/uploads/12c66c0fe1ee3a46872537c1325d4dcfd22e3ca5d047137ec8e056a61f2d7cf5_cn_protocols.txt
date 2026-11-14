@@ -1,0 +1,2 @@
+Computer Networks Protocol Stack Notes Version 1794683563585
+TCP/IP 5-layer model: Physical, Data Link, Network, Transport, Application.

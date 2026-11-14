@@ -3349,6 +3349,12 @@ apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
           : '⚡ Material processed and indexed in classroom library.',
       });
     } catch (uploadErr: any) {
+      if (uploadErr?.message?.includes('DURABLE_STORAGE_UNCONFIGURED')) {
+        return res.status(503).json({
+          error: 'DURABLE_STORAGE_UNCONFIGURED',
+          message: uploadErr.message,
+        });
+      }
       console.warn('[Materials Upload] Deduplication pipeline fallback:', uploadErr?.message || uploadErr);
     }
   }
@@ -3387,6 +3393,12 @@ apiRouter.post('/materials/upload', async (req: Request, res: Response) => {
           : '⚡ Material processed and indexed in classroom library.',
       });
     } catch (uploadErr: any) {
+      if (uploadErr?.message?.includes('DURABLE_STORAGE_UNCONFIGURED')) {
+        return res.status(503).json({
+          error: 'DURABLE_STORAGE_UNCONFIGURED',
+          message: uploadErr.message,
+        });
+      }
       console.warn('[Materials Upload] Text deduplication fallback:', uploadErr?.message || uploadErr);
     }
   }
@@ -4264,6 +4276,32 @@ apiRouter.get('/materials/download/:storageKey', async (req: Request, res: Respo
 
     const exists = await documentStorageService.exists(storageKey);
     if (!exists) {
+      if (isNeonConfigured()) {
+        const sql = getNeonSql();
+        if (sql) {
+          try {
+            const rows: any[] = await (sql as any).query(
+              'SELECT sha256_hash, original_name, file_size, storage_provider FROM document_assets WHERE storage_key = $1 LIMIT 1',
+              [storageKey]
+            );
+            if (rows && rows.length > 0) {
+              const asset = rows[0];
+              return res.status(404).json({
+                error: 'DOCUMENT_FILE_UNAVAILABLE',
+                message: `The physical binary file for "${asset.original_name}" is currently unavailable because the host was restarted without persistent cloud storage configured. Document text chunks, AI summaries, and knowledge graph remain intact and queryable in AI Tutor.`,
+                storageKey,
+                originalName: asset.original_name,
+                fileSize: asset.file_size,
+                storageProvider: asset.storage_provider,
+                isEphemeralLoss: true,
+                textAvailable: true,
+              });
+            }
+          } catch {
+            // Proceed to standard 404
+          }
+        }
+      }
       return res.status(404).json({ error: 'Storage object not found.' });
     }
 

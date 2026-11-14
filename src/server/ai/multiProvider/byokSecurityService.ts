@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { queryNeon, isNeonConfigured } from '../../db/neonClient.js';
+import { queryNeon, isNeonConfigured, getNeonSql } from '../../db/neonClient.js';
 import { ProviderType } from './providerTypes.js';
 
 export interface StoredStudentKey {
@@ -29,15 +29,66 @@ export interface SafeStudentKeySummary {
 }
 
 /**
- * Returns the master encryption secret from environment variables.
- * Refuses execution if secret is completely missing.
+ * Validates the format and strength of BYOK_MASTER_KEY
+ */
+export function validateByokMasterKey(key?: string): { valid: boolean; reason?: string } {
+  const masterKey = key !== undefined ? key : (process.env.BYOK_MASTER_KEY || '');
+  if (!masterKey || typeof masterKey !== 'string' || masterKey.trim().length === 0) {
+    return { valid: false, reason: 'BYOK_MASTER_KEY is not set or is empty.' };
+  }
+  if (masterKey.trim().length < 32) {
+    return {
+      valid: false,
+      reason: `BYOK_MASTER_KEY must be at least 32 characters long for AES-256 security (received ${masterKey.trim().length} chars).`,
+    };
+  }
+  const dbUrl = process.env.DATABASE_URL || '';
+  if (dbUrl && masterKey.trim() === dbUrl.trim()) {
+    return { valid: false, reason: 'BYOK_MASTER_KEY must not be identical to DATABASE_URL.' };
+  }
+  const insecureDefaults = ['placeholder', 'your_master_key', '12345678901234567890123456789012'];
+  if (insecureDefaults.some((d) => masterKey.toLowerCase().includes(d))) {
+    return { valid: false, reason: 'BYOK_MASTER_KEY contains an insecure placeholder value.' };
+  }
+  return { valid: true };
+}
+
+/**
+ * Returns the primary master encryption secret.
+ * In production (NODE_ENV === 'production'), enforces an independent, strong BYOK_MASTER_KEY.
+ * Never silently defaults new encryptions to DATABASE_URL in production.
  */
 export function getMasterEncryptionSecret(): Buffer {
-  const secret = process.env.BYOK_MASTER_KEY || process.env.ENCRYPTION_SECRET || process.env.DATABASE_URL;
-  if (!secret || secret.trim().length === 0) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const validation = validateByokMasterKey();
+
+  if (isProduction) {
+    if (!validation.valid) {
+      throw new Error(
+        `CRITICAL_SECURITY_CONFIG_ERROR: ${validation.reason} In production, an independent BYOK_MASTER_KEY is mandatory to encrypt student credentials.`
+      );
+    }
+    return crypto.createHash('sha256').update(process.env.BYOK_MASTER_KEY!.trim()).digest();
+  }
+
+  // Non-production (development, test) fallback logic
+  const devSecret =
+    process.env.BYOK_MASTER_KEY || process.env.ENCRYPTION_SECRET || process.env.DATABASE_URL;
+  if (!devSecret || devSecret.trim().length === 0) {
     throw new Error('MISSING_ENCRYPTION_SECRET: Server-side master encryption secret is not configured.');
   }
-  return crypto.createHash('sha256').update(secret).digest();
+
+  return crypto.createHash('sha256').update(devSecret.trim()).digest();
+}
+
+/**
+ * Returns the legacy fallback key derived from DATABASE_URL or ENCRYPTION_SECRET.
+ * Used exclusively for non-destructive dual-key decryption of pre-existing student credentials.
+ */
+export function getLegacyFallbackSecret(): Buffer | null {
+  const legacySecret = process.env.DATABASE_URL || process.env.ENCRYPTION_SECRET;
+  if (!legacySecret || legacySecret.trim().length === 0) return null;
+  return crypto.createHash('sha256').update(legacySecret.trim()).digest();
 }
 
 /**
@@ -60,26 +111,64 @@ export function encryptApiKey(plainKey: string, customSecret?: Buffer): string {
 }
 
 /**
- * Decrypts AES-256-GCM ciphertext payload
+ * Decrypts AES-256-GCM ciphertext payload with detailed migration tracking.
+ * Automatically attempts primary BYOK_MASTER_KEY first; falls back to legacy secret if needed.
  */
-export function decryptApiKey(payload: string, customSecret?: Buffer): string {
-  if (!payload || typeof payload !== 'string') return '';
+export function decryptApiKeyDetailed(
+  payload: string,
+  customSecret?: Buffer
+): { decrypted: string; usedLegacyFallback: boolean } {
+  if (!payload || typeof payload !== 'string') {
+    return { decrypted: '', usedLegacyFallback: false };
+  }
   const parts = payload.split(':');
   if (parts.length !== 3) {
     throw new Error('MALFORMED_CIPHERTEXT: Ciphertext payload missing IV or AuthTag.');
   }
 
-  const key = customSecret || getMasterEncryptionSecret();
   const iv = Buffer.from(parts[0], 'hex');
   const authTag = Buffer.from(parts[1], 'hex');
   const encryptedHex = parts[2];
 
-  const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
-  decipher.setAuthTag(authTag);
+  const tryDecrypt = (key: Buffer): string => {
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(authTag);
+    let decrypted = decipher.update(encryptedHex, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  };
 
-  let decrypted = decipher.update(encryptedHex, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  return decrypted;
+  if (customSecret) {
+    return { decrypted: tryDecrypt(customSecret), usedLegacyFallback: false };
+  }
+
+  // 1. Attempt decryption with primary BYOK_MASTER_KEY
+  try {
+    const primaryKey = getMasterEncryptionSecret();
+    const decrypted = tryDecrypt(primaryKey);
+    return { decrypted, usedLegacyFallback: false };
+  } catch (primaryErr) {
+    // 2. If primary fails (or is new), attempt legacy fallback (e.g. DATABASE_URL)
+    const legacyKey = getLegacyFallbackSecret();
+    if (legacyKey) {
+      try {
+        const decrypted = tryDecrypt(legacyKey);
+        return { decrypted, usedLegacyFallback: true };
+      } catch (legacyErr) {
+        // Both primary and legacy fallback failed
+        throw new Error('KEY_DECRYPTION_FAILED: Ciphertext could not be decrypted with primary or legacy keys.');
+      }
+    }
+    throw primaryErr;
+  }
+}
+
+/**
+ * Standard decrypt function returning plain decrypted string
+ */
+export function decryptApiKey(payload: string, customSecret?: Buffer): string {
+  const result = decryptApiKeyDetailed(payload, customSecret);
+  return result.decrypted;
 }
 
 /**
@@ -127,12 +216,18 @@ export class ByokSecurityService {
       throw new Error('apiKey is required.');
     }
 
-    // Refuses persistence if encryption secret is missing
+    // Refuses persistence if encryption secret is missing or insecure
     const encryptedKey = encryptApiKey(apiKey);
     const masked = maskKey(apiKey);
     const now = new Date().toISOString();
     const id = `byok-${studentId}-${provider}-${Date.now()}`;
-    const selectedModel = modelName || (provider === 'gemini' ? 'gemini-3.5-flash' : provider === 'claude' ? 'claude-3-5-sonnet-20241022' : 'gpt-4o-mini');
+    const selectedModel =
+      modelName ||
+      (provider === 'gemini'
+        ? 'gemini-3.5-flash'
+        : provider === 'claude'
+        ? 'claude-3-5-sonnet-20241022'
+        : 'gpt-4o-mini');
 
     const record: StoredStudentKey = {
       id,
@@ -148,42 +243,46 @@ export class ByokSecurityService {
       updatedAt: now,
     };
 
-    // Update in-memory state (replace if same provider for this student)
-    const existing = this.memoryVault.get(studentId) || [];
-    const filtered = existing.filter((k) => k.provider !== provider);
-    filtered.unshift(record);
-    this.memoryVault.set(studentId, filtered);
+    // 1. Save in memory vault
+    const userKeys = this.memoryVault.get(studentId) || [];
+    // Deactivate previous active keys for this specific provider
+    userKeys.forEach((k) => {
+      if (k.provider === provider) k.isActive = false;
+    });
+    userKeys.push(record);
+    this.memoryVault.set(studentId, userKeys);
 
-    // Persist to Neon DB
+    // 2. Persist to Neon PostgreSQL if available
     if (isNeonConfigured()) {
       try {
         await queryNeon(
+          `UPDATE student_byok_credentials 
+           SET is_active = false, updated_at = NOW() 
+           WHERE student_id = $1 AND provider = $2`,
+          [studentId, provider]
+        );
+
+        await queryNeon(
           `INSERT INTO student_byok_credentials (
-            id, student_id, provider, model_name, encrypted_key, masked_key, base_url, allow_fallback, is_active, created_at, updated_at
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-          ON CONFLICT (id) DO UPDATE SET
-            encrypted_key = EXCLUDED.encrypted_key,
-            masked_key = EXCLUDED.masked_key,
-            model_name = EXCLUDED.model_name,
-            base_url = EXCLUDED.base_url,
-            allow_fallback = EXCLUDED.allow_fallback,
-            updated_at = NOW()`,
+            id, student_id, provider, model_name, encrypted_key, 
+            masked_key, base_url, allow_fallback, is_active, created_at, updated_at
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
           [
-            id,
-            studentId,
-            provider,
-            selectedModel,
-            encryptedKey,
-            masked,
-            baseUrl || null,
-            allowFallback,
-            true,
-            now,
-            now,
+            record.id,
+            record.studentId,
+            record.provider,
+            record.modelName,
+            record.encryptedKey,
+            record.maskedKey,
+            record.baseUrl || null,
+            record.allowFallback,
+            record.isActive,
+            record.createdAt,
+            record.updatedAt,
           ]
         );
       } catch (err: any) {
-        console.warn('[BYOK Security] Database key save notice:', err?.message || err);
+        console.warn('[BYOK Security] Notice: Neon DB persistence failed, retained in isolated memory vault:', err?.message || err);
       }
     }
 
@@ -203,6 +302,7 @@ export class ByokSecurityService {
   /**
    * Retrieves and decrypts a student's key for authorized model invocation.
    * Strictly enforces owner authorization.
+   * If a legacy key is detected, transparently migrates it to BYOK_MASTER_KEY in the database.
    */
   public async getDecryptedKey(
     requestingStudentId: string,
@@ -211,7 +311,9 @@ export class ByokSecurityService {
   ): Promise<{ apiKey: string; modelName: string; provider: ProviderType; baseUrl?: string; allowFallback: boolean } | null> {
     // Cross-student access rejection
     if (requestingStudentId !== targetStudentId) {
-      console.warn(`[BYOK Security] Blocked cross-student key access attempt: "${requestingStudentId}" attempted accessing "${targetStudentId}".`);
+      console.warn(
+        `[BYOK Security] Blocked cross-student key access attempt: "${requestingStudentId}" attempted accessing "${targetStudentId}".`
+      );
       return null;
     }
 
@@ -255,9 +357,28 @@ export class ByokSecurityService {
 
     if (!record) return null;
 
-    const plainKey = decryptApiKey(record.encryptedKey);
+    const decryptRes = decryptApiKeyDetailed(record.encryptedKey);
+
+    // 3. Transparent Auto-Migration: if decrypted via legacy key, re-encrypt with BYOK_MASTER_KEY and update DB
+    if (decryptRes.usedLegacyFallback && isNeonConfigured()) {
+      try {
+        const newEncrypted = encryptApiKey(decryptRes.decrypted);
+        const sql = getNeonSql();
+        if (sql) {
+          await (sql as any).query(
+            `UPDATE student_byok_credentials SET encrypted_key = $1, updated_at = NOW() WHERE id = $2`,
+            [newEncrypted, record.id]
+          );
+          record.encryptedKey = newEncrypted;
+          console.log(`[BYOK Security] Transparently migrated student key "${record.id}" to BYOK_MASTER_KEY.`);
+        }
+      } catch (migErr: any) {
+        console.warn(`[BYOK Security] Notice: failed to persist transparent key migration for ${record.id}:`, migErr?.message || migErr);
+      }
+    }
+
     return {
-      apiKey: plainKey,
+      apiKey: decryptRes.decrypted,
       modelName: record.modelName,
       provider: record.provider,
       baseUrl: record.baseUrl,
@@ -294,14 +415,13 @@ export class ByokSecurityService {
           `SELECT id, student_id, provider, model_name, masked_key, base_url, allow_fallback, is_active, created_at 
            FROM student_byok_credentials 
            WHERE student_id = $1 AND is_active = true 
-           ORDER BY updated_at DESC`,
+           ORDER BY created_at DESC`,
           [studentId]
         );
-
         return rows.map((r) => ({
           id: r.id,
           studentId: r.student_id,
-          provider: r.provider,
+          provider: r.provider as ProviderType,
           modelName: r.model_name,
           maskedKey: r.masked_key,
           baseUrl: r.base_url,
@@ -309,8 +429,8 @@ export class ByokSecurityService {
           isActive: Boolean(r.is_active),
           createdAt: r.created_at,
         }));
-      } catch {
-        return [];
+      } catch (err: any) {
+        console.warn('[BYOK Security] DB listSafeKeys notice:', err?.message || err);
       }
     }
 
@@ -318,25 +438,24 @@ export class ByokSecurityService {
   }
 
   /**
-   * Deletes a student's configured key
+   * Deactivates a student's key securely
    */
   public async deleteKey(studentId: string, provider: ProviderType): Promise<boolean> {
-    if (!studentId) return false;
+    const userKeys = this.memoryVault.get(studentId) || [];
+    userKeys.forEach((k) => {
+      if (k.provider === provider) k.isActive = false;
+    });
 
-    // Update in-memory
-    const keys = this.memoryVault.get(studentId) || [];
-    const filtered = keys.filter((k) => k.provider !== provider);
-    this.memoryVault.set(studentId, filtered);
-
-    // Delete in Neon
     if (isNeonConfigured()) {
       try {
         await queryNeon(
-          `DELETE FROM student_byok_credentials WHERE student_id = $1 AND provider = $2`,
+          `UPDATE student_byok_credentials 
+           SET is_active = false, updated_at = NOW() 
+           WHERE student_id = $1 AND provider = $2`,
           [studentId, provider]
         );
       } catch (err: any) {
-        console.warn('[BYOK Security] Delete notice:', err?.message || err);
+        console.warn('[BYOK Security] DB deleteKey notice:', err?.message || err);
       }
     }
 
@@ -361,6 +480,26 @@ export class ByokSecurityService {
         } catch (err: any) {
           console.warn(`[BYOK Security] Could not rotate key for ${studentId}:`, err.message);
         }
+      }
+    }
+
+    if (isNeonConfigured()) {
+      const sql = getNeonSql();
+      if (sql) {
+        try {
+          const rows: any[] = await (sql as any).query('SELECT id, encrypted_key FROM student_byok_credentials');
+          for (const row of rows) {
+            try {
+              const plain = decryptApiKey(row.encrypted_key, oldSecret);
+              const newEncrypted = encryptApiKey(plain, newSecret);
+              await (sql as any).query(
+                'UPDATE student_byok_credentials SET encrypted_key = $1, updated_at = NOW() WHERE id = $2',
+                [newEncrypted, row.id]
+              );
+              rotatedCount++;
+            } catch {}
+          }
+        } catch {}
       }
     }
 

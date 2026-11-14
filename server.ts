@@ -40,13 +40,20 @@ import {
   initializeNeonSchema,
 } from './src/server/db/neonClient.js';
 import { applySecurityHeaders } from './src/server/security/securityHeaders.js';
+import { strictCorsMiddleware } from './src/server/security/corsPolicy.js';
 import { logger } from './src/server/monitoring/productionLogger.js';
 import { generalRateLimiter } from './src/server/security/rateLimiter.js';
 import { printEnvironmentSummary } from './src/server/config/environmentValidator.js';
 
 async function startServer() {
   // Validate and display environment health summary
-  printEnvironmentSummary();
+  const envReport = printEnvironmentSummary();
+  if (envReport.isProduction && !envReport.isValid) {
+    console.error('🛑 [FATAL] Server startup aborted: critical production configuration is missing or insecure:');
+    envReport.errors.forEach((e) => console.error(`   - ${e}`));
+    console.error('\nPlease configure the required variables in your Render environment dashboard before deploying.');
+    process.exit(1);
+  }
 
   const app = express();
   const httpServer = http.createServer(app);
@@ -55,41 +62,8 @@ async function startServer() {
   app.use(applySecurityHeaders);
   app.use(logger.requestMiddleware());
 
-  // Restricted CORS with Authorized Frontend Origins support
-  const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
-  const configuredOrigins = allowedOriginsEnv
-    ? allowedOriginsEnv.split(',').map((o) => o.trim().toLowerCase())
-    : [];
-
-  app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (origin) {
-      const lower = origin.toLowerCase();
-      const isAllowed =
-        configuredOrigins.length === 0 ||
-        configuredOrigins.includes(lower) ||
-        lower.endsWith('.vercel.app') ||
-        lower.includes('localhost') ||
-        lower.includes('127.0.0.1');
-
-      if (isAllowed) {
-        res.header('Access-Control-Allow-Origin', origin);
-        res.header('Vary', 'Origin');
-      }
-    } else {
-      res.header('Access-Control-Allow-Origin', '*');
-    }
-
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    res.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Admin-Key, X-Student-Id, X-Class-Id, X-Request-Id, X-User-Role'
-    );
-    if (req.method === 'OPTIONS') {
-      return res.sendStatus(204);
-    }
-    next();
-  });
+  // Strict, fail-closed CORS policy (Wildcards forbidden in production)
+  app.use(strictCorsMiddleware);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));

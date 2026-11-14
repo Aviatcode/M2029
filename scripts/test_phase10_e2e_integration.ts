@@ -11,7 +11,8 @@ import {
   sanitizeDbError,
 } from '../src/server/db/neonClient.js';
 import { sharedKnowledgeLibrary } from '../src/server/ai/sharedKnowledgeLibrary.js';
-import { questionMatcher, normalizeQueryTokens } from '../src/server/ai/questionMatcher.js';
+import { normalizeQueryTokens } from '../src/server/ai/questionMatcher.js';
+import { MemoryRateLimiter } from '../src/server/security/rateLimiter.js';
 import { concurrentGenerationCoordinator } from '../src/server/ai/concurrentGenerationCoordinator.js';
 import { hybridRetrievalEngine } from '../src/server/rag/hybridRetrievalEngine.js';
 import { knowledgeGraphEngine } from '../src/server/rag/graphRagEngine.js';
@@ -65,6 +66,9 @@ async function runEndToEndIntegrationSuite() {
   const student1 = 'student-e2e-1-' + Date.now();
   const student2 = 'student-e2e-2-' + Date.now();
 
+  const codeA = 'EA' + Date.now().toString().slice(-6);
+  const codeB = 'EB' + Date.now().toString().slice(-6);
+
   // Setup test workspaces in Neon to satisfy foreign keys
   if (isNeonConfigured()) {
     try {
@@ -72,8 +76,8 @@ async function runEndToEndIntegrationSuite() {
         `INSERT INTO class_workspaces (id, code, name, university, semester, academic_year)
          VALUES ($1, $2, 'E2E Test Class A', 'State University', 3, '2026-2027'),
                 ($3, $4, 'E2E Test Class B', 'State University', 3, '2026-2027')
-         ON CONFLICT (id) DO NOTHING`,
-        [testClassA, 'E2E-A', testClassB, 'E2E-B']
+         ON CONFLICT (code) DO UPDATE SET updated_at = NOW()`,
+        [testClassA, codeA, testClassB, codeB]
       );
     } catch (e: any) {
       console.warn('Workspace seeding notice:', e.message);
@@ -85,7 +89,7 @@ async function runEndToEndIntegrationSuite() {
   // =========================================================================
   console.log('--- Workflow A: Student Asks an Academic Question ---');
   try {
-    const questionText = 'Explain Banker Algorithm for Deadlock Avoidance in Operating Systems';
+    const questionText = 'What is the exact asymptotic complexity of Dijkstra shortest path algorithm in sparse graphs with Fibonacci heap ' + Date.now();
 
     // 1. Authenticate & extract student context
     const mockReqA: any = {
@@ -106,7 +110,7 @@ async function runEndToEndIntegrationSuite() {
       classId: testClassA,
       subjectName: 'Operating Systems',
     });
-    assert(initialMatch === null, 'Workflow A.3: Confirmed cache miss on fresh question');
+    assert(!initialMatch.found, 'Workflow A.3: Confirmed cache miss on fresh question');
 
     // 3. Acquire Distributed Concurrency Lock
     const lockKey = concurrentGenerationCoordinator.computeLockKey({
@@ -130,7 +134,7 @@ async function runEndToEndIntegrationSuite() {
     assert(Array.isArray(hybridResults.hits), 'Workflow A.5: Hybrid RAG executed retrieval');
 
     // 5. Synthesize & Store Master Answer in Shared Library
-    const stored = sharedKnowledgeLibrary.storeAnswer({
+    const stored = await sharedKnowledgeLibrary.storeAnswer({
       classId: testClassA,
       subjectName: 'Operating Systems',
       query: questionText,
@@ -170,7 +174,7 @@ async function runEndToEndIntegrationSuite() {
       classId: testClassA,
       subjectName: 'Operating Systems',
     });
-    assert(secondMatch !== null && secondMatch.answer.id === stored.id, 'Workflow A.9: Re-query served from shared library (0 tokens)');
+    assert(secondMatch.found && secondMatch.answer?.id === stored.id, 'Workflow A.9: Re-query served from shared library (0 tokens)');
   } catch (e: any) {
     assert(false, `Workflow A error: ${e.message}`);
   }
@@ -209,8 +213,9 @@ async function runEndToEndIntegrationSuite() {
     assert(uploadRes1.sha256 === uploadRes2.sha256, 'Workflow B.4: Reused identical SHA-256 fingerprint');
 
     // 3. Cross-Class Access Boundary Test
-    const accessByClassA = await documentDeduplicationService.verifyStorageKeyAccess(uploadRes1.fileName, testClassA);
-    const accessByClassB = await documentDeduplicationService.verifyStorageKeyAccess(uploadRes1.fileName, testClassB);
+    const storageKeyB = decodeURIComponent(uploadRes1.material.downloadUrl.replace('/api/materials/download/', ''));
+    const accessByClassA = await documentDeduplicationService.verifyStorageKeyAccess(storageKeyB, testClassA);
+    const accessByClassB = await documentDeduplicationService.verifyStorageKeyAccess(storageKeyB, testClassB);
     assert(accessByClassA, 'Workflow B.5: Class A authorized to access uploaded document');
     assert(!accessByClassB, 'Workflow B.6: Class B strictly blocked from accessing Class A document');
 
@@ -250,7 +255,7 @@ async function runEndToEndIntegrationSuite() {
     });
 
     // Student 1 finishes generation and stores answer
-    const s1Answer = sharedKnowledgeLibrary.storeAnswer({
+    const s1Answer = await sharedKnowledgeLibrary.storeAnswer({
       classId: testClassA,
       subjectName: 'Operating Systems',
       query: concurrentQ,
@@ -361,8 +366,12 @@ async function runEndToEndIntegrationSuite() {
     await learningProfileService.recordPracticeAttempt({
       studentId: student1,
       classId: testClassA,
-      conceptTitle: 'Two-Phase Commit',
-      passed: false,
+      conceptName: 'Two-Phase Commit',
+      topicTitle: 'Transactions',
+      questionText: 'What happens when coordinator fails?',
+      questionSource: 'generated_from_rag',
+      studentAnswer: 'System blocks',
+      isCorrect: false,
       score: 3,
       feedback: 'Review blocking behavior when coordinator fails.',
     });
@@ -372,13 +381,14 @@ async function runEndToEndIntegrationSuite() {
 
     assert(s1Profile.studentId === student1, 'Workflow F.1: Student 1 profile retrieved');
     assert(s2Profile.studentId === student2, 'Workflow F.2: Student 2 profile retrieved separately');
-    assert(s2Profile.conceptMasteryRecords.length === 0, 'Workflow F.3: Student 1 private mastery records NOT visible to Student 2');
+    assert(s2Profile.completedTopics.length === 0, 'Workflow F.3: Student 1 private mastery records NOT visible to Student 2');
 
     // 2. BYOK Key Isolation
     await byokVault.storeUserKey({
       userId: student1,
       apiKey: 'AIzaSyTestKeyForStudent1Only999',
       provider: 'gemini',
+      modelName: 'gemini-2.5-flash',
       label: 'Personal Key',
     });
 

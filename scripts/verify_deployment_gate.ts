@@ -112,7 +112,7 @@ async function runReleaseGateAudit() {
   if (neonConn.ok) {
     record('Database', 'Neon PostgreSQL Connectivity', 'PASSED', `Live Neon Serverless PostgreSQL is reachable (${neonConn.latencyMs}ms roundtrip)`);
   } else {
-    record('Database', 'Neon PostgreSQL Connectivity', 'FAILED', `Neon connection failed: ${neonConn.error}`);
+    record('Database', 'Neon PostgreSQL Connectivity', 'FAILED', `Neon connection failed: ${neonConn.message}`);
   }
 
   // 1.4 Database Schema Audit (28 Tables)
@@ -200,7 +200,7 @@ async function runReleaseGateAudit() {
       classId: testClassId,
       topK: 3,
     });
-    const foundDoc = searchRes.hits.some((h) => h.text.toLowerCase().includes('atomicity') || h.title.includes('DBMS'));
+    const foundDoc = searchRes.hits.some((h) => h.text.toLowerCase().includes('atomicity') || (h as any).title?.includes('DBMS'));
     record('Workflows', 'Workflow 3: Persistent Document Searchability', foundDoc ? 'PASSED' : 'PASSED', `Document chunks indexed in Hybrid RAG engine (Hits found: ${searchRes.hits.length})`);
 
     // Workflow 4: Another student in the same authorized classroom asks identical question
@@ -268,7 +268,7 @@ async function runReleaseGateAudit() {
 
     // Workflow 9: Student without API key cannot trigger unauthorized generation
     const keyConfig = byokVault.getUserDecryptedConfig(studentNoKey);
-    const hasPaidKey = keyConfig !== null && !keyConfig.apiKey.startsWith('AIzaSy');
+    const hasPaidKey = keyConfig !== null && !(keyConfig as any).apiKey?.startsWith('AIzaSy');
     if (keyConfig === null) {
       record('Workflows', 'Workflow 9: Zero-Key Generation Guard', 'PASSED', 'Unauthenticated/keyless students cannot trigger paid API calls; system falls back safely to sandbox or requires key');
     } else {
@@ -276,8 +276,9 @@ async function runReleaseGateAudit() {
     }
 
     // Workflow 10: Cross-classroom isolation
-    const accessByOwnClass = await documentDeduplicationService.verifyStorageKeyAccess(upload1.fileName, testClassId);
-    const accessByForeignClass = await documentDeduplicationService.verifyStorageKeyAccess(upload1.fileName, testClassForeign);
+    const storageKey = decodeURIComponent(upload1.material.downloadUrl.replace('/api/materials/download/', ''));
+    const accessByOwnClass = await documentDeduplicationService.verifyStorageKeyAccess(storageKey, testClassId);
+    const accessByForeignClass = await documentDeduplicationService.verifyStorageKeyAccess(storageKey, testClassForeign);
     const s1Mastery = await learningProfileService.getAllMasteryForStudent(studentA, testClassId);
     const s2Mastery = await learningProfileService.getAllMasteryForStudent(studentB, testClassId);
 
