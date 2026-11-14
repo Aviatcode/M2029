@@ -213,6 +213,9 @@ async function runEndToEndIntegrationSuite() {
     assert(uploadRes1.sha256 === uploadRes2.sha256, 'Workflow B.4: Reused identical SHA-256 fingerprint');
 
     // 3. Cross-Class Access Boundary Test
+    if (!uploadRes1.material.downloadUrl) {
+      throw new Error('Uploaded material is missing its downloadUrl');
+    }
     const storageKeyB = decodeURIComponent(uploadRes1.material.downloadUrl.replace('/api/materials/download/', ''));
     const accessByClassA = await documentDeduplicationService.verifyStorageKeyAccess(storageKeyB, testClassA);
     const accessByClassB = await documentDeduplicationService.verifyStorageKeyAccess(storageKeyB, testClassB);

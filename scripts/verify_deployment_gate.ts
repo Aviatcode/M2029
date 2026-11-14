@@ -276,6 +276,9 @@ async function runReleaseGateAudit() {
     }
 
     // Workflow 10: Cross-classroom isolation
+    if (!upload1.material.downloadUrl) {
+      throw new Error('Uploaded material is missing its downloadUrl');
+    }
     const storageKey = decodeURIComponent(upload1.material.downloadUrl.replace('/api/materials/download/', ''));
     const accessByOwnClass = await documentDeduplicationService.verifyStorageKeyAccess(storageKey, testClassId);
     const accessByForeignClass = await documentDeduplicationService.verifyStorageKeyAccess(storageKey, testClassForeign);
