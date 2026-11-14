@@ -1,13 +1,4 @@
-Recover the original 64 - character BYOK_MASTER_KEY from my previous session transcript.
-
-1. Do not generate a new key.
-2. Do not print or display the actual key.
-3. Copy the exact original key to my Windows clipboard.
-4. Verify its SHA - 256 fingerprint is:
-`5bfdbbc44c008ec11525d1be886813f438480ee9479770384b86dc8c496acfa1`
-5. Confirm the clipboard contains exactly 64 characters and the fingerprint matches.
-
-Do not modify any project files, database records, or environment variables.import fs from 'fs';
+import fs from 'fs';
 import express, { Request, Response } from 'express';
 import http from 'http';
 import { createServer as createViteServer } from 'vite';
