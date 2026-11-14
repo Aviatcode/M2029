@@ -190,7 +190,7 @@ export const AIKeyConfigModal: React.FC<AIKeyConfigModalProps> = ({
       setClassSaveMessage(null);
 
       // Fetch live class server status
-      fetch('/api/ai/status')
+      fetch('/api/ai/config')
         .then((r) => r.json())
         .then((data) => {
           setClassStatus({
