@@ -205,7 +205,9 @@ Thrashing occurs when the OS spends more time swapping pages in/out of swap spac
 
   // Scenario 18: Existing application endpoints continue to function
   const analytics = sharedKnowledgeLibrary.getLibraryAnalytics(testClassId);
-  const graphResult = graphRagEngine.queryGraph('Deadlock Coffman Conditions');
+  const graphResult = await graphRagEngine.queryGraph('Deadlock Coffman Conditions', {
+    classId: testClassId,
+  });
   const resolvedFollowUp = followUpEngine.resolveContextualQuery('What are its four conditions?', {
     parentTopicTitle: 'Deadlock',
     classId: testClassId,

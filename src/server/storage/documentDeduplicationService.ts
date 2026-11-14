@@ -6,6 +6,9 @@ import { documentStorageService } from './documentStorageService.js';
 import { extractTextFromPdf } from '../rag/pdfExtractor.js';
 import { chunkDocument } from '../rag/chunker.js';
 import { ragEngine } from '../rag/ragIndex.js';
+import { embeddingService } from '../rag/embeddingService.js';
+import { graphExtractionService } from '../rag/graphExtractionService.js';
+import { knowledgeGraphEngine } from '../rag/graphRagEngine.js';
 import { AcademicMaterial, UserRole, VerificationStatus } from '../../types/index.js';
 
 export interface IngestionInputParams {
@@ -442,6 +445,38 @@ export class DocumentDeduplicationService {
               ]
             );
           }
+
+          // Trigger asynchronous vector embedding generation
+          const chunksToEmbed = chunkingResult.chunks.map((c) => ({
+            id: `chk-${sha256.slice(0, 8)}-${c.chunkIndex}`,
+            assetHash: sha256,
+            text: c.text,
+          }));
+          embeddingService.embedChunks(chunksToEmbed).catch((err) => {
+            console.warn('[Deduplication] Background embedding generation notice:', err?.message || err);
+          });
+
+          // Trigger asynchronous knowledge graph concept extraction
+          Promise.resolve().then(async () => {
+            try {
+              const { nodes, edges } = graphExtractionService.extractFromText({
+                text: extractedText,
+                classId,
+                subjectId,
+                subjectName,
+                sourceDocId: uploadId,
+                sourceAssetHash: sha256,
+                docVersion: documentVersion,
+                uploaderRole,
+              });
+              if (nodes.length > 0 || edges.length > 0) {
+                await graphExtractionService.persistGraphElements({ nodes, edges, classId });
+                await knowledgeGraphEngine.hydrateFromNeon(classId);
+              }
+            } catch (graphErr: any) {
+              console.warn('[Deduplication] Background graph extraction notice:', graphErr?.message || graphErr);
+            }
+          });
 
           // C. Insert document_uploads
           await (sql as any).query(

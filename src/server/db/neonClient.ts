@@ -468,6 +468,139 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
       ON document_chunks(asset_hash, chunk_index);
   `;
 
+  // 17. Chunk Vector Embeddings (Neon pgvector HNSW Semantic Retrieval)
+  try {
+    await (sql as any).query(`CREATE EXTENSION IF NOT EXISTS vector;`);
+    await (sql as any).query(`
+      CREATE TABLE IF NOT EXISTS chunk_embeddings (
+        chunk_id TEXT PRIMARY KEY REFERENCES document_chunks(id) ON DELETE CASCADE,
+        asset_hash TEXT NOT NULL REFERENCES document_assets(sha256_hash) ON DELETE CASCADE,
+        provider TEXT NOT NULL DEFAULT 'gemini',
+        model_name TEXT NOT NULL DEFAULT 'text-embedding-004',
+        dimensions INTEGER NOT NULL DEFAULT 768,
+        embedding vector(768) NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+    `);
+    await (sql as any).query(`
+      CREATE INDEX IF NOT EXISTS idx_chunk_embeddings_asset_hash 
+        ON chunk_embeddings(asset_hash);
+    `);
+    await (sql as any).query(`
+      CREATE INDEX IF NOT EXISTS idx_chunk_embeddings_hnsw 
+        ON chunk_embeddings USING hnsw (embedding vector_cosine_ops);
+    `);
+  } catch (vecErr: any) {
+    console.warn('[Neon Vector Schema Notice]', vecErr?.message || vecErr);
+  }
+
+  // 18. Knowledge Graph Nodes (Phase 4 Graph RAG)
+  await sql`
+    CREATE TABLE IF NOT EXISTS graph_nodes (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      subject_id TEXT,
+      subject_name TEXT NOT NULL DEFAULT 'Computer Science',
+      name TEXT NOT NULL,
+      canonical_name TEXT NOT NULL,
+      node_type TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      unit_number INTEGER,
+      source_doc_id TEXT,
+      source_asset_hash TEXT REFERENCES document_assets(sha256_hash) ON DELETE SET NULL,
+      doc_version INTEGER DEFAULT 1,
+      page_number INTEGER,
+      section_title TEXT,
+      extraction_method TEXT NOT NULL DEFAULT 'curriculum_curated',
+      confidence_score NUMERIC(3, 2) NOT NULL DEFAULT 1.00,
+      verification_status TEXT NOT NULL DEFAULT 'verified',
+      keywords JSONB NOT NULL DEFAULT '[]'::jsonb,
+      properties JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_graph_nodes_class_type_canon 
+      ON graph_nodes(class_id, node_type, canonical_name);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_graph_nodes_class_subj 
+      ON graph_nodes(class_id, subject_id);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_graph_nodes_canon 
+      ON graph_nodes(canonical_name);
+  `;
+
+  // 19. Knowledge Graph Edges (Phase 4 Graph RAG)
+  await sql`
+    CREATE TABLE IF NOT EXISTS graph_edges (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      subject_id TEXT,
+      source_node_id TEXT NOT NULL REFERENCES graph_nodes(id) ON DELETE CASCADE,
+      target_node_id TEXT NOT NULL REFERENCES graph_nodes(id) ON DELETE CASCADE,
+      relationship_type TEXT NOT NULL,
+      label TEXT NOT NULL,
+      description TEXT,
+      source_doc_id TEXT,
+      source_asset_hash TEXT REFERENCES document_assets(sha256_hash) ON DELETE SET NULL,
+      doc_version INTEGER DEFAULT 1,
+      page_number INTEGER,
+      section_title TEXT,
+      extraction_method TEXT NOT NULL DEFAULT 'curriculum_curated',
+      confidence_score NUMERIC(3, 2) NOT NULL DEFAULT 1.00,
+      verification_status TEXT NOT NULL DEFAULT 'verified',
+      weight NUMERIC(3, 2) NOT NULL DEFAULT 1.00,
+      properties JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `;
+  await sql`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_graph_edges_unique 
+      ON graph_edges(class_id, source_node_id, target_node_id, relationship_type);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_graph_edges_source 
+      ON graph_edges(source_node_id);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_graph_edges_target 
+      ON graph_edges(target_node_id);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_graph_edges_rel_type 
+      ON graph_edges(relationship_type);
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_graph_edges_class_subj 
+      ON graph_edges(class_id, subject_id);
+  `;
+
+  // 20. Graph Proposed Changes (Phase 4 Audit Trail & Verification)
+  await sql`
+    CREATE TABLE IF NOT EXISTS graph_proposed_changes (
+      id TEXT PRIMARY KEY,
+      class_id TEXT NOT NULL REFERENCES class_workspaces(id) ON DELETE CASCADE,
+      proposed_by TEXT NOT NULL,
+      change_type TEXT NOT NULL,
+      target_id TEXT,
+      proposed_data JSONB NOT NULL,
+      reason TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      reviewed_by TEXT,
+      review_notes TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      resolved_at TIMESTAMPTZ
+    );
+  `;
+  await sql`
+    CREATE INDEX IF NOT EXISTS idx_proposed_changes_class_status 
+      ON graph_proposed_changes(class_id, status);
+  `;
+
   const tablesCreated = [
     'class_workspaces',
     'subjects',
@@ -485,6 +618,10 @@ export async function initializeNeonSchema(seed: boolean = false): Promise<{
     'document_assets',
     'document_uploads',
     'document_chunks',
+    'chunk_embeddings',
+    'graph_nodes',
+    'graph_edges',
+    'graph_proposed_changes',
   ];
 
   let seededCounts: Record<string, number> = {};

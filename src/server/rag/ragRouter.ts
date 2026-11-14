@@ -3,6 +3,9 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { ragEngine } from './ragIndex.js';
+import { hybridRetrievalEngine } from './hybridRetrievalEngine.js';
+import { knowledgeGraphEngine } from './graphRagEngine.js';
+import { graphExtractionService } from './graphExtractionService.js';
 import { AcademicMaterial } from '../../types/index.js';
 import { aiKnowledgeCache } from '../ai/aiKnowledgeCache.js';
 import { AIProviderFactory } from '../ai/provider.js';
@@ -289,27 +292,179 @@ ragRouter.get('/document/:docId/chunk/:chunkIndex', (req: Request, res: Response
 });
 
 /**
- * 6. Search across Active Documents (BM25 Semantic Hybrid)
+ * 6. Search across Active Documents (Hybrid BM25 + Vector Semantic via RRF)
  */
-ragRouter.post('/query', (req: Request, res: Response) => {
-  const { query, docId, classId, subjectId, limit } = req.body;
+ragRouter.post('/query', async (req: Request, res: Response) => {
+  const { query, docId, classId = 'class-m2029', subjectId, limit, mode } = req.body;
   if (!query || typeof query !== 'string' || query.trim().length === 0) {
     return res.status(400).json({ error: 'Query string is required.' });
   }
 
-  const results = ragEngine.search(query.trim(), {
-    docId,
+  if (mode === 'bm25_only') {
+    const results = ragEngine.search(query.trim(), {
+      docId,
+      classId,
+      subjectId,
+      limit: limit || 8,
+    });
+
+    return res.json({
+      status: 'success',
+      query: query.trim(),
+      mode: 'bm25_only',
+      count: results.length,
+      results,
+    });
+  }
+
+  const hybrid = await hybridRetrievalEngine.search(query.trim(), {
     classId,
     subjectId,
-    limit: limit || 8,
+    docId,
+    topK: limit || 8,
   });
 
   res.json({
     status: 'success',
     query: query.trim(),
-    count: results.length,
-    results,
+    mode: 'hybrid_rrf',
+    count: hybrid.hits.length,
+    results: hybrid.hits,
+    citations: hybrid.citationString,
+    summary: hybrid.retrievalSummary,
   });
+});
+
+/**
+ * 6.5 Phase 4 Graph RAG: Subgraph Query & Multi-hop Traversal
+ */
+ragRouter.post('/graph/query', async (req: Request, res: Response) => {
+  try {
+    const {
+      query,
+      classId = 'class-m2029',
+      subjectId,
+      maxHops = 2,
+      maxNodes = 12,
+      maxEdges = 16,
+      verificationFilter = 'all',
+    } = req.body;
+
+    if (!query || typeof query !== 'string' || query.trim().length === 0) {
+      return res.status(400).json({ error: 'Query string is required.' });
+    }
+
+    const graphRes = await knowledgeGraphEngine.queryGraph(query.trim(), {
+      classId,
+      subjectId,
+      maxHops: Number(maxHops) || 2,
+      maxNodes: Number(maxNodes) || 12,
+      maxEdges: Number(maxEdges) || 16,
+      verificationFilter: verificationFilter === 'verified_only' ? 'verified_only' : 'all',
+    });
+
+    res.json({
+      status: 'success',
+      query: query.trim(),
+      ...graphRes,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Graph query error.' });
+  }
+});
+
+/**
+ * 6.6 Phase 4 Graph RAG: Prerequisite Chain Lookup
+ */
+ragRouter.get('/graph/prerequisites', async (req: Request, res: Response) => {
+  try {
+    const concept = (req.query.concept as string) || '';
+    const classId = (req.query.classId as string) || 'class-m2029';
+    const subjectId = req.query.subjectId as string;
+
+    if (!concept) {
+      return res.status(400).json({ error: 'Concept query parameter is required.' });
+    }
+
+    const graphRes = await knowledgeGraphEngine.queryGraph(concept, {
+      classId,
+      subjectId,
+      maxHops: 3,
+    });
+
+    res.json({
+      status: 'success',
+      concept,
+      prerequisites: graphRes.prerequisiteChain || null,
+      summary: graphRes.retrievalSummary,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Prerequisite query error.' });
+  }
+});
+
+/**
+ * 6.7 Phase 4 Graph RAG: Propose Knowledge Graph Correction / Addition
+ */
+ragRouter.post('/graph/propose-change', async (req: Request, res: Response) => {
+  try {
+    const {
+      classId = 'class-m2029',
+      proposedBy = 'student',
+      changeType,
+      targetId,
+      proposedData,
+      reason,
+    } = req.body;
+
+    if (!changeType || !proposedData || !reason) {
+      return res.status(400).json({ error: 'changeType, proposedData, and reason are required.' });
+    }
+
+    const change = await knowledgeGraphEngine.proposeChange({
+      classId,
+      proposedBy,
+      changeType,
+      targetId,
+      proposedData,
+      reason,
+    });
+
+    res.json({
+      status: 'success',
+      message: 'Proposed change submitted successfully for teacher verification.',
+      change,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to submit proposed change.' });
+  }
+});
+
+/**
+ * 6.8 Phase 4 Graph RAG: Review & Apply Proposed Change (Teacher/Admin)
+ */
+ragRouter.post('/graph/review-change', async (req: Request, res: Response) => {
+  try {
+    const { changeId, status, reviewerName = 'Teacher', reviewNotes } = req.body;
+
+    if (!changeId || !status || !['approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ error: 'changeId and valid status (approved/rejected) are required.' });
+    }
+
+    const reviewRes = await knowledgeGraphEngine.reviewChange({
+      changeId,
+      status,
+      reviewerName,
+      reviewNotes,
+    });
+
+    res.json({
+      status: 'success',
+      ...reviewRes,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Review change error.' });
+  }
 });
 
 /**

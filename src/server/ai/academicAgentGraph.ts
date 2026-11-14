@@ -2,19 +2,27 @@ import { StateGraph, START, END, Annotation } from '@langchain/langgraph';
 import {
   executeLocalRag,
   executeAcademicWeb,
+  executeGraphRag,
   executeCurriculumCheck,
   retrieveLocalRagTool,
   searchAcademicWebTool,
   checkCurriculumAlignmentTool,
+  queryKnowledgeGraphTool,
   RagHit,
   WebHit,
   CurriculumCheckResult,
 } from './langchainTools.js';
+import { knowledgeGraphEngine } from '../rag/graphRagEngine.js';
 import { AIProviderFactory } from './provider.js';
 import { aiKnowledgeCache } from './aiKnowledgeCache.js';
 import { generateAcademicGuide } from './academicKnowledgeEngine.js';
 
-export { retrieveLocalRagTool, searchAcademicWebTool, checkCurriculumAlignmentTool };
+export {
+  retrieveLocalRagTool,
+  searchAcademicWebTool,
+  checkCurriculumAlignmentTool,
+  queryKnowledgeGraphTool,
+};
 
 export interface AgentReasoningStep {
   step: string;
@@ -29,6 +37,8 @@ export interface AcademicAgentInput {
   mode?: string;
   forceLive?: boolean;
   userAiConfig?: any;
+  classId?: string;
+  conversationContext?: any;
 }
 
 export interface AcademicAgentOutput {
@@ -114,6 +124,8 @@ export const AcademicAgentState = Annotation.Root({
   mode: Annotation<string>(),
   forceLive: Annotation<boolean>(),
   userAiConfig: Annotation<any>(),
+  classId: Annotation<string>(),
+  conversationContext: Annotation<any>(),
 
   // Guardrail state
   isAligned: Annotation<boolean>(),
@@ -126,6 +138,8 @@ export const AcademicAgentState = Annotation.Root({
   // Retrieved Contexts (Local Student Vault first)
   ragHits: Annotation<RagHit[]>(),
   webHits: Annotation<WebHit[]>(),
+  graphContext: Annotation<string>(),
+  graphQueryResult: Annotation<any>(),
 
   // AI Agent Autonomous Decisions
   toolsToRun: Annotation<string[]>(), // e.g. ['rag'], ['rag', 'web']
@@ -226,7 +240,11 @@ async function executeRagNode(state: StateType): Promise<Partial<StateType>> {
   const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
   const query = state.topicName || state.question;
 
-  const raw = await executeLocalRag(query);
+  const raw = await executeLocalRag(query, {
+    classId: state.classId || 'class-m2029',
+    userAiConfig: state.userAiConfig,
+    conversationContext: state.conversationContext,
+  });
   let parsedHits: RagHit[] = [];
   try {
     const data = JSON.parse(raw);
@@ -234,11 +252,11 @@ async function executeRagNode(state: StateType): Promise<Partial<StateType>> {
   } catch {}
 
   steps.push({
-    step: '3. Local RAG Retrieval Execution',
+    step: '3. Hybrid RAG Retrieval Execution (BM25 + pgvector)',
     detail:
       parsedHits.length > 0
-        ? `Retrieved ${parsedHits.length} textbook excerpts from student vault (Pages ${parsedHits.map((h) => h.pageNumber).join(', ')}).`
-        : 'Student vault has no direct notes for this topic. Foundational retrieval required.',
+        ? `Retrieved ${parsedHits.length} verified excerpts from classroom library (Pages ${parsedHits.map((h) => h.pageNumber).join(', ')}).`
+        : 'Classroom library has no direct notes for this topic. Foundational retrieval required.',
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -274,6 +292,12 @@ async function agentDecideNode(state: StateType): Promise<Partial<StateType>> {
   const tools: string[] = ['rag'];
   let reason = '';
 
+  // Check 0: Selective Graph RAG Decision (Phase 4)
+  const graphDecision = knowledgeGraphEngine.shouldTriggerGraphRag(query);
+  if (graphDecision.trigger) {
+    tools.push('graph');
+  }
+
   if (studentAskedSimplification) {
     tools.push('web');
     reason = 'Autonomous Decision: Student requested simplified terms and everyday analogies. Google search activated to find intuitive metaphors to teach effortlessly.';
@@ -291,8 +315,12 @@ async function agentDecideNode(state: StateType): Promise<Partial<StateType>> {
     reason = 'Autonomous Decision: Local textbook notes are clear and sufficient. Google search skipped to avoid latency (0 unnecessary external calls).';
   }
 
+  if (graphDecision.trigger) {
+    reason += ` | Graph RAG: ${graphDecision.reason}`;
+  }
+
   steps.push({
-    step: '4. AI Agent Autonomous Web Decision',
+    step: '4. AI Agent Autonomous Web & Graph Decision',
     detail: reason,
     timestamp: new Date().toLocaleTimeString(),
   });
@@ -305,9 +333,53 @@ async function agentDecideNode(state: StateType): Promise<Partial<StateType>> {
 }
 
 // -------------------------------------------------------------
+// LangGraph Node 4.5: Execute Knowledge Graph Traversal Tool (Selective)
+// -------------------------------------------------------------
+async function executeGraphNode(state: StateType): Promise<Partial<StateType>> {
+  if (!state.toolsToRun || !state.toolsToRun.includes('graph')) {
+    return {};
+  }
+
+  const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
+  const query = state.topicName || state.question;
+
+  const raw = await executeGraphRag(query, {
+    classId: state.classId || 'class-m2029',
+    subjectId: state.subjectName,
+    maxHops: 2,
+  });
+
+  let graphContext = '';
+  let graphData: any = null;
+  try {
+    graphData = JSON.parse(raw);
+    graphContext = graphData.graphContextText || '';
+  } catch {}
+
+  steps.push({
+    step: '4.5 Knowledge Graph Traversal (Graph RAG)',
+    detail:
+      graphData && graphData.matchedNodesCount > 0
+        ? `Curriculum concept graph traversed: ${graphData.matchedNodesCount} focal concepts, ${graphData.edgesCount} inter-concept relationships resolved.`
+        : 'Curriculum graph queried: zero complex prerequisite anomalies detected.',
+    timestamp: new Date().toLocaleTimeString(),
+  });
+
+  return {
+    graphContext,
+    graphQueryResult: graphData,
+    reasoningSteps: steps,
+  };
+}
+
+// -------------------------------------------------------------
 // LangGraph Node 5: Execute Web Simplification Tool (Conditional)
 // -------------------------------------------------------------
 async function executeWebNode(state: StateType): Promise<Partial<StateType>> {
+  if (!state.toolsToRun || !state.toolsToRun.includes('web')) {
+    return {};
+  }
+
   const steps: AgentReasoningStep[] = [...(state.reasoningSteps || [])];
   const query = state.topicName || state.question;
 
@@ -369,6 +441,14 @@ async function synthesisNode(state: StateType): Promise<Partial<StateType>> {
         title: w.title,
         type: 'Google / Web Real-World Analogy',
       });
+    });
+  }
+
+  if (state.graphContext) {
+    evidenceContext += `\n\n=== EVIDENCE FROM KNOWLEDGE GRAPH & PREREQUISITE NETWORK ===\n` + state.graphContext;
+    sourcesUsed.push({
+      title: `${state.subjectName || 'Curriculum'} Knowledge Graph & Concept Map`,
+      type: 'Knowledge Graph',
     });
   }
 
@@ -445,10 +525,11 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
     };
   }
 
+  const graphNote = state.graphContext ? ' + Graph RAG' : '';
   const webNote = webHits.length > 0 ? ` + Google Web Analogies (${webHits.length})` : '';
   steps.push({
     step: '6. LangChain Academic Synthesis',
-    detail: `Synthesized unified 6-part study guide utilizing ${ragHits.length} textbook excerpts${webHits.length > 0 ? ` and ${webHits.length} web analogies` : ''}.`,
+    detail: `Synthesized unified 6-part study guide utilizing ${ragHits.length} textbook excerpts${state.graphContext ? ' and Knowledge Graph' : ''}${webHits.length > 0 ? ` and ${webHits.length} web analogies` : ''}.`,
     timestamp: new Date().toLocaleTimeString(),
   });
 
@@ -456,7 +537,7 @@ ${evidenceContext || 'Use standard textbook author groundings (Galvin, Korth, Ta
     finalResponse: responseText,
     sections,
     sourcesUsed,
-    modelUsed: `${activeModelName} · LangGraph Agent + RAG (${ragHits.length})${webNote}`,
+    modelUsed: `${activeModelName} · LangGraph Agent + RAG (${ragHits.length})${graphNote}${webNote}`,
     reasoningSteps: steps,
   };
 }
@@ -494,9 +575,9 @@ async function reflectAndCacheNode(state: StateType): Promise<Partial<StateType>
 
 // -------------------------------------------------------------
 // Build and Compile the LangGraph StateGraph
-// Conditional Routing:
-// If Web is not needed (local notes are clear, no confusing jargon),
-// the graph routes straight from agent_decide to synthesize!
+// Selective Execution:
+// Graph RAG runs only when complex prerequisite/relationship questions are detected.
+// Web search runs only when difficult jargon needs everyday analogies.
 // -------------------------------------------------------------
 function buildAcademicGraph() {
   const workflow = new StateGraph(AcademicAgentState)
@@ -504,6 +585,7 @@ function buildAcademicGraph() {
     .addNode('cache_check', cacheCheckNode)
     .addNode('execute_rag', executeRagNode)
     .addNode('agent_decide', agentDecideNode)
+    .addNode('execute_graph', executeGraphNode)
     .addNode('execute_web', executeWebNode)
     .addNode('synthesize', synthesisNode)
     .addNode('reflect_and_cache', reflectAndCacheNode)
@@ -511,9 +593,8 @@ function buildAcademicGraph() {
     .addEdge('guardrail', 'cache_check')
     .addConditionalEdges('cache_check', (state) => (state.isCached ? 'reflect_and_cache' : 'execute_rag'))
     .addEdge('execute_rag', 'agent_decide')
-    .addConditionalEdges('agent_decide', (state) =>
-      state.toolsToRun && state.toolsToRun.includes('web') ? 'execute_web' : 'synthesize'
-    )
+    .addEdge('agent_decide', 'execute_graph')
+    .addEdge('execute_graph', 'execute_web')
     .addEdge('execute_web', 'synthesize')
     .addEdge('synthesize', 'reflect_and_cache')
     .addEdge('reflect_and_cache', END);
@@ -534,6 +615,8 @@ export async function runAcademicAgent(input: AcademicAgentInput): Promise<Acade
     mode: input.mode || 'all',
     forceLive: Boolean(input.forceLive),
     userAiConfig: input.userAiConfig,
+    classId: input.classId || 'class-m2029',
+    conversationContext: input.conversationContext,
     isAligned: true,
     guardrailFeedback: '',
     isCached: false,

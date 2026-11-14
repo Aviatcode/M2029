@@ -1,5 +1,8 @@
 import { DynamicTool } from '@langchain/core/tools';
 import { ragEngine } from '../rag/ragIndex.js';
+import { hybridRetrievalEngine } from '../rag/hybridRetrievalEngine.js';
+import { knowledgeGraphEngine } from '../rag/graphRagEngine.js';
+import { UniversalKeyConfig } from './provider.js';
 import { GOLD_TOPICS, SYLLABUS_TRACKS } from './academicKnowledgeBank.js';
 import { fetchGoogleSearch } from './googleFetchService.js';
 
@@ -10,6 +13,9 @@ export interface RagHit {
   score: number;
   text: string;
   chunkIndex: number;
+  version?: number;
+  retrievalMethod?: string;
+  docId?: string;
 }
 
 export interface WebHit {
@@ -26,12 +32,36 @@ export interface CurriculumCheckResult {
 }
 
 /**
- * Executes local RAG retrieval across student uploaded materials
+ * Executes Hybrid RAG retrieval (BM25 + pgvector Semantic Search via RRF)
  */
-export async function executeLocalRag(input: string): Promise<string> {
+export async function executeLocalRag(
+  input: string,
+  options?: { classId?: string; userAiConfig?: UniversalKeyConfig; conversationContext?: any }
+): Promise<string> {
   try {
-    const results = ragEngine.search(input, { limit: 4 });
-    if (!results || results.length === 0) {
+    let query = input;
+    let classId = options?.classId || 'class-m2029';
+    let userAiConfig = options?.userAiConfig;
+    let conversationContext = options?.conversationContext;
+
+    if (input.startsWith('{') && input.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(input);
+        if (parsed.query) query = parsed.query;
+        if (parsed.classId) classId = parsed.classId;
+        if (parsed.userAiConfig) userAiConfig = parsed.userAiConfig;
+        if (parsed.conversationContext) conversationContext = parsed.conversationContext;
+      } catch {}
+    }
+
+    const hybridRes = await hybridRetrievalEngine.search(query, {
+      classId,
+      topK: 4,
+      userAiConfig,
+      conversationContext,
+    });
+
+    if (!hybridRes.hits || hybridRes.hits.length === 0) {
       return JSON.stringify({
         hitsCount: 0,
         hits: [],
@@ -39,18 +69,24 @@ export async function executeLocalRag(input: string): Promise<string> {
       });
     }
 
-    const formatted: RagHit[] = results.map((r) => ({
-      docTitle: r.docTitle,
-      pageNumber: r.pageNumber || 1,
-      sectionTitle: r.sectionTitle || 'General Section',
-      score: Math.round(r.score * 100) / 100,
-      text: r.chunk.text,
-      chunkIndex: r.chunk.chunkIndex,
+    const formatted: RagHit[] = hybridRes.hits.map((h) => ({
+      docTitle: h.docTitle,
+      pageNumber: h.pageNumber,
+      sectionTitle: h.sectionTitle,
+      score: Math.round(h.rrfScore * 1000) / 1000,
+      text: h.text,
+      chunkIndex: h.chunkIndex,
+      version: h.version,
+      retrievalMethod: h.retrievalMethod,
+      docId: h.docId,
     }));
 
     return JSON.stringify({
       hitsCount: formatted.length,
       hits: formatted,
+      citationString: hybridRes.citationString,
+      isFollowUp: hybridRes.isFollowUp,
+      resolvedQuery: hybridRes.resolvedQuery,
       summary: `Retrieved ${formatted.length} high-confidence textbook excerpts from student vault.`,
     });
   } catch (err: any) {
@@ -69,7 +105,63 @@ export const retrieveLocalRagTool = new DynamicTool({
   name: 'retrieve_local_rag',
   description:
     'Retrieves relevant excerpts, proofs, code, and definitions from student uploaded textbooks, syllabi, and notes using BM25 and vector indexing.',
-  func: executeLocalRag,
+  func: async (input: string) => executeLocalRag(input),
+});
+
+/**
+ * 1.5 Graph RAG Tool: Queries curriculum knowledge graph for concept relationships and prerequisites
+ */
+export async function executeGraphRag(
+  input: string,
+  options?: { classId?: string; subjectId?: string; maxHops?: number }
+): Promise<string> {
+  try {
+    let query = input;
+    let classId = options?.classId || 'class-m2029';
+    let subjectId = options?.subjectId;
+    let maxHops = options?.maxHops || 2;
+
+    if (input.startsWith('{') && input.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(input);
+        if (parsed.query) query = parsed.query;
+        if (parsed.classId) classId = parsed.classId;
+        if (parsed.subjectId) subjectId = parsed.subjectId;
+        if (parsed.maxHops) maxHops = parsed.maxHops;
+      } catch {}
+    }
+
+    const graphRes = await knowledgeGraphEngine.queryGraph(query, {
+      classId,
+      subjectId,
+      maxHops,
+    });
+
+    return JSON.stringify({
+      matchedNodesCount: graphRes.matchedNodes.length,
+      connectedNodesCount: graphRes.connectedNodes.length,
+      edgesCount: graphRes.connectingEdges.length,
+      graphContextText: graphRes.graphContextText,
+      hasPrerequisites: graphRes.hasPrerequisites,
+      prerequisiteChain: graphRes.prerequisiteChain,
+      summary: graphRes.retrievalSummary,
+    });
+  } catch (err: any) {
+    return JSON.stringify({
+      matchedNodesCount: 0,
+      connectedNodesCount: 0,
+      edgesCount: 0,
+      graphContextText: '',
+      error: err.message || 'Graph retrieval failed',
+    });
+  }
+}
+
+export const queryKnowledgeGraphTool = new DynamicTool({
+  name: 'query_knowledge_graph',
+  description:
+    'Queries curriculum concept graphs for prerequisite relationships, multi-topic connections, comparisons, and learning paths.',
+  func: async (input: string) => executeGraphRag(input),
 });
 
 /**

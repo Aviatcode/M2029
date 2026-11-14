@@ -772,7 +772,10 @@ export class RagKnowledgeEngine {
       )
       .join('\n\n---\n\n');
 
-    const graphRes = graphRagEngine.queryGraph(question);
+    const graphRes = await graphRagEngine.queryGraph(question, {
+      classId: options.classId || 'class-m2029',
+      subjectId: options.subjectId,
+    });
     const graphSection = graphRes.graphContextText ? `\n\n${graphRes.graphContextText}\n` : '';
 
     const apiKey = options.geminiApiKey || process.env.GEMINI_API_KEY || '';

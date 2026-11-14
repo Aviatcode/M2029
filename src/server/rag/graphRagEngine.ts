@@ -1,268 +1,393 @@
 import fs from 'fs';
 import path from 'path';
+import { queryNeon, isNeonConfigured } from '../db/neonClient.js';
+import {
+  GraphNode,
+  GraphEdge,
+  GraphNodeType,
+  GraphRelationshipType,
+  GraphQueryResult,
+  PrerequisiteChainResult,
+  PrerequisiteStep,
+  GraphProposedChange,
+} from './graphTypes.js';
+import { graphExtractionService } from './graphExtractionService.js';
 
-export interface ConceptNode {
-  id: string;
-  name: string;
-  type: 'concept' | 'topic' | 'subtopic' | 'algorithm' | 'definition' | 'formula' | 'examiner_trap';
-  summary: string;
-  subjectName?: string;
-  unit?: number;
-  docId?: string;
-  keywords: string[];
+const FALLBACK_GRAPH_FILE = path.resolve(
+  process.cwd(),
+  'curriculum-repo',
+  'rag_store',
+  'knowledge_graph.json'
+);
+
+export interface GraphTraversalOptions {
+  classId: string;
+  subjectId?: string;
+  maxHops?: number;
+  maxNodes?: number;
+  maxEdges?: number;
+  minConfidence?: number;
+  verificationFilter?: 'all' | 'verified_only';
 }
 
-export interface ConceptEdge {
-  id: string;
-  source: string;
-  target: string;
-  relationship: 'prerequisite_of' | 'subtopic_of' | 'implements' | 'contrasts_with' | 'causes' | 'solves' | 'shares_resource';
-  label: string;
-}
-
-export interface KnowledgeGraph {
-  nodes: ConceptNode[];
-  edges: ConceptEdge[];
-  lastUpdated: string;
-}
-
-const GRAPH_FILE = path.resolve(process.cwd(), 'curriculum-repo', 'rag_store', 'knowledge_graph.json');
-
-export class GraphRagEngine {
-  private nodes: Map<string, ConceptNode> = new Map();
-  private edges: Map<string, ConceptEdge> = new Map();
+export class KnowledgeGraphEngine {
+  private inMemoryNodes: Map<string, GraphNode> = new Map();
+  private inMemoryEdges: Map<string, GraphEdge> = new Map();
+  private maxCacheSize = 500;
 
   constructor() {
-    this.ensureStorage();
-    this.loadFromDisk();
-    if (this.nodes.size === 0) {
-      this.seedCoreCurriculumGraph();
-    }
+    this.hydrateFromLocalFallback();
+    // Non-blocking hydration from Neon
+    this.hydrateFromNeon().catch((err) => {
+      console.warn('[Knowledge Graph] Initial Neon hydration notice:', err?.message || err);
+    });
   }
 
-  private ensureStorage() {
-    const dir = path.dirname(GRAPH_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  }
-
-  private loadFromDisk() {
+  /**
+   * Loads initial seed nodes from local disk fallback for zero-latency startup
+   */
+  private hydrateFromLocalFallback() {
     try {
-      if (fs.existsSync(GRAPH_FILE)) {
-        const raw = fs.readFileSync(GRAPH_FILE, 'utf8');
-        const data: KnowledgeGraph = JSON.parse(raw);
+      if (fs.existsSync(FALLBACK_GRAPH_FILE)) {
+        const raw = fs.readFileSync(FALLBACK_GRAPH_FILE, 'utf8');
+        const data = JSON.parse(raw);
         for (const n of data.nodes || []) {
-          this.nodes.set(n.id, n);
+          const canonical = graphExtractionService.normalizeCanonicalName(n.name);
+          const node: GraphNode = {
+            id: n.id,
+            classId: n.classId || 'class-m2029',
+            subjectId: n.subjectId,
+            subjectName: n.subjectName || 'Operating Systems',
+            name: n.name,
+            canonicalName: canonical,
+            nodeType: (n.type as GraphNodeType) || 'concept',
+            summary: n.summary || '',
+            unitNumber: n.unit || 1,
+            extractionMethod: 'curriculum_curated',
+            confidenceScore: 1.0,
+            verificationStatus: 'verified',
+            keywords: n.keywords || [canonical],
+            properties: {},
+          };
+          this.inMemoryNodes.set(node.id, node);
         }
         for (const e of data.edges || []) {
-          this.edges.set(e.id, e);
+          const edge: GraphEdge = {
+            id: e.id,
+            classId: e.classId || 'class-m2029',
+            sourceNodeId: e.source,
+            targetNodeId: e.target,
+            relationshipType: (e.relationship?.toUpperCase() as GraphRelationshipType) || 'RELATED_TO',
+            label: e.label || 'relates to',
+            description: e.label,
+            extractionMethod: 'curriculum_curated',
+            confidenceScore: 1.0,
+            verificationStatus: 'verified',
+            weight: 1.0,
+          };
+          this.inMemoryEdges.set(edge.id, edge);
         }
       }
     } catch (err: any) {
-      console.warn('[Graph RAG] Error loading graph:', err.message);
+      console.warn('[Knowledge Graph] Local fallback read notice:', err?.message || err);
     }
   }
 
-  private saveToDisk() {
+  /**
+   * Hydrates graph nodes and edges from Neon PostgreSQL
+   */
+  public async hydrateFromNeon(classId: string = 'class-m2029'): Promise<{ nodesCount: number; edgesCount: number }> {
+    if (!isNeonConfigured()) {
+      return { nodesCount: this.inMemoryNodes.size, edgesCount: this.inMemoryEdges.size };
+    }
+
     try {
-      this.ensureStorage();
-      const payload: KnowledgeGraph = {
-        nodes: Array.from(this.nodes.values()),
-        edges: Array.from(this.edges.values()),
-        lastUpdated: new Date().toISOString(),
-      };
-      fs.writeFileSync(GRAPH_FILE, JSON.stringify(payload, null, 2), 'utf8');
+      const nodeRows = await queryNeon<any>(
+        `SELECT * FROM graph_nodes 
+         WHERE (class_id = $1 OR class_id = 'class-shared' OR class_id = 'public') 
+         ORDER BY updated_at DESC LIMIT 500`,
+        [classId]
+      );
+
+      for (const r of nodeRows) {
+        const node: GraphNode = {
+          id: r.id,
+          classId: r.class_id,
+          subjectId: r.subject_id,
+          subjectName: r.subject_name,
+          name: r.name,
+          canonicalName: r.canonical_name,
+          nodeType: r.node_type as GraphNodeType,
+          summary: r.summary,
+          unitNumber: r.unit_number ? Number(r.unit_number) : undefined,
+          sourceDocId: r.source_doc_id,
+          sourceAssetHash: r.source_asset_hash,
+          docVersion: r.doc_version ? Number(r.doc_version) : 1,
+          pageNumber: r.page_number ? Number(r.page_number) : undefined,
+          sectionTitle: r.section_title,
+          extractionMethod: r.extraction_method,
+          confidenceScore: Number(r.confidence_score) || 1.0,
+          verificationStatus: r.verification_status,
+          keywords: typeof r.keywords === 'string' ? JSON.parse(r.keywords) : (r.keywords || []),
+          properties: typeof r.properties === 'string' ? JSON.parse(r.properties) : (r.properties || {}),
+          createdAt: r.created_at,
+          updatedAt: r.updated_at,
+        };
+        this.inMemoryNodes.set(node.id, node);
+      }
+
+      const edgeRows = await queryNeon<any>(
+        `SELECT * FROM graph_edges 
+         WHERE (class_id = $1 OR class_id = 'class-shared' OR class_id = 'public') 
+         ORDER BY updated_at DESC LIMIT 1000`,
+        [classId]
+      );
+
+      for (const er of edgeRows) {
+        const edge: GraphEdge = {
+          id: er.id,
+          classId: er.class_id,
+          subjectId: er.subject_id,
+          sourceNodeId: er.source_node_id,
+          targetNodeId: er.target_node_id,
+          relationshipType: er.relationship_type as GraphRelationshipType,
+          label: er.label,
+          description: er.description,
+          sourceDocId: er.source_doc_id,
+          sourceAssetHash: er.source_asset_hash,
+          docVersion: er.doc_version ? Number(er.doc_version) : 1,
+          pageNumber: er.page_number ? Number(er.page_number) : undefined,
+          sectionTitle: er.section_title,
+          extractionMethod: er.extraction_method,
+          confidenceScore: Number(er.confidence_score) || 1.0,
+          verificationStatus: er.verification_status,
+          weight: Number(er.weight) || 1.0,
+          properties: typeof er.properties === 'string' ? JSON.parse(er.properties) : (er.properties || {}),
+          createdAt: er.created_at,
+          updatedAt: er.updated_at,
+        };
+        this.inMemoryEdges.set(edge.id, edge);
+      }
+
+      console.log(`[Knowledge Graph] ☁️ Hydrated from Neon: ${this.inMemoryNodes.size} nodes, ${this.inMemoryEdges.size} edges active.`);
+      return { nodesCount: this.inMemoryNodes.size, edgesCount: this.inMemoryEdges.size };
     } catch (err: any) {
-      console.error('[Graph RAG] Failed to save graph to disk:', err.message);
+      console.warn('[Knowledge Graph] Hydration from Neon notice:', err?.message || err);
+      return { nodesCount: this.inMemoryNodes.size, edgesCount: this.inMemoryEdges.size };
     }
   }
 
-  private seedCoreCurriculumGraph() {
-    const seedNodes: ConceptNode[] = [
-      {
-        id: 'node-process',
-        name: 'Process',
-        type: 'concept',
-        summary: 'A program in execution, consisting of program counter, stack, data section, and PCB.',
-        subjectName: 'Operating Systems',
-        unit: 2,
-        keywords: ['process', 'program', 'pcb', 'address space'],
-      },
-      {
-        id: 'node-pcb',
-        name: 'Process Control Block (PCB)',
-        type: 'definition',
-        summary: 'Kernel data structure holding execution context, registers, state, and priority.',
-        subjectName: 'Operating Systems',
-        unit: 2,
-        keywords: ['pcb', 'process control block', 'context', 'registers'],
-      },
-      {
-        id: 'node-cpu-scheduling',
-        name: 'CPU Scheduling',
-        type: 'topic',
-        summary: 'Short-term scheduler dynamic allocation of CPU time to processes in the ready queue.',
-        subjectName: 'Operating Systems',
-        unit: 2,
-        keywords: ['cpu scheduling', 'scheduler', 'ready queue', 'allocation'],
-      },
-      {
-        id: 'node-context-switch',
-        name: 'Context Switching',
-        type: 'algorithm',
-        summary: 'Switching CPU from one process to another, saving old state into PCB and loading new state.',
-        subjectName: 'Operating Systems',
-        unit: 2,
-        keywords: ['context switch', 'dispatcher', 'latency', 'pcb save'],
-      },
-      {
-        id: 'node-deadlock',
-        name: 'Deadlock',
-        type: 'topic',
-        summary: 'A set of processes blocked because each process holds a resource and waits for another resource held by another process.',
-        subjectName: 'Operating Systems',
-        unit: 3,
-        keywords: ['deadlock', 'starvation', 'blocked', 'cycle'],
-      },
-      {
-        id: 'node-coffman-conditions',
-        name: '4 Coffman Conditions',
-        type: 'formula',
-        summary: 'Mutual Exclusion, Hold & Wait, No Preemption, Circular Wait. All 4 must hold simultaneously for deadlock.',
-        subjectName: 'Operating Systems',
-        unit: 3,
-        keywords: ['coffman', 'conditions', 'mutual exclusion', 'hold and wait', 'no preemption', 'circular wait'],
-      },
-      {
-        id: 'node-bankers-algo',
-        name: "Banker's Algorithm",
-        type: 'algorithm',
-        summary: 'Deadlock avoidance algorithm that simulates resource allocation to check for safe states.',
-        subjectName: 'Operating Systems',
-        unit: 3,
-        keywords: ['bankers algorithm', 'avoidance', 'safe state', 'allocation matrix', 'need matrix'],
-      },
-      {
-        id: 'node-virtual-memory',
-        name: 'Virtual Memory & Paging',
-        type: 'topic',
-        summary: 'Decoupling logical memory from physical memory via page tables, TLB, and demand paging.',
-        subjectName: 'Operating Systems',
-        unit: 4,
-        keywords: ['virtual memory', 'paging', 'page table', 'tlb', 'page fault'],
-      },
-      {
-        id: 'node-semaphore',
-        name: 'Semaphores & Mutex',
-        type: 'concept',
-        summary: 'Synchronization primitives (Wait/P and Signal/V) used to eliminate race conditions in critical sections.',
-        subjectName: 'Operating Systems',
-        unit: 3,
-        keywords: ['semaphore', 'mutex', 'critical section', 'race condition', 'wait', 'signal'],
-      },
-    ];
-
-    const seedEdges: ConceptEdge[] = [
-      {
-        id: 'edge-1',
-        source: 'node-process',
-        target: 'node-pcb',
-        relationship: 'implements',
-        label: 'maintains state inside',
-      },
-      {
-        id: 'edge-2',
-        source: 'node-cpu-scheduling',
-        target: 'node-context-switch',
-        relationship: 'implements',
-        label: 'triggers dispatcher for',
-      },
-      {
-        id: 'edge-3',
-        source: 'node-context-switch',
-        target: 'node-pcb',
-        relationship: 'shares_resource',
-        label: 'saves and restores',
-      },
-      {
-        id: 'edge-4',
-        source: 'node-process',
-        target: 'node-cpu-scheduling',
-        relationship: 'subtopic_of',
-        label: 'is scheduled by',
-      },
-      {
-        id: 'edge-5',
-        source: 'node-deadlock',
-        target: 'node-coffman-conditions',
-        relationship: 'implements',
-        label: 'requires all 4',
-      },
-      {
-        id: 'edge-6',
-        source: 'node-deadlock',
-        target: 'node-bankers-algo',
-        relationship: 'solves',
-        label: 'avoided dynamically by',
-      },
-      {
-        id: 'edge-7',
-        source: 'node-semaphore',
-        target: 'node-deadlock',
-        relationship: 'causes',
-        label: 'can cause deadlock if misordered',
-      },
-      {
-        id: 'edge-8',
-        source: 'node-cpu-scheduling',
-        target: 'node-virtual-memory',
-        relationship: 'shares_resource',
-        label: 'coordinates memory with',
-      },
-    ];
-
-    for (const n of seedNodes) this.nodes.set(n.id, n);
-    for (const e of seedEdges) this.edges.set(e.id, e);
-    this.saveToDisk();
-  }
-
   /**
-   * Adds or updates nodes/edges extracted from an ingested document
+   * Selectively decides whether a student question warrants Graph RAG
    */
-  public addConcept(node: ConceptNode) {
-    this.nodes.set(node.id, node);
-    this.saveToDisk();
-  }
-
-  public addRelationship(edge: ConceptEdge) {
-    this.edges.set(edge.id, edge);
-    this.saveToDisk();
-  }
-
-  /**
-   * Multi-hop subgraph retrieval for a question
-   */
-  public queryGraph(
-    queryString: string,
-    maxHops = 2
-  ): {
-    matchedNodes: ConceptNode[];
-    connectedNodes: ConceptNode[];
-    connectingEdges: ConceptEdge[];
-    graphContextText: string;
+  public shouldTriggerGraphRag(query: string): {
+    trigger: boolean;
+    intent: 'prerequisite' | 'comparison' | 'learning_path' | 'relationship' | 'none';
+    reason: string;
   } {
-    const qTokens = queryString.toLowerCase().split(/\s+/).filter((w) => w.length > 2);
+    const q = query.trim().toLowerCase();
+
+    // 1. Prerequisite Intent
+    if (
+      /\b(?:what\s+(?:should|do|must)\s+i\s+learn\s+before|prerequisite|prerequisites|prior\s+knowledge|foundational\s+knowledge|concepts?\s+required\s+before|what\s+do\s+i\s+need\s+to\s+know\s+before)\b/i.test(
+        q
+      )
+    ) {
+      return {
+        trigger: true,
+        intent: 'prerequisite',
+        reason: 'Question requires analyzing foundational prerequisite relationships.',
+      };
+    }
+
+    // 2. Comparison / Contrast Intent
+    if (
+      /\b(?:how\s+are\s+.*\s+and\s+.*\s+related|difference\s+between|compare\s+and\s+contrast|versus|vs\.?|how\s+do\s+.*\s+differ)\b/i.test(
+        q
+      )
+    ) {
+      return {
+        trigger: true,
+        intent: 'comparison',
+        reason: 'Question requires comparing multiple entities across units.',
+      };
+    }
+
+    // 3. Inter-concept Relationship & Integration
+    if (
+      /\b(?:how\s+(?:does|do)\s+.*\s+(?:connect|relate|link)\s+to|connection\s+between|how\s+.*\s+work\s+together|how\s+is\s+.*\s+applied\s+in|relationship\s+between)\b/i.test(
+        q
+      )
+    ) {
+      return {
+        trigger: true,
+        intent: 'relationship',
+        reason: 'Question requires tracing multi-hop concept relationships.',
+      };
+    }
+
+    // 4. Learning Path & Topic Sequencing
+    if (
+      /\b(?:learning\s+path|study\s+roadmap|what\s+order\s+to\s+study|which\s+concepts\s+from\s+unit\s+\d+\s+are\s+required|step\s+by\s+step\s+path)\b/i.test(
+        q
+      )
+    ) {
+      return {
+        trigger: true,
+        intent: 'learning_path',
+        reason: 'Question requires constructing an ordered curriculum learning path.',
+      };
+    }
+
+    // Ordinary direct question -> bypass Graph RAG, use Hybrid RAG only
+    return {
+      trigger: false,
+      intent: 'none',
+      reason: 'Direct conceptual or factual query suited for standard Hybrid RAG.',
+    };
+  }
+
+  /**
+   * Multi-hop subgraph query with bounded traversal, cycle detection, and classroom isolation
+   */
+  public async queryGraph(
+    queryText: string,
+    options: GraphTraversalOptions
+  ): Promise<GraphQueryResult> {
+    const {
+      classId,
+      subjectId,
+      maxHops = 2,
+      maxNodes = 12,
+      maxEdges = 16,
+      minConfidence = 0.5,
+      verificationFilter = 'all',
+    } = options;
+
+    const normalizedQuery = queryText.toLowerCase();
+    const queryTokens = normalizedQuery
+      .split(/\s+/)
+      .map((t) => t.replace(/[^\w-]/g, ''))
+      .filter((w) => w.length > 2);
+
+    let candidateNodes: GraphNode[] = [];
+    let candidateEdges: GraphEdge[] = [];
+
+    // Branch A: Query Neon PostgreSQL if configured
+    if (isNeonConfigured()) {
+      try {
+        let nodeSql = `SELECT * FROM graph_nodes WHERE (class_id = $1 OR class_id = 'class-shared' OR class_id = 'public')`;
+        const nodeParams: any[] = [classId];
+        let pIdx = 2;
+
+        if (subjectId) {
+          nodeSql += ` AND (subject_id = $${pIdx} OR subject_id IS NULL)`;
+          nodeParams.push(subjectId);
+          pIdx++;
+        }
+
+        if (verificationFilter === 'verified_only') {
+          nodeSql += ` AND verification_status = 'verified'`;
+        }
+
+        nodeSql += ` AND confidence_score >= $${pIdx} LIMIT 200`;
+        nodeParams.push(minConfidence);
+
+        const rows = await queryNeon<any>(nodeSql, nodeParams);
+
+        candidateNodes = rows.map((r) => ({
+          id: r.id,
+          classId: r.class_id,
+          subjectId: r.subject_id,
+          subjectName: r.subject_name,
+          name: r.name,
+          canonicalName: r.canonical_name,
+          nodeType: r.node_type as GraphNodeType,
+          summary: r.summary,
+          unitNumber: r.unit_number ? Number(r.unit_number) : undefined,
+          sourceDocId: r.source_doc_id,
+          sourceAssetHash: r.source_asset_hash,
+          docVersion: r.doc_version ? Number(r.doc_version) : 1,
+          pageNumber: r.page_number ? Number(r.page_number) : undefined,
+          sectionTitle: r.section_title,
+          extractionMethod: r.extraction_method,
+          confidenceScore: Number(r.confidence_score) || 1.0,
+          verificationStatus: r.verification_status,
+          keywords: typeof r.keywords === 'string' ? JSON.parse(r.keywords) : (r.keywords || []),
+          properties: typeof r.properties === 'string' ? JSON.parse(r.properties) : (r.properties || {}),
+        }));
+
+        let edgeSql = `SELECT * FROM graph_edges WHERE (class_id = $1 OR class_id = 'class-shared' OR class_id = 'public')`;
+        const edgeParams: any[] = [classId];
+        let epIdx = 2;
+
+        if (subjectId) {
+          edgeSql += ` AND (subject_id = $${epIdx} OR subject_id IS NULL)`;
+          edgeParams.push(subjectId);
+          epIdx++;
+        }
+
+        if (verificationFilter === 'verified_only') {
+          edgeSql += ` AND verification_status = 'verified'`;
+        }
+
+        edgeSql += ` AND confidence_score >= $${epIdx} LIMIT 300`;
+        edgeParams.push(minConfidence);
+
+        const edgeRows = await queryNeon<any>(edgeSql, edgeParams);
+
+        candidateEdges = edgeRows.map((er) => ({
+          id: er.id,
+          classId: er.class_id,
+          subjectId: er.subject_id,
+          sourceNodeId: er.source_node_id,
+          targetNodeId: er.target_node_id,
+          relationshipType: er.relationship_type as GraphRelationshipType,
+          label: er.label,
+          description: er.description,
+          sourceDocId: er.source_doc_id,
+          sourceAssetHash: er.source_asset_hash,
+          docVersion: er.doc_version ? Number(er.doc_version) : 1,
+          pageNumber: er.page_number ? Number(er.page_number) : undefined,
+          sectionTitle: er.section_title,
+          extractionMethod: er.extraction_method,
+          confidenceScore: Number(er.confidence_score) || 1.0,
+          verificationStatus: er.verification_status,
+          weight: Number(er.weight) || 1.0,
+        }));
+      } catch (err: any) {
+        console.warn('[Knowledge Graph] Neon query notice, falling back to in-memory:', err?.message || err);
+        candidateNodes = Array.from(this.inMemoryNodes.values()).filter(
+          (n) => n.classId === classId || n.classId === 'class-shared' || n.classId === 'public'
+        );
+        candidateEdges = Array.from(this.inMemoryEdges.values()).filter(
+          (e) => e.classId === classId || e.classId === 'class-shared' || e.classId === 'public'
+        );
+      }
+    } else {
+      // In-memory fallback
+      candidateNodes = Array.from(this.inMemoryNodes.values()).filter(
+        (n) => n.classId === classId || n.classId === 'class-shared' || n.classId === 'public'
+      );
+      candidateEdges = Array.from(this.inMemoryEdges.values()).filter(
+        (e) => e.classId === classId || e.classId === 'class-shared' || e.classId === 'public'
+      );
+    }
+
+    const nodeMap = new Map<string, GraphNode>(candidateNodes.map((n) => [n.id, n]));
     const matchedNodeIds = new Set<string>();
 
-    // 1. Find direct concept hits
-    for (const [id, node] of this.nodes.entries()) {
-      const nameTokens = node.name.toLowerCase().split(/\s+/);
-      const isDirectNameMatch = nameTokens.some((nt) => qTokens.includes(nt));
-      const isKeywordMatch = node.keywords.some((kw) => queryString.toLowerCase().includes(kw));
+    // Step 1: Match Entry Nodes
+    for (const node of candidateNodes) {
+      const canon = node.canonicalName;
+      const name = node.name.toLowerCase();
 
-      if (isDirectNameMatch || isKeywordMatch) {
-        matchedNodeIds.add(id);
+      const directCanonMatch = normalizedQuery.includes(canon) || canon.includes(normalizedQuery);
+      const tokenMatch = queryTokens.some((t) => name.includes(t) || canon.includes(t));
+      const keywordMatch = node.keywords.some((kw) => normalizedQuery.includes(kw.toLowerCase()));
+
+      if (directCanonMatch || tokenMatch || keywordMatch) {
+        matchedNodeIds.add(node.id);
       }
     }
 
@@ -272,75 +397,321 @@ export class GraphRagEngine {
         connectedNodes: [],
         connectingEdges: [],
         graphContextText: '',
+        retrievalSummary: 'No matching concept nodes found in authorized classroom graph.',
+        hasPrerequisites: false,
       };
     }
 
-    // 2. Perform BFS traversal up to maxHops
-    const visitedNodes = new Set<string>(matchedNodeIds);
-    const relevantEdges: ConceptEdge[] = [];
+    // Step 2: Bounded BFS Multi-hop Traversal
+    const visited = new Set<string>(matchedNodeIds);
+    const resultEdges: GraphEdge[] = [];
     let currentFrontier = Array.from(matchedNodeIds);
 
     for (let hop = 0; hop < maxHops; hop++) {
       const nextFrontier: string[] = [];
       for (const nodeId of currentFrontier) {
-        for (const edge of this.edges.values()) {
-          if (edge.source === nodeId && !visitedNodes.has(edge.target)) {
-            visitedNodes.add(edge.target);
-            nextFrontier.push(edge.target);
-            relevantEdges.push(edge);
-          } else if (edge.target === nodeId && !visitedNodes.has(edge.source)) {
-            visitedNodes.add(edge.source);
-            nextFrontier.push(edge.source);
-            relevantEdges.push(edge);
+        for (const edge of candidateEdges) {
+          if (resultEdges.length >= maxEdges) break;
+
+          if (edge.sourceNodeId === nodeId && !visited.has(edge.targetNodeId)) {
+            visited.add(edge.targetNodeId);
+            nextFrontier.push(edge.targetNodeId);
+            resultEdges.push(edge);
+          } else if (edge.targetNodeId === nodeId && !visited.has(edge.sourceNodeId)) {
+            visited.add(edge.sourceNodeId);
+            nextFrontier.push(edge.sourceNodeId);
+            resultEdges.push(edge);
           } else if (
-            (edge.source === nodeId && visitedNodes.has(edge.target)) ||
-            (edge.target === nodeId && visitedNodes.has(edge.source))
+            (edge.sourceNodeId === nodeId && visited.has(edge.targetNodeId)) ||
+            (edge.targetNodeId === nodeId && visited.has(edge.sourceNodeId))
           ) {
-            if (!relevantEdges.some((re) => re.id === edge.id)) {
-              relevantEdges.push(edge);
+            if (!resultEdges.some((re) => re.id === edge.id)) {
+              resultEdges.push(edge);
             }
           }
         }
       }
       currentFrontier = nextFrontier;
-      if (currentFrontier.length === 0) break;
+      if (currentFrontier.length === 0 || visited.size >= maxNodes) break;
     }
 
-    const matchedNodes = Array.from(matchedNodeIds).map((id) => this.nodes.get(id)!).filter(Boolean);
-    const connectedNodes = Array.from(visitedNodes)
-      .filter((id) => !matchedNodeIds.has(id))
-      .map((id) => this.nodes.get(id)!)
+    const matchedNodes = Array.from(matchedNodeIds)
+      .map((id) => nodeMap.get(id)!)
       .filter(Boolean);
 
-    // 3. Format graph context text
-    const lines: string[] = ['### 🕸️ Knowledge Graph Context'];
+    const connectedNodes = Array.from(visited)
+      .filter((id) => !matchedNodeIds.has(id))
+      .slice(0, maxNodes - matchedNodes.length)
+      .map((id) => nodeMap.get(id)!)
+      .filter(Boolean);
+
+    // Step 3: Check for Prerequisite Chains for Primary Matched Node
+    let prerequisiteChain: PrerequisiteChainResult | undefined;
+    if (matchedNodes.length > 0) {
+      prerequisiteChain = this.calculatePrerequisiteChain(matchedNodes[0].id, candidateNodes, candidateEdges);
+    }
+
+    // Step 4: Construct Markdown Context
+    const lines: string[] = ['### 🕸️ Academic Knowledge Graph & Concept Interdependencies'];
+
+    lines.push('\n**Core Concept Entities:**');
     for (const node of matchedNodes) {
-      lines.push(`- **${node.name}** [${node.type}]: ${node.summary}`);
+      const statusBadge = node.verificationStatus === 'verified' ? '✅ Verified' : '⚠️ Unverified';
+      const sourceRef = node.sectionTitle ? ` (Source: "${node.sectionTitle}", Page ${node.pageNumber || 'N/A'})` : '';
+      lines.push(`- **${node.name}** [${node.nodeType.toUpperCase()} | ${statusBadge}]${sourceRef}: ${node.summary}`);
     }
+
     if (connectedNodes.length > 0) {
-      lines.push('\n**Connected Curriculum Concepts:**');
+      lines.push('\n**Related Curriculum Concepts:**');
       for (const node of connectedNodes) {
-        lines.push(`- **${node.name}** (${node.subjectName || 'Core CS'}): ${node.summary}`);
+        const unitRef = node.unitNumber ? `Unit ${node.unitNumber}` : node.subjectName;
+        lines.push(`- **${node.name}** (${unitRef}): ${node.summary}`);
       }
     }
-    if (relevantEdges.length > 0) {
-      lines.push('\n**Concept Interdependencies:**');
-      for (const edge of relevantEdges) {
-        const srcNode = this.nodes.get(edge.source);
-        const tgtNode = this.nodes.get(edge.target);
-        if (srcNode && tgtNode) {
-          lines.push(`- ${srcNode.name} ──[${edge.label}]──► ${tgtNode.name}`);
-        }
+
+    if (resultEdges.length > 0) {
+      lines.push('\n**Verified Concept Relationships:**');
+      for (const edge of resultEdges) {
+        const src = nodeMap.get(edge.sourceNodeId)?.name || edge.sourceNodeId;
+        const tgt = nodeMap.get(edge.targetNodeId)?.name || edge.targetNodeId;
+        const statusBadge = edge.verificationStatus === 'verified' ? '✅' : '⚠️';
+        lines.push(`- ${src} ──[${edge.relationshipType}: "${edge.label}"]──► ${tgt} ${statusBadge}`);
       }
     }
+
+    if (prerequisiteChain && prerequisiteChain.prerequisites.length > 0) {
+      lines.push('\n**Recommended Prerequisite Learning Path:**');
+      lines.push(prerequisiteChain.pathString);
+      if (prerequisiteChain.missingPrerequisites.length > 0) {
+        lines.push(`- ℹ️ *Missing syllabus prerequisites:* ${prerequisiteChain.missingPrerequisites.join(', ')}`);
+      }
+    }
+
+    const graphContextText = lines.join('\n');
+    const retrievalSummary = `Traversed knowledge graph: ${matchedNodes.length} focal nodes, ${connectedNodes.length} connected nodes, ${resultEdges.length} relationship edges.`;
 
     return {
       matchedNodes,
       connectedNodes,
-      connectingEdges: relevantEdges,
-      graphContextText: lines.join('\n'),
+      connectingEdges: resultEdges,
+      graphContextText,
+      retrievalSummary,
+      hasPrerequisites: Boolean(prerequisiteChain && prerequisiteChain.prerequisites.length > 0),
+      prerequisiteChain,
     };
+  }
+
+  /**
+   * Calculates a topological prerequisite chain for a target concept, detecting cycles
+   */
+  public calculatePrerequisiteChain(
+    targetNodeId: string,
+    allNodes: GraphNode[],
+    allEdges: GraphEdge[]
+  ): PrerequisiteChainResult {
+    const nodeMap = new Map<string, GraphNode>(allNodes.map((n) => [n.id, n]));
+    const targetNode = nodeMap.get(targetNodeId) || null;
+
+    if (!targetNode) {
+      return {
+        targetNode: null,
+        prerequisites: [],
+        hasCycle: false,
+        missingPrerequisites: [],
+        pathString: 'Target concept not found.',
+        isFullyVerified: false,
+      };
+    }
+
+    const visited = new Set<string>();
+    const currentPath = new Set<string>();
+    const orderedPrereqs: PrerequisiteStep[] = [];
+    const missingPrerequisites: string[] = [];
+    let hasCycle = false;
+    const cycleNodes: string[] = [];
+
+    // DFS reverse traversal on REQUIRES and forward traversal on PREREQUISITE_OF
+    const dfs = (nodeId: string, depth = 0) => {
+      if (depth > 10) return; // Guard maximum traversal depth
+
+      if (currentPath.has(nodeId)) {
+        hasCycle = true;
+        cycleNodes.push(nodeId);
+        return;
+      }
+
+      if (visited.has(nodeId)) return;
+
+      currentPath.add(nodeId);
+      visited.add(nodeId);
+
+      // Find prerequisite edges where target is nodeId and rel is REQUIRES,
+      // or source is nodeId and rel is PREREQUISITE_OF
+      const prereqEdges = allEdges.filter(
+        (e) =>
+          (e.sourceNodeId === nodeId && e.relationshipType === 'REQUIRES') ||
+          (e.targetNodeId === nodeId && e.relationshipType === 'PREREQUISITE_OF')
+      );
+
+      for (const edge of prereqEdges) {
+        const prereqNodeId =
+          edge.relationshipType === 'REQUIRES' ? edge.targetNodeId : edge.sourceNodeId;
+
+        const prereqNode = nodeMap.get(prereqNodeId);
+        if (!prereqNode) {
+          missingPrerequisites.push(prereqNodeId);
+          continue;
+        }
+
+        dfs(prereqNodeId, depth + 1);
+
+        if (prereqNodeId !== targetNodeId && !orderedPrereqs.some((p) => p.nodeId === prereqNodeId)) {
+          orderedPrereqs.push({
+            nodeId: prereqNode.id,
+            name: prereqNode.name,
+            nodeType: prereqNode.nodeType,
+            unitNumber: prereqNode.unitNumber,
+            subjectName: prereqNode.subjectName,
+            summary: prereqNode.summary,
+            verificationStatus: edge.verificationStatus,
+            confidenceScore: edge.confidenceScore,
+            sourceDocTitle: edge.sectionTitle,
+            pageNumber: edge.pageNumber,
+            rationale: edge.description,
+          });
+        }
+      }
+
+      currentPath.delete(nodeId);
+    };
+
+    dfs(targetNodeId);
+
+    const isFullyVerified =
+      orderedPrereqs.length > 0 &&
+      orderedPrereqs.every((p) => p.verificationStatus === 'verified');
+
+    const chainNames = [...orderedPrereqs.map((p) => p.name), targetNode.name];
+    const pathString = hasCycle
+      ? `⚠️ Circular dependency detected (${cycleNodes.join(' ↔ ')}). Safe fallback path: ${chainNames.join(' → ')}`
+      : chainNames.join(' → ');
+
+    return {
+      targetNode,
+      prerequisites: orderedPrereqs,
+      hasCycle,
+      cycleNodes: hasCycle ? cycleNodes : undefined,
+      missingPrerequisites: Array.from(new Set(missingPrerequisites)),
+      pathString,
+      isFullyVerified,
+    };
+  }
+
+  /**
+   * Submits a student-proposed graph change without modifying verified graph
+   */
+  public async proposeChange(change: Omit<GraphProposedChange, 'id' | 'createdAt' | 'status'>): Promise<GraphProposedChange> {
+    const id = `prop-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const fullChange: GraphProposedChange = {
+      ...change,
+      id,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isNeonConfigured()) {
+      await queryNeon(
+        `INSERT INTO graph_proposed_changes (
+          id, class_id, proposed_by, change_type, target_id, proposed_data, reason, status, created_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+        [
+          fullChange.id,
+          fullChange.classId,
+          fullChange.proposedBy,
+          fullChange.changeType,
+          fullChange.targetId || null,
+          JSON.stringify(fullChange.proposedData),
+          fullChange.reason,
+          fullChange.status,
+        ]
+      );
+    }
+
+    return fullChange;
+  }
+
+  /**
+   * Reviews and applies a student-proposed graph change (Teacher / Admin only)
+   */
+  public async reviewChange(params: {
+    changeId: string;
+    status: 'approved' | 'rejected';
+    reviewerName: string;
+    reviewNotes?: string;
+  }): Promise<{ success: boolean; message: string }> {
+    if (!isNeonConfigured()) {
+      return { success: false, message: 'Database not configured.' };
+    }
+
+    const rows = await queryNeon<any>(
+      `SELECT * FROM graph_proposed_changes WHERE id = $1`,
+      [params.changeId]
+    );
+
+    if (rows.length === 0) {
+      return { success: false, message: 'Proposed change not found.' };
+    }
+
+    const item = rows[0];
+    const proposedData = typeof item.proposed_data === 'string' ? JSON.parse(item.proposed_data) : item.proposed_data;
+
+    await queryNeon(
+      `UPDATE graph_proposed_changes 
+       SET status = $1, reviewed_by = $2, review_notes = $3, resolved_at = NOW() 
+       WHERE id = $4`,
+      [params.status, params.reviewerName, params.reviewNotes || '', params.changeId]
+    );
+
+    if (params.status === 'approved') {
+      if (item.change_type === 'add_node') {
+        await graphExtractionService.persistGraphElements({
+          nodes: [{ ...proposedData, verificationStatus: 'verified' }],
+          edges: [],
+          classId: item.class_id,
+        });
+      } else if (item.change_type === 'add_edge') {
+        await graphExtractionService.persistGraphElements({
+          nodes: [],
+          edges: [{ ...proposedData, verificationStatus: 'verified' }],
+          classId: item.class_id,
+        });
+      }
+      // Rehydrate in-memory graph
+      await this.hydrateFromNeon(item.class_id);
+    }
+
+    return {
+      success: true,
+      message: `Change ${params.changeId} successfully ${params.status}.`,
+    };
+  }
+
+  public addNodeToMemory(node: GraphNode) {
+    this.inMemoryNodes.set(node.id, node);
+  }
+
+  public addEdgeToMemory(edge: GraphEdge) {
+    this.inMemoryEdges.set(edge.id, edge);
+  }
+
+  /**
+   * In-memory test helper to reset graph
+   */
+  public clearAll() {
+    this.inMemoryNodes.clear();
+    this.inMemoryEdges.clear();
   }
 }
 
-export const graphRagEngine = new GraphRagEngine();
+export const knowledgeGraphEngine = new KnowledgeGraphEngine();
+export const graphRagEngine = knowledgeGraphEngine;

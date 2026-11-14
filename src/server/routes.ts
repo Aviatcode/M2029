@@ -83,6 +83,7 @@ import { SYLLABUS_TRACKS, GOLD_TOPICS, GoldTopic } from './ai/academicKnowledgeB
 import { aiKnowledgeCache, calculateJaccardSimilarity, CachedAIResponse } from './ai/aiKnowledgeCache.js';
 import { ragRouter, setDbReference } from './rag/ragRouter.js';
 import { ragEngine } from './rag/ragIndex.js';
+import { hybridRetrievalEngine } from './rag/hybridRetrievalEngine.js';
 import { documentDeduplicationService, documentStorageService } from './storage/index.js';
 import { attendanceService } from './attendanceService.js';
 import { runAcademicAgent } from './ai/academicAgentGraph.js';
@@ -1257,7 +1258,7 @@ apiRouter.get('/university/notices/:code', (req: Request, res: Response) => {
 });
 
 // 3. Get Syllabus & Likely Next Topic
-apiRouter.get('/syllabus/:subjectId', (req: Request, res: Response) => {
+apiRouter.get('/syllabus/:subjectId', async (req: Request, res: Response) => {
   const subjectId = req.params.subjectId;
   const units = db.units[subjectId] || [];
 
@@ -1275,6 +1276,25 @@ apiRouter.get('/syllabus/:subjectId', (req: Request, res: Response) => {
     if (likelyTopic) break;
   }
 
+  // Phase 4: Enhance likely next topic with verified prerequisite check
+  let prerequisiteInfo: any = null;
+  if (likelyTopic) {
+    try {
+      const graphRes = await graphRagEngine.queryGraph(likelyTopic.title, {
+        classId: (req.query.classId as string) || 'class-m2029',
+        subjectId,
+      });
+      if (graphRes.hasPrerequisites && graphRes.prerequisiteChain) {
+        prerequisiteInfo = {
+          hasPrerequisites: true,
+          prerequisitePath: graphRes.prerequisiteChain.pathString,
+          prerequisites: graphRes.prerequisiteChain.prerequisites,
+          isFullyVerified: graphRes.prerequisiteChain.isFullyVerified,
+        };
+      }
+    } catch {}
+  }
+
   res.json({
     subjectId,
     units,
@@ -1282,8 +1302,10 @@ apiRouter.get('/syllabus/:subjectId', (req: Request, res: Response) => {
       ? {
           topic: likelyTopic,
           confidence,
-          reasoning:
-            'Calculated from syllabus sequence and recent uploaded class notes. Marked as likely, not confirmed fact.',
+          reasoning: prerequisiteInfo?.prerequisitePath
+            ? `Recommended based on syllabus sequence and prerequisite chain: ${prerequisiteInfo.prerequisitePath}`
+            : 'Calculated from syllabus sequence and recent uploaded class notes. Marked as likely, not confirmed fact.',
+          prerequisites: prerequisiteInfo,
         }
       : null,
   });
@@ -1996,6 +2018,12 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       mode: tutorMode,
       forceLive: Boolean(forceLive),
       userAiConfig,
+      classId: classCode,
+      conversationContext: req.body?.conversationContext || {
+        previousQuery: req.body?.previousQuery,
+        activeTopic: req.body?.activeTopic || subjectName,
+        previousAnswer: req.body?.previousAnswer,
+      },
     });
 
     // Save into Shared Classroom Knowledge Library for cohort reuse
@@ -2038,11 +2066,17 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
       evolutionHistory: agentResult.evolutionHistory || [],
     });
   } catch (err: any) {
-    // If AI generation failed, check if we have RAG hits to provide an instant grounded answer
-    const ragHits = ragEngine.search(lookupKey, { limit: 3 });
-    if (ragHits.length > 0) {
-      const top = ragHits[0];
-      const fallbackAnswer = `### 📖 Active Backend RAG Grounded Answer\n\n**Source:** *${top.docTitle}* (Page ${top.pageNumber || 1}, ${top.sectionTitle || 'Core Section'})\n\n${top.chunk.text}\n\n*⚡ Directly retrieved from active 300MB textbook chunks on the server.*`;
+    // If AI generation failed, check if we have Hybrid RAG hits to provide an instant grounded answer
+    const hybridHits = await hybridRetrievalEngine.search(lookupKey, {
+      classId: classCode,
+      subjectName,
+      userAiConfig,
+      topK: 3,
+    });
+    if (hybridHits.hits.length > 0) {
+      const top = hybridHits.hits[0];
+      const methodLabel = top.retrievalMethod === 'hybrid' ? '⚡ Hybrid BM25 + Vector' : top.retrievalMethod === 'vector_only' ? '🧠 Vector Semantic' : '🔍 BM25 Keyword';
+      const fallbackAnswer = `### 📖 Classroom Library Grounded Answer\n\n**Source:** *${top.docTitle}* (Page ${top.pageNumber || 1}, Section: ${top.sectionTitle || 'Core Section'}, v${top.version}) [${methodLabel}]\n\n${top.text}\n\n*⚡ Verified excerpts retrieved from active classroom materials on the server.*`;
       return res.json({
         answer: fallbackAnswer,
         text: fallbackAnswer,
@@ -2055,20 +2089,21 @@ apiRouter.post('/ai-tutor/ask', async (req: Request, res: Response) => {
           socratic: '',
         },
         modeUsed: tutorMode,
-        modelUsed: '⚡ Active Backend RAG Retrieval Engine',
+        modelUsed: `⚡ Hybrid RAG Retrieval Engine (${methodLabel})`,
         cached: false,
         tokensSaved: 0,
         reasoningSteps: [
           {
-            step: '1. RAG Fallback Search',
-            detail: `Retrieved fallback chunk from ${top.docTitle}`,
+            step: '1. Hybrid RAG Retrieval',
+            detail: `Retrieved ${hybridHits.hits.length} excerpts from ${top.docTitle} via ${top.retrievalMethod}`,
             timestamp: new Date().toLocaleTimeString(),
           },
         ],
-        sourcesUsed: ragHits.map((h) => ({
-          title: `${h.docTitle} (Page ${h.pageNumber || 1}, Chunk #${h.chunk.chunkIndex})`,
-          type: 'Active Backend RAG Textbook',
+        sourcesUsed: hybridHits.hits.map((h) => ({
+          title: `${h.docTitle} (Page ${h.pageNumber || 1}, Chunk #${h.chunkIndex}, v${h.version})`,
+          type: 'Classroom Verified Material',
         })),
+        citations: hybridHits.citationString,
       });
     }
 
