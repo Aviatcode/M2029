@@ -401,50 +401,60 @@ export const Sidebar: React.FC<SidebarProps> = ({
           isRight ? 'border-l border-zinc-800/80' : 'border-r border-zinc-800/80'
         } ${isHovered ? 'w-52 sm:w-60' : 'w-14 sm:w-16 md:w-18'}`}
       >
-        {/* 1. App Logo Header & Small Arrow just below it */}
-        <div className="p-2 sm:p-2.5 border-b border-zinc-800/70 bg-zinc-950/40 shrink-0 flex flex-col items-center gap-1.5">
-          {/* A. App Logo: ALWAYS in top left, click sends to Home tab */}
-          <button
-            onClick={() => handleTabClick('dashboard')}
-            className={`flex items-center gap-2.5 cursor-pointer focus:outline-none group text-left transition-all ${
-              isHovered ? 'w-full px-1' : 'justify-center'
-            }`}
-            title="M2029 Home (Academic Overview)"
-          >
-            <div className="p-1 rounded-xl bg-[#121215] border border-white/10 group-hover:border-white/25 shadow-md shadow-black/60 group-hover:shadow-[0_0_16px_rgba(255,255,255,0.1)] transition-all shrink-0">
-              <AppLogo size={24} withGlow />
-            </div>
-            {isHovered && (
-              <div className="leading-tight overflow-hidden flex-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs sm:text-sm font-black text-white tracking-tight font-sans block truncate">
-                    M2029
-                  </span>
-                  <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300">
-                    AI OS
+        {/* 1. App Logo Header & Small Arrow */}
+        <div className="p-2 sm:p-2.5 border-b border-zinc-800/70 bg-zinc-950/40 shrink-0">
+          <div className="flex items-center justify-between gap-1.5">
+            <button
+              onClick={() => handleTabClick('dashboard')}
+              className={`flex items-center gap-2.5 cursor-pointer focus:outline-none group text-left transition-all ${
+                isHovered ? 'flex-1 min-w-0 px-0.5' : 'w-full justify-center'
+              }`}
+              title="M2029 Home (Academic Overview)"
+            >
+              <div className="p-1 rounded-xl bg-[#121215] border border-white/10 group-hover:border-white/25 shadow-md shadow-black/60 group-hover:shadow-[0_0_16px_rgba(255,255,255,0.1)] transition-all shrink-0">
+                <AppLogo size={24} withGlow />
+              </div>
+              {isHovered && (
+                <div className="leading-tight overflow-hidden flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs sm:text-sm font-black text-white tracking-tight font-sans block truncate">
+                      m2029
+                    </span>
+                    <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300">
+                      AI OS
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-mono text-cyan-400 font-semibold block truncate mt-0.5">
+                    {classCode || 'BCA-2028'}
                   </span>
                 </div>
-                <span className="text-[9px] font-mono text-zinc-400 font-semibold block truncate mt-0.5">
-                  {classCode || 'CLASS-2029'}
-                </span>
-              </div>
-            )}
-          </button>
+              )}
+            </button>
 
-          {/* B. Small Arrow just below it to toggle collapse / expand / mobile drawer */}
-          <button
-            type="button"
-            onClick={handleArrowToggle}
-            title={isHovered ? "Collapse Sidebar" : "Open Navigation Drawer"}
-            aria-label="Toggle Sidebar"
-            className="w-full h-5 rounded-md flex items-center justify-center bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer group active:scale-95"
-          >
-            {isHovered ? (
-              <ChevronLeft className="w-3.5 h-3.5 stroke-[2.2] transition-transform group-hover:-translate-x-0.5" />
-            ) : (
-              <ChevronRight className="w-3.5 h-3.5 stroke-[2.2] transition-transform group-hover:translate-x-0.5" />
+            {isHovered && (
+              <button
+                type="button"
+                onClick={handleArrowToggle}
+                title="Collapse Sidebar"
+                aria-label="Collapse Sidebar"
+                className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/70 border border-transparent hover:border-zinc-700 transition cursor-pointer shrink-0"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 stroke-[2.2]" />
+              </button>
             )}
-          </button>
+          </div>
+
+          {!isHovered && (
+            <button
+              type="button"
+              onClick={handleArrowToggle}
+              title="Open Navigation Drawer"
+              aria-label="Toggle Sidebar"
+              className="w-full h-5 mt-1.5 rounded-md flex items-center justify-center bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-800 hover:border-zinc-700 transition-all cursor-pointer group active:scale-95"
+            >
+              <ChevronRight className="w-3.5 h-3.5 stroke-[2.2] transition-transform group-hover:translate-x-0.5" />
+            </button>
+          )}
         </div>
 
         {/* 2. Navigation Links */}

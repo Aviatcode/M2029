@@ -87,6 +87,8 @@ interface ConversationTurn {
   cached?: boolean;
   modelUsed?: string;
   tokensSaved?: number;
+  sourcesUsed?: Array<{ title: string; chunkIndex?: number; pageNumber?: number; snippet?: string }>;
+  groundedInDoc?: boolean;
   quickCheck?: {
     question: string;
     options: { key: string; label: string }[];
@@ -304,10 +306,20 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
   // Initialize first topic of selected track
   useEffect(() => {
-    if (tracks.length > 0 && selectedTrackId && conversationTurns.length === 0) {
+    if (tracks.length > 0 && selectedTrackId && conversationTurns.length === 0 && !initialPrompt) {
       loadGuidedTopic(selectedTrackId, 0, 'start');
     }
-  }, [tracks, selectedTrackId]);
+  }, [tracks, selectedTrackId, initialPrompt]);
+
+  // Handle initialPrompt prop (e.g. from Materials "Ask AI Tutor about this document")
+  const hasTriggeredInitialPrompt = useRef<string | null>(null);
+  useEffect(() => {
+    if (initialPrompt && initialPrompt.trim() && hasTriggeredInitialPrompt.current !== initialPrompt.trim()) {
+      hasTriggeredInitialPrompt.current = initialPrompt.trim();
+      setViewMode('guided');
+      loadGuidedTopic(selectedTrackId || 'os-unit2-cpu', 0, 'custom_question', '', initialPrompt.trim());
+    }
+  }, [initialPrompt, selectedTrackId]);
 
   // Scroll to bottom of chat when new turn arrives
   useEffect(() => {
@@ -397,6 +409,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
           modelUsed: data.modelUsed,
           cached: data.cached,
           tokensSaved: data.tokensSaved,
+          sourcesUsed: data.topic.sourcesUsed,
+          groundedInDoc: data.topic.groundedInDoc,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setConversationTurns((prev) => [...prev, asstTurn]);
@@ -1042,6 +1056,29 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
 
                     {/* Markdown Formatted Text with Hinglish Intuition & Blueprint Callouts */}
                     <AITutorMarkdown content={turn.content} />
+
+                    {/* Grounded Document Citation Badges */}
+                    {turn.sourcesUsed && turn.sourcesUsed.length > 0 && (
+                      <div className="mt-3 pt-2.5 border-t border-slate-800/80 flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-mono font-semibold text-emerald-400 flex items-center gap-1 mr-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          Sourced from your uploaded document:
+                        </span>
+                        {turn.sourcesUsed.map((src, sIdx) => (
+                          <span
+                            key={sIdx}
+                            className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-slate-900/90 border border-emerald-500/30 text-emerald-300 shadow-xs"
+                            title={src.snippet}
+                          >
+                            <span>📄</span>
+                            <span className="font-semibold text-emerald-200">{src.title}</span>
+                            {src.pageNumber && (
+                              <span className="text-slate-400 text-[9px] font-normal">(Page {src.pageNumber})</span>
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Interactive Gantt Chart Widget (for CPU Scheduling Algorithms) */}
                     {turn.gantt && (

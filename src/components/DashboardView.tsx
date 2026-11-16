@@ -23,6 +23,7 @@ import {
   Play,
 } from 'lucide-react';
 import { ActiveNavTab } from './Sidebar';
+import { AppLogo } from './AppLogo';
 
 export interface DashboardViewProps {
   studentName: string;
@@ -188,8 +189,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             className="flex items-center gap-2 mb-1 group cursor-pointer text-left focus:outline-none"
             title="Manage Profile & Settings"
           >
-            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white group-hover:border-zinc-500 transition-colors">
-              {studentName ? studentName.charAt(0).toUpperCase() : 'S'}
+            <div className="w-7 h-7 rounded-lg overflow-hidden border border-zinc-700/80 group-hover:border-zinc-500 transition-colors shadow-xs shrink-0 flex items-center justify-center bg-zinc-900">
+              <AppLogo size={24} withGlow={false} />
             </div>
             <span className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors">
               {studentName || 'Student'}

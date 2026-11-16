@@ -90,14 +90,18 @@ ragRouter.post('/upload', uploadRateLimiter.middleware(), upload.single('file'),
 
     const newMaterial = result.material;
 
-    // Attach to classroom store
-    if (dbRef && dbRef.materials) {
-      if (!dbRef.materials[classId]) {
-        dbRef.materials[classId] = [];
-      }
-      dbRef.materials[classId].unshift(newMaterial);
-      if (typeof dbRef.saveToDisk === 'function') {
-        dbRef.saveToDisk();
+    // Attach to classroom store & Neon persistence
+    if (dbRef) {
+      if (typeof dbRef.addMaterial === 'function') {
+        await dbRef.addMaterial(newMaterial);
+      } else if (dbRef.materials) {
+        if (!dbRef.materials[classId]) {
+          dbRef.materials[classId] = [];
+        }
+        dbRef.materials[classId].unshift(newMaterial);
+        if (typeof dbRef.saveToDisk === 'function') {
+          dbRef.saveToDisk();
+        }
       }
     }
 

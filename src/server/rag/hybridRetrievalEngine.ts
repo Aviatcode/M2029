@@ -163,7 +163,13 @@ export class HybridRetrievalEngine {
       if (!doc) continue;
 
       // Extract asset hash from docId: "doc-{sha256.slice(0, 12)}" or check doc.classId
-      const isClassMatch = doc.classId === classId || doc.classId === 'class-shared' || doc.classId === 'public';
+      const normalizeClass = (c?: string) => (c || '').toLowerCase().replace(/^(class-)/, '').trim();
+      const isClassMatch =
+        !doc.classId ||
+        !classId ||
+        doc.classId === 'class-shared' ||
+        doc.classId === 'public' ||
+        normalizeClass(doc.classId) === normalizeClass(classId);
       if (isClassMatch) {
         bm25Filtered.push(hit);
       }

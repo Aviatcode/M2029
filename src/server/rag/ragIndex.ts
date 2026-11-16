@@ -618,7 +618,14 @@ export class RagKnowledgeEngine {
 
         const doc = this.documents.get(ref.docId);
         if (!doc || doc.status !== 'active') continue;
-        if (options.classId && doc.classId !== options.classId) continue;
+        const normalizeClass = (c?: string) => (c || '').toLowerCase().replace(/^(class-)/, '').trim();
+        if (
+          options.classId &&
+          doc.classId &&
+          doc.classId !== 'class-shared' &&
+          doc.classId !== 'public' &&
+          normalizeClass(doc.classId) !== normalizeClass(options.classId)
+        ) continue;
         if (options.subjectId && doc.subjectId !== options.subjectId) continue;
 
         const f_qi = posting.termFrequency;

@@ -2004,11 +2004,14 @@ apiRouter.post('/ai-tutor/ask', aiRateLimiter.middleware(), async (req: Request,
         (Array.isArray(userAiConfig.keyPool) && userAiConfig.keyPool.length > 0))
   );
 
+  const asksAboutUploadedNotes = Boolean(
+    (question && /\b(?:uploaded|document|my notes|my doc|textbook|pdf|file)\b/i.test(question)) ||
+    (topicName && /\b(?:uploaded|document|notes)\b/i.test(topicName))
+  );
+
   // 1. FAST ZERO-TOKEN SHARED CLASSROOM LIBRARY & COHORT CACHE LOOKUP
-  // Shared library is ALWAYS checked first — even for personal-key students.
-  // Students with premium keys still get instant cache hits (0 tokens, 0 rate limits).
-  // Only a library MISS triggers their personal AI, which then contributes back to the class.
-  if (!forceLive) {
+  // Skipped when student specifically asks about their uploaded documents/notes.
+  if (!forceLive && !asksAboutUploadedNotes) {
     const libMatch = sharedKnowledgeLibrary.findMatchingAnswer(lookupKey, {
       classId: classCode,
       subjectName,
@@ -2821,7 +2824,61 @@ Highlight the exact mental model, the formulas, and the examiner traps for unive
         classId: classCode,
       });
 
-      if (!forceLive) {
+      // Step: Search student's uploaded documents via hybrid retrieval engine & classroom materials
+      let sourcesUsed: Array<{ title: string; chunkIndex?: number; pageNumber?: number; snippet?: string }> = [];
+
+      try {
+        const hybridSearch = await hybridRetrievalEngine.search(resolvedQuery || customQuery, {
+          classId: classCode || 'class-m2029',
+          topK: 4,
+          studentName,
+          userAiConfig,
+        });
+
+        if (hybridSearch && hybridSearch.hits && hybridSearch.hits.length > 0) {
+          const highConfidenceHits = hybridSearch.hits.filter(
+            (h) => (h.rrfScore && h.rrfScore >= 0.005) || (h.bm25Score && h.bm25Score > 0) || (h.vectorSimilarity && h.vectorSimilarity >= 0.32)
+          );
+          if (highConfidenceHits.length > 0) {
+            sourcesUsed = highConfidenceHits.map((h) => ({
+              title: h.docTitle || 'Uploaded Notes',
+              chunkIndex: h.chunkIndex,
+              pageNumber: h.pageNumber || 1,
+              snippet: (h.text || '').slice(0, 260),
+            }));
+          }
+        }
+      } catch (ragSearchErr) {
+        console.warn('[AI Tutor] RAG document search notice:', ragSearchErr);
+      }
+
+      // Also search db.materials for direct matches if BM25 had no hits
+      if (sourcesUsed.length === 0) {
+        const targetClassMaterials = [
+          ...(db.materials[classCode] || []),
+          ...(db.materials['class-m2029'] || []),
+          ...(Object.values(db.materials).flat() || []),
+        ];
+        const queryNorm = (customQuery || '').toLowerCase();
+        const matchedMat = targetClassMaterials.find((m) => {
+          if (!m || !m.title) return false;
+          const tLower = m.title.toLowerCase();
+          return queryNorm.includes(tLower) || tLower.includes(queryNorm.slice(0, 20));
+        });
+
+        if (matchedMat) {
+          sourcesUsed.push({
+            title: matchedMat.title,
+            pageNumber: 1,
+            snippet: matchedMat.resources?.summary || matchedMat.rawTextContent?.slice(0, 260) || 'Uploaded classroom study material',
+          });
+        }
+      }
+
+      const hasUploadedDocGrounding = sourcesUsed.length > 0;
+
+      // Only check static cache if there is NO specific uploaded document context
+      if (!forceLive && !hasUploadedDocGrounding) {
         // Check Shared Classroom Knowledge Library first (semantic & intent matching)
         const libMatch = sharedKnowledgeLibrary.findMatchingAnswer(resolvedQuery, {
           classId: classCode,
@@ -2940,6 +2997,18 @@ Provide an authoritative, high-scoring university explanation with:
 [Friendly 2-3 sentence mental model in natural Hinglish starting with "Dekho bhai..."]`;
       }
 
+      if (hasUploadedDocGrounding) {
+        tutorUserPrompt += `\n\n=== STUDENT'S UPLOADED CLASSROOM NOTES & DOCUMENTS ===
+The student has uploaded notes and documents in this workspace. You MUST refer directly to their uploaded notes to answer their question:
+${sourcesUsed.map((s, idx) => `[Document ${idx + 1}: "${s.title}" (Page ${s.pageNumber || 1})]
+Excerpt: "${s.snippet}"`).join('\n\n')}
+======================================================
+INSTRUCTIONS FOR GROUNDING:
+- Directly ground your explanation in the student's uploaded notes above.
+- Explicitly cite their uploaded notes by name (e.g. "According to your uploaded notes on **${sourcesUsed[0].title}**...").
+- Synthesize the notes with university curriculum standards to provide a complete, high-scoring answer.`;
+      }
+
       let responseText = '';
       let usedModelName = ai.name;
       try {
@@ -2963,8 +3032,14 @@ Provide an authoritative, high-scoring university explanation with:
       }
 
       if (!responseText || responseText.length < 50) {
-        responseText = await generateAcademicDoubtAnswer(customQuery, targetTopic.title, track.name, classCode);
-        usedModelName = 'Academic Knowledge Bank (Offline Verified)';
+        if (hasUploadedDocGrounding) {
+          const docTitle = sourcesUsed[0].title;
+          responseText = `### 📌 Grounded Analysis: ${docTitle}\n\nAccording to your uploaded notes on **${docTitle}**:\n\n${sourcesUsed.map((s) => s.snippet).join('\n\n')}\n\n#### 📝 Key Exam Takeaways from Your Uploaded Notes\n- Review the core definitions and architectural structures from **${docTitle}** for semester examinations.\n- State key formulas, invariants, and step-by-step algorithms clearly to maximize evaluator scoring.`;
+          usedModelName = 'Uploaded Document Grounding Engine';
+        } else {
+          responseText = await generateAcademicDoubtAnswer(customQuery, targetTopic.title, track.name, classCode);
+          usedModelName = 'Academic Knowledge Bank (Offline Verified)';
+        }
       }
 
       // Step 6: Response Quality Validation & Secret Redaction
@@ -3015,6 +3090,8 @@ Provide an authoritative, high-scoring university explanation with:
           id: `doubt-${Date.now()}`,
           title: isConversational ? 'Tutor Capabilities & Welcome' : `Doubt Resolved: ${customQuery.slice(0, 45)}`,
           content: responseText,
+          sourcesUsed: sourcesUsed.length > 0 ? sourcesUsed : undefined,
+          groundedInDoc: hasUploadedDocGrounding,
           quickCheck: undefined,
           gantt: undefined,
         },

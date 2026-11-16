@@ -9,6 +9,7 @@ import { ragEngine } from '../rag/ragIndex.js';
 import { embeddingService } from '../rag/embeddingService.js';
 import { graphExtractionService } from '../rag/graphExtractionService.js';
 import { knowledgeGraphEngine } from '../rag/graphRagEngine.js';
+import { documentAnalysisService } from '../rag/documentAnalysisService.js';
 import { AcademicMaterial, UserRole, VerificationStatus } from '../../types/index.js';
 
 export interface IngestionInputParams {
@@ -209,6 +210,12 @@ export class DocumentDeduplicationService {
             );
 
             // Construct standard AcademicMaterial representation
+            const dedupedResources = documentAnalysisService.generateHeuristicResources(
+              cleanTitle,
+              asset.extracted_summary || cleanTitle,
+              subjectName
+            );
+
             const material: AcademicMaterial = {
               id: uploadId,
               classId,
@@ -225,24 +232,7 @@ export class DocumentDeduplicationService {
               ragDocId: `doc-${sha256.slice(0, 12)}`,
               chunkCount: Number(asset.page_count) || 1,
               downloadUrl: `/api/materials/download/${encodeURIComponent(asset.storage_key)}`,
-              resources: {
-                summary: asset.extracted_summary || `Synthesized overview of ${cleanTitle}. Reused verified academic index with 0 duplicate storage.`,
-                hinglishSummary: `Is verified material (${cleanTitle}) ko cloud library se instantly reuse kiya gaya hai bina duplicate storage ke.`,
-                mindmapMermaid: `graph TD\n  A[${cleanTitle.slice(0, 20)}] --> B[Verified Shared Asset]\n  A --> C[SHA-256 Verified: ${sha256.slice(0, 8)}]\n  A --> D[Full Text Search Active]`,
-                keyConcepts: [],
-                importantDefinitions: [
-                  { term: cleanTitle, definition: `Verified university study material (${this.formatBytes(Number(asset.file_size))}). Reused via SHA-256 deduplication.` },
-                ],
-                examples: [],
-                examPoints: [
-                  'Instant verified classroom fetch (0 duplicate processing tokens)',
-                  'Direct citation retrieval available in AI Tutor',
-                ],
-                flashcards: [],
-                quiz: [],
-                possibleQuestions: [],
-                relatedPYQs: [],
-              },
+              resources: dedupedResources,
             };
 
             // Discard temporary incoming file safely now that asset is verified
@@ -396,7 +386,16 @@ export class DocumentDeduplicationService {
       expectedSha256: sha256,
     });
 
-    const summary = `Synthesized overview of ${cleanTitle}. Total pages: ${pageCount}, Words: ${wordCount}.`;
+    // 5.1 Synthesize in-depth Academic Analysis directly from document content
+    const analyzedResources = await documentAnalysisService.analyzeDocument({
+      title: cleanTitle,
+      originalName,
+      extractedText,
+      fileType: fileExt,
+      subjectName,
+      classId,
+    });
+    const summary = analyzedResources.summary || `Synthesized overview of ${cleanTitle}. Total pages: ${pageCount}, Words: ${wordCount}.`;
     const docId = `doc-${sha256.slice(0, 12)}`;
 
     // 6. Chunk Document Text
@@ -563,28 +562,7 @@ export class DocumentDeduplicationService {
       ragDocId: docId,
       chunkCount: chunkingResult.chunks.length,
       downloadUrl: storageMeta.storageUrl || `/api/materials/download/${encodeURIComponent(storageKey)}`,
-      resources: {
-        summary,
-        hinglishSummary: `Is textbook (${cleanTitle}) ke saare chapters backend par active hain, aap direct koi bhi topic ya question search kar sakte ho.`,
-        mindmapMermaid: `graph TD\n  A[${cleanTitle.slice(0, 20)}] --> B[Active Chunks: ${chunkingResult.chunks.length}]\n  A --> C[Total Pages: ${pageCount}]\n  A --> D[Full Text Indexed]`,
-        keyConcepts: (chunkingResult.tableOfContents || []).slice(0, 4).map((toc) => ({
-          concept: toc.title,
-          explanation: `Indexed at Chunk #${toc.chunkIndex} (Page ${toc.page || 1})`,
-        })),
-        importantDefinitions: [
-          { term: cleanTitle, definition: `University study material (${this.formatBytes(fileSize)}). Accessible via RAG semantic search.` },
-        ],
-        examples: [],
-        examPoints: [
-          `Contains ${chunkingResult.chunks.length} active searchable chunks`,
-          `Estimated ${pageCount} pages parsed & indexed`,
-          'Direct citation retrieval available in AI Tutor',
-        ],
-        flashcards: [],
-        quiz: [],
-        possibleQuestions: [],
-        relatedPYQs: [],
-      },
+      resources: analyzedResources,
     };
 
     return {

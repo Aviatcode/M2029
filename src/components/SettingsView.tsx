@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { Subject } from '../types';
 import { UserProfile } from './LoginModal';
+import { AppLogo } from './AppLogo';
 
 interface SettingsViewProps {
   classCode: string;
@@ -393,8 +394,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xs font-bold text-white">
-              {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'S'}
+            <div className="w-7 h-7 rounded-lg overflow-hidden border border-zinc-700/80 group-hover:border-zinc-500 transition-colors shadow-xs shrink-0 flex items-center justify-center bg-zinc-900">
+              <AppLogo size={24} withGlow={false} />
             </div>
             <span className="text-xs font-semibold text-slate-300">
               {currentUser?.name || 'Student'}
@@ -453,8 +454,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           {/* User Avatar Circle */}
           <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-[#18181b] border border-zinc-800">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 via-indigo-600 to-zinc-900 border border-zinc-700 text-white flex items-center justify-center font-bold text-lg shadow-md">
-              {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'S'}
+            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-700 text-white flex items-center justify-center shadow-md shrink-0">
+              <AppLogo size={36} withGlow />
             </div>
             <div className="flex-1 min-w-0">
               {isEditingUsername ? (

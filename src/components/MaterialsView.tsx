@@ -23,6 +23,7 @@ import {
   FolderOpen,
   MoreVertical,
   ExternalLink,
+  Bot,
 } from 'lucide-react';
 import { RagDocumentViewer } from './RagDocumentViewer';
 import { uploadLargeFileToRag, fetchFromGitHubUrl } from '../utils/ragService';
@@ -660,13 +661,14 @@ export const MaterialsView: React.FC<MaterialsViewProps> = ({
                     <span>View PDF</span>
                   </a>
                 )}
-                {onAskAI && selectedMaterial.resources.exam10Marker && (
+                {onAskAI && (
                   <button
-                    onClick={() => onAskAI(`Explain this GGSIPU 10-Marker Question from ${selectedMaterial.title}: "${selectedMaterial.resources.exam10Marker?.question}". Provide full derivation and university grading gotchas.`)}
-                    className="px-2.5 py-1 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition cursor-pointer flex items-center gap-1"
-                    title="Ask AI Companion"
+                    onClick={() => onAskAI(`Explain the core concepts and 10-marker exam questions from my uploaded notes: "${selectedMaterial.title}". Please refer directly to my uploaded document.`)}
+                    className="px-2.5 py-1 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
+                    title="Ask AI Tutor about this document"
                   >
-                    <span>Ask AI</span>
+                    <Bot className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Ask AI Tutor</span>
                   </button>
                 )}
                 <button
