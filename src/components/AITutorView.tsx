@@ -48,6 +48,7 @@ import {
 } from '../utils/aiModelService';
 import { GanttChartWidget } from './tutor/GanttChartWidget';
 import { QuickCheckCard } from './tutor/QuickCheckCard';
+import { AITutorMarkdown } from './tutor/AITutorMarkdown';
 import { ActiveNavTab } from './Sidebar';
 
 interface AITutorViewProps {
@@ -1039,115 +1040,8 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Markdown Formatted Text with Hinglish Intuition Callouts */}
-                    <div className="prose prose-invert max-w-none text-xs sm:text-sm leading-relaxed text-slate-200 font-sans-ui space-y-3">
-                      {turn.content.split('\n\n').map((paragraph, pIdx) => {
-                        // Highlight Hinglish intuition callout
-                        if (
-                          paragraph.toLowerCase().includes('simple words mein') ||
-                          paragraph.toLowerCase().includes('simple hinglish') ||
-                          paragraph.toLowerCase().includes('dekho bhai') ||
-                          paragraph.toLowerCase().includes('bilkul line mein')
-                        ) {
-                          return (
-                            <div
-                              key={pIdx}
-                              className="p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-200 text-xs sm:text-sm font-sans-ui leading-relaxed my-2 shadow-xs"
-                            >
-                              <div className="font-semibold text-amber-300 flex items-center gap-1.5 mb-1 font-mono text-[11px]">
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>Hinglish Intuition (Exam Mental Model)</span>
-                              </div>
-                              <p className="italic text-slate-200">{paragraph}</p>
-                            </div>
-                          );
-                        }
-
-                        // Highlight Exam Point
-                        if (
-                          paragraph.toLowerCase().includes('exam point:') ||
-                          paragraph.toLowerCase().includes('exam keyword:') ||
-                          paragraph.toLowerCase().includes('exam-ready short notes')
-                        ) {
-                          return (
-                            <div
-                              key={pIdx}
-                              className="p-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 text-xs sm:text-sm my-2 shadow-xs"
-                            >
-                              <div className="font-semibold text-emerald-300 flex items-center gap-1.5 mb-1 font-mono text-[11px]">
-                                <GraduationCap className="w-3.5 h-3.5" />
-                                <span>Exam Answer Sheet Blueprint (Copy Directly)</span>
-                              </div>
-                              <p className="text-slate-200">{paragraph}</p>
-                            </div>
-                          );
-                        }
-
-                        // Table block
-                        if (paragraph.includes('|') && paragraph.includes('---')) {
-                          const rows = paragraph.trim().split('\n');
-                          return (
-                            <div key={pIdx} className="overflow-x-auto my-3 rounded-lg border border-slate-800">
-                              <table className="min-w-full text-xs text-left border-collapse">
-                                <thead>
-                                  <tr className="bg-slate-900 border-b border-slate-800">
-                                    {rows[0]
-                                      .split('|')
-                                      .filter((c) => c.trim().length > 0)
-                                      .map((col, cIdx) => (
-                                        <th key={cIdx} className="px-3 py-2 font-semibold text-slate-300 font-mono">
-                                          {col.trim()}
-                                        </th>
-                                      ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {rows.slice(2).map((row, rIdx) => (
-                                    <tr key={rIdx} className="border-b border-slate-850 hover:bg-slate-900/50">
-                                      {row
-                                        .split('|')
-                                        .filter((c) => c.trim().length > 0)
-                                        .map((cell, cIdx) => (
-                                          <td key={cIdx} className="px-3 py-1.5 text-slate-300 font-mono">
-                                            {cell.trim()}
-                                          </td>
-                                        ))}
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          );
-                        }
-
-                        // Code block
-                        if (paragraph.startsWith('```')) {
-                          const lines = paragraph.split('\n');
-                          const lang = lines[0].replace('```', '') || 'bash';
-                          const codeText = lines.slice(1, -1).join('\n');
-                          return (
-                            <div key={pIdx} className="my-2 rounded-lg bg-slate-950 border border-slate-800 overflow-hidden font-mono text-xs">
-                              <div className="px-3 py-1 bg-slate-900 border-b border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
-                                <span>{lang.toUpperCase()}</span>
-                                <button
-                                  onClick={() => handleCopy(codeText, `code-${pIdx}`)}
-                                  className="text-slate-400 hover:text-white"
-                                >
-                                  {copiedKey === `code-${pIdx}` ? 'Copied' : 'Copy'}
-                                </button>
-                              </div>
-                              <pre className="p-3 overflow-x-auto text-emerald-400">{codeText}</pre>
-                            </div>
-                          );
-                        }
-
-                        return (
-                          <p key={pIdx} className="leading-relaxed">
-                            {paragraph}
-                          </p>
-                        );
-                      })}
-                    </div>
+                    {/* Markdown Formatted Text with Hinglish Intuition & Blueprint Callouts */}
+                    <AITutorMarkdown content={turn.content} />
 
                     {/* Interactive Gantt Chart Widget (for CPU Scheduling Algorithms) */}
                     {turn.gantt && (
@@ -1603,9 +1497,7 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                           <m.icon className="w-4 h-4" />
                           <span>{m.label}</span>
                         </div>
-                        <div className="prose prose-invert max-w-none text-xs sm:text-sm text-slate-300 whitespace-pre-line leading-relaxed font-sans-ui">
-                          {content}
-                        </div>
+                        <AITutorMarkdown content={content} />
                       </div>
                     );
                   })
@@ -1620,12 +1512,14 @@ export const AITutorView: React.FC<AITutorViewProps> = ({
                       </span>
                     </div>
 
-                    <div className="prose prose-invert max-w-none text-xs sm:text-sm text-slate-200 whitespace-pre-line leading-relaxed font-sans-ui">
-                      {studyGuide.sections[activeDisplayMode as keyof typeof studyGuide.sections] ||
+                    <AITutorMarkdown
+                      content={
+                        studyGuide.sections[activeDisplayMode as keyof typeof studyGuide.sections] ||
                         studyGuide.sections.exam_10marker ||
                         studyGuide.sections.simple ||
-                        'No content available for this section.'}
-                    </div>
+                        'No content available for this section.'
+                      }
+                    />
                   </div>
                 )}
 
